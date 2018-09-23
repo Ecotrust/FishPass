@@ -30,6 +30,7 @@ echo "setting up virtualenvs"
     $PIP install -e $PROJECT_DIR/apps/FishPass && \ 
     $PIP install -e $PROJECT_DIR/apps/madrona-features && \ 
     $PIP install -e $PROJECT_DIR/apps/madrona-manipulators && \ 
+    $PIP install -e $PROJECT_DIR/apps/madrona-scenarios && \ 
     $PIP install -e $PROJECT_DIR/apps/mp-accounts && \ 
     $PIP install -e $PROJECT_DIR/apps/mp-data-manager && \ 
     $PIP install -e $PROJECT_DIR/apps/mp-drawing && \ 

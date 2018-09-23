@@ -29,7 +29,7 @@ EXISTING_PROJECT=true
 MODULES="DEFAULT"
 
 # If you know where you want your django app folder, uncomment and set the line below
-#PROJ_FOLDER=Set_This_Yourself_To_Override
+PROJ_FOLDER=$CORE/apps/$APP_NAME
 
 cd $CORE/apps
   ### Uncomment the modules you want included in this project, or leave modules as "DEFAULT":

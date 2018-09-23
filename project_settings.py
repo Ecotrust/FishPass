@@ -180,6 +180,7 @@ INSTALLED_APPS = [
     'fishpass', 
     'features', 
     'manipulators', 
+    'scenarios', 
     'accounts', 
     'data_manager', 
     'drawing', 
@@ -198,9 +199,11 @@ MAP_TECH = 'ol4'
 try:
     ### START MODULE SETTINGS IMPORT ###
     from features.settings import *
+    from scenarios.settings import *
     from accounts.settings import *
     from data_manager.settings import *
     from drawing.settings import *
+    from visualize.settings import *
     ### END MODULE SETTINGS IMPORT ###
 except ImportError:
     pass

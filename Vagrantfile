@@ -28,6 +28,11 @@ Vagrant.configure(2) do |config|
 
     ### INSERT MODULE PROVISION FILES HERE ###
     config.vm.provision "shell" do |s|
+      s.path = "apps/madrona-scenarios/scripts/vagrant_provision.sh"
+      s.args = "marineplanner-core"
+      s.privileged = "false"
+    end
+    config.vm.provision "shell" do |s|
       s.path = "apps/mp-accounts/scripts/vagrant_provision.sh"
       s.args = "marineplanner-core"
       s.privileged = "false"
