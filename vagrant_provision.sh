@@ -27,15 +27,16 @@ echo "setting up virtualenvs"
     $PIP install --upgrade pip
     $PIP install --src ./deps -r requirements.txt
     ### INSERT PROJECT PROVISION FILES HERE ###
-    $PIP install -e $PROJECT_DIR/apps/FishPass && \ 
-    $PIP install -e $PROJECT_DIR/apps/madrona-features && \ 
-    $PIP install -e $PROJECT_DIR/apps/madrona-manipulators && \ 
-    $PIP install -e $PROJECT_DIR/apps/madrona-scenarios && \ 
-    $PIP install -e $PROJECT_DIR/apps/mp-accounts && \ 
-    $PIP install -e $PROJECT_DIR/apps/mp-data-manager && \ 
-    $PIP install -e $PROJECT_DIR/apps/mp-drawing && \ 
-    $PIP install -e $PROJECT_DIR/apps/mp-visualize && \ 
-    $PIP install -e $PROJECT_DIR/apps/p97-nursery && \ 
+    $PIP install -e $PROJECT_DIR/apps/FishPass && \
+    $PIP install -e $PROJECT_DIR/apps/madrona-analysistools && \ 
+    $PIP install -e $PROJECT_DIR/apps/madrona-features && \
+    $PIP install -e $PROJECT_DIR/apps/madrona-manipulators && \
+    $PIP install -e $PROJECT_DIR/apps/madrona-scenarios && \
+    $PIP install -e $PROJECT_DIR/apps/mp-accounts && \
+    $PIP install -e $PROJECT_DIR/apps/mp-data-manager && \
+    $PIP install -e $PROJECT_DIR/apps/mp-drawing && \
+    $PIP install -e $PROJECT_DIR/apps/mp-visualize && \
+    $PIP install -e $PROJECT_DIR/apps/p97-nursery && \
     ### END PROJECT PROVISION FILES ###
 
 echo "resetting DB"

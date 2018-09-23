@@ -44,6 +44,7 @@ cd $CORE/apps
     MOD_NAME=$APP_NAME
   fi
   if [ $MODULES == "DEFAULT" ]; then
+    if [ ! -d madrona-analysistools ]; then git clone https://github.com/Ecotrust/madrona-analysistools.git; fi
     if [ ! -d madrona-features ]; then git clone https://github.com/Ecotrust/madrona-features.git; fi
     if [ ! -d madrona-scenarios ]; then git clone https://github.com/Ecotrust/madrona-scenarios.git; fi
     if [ ! -d madrona-manipulators ]; then git clone https://github.com/Ecotrust/madrona-manipulators.git; fi
