@@ -23,7 +23,7 @@ MOD_NAME='fishpass'
 # "EXISTING_PROJECT" indicates whether the application being checked in is already configured
 #     Initially set to false, will be set to true if a vagrant_provision.sh or a Vagrantfile
 #     file exists in the project. If true, new configurations will not be made.
-EXISTING_PROJECT=false
+EXISTING_PROJECT=true
 
 # "DEFAULT" installs the basic marineplanner modules. You can take more control below
 MODULES="DEFAULT"
