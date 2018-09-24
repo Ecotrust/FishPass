@@ -177,16 +177,17 @@ INSTALLED_APPS = [
     'core',
     'compressor',
     ### BEGIN INSERTED INSTALLED APPS ###
-    'fishpass', 
-    'features', 
-    'manipulators', 
-    'scenarios', 
-    'accounts', 
-    'data_manager', 
-    'drawing', 
-    'rpc4django', 
-    'visualize', 
-    'nursery', 
+    'fishpass',
+    'features',
+    'manipulators',
+    'scenarios',
+    'accounts',
+    'data_manager',
+    'drawing',
+    'rpc4django',
+    'visualize',
+    'nursery',
+    'django.contrib.flatpages',
     ### END INSERTED INSTALLED APPS ###
 ]
 
@@ -195,6 +196,10 @@ INSTALLED_APPS = [
 # SCENARIO_LINK_BASE = '/features/scenario/app_scenario'
 
 MAP_TECH = 'ol4'
+# Set below in fishpass.local_settings.py
+MAPBOX_ACCESS_TOKEN=None
+HERE_API_TOKEN=None
+HERE_APP_CODE=None
 
 try:
     ### START MODULE SETTINGS IMPORT ###
@@ -213,6 +218,11 @@ RECAPTCHA_PRIVATE_KEY = 'SetInLocalSettings'
 
 try:
     from marineplanner.local_settings import *
+except ImportError:
+    pass
+
+try:
+    from fishpass.local_settings import *
 except ImportError:
     pass
 
