@@ -201,6 +201,24 @@ MAPBOX_ACCESS_TOKEN=None
 HERE_API_TOKEN=None
 HERE_APP_CODE=None
 
+########################################
+######        LAYER DATA        ########
+########################################
+FOCUS_AREA_TYPES = ['HUC08', 'HUC10', 'HUC12', 'County', 'Region', 'State']
+FOCUS_AREA_FIELD_ID_LOOKUP = {
+    'HUC08': 'huc_08_id',
+    'HUC10': 'huc_10_id',
+    'HUC12': 'huc_12_id',
+    'County': 'county_id',
+    'Region': 'region_id',
+    'State': 'state_id'
+}
+IMPORT_SRID = 4326
+
+# Setting internal DB SRID to an Equal Area projection would allow us to natively calculate area.
+# For now mercator is just easier.
+GEOMETRY_DB_SRID = 3857
+
 try:
     ### START MODULE SETTINGS IMPORT ###
     from features.settings import *
@@ -215,6 +233,7 @@ except ImportError:
 
 RECAPTCHA_PUBLIC_KEY = 'SiteKey'
 RECAPTCHA_PRIVATE_KEY = 'SetInLocalSettings'
+
 
 try:
     from marineplanner.local_settings import *
