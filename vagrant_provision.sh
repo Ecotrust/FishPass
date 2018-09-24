@@ -28,7 +28,7 @@ echo "setting up virtualenvs"
     $PIP install --src ./deps -r requirements.txt
     ### INSERT PROJECT PROVISION FILES HERE ###
     $PIP install -e $PROJECT_DIR/apps/FishPass && \
-    $PIP install -e $PROJECT_DIR/apps/madrona-analysistools && \ 
+    $PIP install -e $PROJECT_DIR/apps/madrona-analysistools && \
     $PIP install -e $PROJECT_DIR/apps/madrona-features && \
     $PIP install -e $PROJECT_DIR/apps/madrona-manipulators && \
     $PIP install -e $PROJECT_DIR/apps/madrona-scenarios && \
@@ -46,7 +46,7 @@ $PROJECT_DIR/scripts/reset_db.sh $APP_DB_NAME #$USER
 chmod a+x $PROJECT_DIR/$APP_NAME/manage.py
 
 # Add a couple of aliases to manage.py into .bashrc
-cat << EOF >> ~/.bashrc
+cat << EOF >> ~/bash.bashrc
 alias dj="$PYTHON $PROJECT_DIR/$APP_NAME/manage.py"
 alias djrun="dj runserver 0.0.0.0:8000"
 EOF
