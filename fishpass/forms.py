@@ -6,7 +6,7 @@ from django.conf import settings
 from django.forms.widgets import *
 from analysistools.widgets import SliderWidget, DualSliderWidget
 
-class TreatmentScenarioForm(ScenarioForm):
+class ProjectForm(ScenarioForm):
     from fishpass.models import FocusArea
 
     focus_area = HiddenScenarioBooleanField(
