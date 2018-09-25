@@ -49,7 +49,7 @@ class Barrier(models.Model):
     #HUC10_Name
     huc10_name = models.CharField(max_length=255,null=True,blank=True,default=None,verbose_name="HUC 10 Name")
     #HUC12_Code
-    huc12_code = models.IntegerField(null=True,blank=True,default=None,verbose_name="HUC 12 ID")
+    huc12_code = models.BigIntegerField(null=True,blank=True,default=None,verbose_name="HUC 12 ID")
     #HUC12_Name
     huc12_name = models.CharField(max_length=255,null=True,blank=True,default=None,verbose_name="HUC 12 Name")
     #County
@@ -91,8 +91,11 @@ class Project(Scenario):
         # form_template = 'fishpass/project_form.html'
         show_template = 'scenarios/show.html'
 
+# outside of scenario model, between pad and user entry
+#class ScenarioBarrier(models.Model):
 #class ScenarioBarrierType(models.Model):
 #class ScenarioBarrierStatus(models.Model):
+
 #class Default(models.Model):
 #class DefaultCost(models.Model):
 

@@ -219,6 +219,34 @@ IMPORT_SRID = 4326
 # For now mercator is just easier.
 GEOMETRY_DB_SRID = 3857
 
+#######################
+# PAD IMPORT SETTINGS #
+#######################
+OWNERSHIP_LOOKUP = {
+    '99': 'Unknown',
+    '22': 'City',
+    '16': 'College or university',
+    '7': 'Conservation group',
+    '23': 'County',
+    '4': 'Federal agency',
+    '3': 'Local agency',
+    '18': 'Natural Resource Commission',
+    '17': 'Primary or secondary school',
+    '5': 'Private landowner - corporate',
+    '20': 'Private landowner - noncorporate',
+    '20': 'Public utility',
+    '9': 'Soil and water conservation district',
+    '10': 'Sporting group',
+    '2': 'State agency',
+    '12': 'Tribe or tribal organization',
+    '28': 'Multiple/mixed',
+    '98': 'NA',
+    '8': 'Other',
+}
+
+OWNERSHIP_DEFAULT = '99'
+
+
 try:
     ### START MODULE SETTINGS IMPORT ###
     from features.settings import *
