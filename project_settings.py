@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 
 import os
+from collections import OrderedDict
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -222,27 +223,26 @@ GEOMETRY_DB_SRID = 3857
 #######################
 # PAD IMPORT SETTINGS #
 #######################
-OWNERSHIP_LOOKUP = {
-    '99': 'Unknown',
-    '22': 'City',
-    '16': 'College or university',
-    '7': 'Conservation group',
-    '23': 'County',
-    '4': 'Federal agency',
-    '3': 'Local agency',
-    '18': 'Natural Resource Commission',
-    '17': 'Primary or secondary school',
-    '5': 'Private landowner - corporate',
-    '20': 'Private landowner - noncorporate',
-    '20': 'Public utility',
-    '9': 'Soil and water conservation district',
-    '10': 'Sporting group',
-    '2': 'State agency',
-    '12': 'Tribe or tribal organization',
-    '28': 'Multiple/mixed',
-    '98': 'NA',
-    '8': 'Other',
-}
+OWNERSHIP_LOOKUP = OrderedDict({})
+OWNERSHIP_LOOKUP['99'] = 'Unknown'
+OWNERSHIP_LOOKUP['22'] = 'City'
+OWNERSHIP_LOOKUP['16'] = 'College or university'
+OWNERSHIP_LOOKUP['7'] = 'Conservation group'
+OWNERSHIP_LOOKUP['23'] = 'County'
+OWNERSHIP_LOOKUP['4'] = 'Federal agency'
+OWNERSHIP_LOOKUP['3'] = 'Local agency'
+OWNERSHIP_LOOKUP['18'] = 'Natural Resource Commission'
+OWNERSHIP_LOOKUP['17'] = 'Primary or secondary school'
+OWNERSHIP_LOOKUP['5'] = 'Private landowner - corporate'
+OWNERSHIP_LOOKUP['6'] = 'Private landowner - noncorporate'
+OWNERSHIP_LOOKUP['20'] = 'Public utility'
+OWNERSHIP_LOOKUP['9'] = 'Soil and water conservation district'
+OWNERSHIP_LOOKUP['10'] = 'Sporting group'
+OWNERSHIP_LOOKUP['2'] = 'State agency'
+OWNERSHIP_LOOKUP['12'] = 'Tribe or tribal organization'
+OWNERSHIP_LOOKUP['28'] = 'Multiple/mixed'
+OWNERSHIP_LOOKUP['98'] = 'NA'
+OWNERSHIP_LOOKUP['8'] = 'Other'
 
 OWNERSHIP_DEFAULT = '99'
 

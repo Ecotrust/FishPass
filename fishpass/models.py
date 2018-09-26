@@ -10,15 +10,20 @@ GEOMETRY_DB_SRID = settings.GEOMETRY_DB_SRID
 class BarrierType(models.Model):
     name = models.CharField(max_length=80)
     default_cost = models.FloatField(null=True,blank=True,verbose_name="Default Cost of Mitigation")
-    default_post_passability = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],default=1.0,verbose_name='Post-passability')
+    default_post_passability = models.FloatField(null=True,blank=True,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],default=1.0,verbose_name='Post-passability')
+    fixable = models.BooleanField(default=True)
+    barrier_specific = models.BooleanField(default=False)
+    order = models.IntegerField(default=999)
 
 class BarrierStatus(models.Model):
     name = models.CharField(max_length=90)
     default_pre_passability = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],default=1.0, verbose_name='Pre-passability')
+    order = models.IntegerField(default=999)
 
 class OwnershipType(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
+    order = models.IntegerField(default=999)
 
 class Barrier(models.Model):
     # PAD_ID
@@ -82,28 +87,11 @@ class Barrier(models.Model):
     # DS_Barrier
     downstream_barrier_count = models.IntegerField(validators=[MinValueValidator(0)],default=0,verbose_name="Downstream Barrier Count")
 
-class Project(Scenario):
-    class Options:
-        verbose_name = 'Project'
-        # icon_url = 'marco/img/multi.png'
-        form = 'fishpass.forms.ProjectForm'
-        form_template = 'scenarios/form.html'
-        # form_template = 'fishpass/project_form.html'
-        show_template = 'scenarios/show.html'
-
-# outside of scenario model, between pad and user entry
-#class ScenarioBarrier(models.Model):
-#class ScenarioBarrierType(models.Model):
-#class ScenarioBarrierStatus(models.Model):
-
-#class Default(models.Model):
-#class DefaultCost(models.Model):
-
-################
-# QUESTIONABLE #
-################
-#class BarrierType(models.Model):
-#class BarrierStatus(models.Model):
+class BarrierCost(models.Model):
+    # We want these to persist when new PAD imports are made, so we don't use FK to Barrier
+    # However, we should delete any of these that no longer match a barrier after import
+    pad_id = models.IntegerField(primary_key=True)
+    cost = models.IntegerField(validators=[MinValueValidator(0.0)])
 
 class FocusArea(models.Model):
     UNIT_TYPE_CHOICES = []
@@ -133,3 +121,81 @@ class FocusArea(models.Model):
             return u'%s' % self.description
         else:
             return u'%s: %s' % (self.unit_type, self.unit_id)
+
+class Project(Scenario):
+    DS_TREATMENT_CHOICES = [
+        ('adjust','Adjustable'),
+        ('consider','Non-adjustable'),
+        ('ignore','Excluded'),
+    ]
+    OWNERSHIP_CHOICES = [(key, settings.OWNERSHIP_LOOKUP[key]) for key in settings.OWNERSHIP_LOOKUP.keys()]
+    BUDGET_CHOICES = [
+        ('budget','Fixed Budget'),
+        ('batch','Ranged Budget')
+    ]
+
+    focus_region = models.ForeignKey(FocusArea)
+    treat_downstream = models.CharField(max_length=30, default='consider', choices=DS_TREATMENT_CHOICES)
+
+    # For pre-pass, post-pass, and cost estimates unique to this project, see:
+    #   ScenarioBarrier (barrier specific for all three)
+    #   ScenarioBarrierType (Change estimated cost or post-pass for a given type)
+    #   ScenarioBarrierStatus (Change pre-pass for a given status)
+
+    ownership_input = models.CharField(max_length=150, blank=True, null=True, default=None, choices=OWNERSHIP_CHOICES)
+    assign_cost = models.BooleanField(default=True,verbose_name="Assign Barrier Costs",help_text="Consider the unique cost of mitigating each barrier by $")
+    budget_type = models.CharField(max_length=40, default='budget', verbose_name="Fixed Budget or Range")
+    budget = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])
+    min_budget = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])
+    max_budget = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])
+    batch_increment = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(1)])
+
+    target_area = gismodels.MultiPolygonField(srid=GEOMETRY_DB_SRID,
+        null=True, blank=True, verbose_name="Target Area")
+    objects = gismodels.GeoManager()
+
+    class Options:
+        verbose_name = 'Project'
+        # icon_url = 'marco/img/multi.png'
+        form = 'fishpass.forms.ProjectForm'
+        form_template = 'scenarios/form.html'
+        # form_template = 'fishpass/project_form.html'
+        show_template = 'scenarios/show.html'
+
+# outside of scenario model, between pad and user entry
+class ScenarioBarrier(models.Model):
+    project = models.ForeignKey(Project)
+    barrier = models.ForeignKey(Barrier)
+    pre_pass = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name="Pre-Passability")
+    post_pass = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name="Post-Passability")
+    cost = models.FloatField(null=True,blank=True,default=None,verbose_name="Estimated cost to mitigate")
+
+class ScenarioBarrierType(models.Model):
+    project = models.ForeignKey(Project)
+    barrier_type = models.ForeignKey(BarrierType)
+    default_cost = models.FloatField(null=True,blank=True,verbose_name="Default Cost of Mitigation")
+    default_post_passability = models.FloatField(null=True,blank=True,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],default=1.0,verbose_name='Post-passability')
+    fixable = models.BooleanField(default=True)
+    barrier_specific = models.BooleanField(default=False)
+
+class ScenarioBarrierStatus(models.Model):
+    project = models.ForeignKey(Project)
+    barrier_status = models.ForeignKey(BarrierStatus)
+    default_pre_passability = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],default=1.0, verbose_name='Pre-passability')
+
+#class Default(models.Model):
+# No. Barriers (no need)
+# HUC size (?)
+# Cost method (defaults)
+# Barrier Status (own model)
+# Weightings (outside of scope)
+# Site Type (own model)
+# Ownership (own model)
+# PAD ESU/DPS (outside of scope)
+# Species/ESU/DPS (outside of scope)
+# HUC12/Name/Region (Focus Area + shapefiles)
+# Code/Region (Focus Area)
+
+#class DefaultCost(models.Model):
+# PAD_ID/SiteType/Comments(1/2/3) (Barrier)
+# Cost (BarrierCost)

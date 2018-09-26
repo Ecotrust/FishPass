@@ -6,17 +6,17 @@ class Command(BaseCommand):
     help = 'Import PAD. 1 argument - an Excel spreadsheet exported from the PAD with appropriate fields (see docs)'
     def add_arguments(self, parser):
         parser.add_argument('file',  type=str)
+        # test file in:
+        #   FishPASS Team Share
+        #       Optipass
+        #           FISHPass_Input_20180410.xls
 
     def handle(self, *args, **options):
         import sys
-        from fishpass.models import Barrier, BarrierType, BarrierStatus, OwnershipType
-        from io import StringIO, BytesIO
-        from fishpass.models import FocusArea #TODO: check which huc barrier falls into
         import xlrd
-        # from xlrd import open_workbook
         from datetime import datetime
-        # import ipdb; ipdb.set_trace()
-        # from fishpass.project_settings import OWNERSHIP_LOOKUP
+        from io import StringIO, BytesIO
+        from fishpass.models import Barrier, BarrierType, BarrierStatus, OwnershipType, FocusArea, BarrierCost
 
         print('deleting all old barrier records')
         Barrier.objects.all().delete()
@@ -55,10 +55,7 @@ class Command(BaseCommand):
 
         print('reading PAD excel sheet')
         book = xlrd.open_workbook(options['file'])
-        # print("The number of worksheets is {0}".format(book.nsheets))
-        # print("Worksheet name(s): {0}".format(book.sheet_names()))
         sheet = book.sheet_by_index(0)
-        print("{0} {1} {2}".format(sheet.name, sheet.nrows, sheet.ncols))
 
         # for each line
         headers = []
@@ -94,16 +91,13 @@ class Command(BaseCommand):
                 updated = datetime(*xlrd.xldate_as_tuple(row_dict['updated'], book.datemode))
                 row_dict['updated'] = updated
                 try:
-                    #     create Barrier
+                    # create Barrier
                     Barrier.objects.create(**row_dict)
                 except ValueError:
                     print('row: %d, value:%s' % (row_num, row_dict))
                     import ipdb; ipdb.set_trace()
 
-
-
-        # file in:
-        #   FishPASS Team Share
-        #       Optipass
-        #           FISHPass_Input_20180410.xls
-        #   other options include pandas (data manipulation tool), xlutils, and pyexcel
+        print('deleting mismatched barrier cost overrides')
+        for barrierCost in BarrierCost.objects.all():
+            if Barrier.objects.filter(pad_id=barrierCost.pad_id).count() == 0:
+                barrierCost.delete()
