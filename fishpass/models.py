@@ -86,6 +86,12 @@ class Barrier(models.Model):
     downstream_id = models.IntegerField(null=True,blank=True,default=None,verbose_name="Downstream Barrier ID")
     # DS_Barrier
     downstream_barrier_count = models.IntegerField(validators=[MinValueValidator(0)],default=0,verbose_name="Downstream Barrier Count")
+    geometry = gismodels.PointField(null=True,blank=True,default=None,srid=settings.GEOMETRY_DB_SRID)
+
+    def save(self, *args, **kwargs):
+        from django.contrib.gis.geos import Point
+        self.geometry = Point(self.longitude, self.latitude,None,4326)
+        super(Barrier, self).save(*args, **kwargs)
 
 class BarrierCost(models.Model):
     # We want these to persist when new PAD imports are made, so we don't use FK to Barrier

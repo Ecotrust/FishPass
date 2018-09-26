@@ -35,8 +35,7 @@ def home(request, template=loader.get_template('fishpass/home.html'), context={'
 
 def get_user_scenario_list(request):
     user_scenarios_list = []
-    #TODO: Replace "TreatmentScenario" with BarrierScenario
-    user_scenarios = TreatmentScenario.objects.filter(user=request.user)
+    user_scenarios = Project.objects.filter(user=request.user)
     for us in user_scenarios:
         user_scenarios_list.append({
             "id": us.pk,
