@@ -88,6 +88,9 @@ class Barrier(models.Model):
     downstream_barrier_count = models.IntegerField(validators=[MinValueValidator(0)],default=0,verbose_name="Downstream Barrier Count")
     geometry = gismodels.PointField(null=True,blank=True,default=None,srid=settings.GEOMETRY_DB_SRID)
 
+    # TODO: determine best way to stor optipass results in scenario model
+    # results = models.TextField(null=True,blank=True,default=None)
+
     def save(self, *args, **kwargs):
         from django.contrib.gis.geos import Point
         self.geometry = Point(self.longitude, self.latitude,None,4326)
