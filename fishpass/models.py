@@ -98,7 +98,7 @@ class Barrier(models.Model):
     downstream_barrier_count = models.IntegerField(validators=[MinValueValidator(0)],default=0,verbose_name="Downstream Barrier Count")
     geometry = gismodels.PointField(null=True,blank=True,default=None,srid=settings.GEOMETRY_DB_SRID)
 
-    def to_dict(self, project=None):
+    def to_dict(self, project=None, downstream=False):
         # Calculate any project overrides
         override_fields = {
             'estimated_cost': self.site_type.default_cost,
@@ -137,7 +137,6 @@ class Barrier(models.Model):
                     override_fields['estimated_cost'] = override_barrier.cost
                 if override_barrier.action:
                     override_fields['action'] = override_barrier.action
-
 
         return {
             'pad_id': self.pad_id,
@@ -178,6 +177,7 @@ class Barrier(models.Model):
             'post_passability': override_fields['post_passability'],
             'fixable': override_fields['fixable'],
             'action': override_fields['action'],
+            'downstream_only': downstream,
         }
 
     def __str__(self):
@@ -223,6 +223,16 @@ class FocusArea(models.Model):
         else:
             return u'%s: %s' % (self.unit_type, self.unit_id)
 
+def get_ds_ids(barrier, barrier_pad_ids, ds_ids):
+    if barrier.downstream_id not in barrier_pad_ids and barrier.downstream_id not in ds_ids:
+        ds_ids.append(barrier.downstream_id)
+    try:
+        ds_barrier = Barrier.objects.get(pad_id=downstream_id)
+        ds_ids = get_ds_ids(ds_barrier, barrier_pad_ids, ds_ids)
+    except:
+        pass
+    return ds_ids
+
 @register
 class Project(Scenario):
     DS_TREATMENT_CHOICES = [
@@ -236,6 +246,7 @@ class Project(Scenario):
         ('batch','Ranged Budget')
     ]
 
+    # RDH: Is focus region going to be a multipolygon clone of the FocusAreas selected?
     focus_region = models.ForeignKey(FocusArea)
     treat_downstream = models.CharField(max_length=30, default='consider', choices=DS_TREATMENT_CHOICES)
 
@@ -253,12 +264,48 @@ class Project(Scenario):
     max_budget = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])
     batch_increment = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(1)])
 
+    # This sounds like the same thing as how focus_region is used above... RDH likes how this one will be cleaned up
+    #   with any changed/deleted Project records.
     target_area = gismodels.MultiPolygonField(srid=GEOMETRY_DB_SRID,
         null=True, blank=True, verbose_name="Target Area")
     objects = gismodels.GeoManager()
 
     # TODO: determine best way to store optipass results in scenario model
     # results = models.TextField(null=True,blank=True,default=None)
+
+    def run_filters(self, query):
+        # from scenarios.views import run_filter_query
+        # Who calls this? Where does it go? When is the new layer created?
+        # import ipdb; ipdb.set_trace()
+
+        filters = {}
+        if self.target_area:
+            # filters['target_area'] = self.target_area
+            query = query.filter(geometry__intersect=self.taget_area)
+
+        if self.landform_type:
+            # filters['ownership_input'] = self.ownership_input
+            ownership_list = eval(self.ownership_input)
+            ownership_keys = []
+            for key in ownership_list.keys():
+                if ownership_list[key]:
+                    ownership_keys.appen(key)
+            query = query.filter(ownership_type__in=ownership_keys)
+
+        # filters['treat_downstream'] = self.treat_downstream
+        if self.treat_downstream == 'ignore':
+            return query
+        else:
+            barrier_pad_ids = [x.pad_id for x in query]
+            ds_ids = []
+            for barrier in query:
+                ds_ids = get_ds_ids(barrier, barrier_pad_ids, ds_ids)
+
+        # TODO: How to apply knowledge of DS vs barriers in target area?
+        query_ids = barrier_pad_ids + ds_ids
+        query = Barrier.objects.filter(pad_id__in=query_ids)
+
+        return query
 
     class Options:
         verbose_name = 'Project'
