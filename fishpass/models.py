@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from features.registry import register
 from scenarios.models import Scenario#, PlanningUnit
 from django.contrib.gis.db import models as gismodels
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -96,9 +97,6 @@ class Barrier(models.Model):
     # DS_Barrier
     downstream_barrier_count = models.IntegerField(validators=[MinValueValidator(0)],default=0,verbose_name="Downstream Barrier Count")
     geometry = gismodels.PointField(null=True,blank=True,default=None,srid=settings.GEOMETRY_DB_SRID)
-
-    # TODO: determine best way to store optipass results in scenario model
-    # results = models.TextField(null=True,blank=True,default=None)
 
     def to_dict(self, project=None):
         # Calculate any project overrides
@@ -225,13 +223,14 @@ class FocusArea(models.Model):
         else:
             return u'%s: %s' % (self.unit_type, self.unit_id)
 
+@register
 class Project(Scenario):
     DS_TREATMENT_CHOICES = [
         ('adjust','Adjustable'),
         ('consider','Non-adjustable'),
         ('ignore','Excluded'),
     ]
-    OWNERSHIP_CHOICES = [(key, settings.OWNERSHIP_LOOKUP[key]) for key in settings.OWNERSHIP_LOOKUP.keys()]
+    # OWNERSHIP_CHOICES = [(key, settings.OWNERSHIP_LOOKUP[key]) for key in settings.OWNERSHIP_LOOKUP.keys()]
     BUDGET_CHOICES = [
         ('budget','Fixed Budget'),
         ('batch','Ranged Budget')
@@ -245,7 +244,8 @@ class Project(Scenario):
     #   ScenarioBarrierType (Change estimated cost or post-pass for a given type)
     #   ScenarioBarrierStatus (Change pre-pass for a given status)
 
-    ownership_input = models.CharField(max_length=150, blank=True, null=True, default=None, choices=OWNERSHIP_CHOICES)
+    #TODO: sort this multiselect of unknown length out.
+    ownership_input = models.TextField(blank=True, null=True, default=None)
     assign_cost = models.BooleanField(default=True,verbose_name="Assign Barrier Costs",help_text="Consider the unique cost of mitigating each barrier by $")
     budget_type = models.CharField(max_length=40, default='budget', verbose_name="Fixed Budget or Range")
     budget = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])
@@ -256,6 +256,9 @@ class Project(Scenario):
     target_area = gismodels.MultiPolygonField(srid=GEOMETRY_DB_SRID,
         null=True, blank=True, verbose_name="Target Area")
     objects = gismodels.GeoManager()
+
+    # TODO: determine best way to store optipass results in scenario model
+    # results = models.TextField(null=True,blank=True,default=None)
 
     class Options:
         verbose_name = 'Project'
