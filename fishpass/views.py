@@ -45,19 +45,34 @@ def get_user_scenario_list(request):
         })
     return JsonResponse(sorted(user_scenarios_list, key=lambda k: k['name'].lower()), safe=False)
 
-def get_geojson_from_queryset(query):
-    geojson = {}
-    # for object in query
-    #     derive geojson
-    #     apply geojson to return object
-    #     convert attributes to json notation
-    #     apply attributes to geojson feature collection
+def get_geojson_from_queryset(query, project):
+    geojson = {
+        "type": "FeatureCollection",
+        "features": []
+    }
+    for feature in query:
+        # derive geojson
+        feat_json = {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [feature.geometry.x, feature.geometry.y]
+            },
+            "properties": {}
+        }
+        # convert attributes to json notation
+        feat_dict = feature.to_dict(project)
+        for field in feat_dict.keys:
+            feat_json['properties'][field] = feat_dict[field]
+
+        # apply geojson to return object
+        geojson['features'].append(feat_json)
+
     return geojson
 
 # @cache_page(60 * 60) # 1 hour of caching
-def get_barrier_layer(request, query=False, notes=[],extra_context={}):
+def get_barrier_layer(request, project, query=False, notes=[],extra_context={}):
     # Query for barriers and convert to geojson here.
-    #TODO: Look to re-use as much of scenarios.views.get_filter_results as possible
     #TODO: Include any ScenarioBarrierType, ScenarioBarrierStatus, ScenarioBarrier data
     request = check_user(request)
     from django.db.models.query import QuerySet
@@ -68,7 +83,7 @@ def get_barrier_layer(request, query=False, notes=[],extra_context={}):
     json = []
     count = query.count()
 
-    geojson = get_geojson_from_queryset(query)
+    geojson = get_geojson_from_queryset(query, project)
 
     results_dict = {
         'count': count,
