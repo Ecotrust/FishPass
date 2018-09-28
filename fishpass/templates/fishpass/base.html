@@ -1,0 +1,48 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--
+      The above 2 meta tags *must* come first in the <head>
+      to consistently ensure proper document rendering.
+      Any other head element should come *after* these tags.
+    -->
+    <title>{% block title %}{% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}{% endblock %}{% block title_suffix %}{% endblock %}</title>
+
+    {% block extra_head %}
+      <meta name="description" content="">
+      <meta name="robots" content="index,follow"><!-- All Search Engines -->
+      <meta name="googlebot" content="index,follow"><!-- Google Specific -->
+    {% endblock extra_head %}
+
+    {% block site_style %}{% endblock site_style %}
+    {% block jquery %}{% endblock jquery %}
+    {% block js_head %}{% endblock js_head %}
+  </head>
+  <body class="{% block body_class %}classless-page{% endblock %} {% block layout %}base{% endblock %}-layout">
+    {% csrf_token %}
+    {% block header_wrap %}
+      <header>
+        {% block header %}{% endblock header %}
+      </header>
+    {% endblock header_wrap %}
+
+    {% block main %}
+      <main>
+        {% block content %}{% endblock content %}
+        {% block outer_content %}{% endblock outer_content %}
+      </main>
+    {% endblock main %}
+
+    {% block footer_wrap %}
+      <footer>
+        {% block footer %}{% endblock %}
+      </footer>
+    {% endblock %}
+
+    {% block js %}{% endblock js %}
+    {% block extra_js %}{% endblock extra_js %}
+  </body>
+</html>
