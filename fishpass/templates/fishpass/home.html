@@ -1,8 +1,13 @@
-<!DOCTYPE html>
-  <head></head>
-  <body>
-    <h1>
-      FISHPASS!
-    </h1>
-  </body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+  <section>
+    <h1>FishPass!</h1>
+    {% if user.is_authenticated %}
+      <a href="/app">Launch App</a>
+    {% else %}
+      <a href="{% url 'account:login' %}">Login</a>
+    {% endif %}
+  </section>
+{% endblock content %}
