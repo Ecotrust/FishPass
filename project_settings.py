@@ -190,6 +190,7 @@ INSTALLED_APPS = [
     'nursery',
     'django.contrib.flatpages',
     ### END INSERTED INSTALLED APPS ###
+    'captcha',
 ]
 
 # GET_SCENARIOS_URL = '/get_scenarios'
