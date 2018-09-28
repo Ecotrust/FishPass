@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^about/$', flat_views.flatpage, {'url': '/about/'}, name='about'),
 
     ### Mapping/Optimization
+    #TODO: get/pass project_id
     url(r'^get_barrier_layer/$', views.get_barrier_layer),
 
     ### API urls
@@ -37,7 +38,9 @@ urlpatterns = [
     # url(r'get_planningunits$', views.get_planningunits),
 
     url(r'^get_user_scenario_list/$', views.get_user_scenario_list),
+    # TODO: pass project_id
     url(r'^get_report/$', views.get_report),
+    # TODO: pass project_id
     url(r'^export_report/$', views.export_report),
 
 

@@ -15,15 +15,24 @@ class BarrierType(models.Model):
     barrier_specific = models.BooleanField(default=False)
     order = models.IntegerField(default=999)
 
+    def __str__(self):
+        return self.name
+
 class BarrierStatus(models.Model):
     name = models.CharField(max_length=90)
     default_pre_passability = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],default=1.0, verbose_name='Pre-passability')
     order = models.IntegerField(default=999)
 
+    def __str__(self):
+        return self.name
+
 class OwnershipType(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
     order = models.IntegerField(default=999)
+
+    def __str__(self):
+        return self.name
 
 class Barrier(models.Model):
     # PAD_ID
@@ -86,6 +95,100 @@ class Barrier(models.Model):
     downstream_id = models.IntegerField(null=True,blank=True,default=None,verbose_name="Downstream Barrier ID")
     # DS_Barrier
     downstream_barrier_count = models.IntegerField(validators=[MinValueValidator(0)],default=0,verbose_name="Downstream Barrier Count")
+    geometry = gismodels.PointField(null=True,blank=True,default=None,srid=settings.GEOMETRY_DB_SRID)
+
+    # TODO: determine best way to store optipass results in scenario model
+    # results = models.TextField(null=True,blank=True,default=None)
+
+    def to_dict(self, project=None):
+        # Calculate any project overrides
+        override_fields = {
+            'estimated_cost': self.site_type.default_cost,
+            'pre_passability': self.barrier_status.default_pre_passability,
+            'post_passability': self.site_type.default_post_passability,
+            # TODO: Perhaps: if not fixable, cost = NA, post_passability = 0, action = 'exclude'
+            'fixable': self.site_type.fixable,
+            'action': 'consider'
+        }
+        if self.site_type.barrier_specific:
+            override_fields['estimated_cost'] = 'Barrier Specific',
+        if project:
+            override_type_list = ScenarioBarrierType.objects.filter(barrier_type=feature.barrier_type,project=project)
+            if override_type_list.count() > 0:
+                override_type = override_type_list[0]
+                if override_type.default_cost:
+                    override_fields['estimated_cost'] = override_type.default_cost
+                elif override_type.barrier_specific:
+                    override_fields['estimated_cost'] = 'Barrier Specific'
+                if override_type.default_post_passability:
+                    override_fields['post_passability'] = override_type.default_post_passability
+                override_fields['fixable'] = override_type.fixable
+            override_status_list = ScenarioBarrierStatus.objects.filter(barrier_status=feature.barrier_status,project=project)
+            if override_status_list.count() > 0:
+                override_status = override_status_list[0]
+                if override_status.default_pre_passability:
+                    override_fields['pre_passability'] = override_status.default_pre_passability
+            override_barrier_list = ScenarioBarrier.objects.filter(barrier=self,project=project)
+            if override_barrier_list.count() > 0:
+                override_barrier = override_barrier_list[0]
+                if override_barrier.pre_pass:
+                    override_fields['pre_passability'] = override_barrier.pre_pass
+                if override_barrier.post_pass:
+                    override_fields['post_passability'] = override_barrier.post_pass
+                if override_barrier.cost:
+                    override_fields['estimated_cost'] = override_barrier.cost
+                if override_barrier.action:
+                    override_fields['action'] = override_barrier.action
+
+
+        return {
+            'pad_id': self.pad_id,
+            'passage_id': self.passage_id,
+            'stream_name': self.stream_name,
+            'tributary_to': self.tributary_to,
+            'site_name': self.site_name,
+            'site_type': str(self.site_type),
+            'site_type_id': self.site_type.pk,
+            'barrier_status': str(self.barrier_status),
+            'barrier_status_id': self.barrier_status.pk,
+            'protocol': self.protocol,
+            'assessed_by': self.assessed_by,
+            'huc8_code': self.huc8_code,
+            'huc8_name': self.huc8_name,
+            'huc10_code': self.huc10_code,
+            'huc10_name': self.huc10_name,
+            'huc12_code': self.huc12_code,
+            'huc12_name': self.huc12_name,
+            'county': self.county,
+            'ownership_type': str(self.ownership_type),
+            'ownership_type_id': self.ownership_type.pk,
+            'nhd_com_id': self.nhd_com_id,
+            'nhd_com_meas': self.nhd_com_meas,
+            'longitude': self.longitude,
+            'latitude': self.latitude,
+            'state': self.state,
+            'updated': self.updated.strftime('%Y-%m-%d'),
+            'esu_coho': self.esu_coho,
+            'esu_chinook': self.esu_chinook,
+            'esu_steelhead': self.esu_steelhead,    # Steelhead have DPS, not ESU - fix by sharing label and value
+            'upstream_miles': self.upstream_miles,  # this could use some number formatting
+            'downstream_id': self.downstream_id,
+            'downstream_barrier_count': self.downstream_barrier_count,
+            'BIOS_link': "<a href=%s%s>link</a>" % (settings.BIOS_URL, self.pad_id),
+            'estimated_cost': override_fields['estimated_cost'],
+            'pre_passability': override_fields['pre_passability'],
+            'post_passability': override_fields['post_passability'],
+            'fixable': override_fields['fixable'],
+            'action': override_fields['action'],
+        }
+
+    def __str__(self):
+        return "%s: %s, %s" % (self.pad_id, self.site_name, self.stream_name)
+
+    def save(self, *args, **kwargs):
+        from django.contrib.gis.geos import Point
+        self.geometry = Point(self.longitude, self.latitude,None,4326)
+        super(Barrier, self).save(*args, **kwargs)
 
 class BarrierCost(models.Model):
     # We want these to persist when new PAD imports are made, so we don't use FK to Barrier
@@ -164,11 +267,17 @@ class Project(Scenario):
 
 # outside of scenario model, between pad and user entry
 class ScenarioBarrier(models.Model):
+    ACTION_CHOICES = [
+        ('consider', 'Consider'),
+        ('include', 'Include in solution'),
+        ('exclude', 'Exclude from solution')
+    ]
     project = models.ForeignKey(Project)
     barrier = models.ForeignKey(Barrier)
     pre_pass = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name="Pre-Passability")
     post_pass = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name="Post-Passability")
     cost = models.FloatField(null=True,blank=True,default=None,verbose_name="Estimated cost to mitigate")
+    action = models.CharField(max_length= 30, choices=ACTION_CHOICES, default='consider')
 
 class ScenarioBarrierType(models.Model):
     project = models.ForeignKey(Project)

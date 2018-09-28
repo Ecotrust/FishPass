@@ -246,6 +246,8 @@ OWNERSHIP_LOOKUP['8'] = 'Other'
 
 OWNERSHIP_DEFAULT = '99'
 
+FISH_PASSAGE_BIOS_LAYER = 'ds69'
+BIOS_URL = 'https://map.dfg.ca.gov/bios/?al=ds69&col=pad_id&val='
 
 try:
     ### START MODULE SETTINGS IMPORT ###
