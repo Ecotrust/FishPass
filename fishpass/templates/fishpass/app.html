@@ -1,8 +1,38 @@
-<!DOCTYPE html>
-  <head></head>
-  <body>
-    <h1>
-      FISHPASS!
-    </h1>
-  </body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_head %}
+  {{ block.super }}
+  <script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0/build/ol.js"></script>
+{% endblock extra_head %}
+
+{% block site_style %}
+  {{ block.super }}
+  <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.2.0/css/ol.css">
+  <link rel="stylesheet" href="{% static 'visualize/css/ol4_settings.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'visualize/css/map_popup.css' %}" type="text/css">
+  <link rel="stylesheet" href="{% static 'scenarios/css/scenarios_form.css' %}" type="text/css">
+{% endblock site_style %}
+
+{% block content %}
+  <div id="map" class="map"></div>
+{% endblock content %}
+
+{% block extra_js %}
+    {{ block.super }}
+
+    <script src="{% static 'visualize/js/' %}{{ MAP_TECH }}_settings.js"></script>
+    <script src="{% static 'scenarios/js/' %}{{ MAP_TECH }}_settings.js"></script>
+
+    <script>
+      app.mapbox = {
+          key: '{{ MAPBOX_TOKEN }}'
+      };
+      app.here = {
+        key: '{{ HERE_TOKEN }}',
+        appCode: '{{ HERE_APP_CODE }}',
+      }
+    </script>
+
+    <script src="{% static 'scenarios/js/models.js' %}"></script>
+{% endblock extra_js %}
