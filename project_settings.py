@@ -190,6 +190,7 @@ INSTALLED_APPS = [
     'nursery',
     'django.contrib.flatpages',
     ### END INSERTED INSTALLED APPS ###
+    'captcha',
 ]
 
 # GET_SCENARIOS_URL = '/get_scenarios'
@@ -248,6 +249,9 @@ OWNERSHIP_DEFAULT = '99'
 
 FISH_PASSAGE_BIOS_LAYER = 'ds69'
 BIOS_URL = 'https://map.dfg.ca.gov/bios/?al=ds69&col=pad_id&val='
+
+GET_SCENARIOS_URL = '/fishpass/get_scenarios/Project/'
+SCENARIO_FORM_URL = '/features/project/form/'
 
 try:
     ### START MODULE SETTINGS IMPORT ###

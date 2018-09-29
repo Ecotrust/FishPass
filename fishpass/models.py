@@ -223,6 +223,7 @@ class FocusArea(models.Model):
         else:
             return u'%s: %s' % (self.unit_type, self.unit_id)
 
+# TODO: Move this logic (and caller) into views.py
 def get_ds_ids(barrier, barrier_pad_ids, ds_ids):
     if barrier.downstream_id not in barrier_pad_ids and barrier.downstream_id not in ds_ids:
         ds_ids.append(barrier.downstream_id)
@@ -235,6 +236,7 @@ def get_ds_ids(barrier, barrier_pad_ids, ds_ids):
 
 @register
 class Project(Scenario):
+    from features.managers import ShareableGeoManager
     DS_TREATMENT_CHOICES = [
         ('adjust','Adjustable'),
         ('consider','Non-adjustable'),
@@ -248,6 +250,11 @@ class Project(Scenario):
 
     # RDH: Is focus region going to be a multipolygon clone of the FocusAreas selected?
     focus_region = models.ForeignKey(FocusArea)
+    # This sounds like the same thing as how focus_region is used above... RDH likes how this one will be cleaned up
+    #   with any changed/deleted Project records.
+    target_area = gismodels.MultiPolygonField(srid=GEOMETRY_DB_SRID,
+    null=True, blank=True, verbose_name="Target Area")
+
     treat_downstream = models.CharField(max_length=30, default='consider', choices=DS_TREATMENT_CHOICES)
 
     # For pre-pass, post-pass, and cost estimates unique to this project, see:
@@ -264,11 +271,7 @@ class Project(Scenario):
     max_budget = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])
     batch_increment = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(1)])
 
-    # This sounds like the same thing as how focus_region is used above... RDH likes how this one will be cleaned up
-    #   with any changed/deleted Project records.
-    target_area = gismodels.MultiPolygonField(srid=GEOMETRY_DB_SRID,
-        null=True, blank=True, verbose_name="Target Area")
-    objects = gismodels.GeoManager()
+    objects = ShareableGeoManager()
 
     # TODO: determine best way to store optipass results in scenario model
     # results = models.TextField(null=True,blank=True,default=None)
@@ -279,17 +282,20 @@ class Project(Scenario):
         # import ipdb; ipdb.set_trace()
 
         filters = {}
+        # TODO: If form.target_area?
         if self.target_area:
+            # TODO: This should come in as stringified GeoJSON:
+            #   Convert to a Multipolygon and save to self.target_area
             # filters['target_area'] = self.target_area
-            query = query.filter(geometry__intersect=self.taget_area)
+            query = query.filter(geometry__intersects=self.taget_area)
 
-        if self.landform_type:
+        if self.ownership_input:
             # filters['ownership_input'] = self.ownership_input
             ownership_list = eval(self.ownership_input)
             ownership_keys = []
             for key in ownership_list.keys():
                 if ownership_list[key]:
-                    ownership_keys.appen(key)
+                    ownership_keys.append(key)
             query = query.filter(ownership_type__in=ownership_keys)
 
         # filters['treat_downstream'] = self.treat_downstream
@@ -313,7 +319,8 @@ class Project(Scenario):
         form = 'fishpass.forms.ProjectForm'
         form_template = 'scenarios/form.html'
         # form_template = 'fishpass/project_form.html'
-        show_template = 'scenarios/show.html'
+        # show_template = 'scenarios/show.html'
+        show_template = 'fishpass/demo.html'
 
 # outside of scenario model, between pad and user entry
 class ScenarioBarrier(models.Model):

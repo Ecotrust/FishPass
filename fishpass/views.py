@@ -33,8 +33,13 @@ def app(request, template=loader.get_template('fishpass/app.html'), context=acco
 def home(request, template=loader.get_template('fishpass/home.html'), context={'title': 'FishPASS - Home'}):
     return HttpResponse(template.render(context, request))
 
+def demo(request, template='fishpass/demo.html'):
+    from scenarios import views as scenarios_views
+    return scenarios_views.demo(request, template)
+
 def get_user_scenario_list(request):
     #TODO: use "scenarios.views.get_scenarios" if possible.
+    from fishpass.models import Project
     user_scenarios_list = []
     user_scenarios = Project.objects.filter(user=request.user)
     for us in user_scenarios:

@@ -2,14 +2,17 @@ from django.conf.urls import url
 from fishpass import views
 from django.contrib.auth import views as auth_views
 from django.contrib.flatpages import views as flat_views
+from scenarios.views import get_scenarios
 
 urlpatterns = [
     ### App URLs
     url(r'^home/?$', views.home),
-    url(r'^$', views.home),
     url(r'^app/?$', views.app, name="app"),
     url(r'^help/$', flat_views.flatpage, {'url': '/help/'}, name="help"),
     url(r'^about/$', flat_views.flatpage, {'url': '/about/'}, name='about'),
+    url(r'demo/$', views.demo, name='demo'),
+    url(r'get_scenarios/', get_scenarios, {'scenario_module_name':'fishpass', 'scenario_model_name':'Project'}),
+    # url(r'^', views.home, name='home'),
 
     ### Mapping/Optimization
     #TODO: get/pass project_id
@@ -45,5 +48,7 @@ urlpatterns = [
 
 
     ### end API urls
-    url(r'^', views.home, name='home'),
+    # url(r'$', views.home),
+    url(r'$', views.home, name='home'),
+    # url(r'^', views.home, name='home'),
 ]

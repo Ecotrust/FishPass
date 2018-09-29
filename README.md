@@ -2,12 +2,13 @@
 FishPass - Web Frontend Interface for OptiPass
 
 ## Installation
+### Development Environment Only:
 1. Create a project Directory
 1. Clone marineplanner-core into it
 1. Load Fishpass into MP core:
    * `cd marineplanner-core/apps`
    * `git clone https://github.com/Ecotrust/FishPass.git`
-### Development Environment Only:
+
 1. Configure app
    * *LINUX*
       * Copy apps/FishPass/scripts/configure_project.sh to scripts/configure_project.sh
@@ -26,11 +27,6 @@ FishPass - Web Frontend Interface for OptiPass
    * cd marineplanner
    * python manage.py enable_sharing --all
    * python manage.py runserver 0:8000
-### Production Environment Only
-1. Install libraries: TODO
-1. Load Data: TODO
-
-### All Environments
 1. Set your Local Settings
    * TODO: see fishpass/local_settings.py.template
 1. Import your data
@@ -42,7 +38,77 @@ FishPass - Web Frontend Interface for OptiPass
    * TODO: decide if this is a valid use case, document if so.
    
 ### Production Server Setup:
+#### Bootstrap MarinePlanner
+1. `sudo apt-get update`
+1. `sudo apt-get upgrade`
+1. `sudo apt-get install git`
+1. `mkdir /usr/local/apps`
+1. `sudo chgrp adm /usr/local/apps`
+1. `cd /usr/local/apps`
+1. `git clone https://github.com/Ecotrust/marineplanner-core.git`
+
+#### Install PostgreSQL/PostGIS and a few Dependencies
+1. `cd /usr/local/apps/marineplanner-core/scripts/`
+1. `sudo chmod +x vagrant_provision0.sh`
+1. `sudo vagrant_provision0.sh xenial 3.6.2 9.5` #Ubuntu xenial, GEOS 3.6.2, PostgreSQL 9.5
+
+#### Installing FishPass
+```
+cd /usr/local/apps/marineplanner-core/apps
+git clone https://github.com/Ecotrust/FishPass.git
+cd FishPass/scripts
+chmod +x configure_project.sh
+cp configure_project.sh /usr/local/apps/marineplanner-core/scripts/configure_project.sh
+cd /usr/local/apps/marineplanner-core/scripts/
+./configure_project.sh fishpass
+cd /usr/local/apps/marineplanner-core/apps/FishPass/
+./vagrant_provision.sh marineplanner-core marineplanner marineplanner /usr/local/apps/marineplanner-core/apps/FishPass/fishpass
+/usr/local/apps/marineplanner-core/apps/mp-accounts/scripts/vagrant_provision.sh marineplanner-core
+/usr/local/apps/marineplanner-core/apps/mp-visualize/scripts/vagrant_provision.sh marineplanner-core
+/usr/local/apps/marineplanner-core/apps/madrona-scenarios/scripts/vagrant_provision.sh marineplanner-core
+```
+Activate the virtualenvironment and install the dependencies:
+   * Note that I had run the 'finish the process' script before this - I'm not sure if the virtualenv exists yet, but it needs to.
+```
+source /usr/local/apps/marineplanner-core/env/bin/activate
+pip install -e /usr/local/apps/marineplanner-core/apps/madrona-manipulators/
+pip install -e /usr/local/apps/marineplanner-core/apps/madrona-scenarios/
+pip install -r /usr/local/apps/marineplanner-core/apps/madrona-scenarios/requirements.txt
+pip install -e /usr/local/apps/marineplanner-core/apps/mp-accounts/
+pip install -r /usr/local/apps/marineplanner-core/apps/mp-accounts/requirements.txt
+pip install -e /usr/local/apps/marineplanner-core/apps/mp-data-manager/
+pip install -e /usr/local/apps/marineplanner-core/apps/mp-drawing/
+pip install -r /usr/local/apps/marineplanner-core/apps/mp-drawing/requirements.txt
+pip install -e /usr/local/apps/marineplanner-core/apps/p97-nursery/
+pip install -r /usr/local/apps/marineplanner-core/apps/p97-nursery/requirements.txt
+pip install -e /usr/local/apps/marineplanner-core/apps/madrona-analysistools/
+```
+Finish the process
+`/usr/local/apps/marineplanner-core/scripts/vagrant_finish_provision.sh marineplanner-core marineplanner`
+
+Create Shortcut 'dj':
+1. `sudo vim /etc/bash.bashrc`
+1. Add the following to the bottom of the script:
+   ```
+   alias dj="/usr/local/apps/marineplanner-core/env/bin/python /usr/local/apps/marineplanner-core/marineplanner/manage.py"
+   alias djrun="dj runserver 0:8000"
+   ```
+1. now 'dj' will run 'manage.py' from wherever you are, without needing to activate your virtualenv
+1. now 'djrun' will spin up your django server on port 8000
+   * DO NOT USE THIS AFTER EARLY TESTING
+   * NEVER RUN THIS WITH SUDO OR AS ROOT
+   * CLOSE PORT 8000 AFTER TESTING
+
+
+Load Data:
+1. `dj import_PAD /usr/local/apps/marineplanner-core/apps/FishPass/input_files/FISHPass_Input_20180410.xls`
+
 #### Install and Configure NGINX and UWSGI
+1. Copy configuration script:
+   * `ln -s /usr/local/apps/marineplanner-core/apps/FishPass/scripts/configure_production.sh /usr/local/apps/marineplanner-core/scripts/`
+   * `cd /usr/local/apps/marineplanner-core/scripts/`
+   * `sudo chmod +x configure_production.sh`
+   * `./configure_production.sh`
 
 ```
 sudo apt-get install nginx uwsgi uwsgi-plugin-python3 -y
