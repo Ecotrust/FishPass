@@ -60,6 +60,7 @@ setInit = function() {
 
     app.state.setStep = 0;
     app.map.layer.draw.layer.getSource().clear();
+    app.panel.form.init()
 };
 
 reportInit = function() {
@@ -103,7 +104,7 @@ app.resultsInit = function(id) {
     if (!id) {
         id = app.viewModel.scenarios.scenarioList()[0].uid;
     } else if (!id.includes('ucsrb')) {
-        id = 'ucsrb_treatmentscenario_' + id;
+        id = 'fishpass_project_' + id;
         app.viewModel.scenarios.addScenarioToMap(null, {
             uid: id
         });
@@ -206,7 +207,7 @@ app.panel = {
     form: {
         init: function() {
             app.panel.moveRight();
-            app.panel.form.scenario = app.viewModel.scenarios.createNewScenario('/features/treatmentscenario/form/');
+            app.panel.form.scenario = app.viewModel.scenarios.createNewScenario('/features/project/form/');
             // app.nav.showSave();
             initFiltering();
         },
@@ -1049,8 +1050,8 @@ app.request = {
                 var draw_source = app.map.layer.draw.layer.getSource();
                 draw_source.removeFeature(draw_source.getFeatures()[0]);
                 app.map.addScenario(vectors);
-                app.panel.results.init('ucsrb_treatmentscenario_' + response.id);
-                app.resultsInit('ucsrb_treatmentscenario_' + response.id);
+                app.panel.results.init('fishpass_project_' + response.id);
+                app.resultsInit('fishpass_project_' + response.id);
                 app.state.scenarioId = response.id;
                 app.state.setStep = 'results';
             },
@@ -1071,7 +1072,7 @@ app.request = {
     },
     saveIntermediateScenario: function(data) {
         $.ajax({
-            url: '/scenario/treatmentscenario/save',
+            url: '/scenario/project/save',
             type: 'POST',
             data: data,
             dataType: 'json',
@@ -1086,7 +1087,7 @@ app.request = {
     },
     saveState: function() {
         $.ajax({
-            url: '/scenario/treatmentscenario/save',
+            url: '/scenario/project/save',
             type: 'POST',
             data: app.saveState,
             dataType: 'json',
@@ -1101,7 +1102,7 @@ app.request = {
     },
     deleteScenario: function(id) {
         return $.ajax({
-            url: `/scenario/delete_design/ucsrb_treatmentscenario_${id}/`,
+            url: `/scenario/delete_design/fishpass_project_${id}/`,
             type: 'POST',
             data: {
                 uid: id
