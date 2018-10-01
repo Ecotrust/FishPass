@@ -28,9 +28,11 @@ def app(request, template=loader.get_template('fishpass/app.html'), context=acco
     context['HERE_TOKEN'] = settings.HERE_API_TOKEN
     context['HERE_APP_CODE'] = settings.HERE_APP_CODE
     context['MAP_TECH'] = settings.MAP_TECH
+    context['SEARCH_DISABLED'] = settings.SEARCH_DISABLED
     return HttpResponse(template.render(context, request))
 
 def home(request, template=loader.get_template('fishpass/home.html'), context={'title': 'FishPASS - Home'}):
+    context['SEARCH_DISABLED'] = settings.SEARCH_DISABLED
     return HttpResponse(template.render(context, request))
 
 def demo(request, template='fishpass/demo.html'):

@@ -253,6 +253,8 @@ BIOS_URL = 'https://map.dfg.ca.gov/bios/?al=ds69&col=pad_id&val='
 GET_SCENARIOS_URL = '/fishpass/get_scenarios/Project/'
 SCENARIO_FORM_URL = '/features/project/form/'
 
+SEARCH_DISABLED = True
+
 try:
     ### START MODULE SETTINGS IMPORT ###
     from features.settings import *

@@ -1,2 +1,10 @@
+{% extends "navbar.html" %}
 {% load static %}
-<div class="container-fluid"></div>
+
+{% block navbar-brand %}
+  <img src="{% static 'brand/MARCO_portal_logo_blue_green_recropped.svg' %}">
+{% endblock %}
+
+{% block navbar-app-link %}
+  <a href="{% url 'app' %}"><span class="icon-marco oversized"></span>FishPass</a>
+{% endblock navbar-app-link %}
