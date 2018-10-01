@@ -1,8 +1,8 @@
 app.map = mapSettings.getInitMap();
 
-app.map.getView().setCenter([-13363592.377434019, 6154762.569701998]);
-app.map.getView().setZoom(8);
-app.map.getView().setMinZoom(7);
+app.map.getView().setCenter([-13277300, 4497600]);
+app.map.getView().setZoom(6);
+app.map.getView().setMinZoom(5);
 app.map.getView().setMaxZoom(19);
 
 app.map.zoomToExtent = function zoomToExtent(extent) {
