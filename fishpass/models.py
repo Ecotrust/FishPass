@@ -258,7 +258,7 @@ class Project(Scenario):
     #   ScenarioBarrierStatus (Change pre-pass for a given status)
 
     #TODO: sort this multiselect of unknown length out.
-    # ownership_input = models.BooleanField(default=False,verbose_name="Select ownership types")
+    ownership_input = models.BooleanField(default=False,verbose_name="Select ownership types")
     ownership_input_checkboxes = models.TextField(blank=True, null=True, default=None)
     assign_cost = models.BooleanField(default=True,verbose_name="Assign Barrier Costs",help_text="Consider the unique cost of mitigating each barrier by $")
     budget_type = models.CharField(max_length=40, default='budget', verbose_name="Fixed Budget or Range")
