@@ -237,11 +237,6 @@ def get_ds_ids(barrier, barrier_pad_ids, ds_ids):
 @register
 class Project(Scenario):
     from features.managers import ShareableGeoManager
-    DS_TREATMENT_CHOICES = [
-        ('adjust','Adjustable'),
-        ('consider','Non-adjustable'),
-        ('ignore','Excluded'),
-    ]
     # OWNERSHIP_CHOICES = [(key, settings.OWNERSHIP_LOOKUP[key]) for key in settings.OWNERSHIP_LOOKUP.keys()]
     BUDGET_CHOICES = [
         ('budget','Fixed Budget'),
@@ -255,7 +250,7 @@ class Project(Scenario):
     target_area = gismodels.MultiPolygonField(srid=GEOMETRY_DB_SRID,
     null=True, blank=True, verbose_name="Target Area")
 
-    treat_downstream = models.CharField(max_length=30, default='consider', choices=DS_TREATMENT_CHOICES)
+    treat_downstream = models.CharField(max_length=30, default='consider', choices=settings.DS_TREATMENT_CHOICES)
 
     # For pre-pass, post-pass, and cost estimates unique to this project, see:
     #   ScenarioBarrier (barrier specific for all three)
@@ -263,7 +258,8 @@ class Project(Scenario):
     #   ScenarioBarrierStatus (Change pre-pass for a given status)
 
     #TODO: sort this multiselect of unknown length out.
-    ownership_input = models.TextField(blank=True, null=True, default=None)
+    # ownership_input = models.BooleanField(default=False,verbose_name="Select ownership types")
+    ownership_input_checkboxes = models.TextField(blank=True, null=True, default=None)
     assign_cost = models.BooleanField(default=True,verbose_name="Assign Barrier Costs",help_text="Consider the unique cost of mitigating each barrier by $")
     budget_type = models.CharField(max_length=40, default='budget', verbose_name="Fixed Budget or Range")
     budget = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])

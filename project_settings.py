@@ -255,6 +255,12 @@ SCENARIO_FORM_URL = '/features/project/form/'
 
 SEARCH_DISABLED = True
 
+DS_TREATMENT_CHOICES = [
+    ('adjust','Adjustable'),
+    ('consider','Non-adjustable'),
+    ('ignore','Excluded'),
+]
+
 try:
     ### START MODULE SETTINGS IMPORT ###
     from features.settings import *
