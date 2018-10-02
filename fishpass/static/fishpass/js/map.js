@@ -222,16 +222,16 @@ app.mapbox.layers = {
    * [layers from mapbox]
    * @type {String} [use layer name from mapbox. layer name used in confirmSelection() to find layer]
    */
-  'strm_sgmnts_all6-11-0i3yy4': {
-    id: 'ucsrbsupport.ba73w0bq',
-    id_field: 'EtID',
-    name_field: 'Name',
-    ppt_ID: 'ppt_ID',
-    NEAR_FID: 'NEAR_FID',
-    name: 'Streams',
-    report_methods: ['select'],
-    map_layer_id: 'streams'
-  },
+  // 'strm_sgmnts_all6-11-0i3yy4': {
+  //   id: 'ucsrbsupport.ba73w0bq',
+  //   id_field: 'EtID',
+  //   name_field: 'Name',
+  //   ppt_ID: 'ppt_ID',
+  //   NEAR_FID: 'NEAR_FID',
+  //   name: 'Streams',
+  //   report_methods: ['select'],
+  //   map_layer_id: 'streams'
+  // },
   'huc10_3857': {
     id: 'ucsrbsupport.HUC10_3857',
     id_field: 'HUC_10',
@@ -247,30 +247,6 @@ app.mapbox.layers = {
     name: 'HUC 12',
     report_methods: ['filter'],
     map_layer_id: 'huc12'
-  },
-  'LandMgmtPlan_OKAWEN_WCol-4m69bv': {
-    id: 'ucsrbsupport.40j4gieb',
-    id_field: 'ET_UID',
-    name_field: 'MgmtDescri',
-    name: 'Forest Plan Mgmt Alloc',
-    report_methods: ['filter'],
-    map_layer_id: 'RMU'
-  },
-  'ppts_all6-11-2mwii2': {
-    id: 'ucsrbsupport.cgxp2slx',
-    id_field: 'ppt_ID',
-    // name_field: 'g_name',
-    name: 'Pour Points',
-    report_methods: ['select'],
-    map_layer_id: 'pourpoints'
-  },
-  'western_uc_bnd-3eremu':{
-    id: 'ucsrbsupport.725p2eqc',
-    id_field: 'BASIN_NAME',
-    name_field: 'BASIN_NAME',
-    name: 'Upper Columbia Boundary',
-    // report_methods: [],
-    map_layer_id: 'boundary'
   }
 };
 
@@ -407,39 +383,6 @@ focusAreaSelectAction = function(feat) {
   });
 };
 
-streamSelectAction = function(feat) {
-  app.scenarioInProgressCheck();
-  pourPointSelectAction(feat);
-};
-
-pourPointSelectAction = function(feat, selectEvent) {
-  app.request.get_basin(feat, function(feat, vector) {
-    if (feat) {
-      confirmSelection(feat, vector);
-    }
-    if (app.state.step < 2) {
-      app.state.setStep = 2; // step forward in state
-    }
-  });
-};
-
-pourPointResultSelection = function(feat) {
-  app.panel.loading.show();
-  var l = app.map.selection.select.getLayer(feat).get('id');
-  app.map.layer[l].layer.getSource().forEachFeature(function(feature) {
-    feature.setStyle(app.map.styles.PourPoint)
-  });
-  feat.setStyle(app.map.styles.PourPointSelected);
-  app.request.get_hydro_results_by_pour_point_id(feat)
-    .done(function(response) {
-      app.init['hydro']();
-      if (response.hasOwnProperty('basin')) {
-        app.map.addDrainageBasinToMap(response.basin);
-      }
-      app.panel.results.loadHydroResult(response);
-    })
-}
-
 var drawSource = new ol.source.Vector();
 var drawInteraction = new ol.interaction.Draw({
   source: drawSource,
@@ -566,64 +509,43 @@ app.map.layer = {
         style: app.map.styles.Draw,
       })
     },
-    boundary: {
-      // layer: new ol.layer.VectorTile({
-      layer: new ol.layer.Vector({
-        name: 'Upper Columbia Boundary',
-        title: 'Upper Columbia Boundary',
-        id: 'boundary', // set id equal to x in app.map.layer.x
-        // source: new ol.source.VectorTile({
-        source: new ol.source.Vector({
-          attributions: 'Ecotrust',
-          // format: new ol.format.MVT(),
-          // url: 'https://api.mapbox.com/v4/' + app.mapbox.layers['western_uc_bnd-3eremu'].id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
-          format: new ol.format.GeoJSON({
-            dataProjection: 'EPSG:4326',
-            featureProjection: 'EPSG:4326'
-          }),
-          url: '/static/ucsrb/data/ucsrb_bounds.geojson',
-        }),
-        style: app.map.styles.Boundary,
-      })
-    },
-    streams: {
-      layer: new ol.layer.VectorTile({
-        name: 'Streams',
-        title: 'Streams',
-        id: 'streams', // set id equal to x in app.map.layer.x
-        source: new ol.source.VectorTile({
-          attributions: 'NRCS',
-          format: new ol.format.MVT({
-            featureClass: ol.Feature
-          }),
-          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers['strm_sgmnts_all6-11-0i3yy4'].id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
-        }),
-        style: app.map.styles.Streams,
-        visible: false,
-        renderBuffer: 300,
-        minResolution: 0.3470711467930046,
-        maxResolution: 180,
-        // declutter: true
-      }),
-      selectAction: streamSelectAction
-    },
-    pourpoints: {
-      layer: new ol.layer.VectorTile({
-        name: 'Gauging Station',
-        title: 'Gauging Station',
-        id: 'pourpoints', // set id equal to x in app.map.layer.x
-        source: new ol.source.VectorTile({
-          attributions: 'Ecotrust',
-          format: new ol.format.GeoJSON(),
-        }),
-        style: app.map.styles.PourPoint,
-        visible: false,
-        renderBuffer: 20,
-        minResolution: 2,
-        maxResolution: 200,
-      }),
-      selectAction: pourPointSelectAction
-    },
+    // boundary: {
+    //   // layer: new ol.layer.VectorTile({
+    //   layer: new ol.layer.Vector({
+    //     name: 'Upper Columbia Boundary',
+    //     title: 'Upper Columbia Boundary',
+    //     id: 'boundary', // set id equal to x in app.map.layer.x
+    //     // source: new ol.source.VectorTile({
+    //     source: new ol.source.Vector({
+    //       attributions: 'Ecotrust',
+    //       // format: new ol.format.MVT(),
+    //       // url: 'https://api.mapbox.com/v4/' + app.mapbox.layers['western_uc_bnd-3eremu'].id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+    //       format: new ol.format.GeoJSON({
+    //         dataProjection: 'EPSG:4326',
+    //         featureProjection: 'EPSG:4326'
+    //       }),
+    //       url: '/static/ucsrb/data/ucsrb_bounds.geojson',
+    //     }),
+    //     style: app.map.styles.Boundary,
+    //   })
+    // },
+    // pourpoints: {
+    //   layer: new ol.layer.VectorTile({
+    //     name: 'Gauging Station',
+    //     title: 'Gauging Station',
+    //     id: 'pourpoints', // set id equal to x in app.map.layer.x
+    //     source: new ol.source.VectorTile({
+    //       attributions: 'Ecotrust',
+    //       format: new ol.format.GeoJSON(),
+    //     }),
+    //     style: app.map.styles.PourPoint,
+    //     visible: false,
+    //     renderBuffer: 20,
+    //     minResolution: 2,
+    //     maxResolution: 200,
+    //   }),
+    //   selectAction: pourPointSelectAction
+    // },
     huc10: {
       layer: new ol.layer.VectorTile({
         name: 'HUC 10',
@@ -660,23 +582,6 @@ app.map.layer = {
       }),
       selectAction: focusAreaSelectAction
     },
-    RMU: {
-      layer: new ol.layer.VectorTile({
-        name: 'Forest Plan Mgmt Alloc',
-        title: 'Forest Plan Mgmt Alloc',
-        id: 'RMU', // set id equal to x in app.map.layer.x
-        source: new ol.source.VectorTile({
-          format: new ol.format.MVT({
-            featureClass: ol.Feature
-          }),
-          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers['LandMgmtPlan_OKAWEN_WCol-4m69bv'].id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
-        }),
-        style: app.map.styles.FocusArea,
-        visible: false,
-        renderBuffer: 200
-      }),
-      selectAction: focusAreaSelectAction
-    },
     scenarios: {
         layer: mapSettings.getInitFilterResultsLayer('scenarios', false),
         source: function() {
@@ -700,87 +605,18 @@ app.map.layer = {
         style: app.map.styles.LineStringSelected
       })
     },
-    resultPoints: {
-      layer: new ol.layer.Vector({
-        source: new ol.source.Vector({
-          format: new ol.format.GeoJSON()
-        }),
-        style: app.map.styles.PourPoint,
-        id: 'resultPoints',
-      }),
-      selectAction: pourPointResultSelection,
-    },
-    wetlands: {
-      layer: new ol.layer.Tile({
-        name: 'Wetlands',
-        title: 'Wetlands',
-        id: 'wetlands', // set id equal to x in app.map.layer.x
-        source: new ol.source.XYZ({
-          attributions: 'Ecotrust',
-          url: `https://api.mapbox.com/styles/v1/ucsrbsupport/cjixp1ni6ar6x2qpbaz58fit0/tiles/256/{z}/{x}/{y}@2x?access_token=${app.mapbox.key}`
-        }),
-        visible: false,
-      }),
-    },
-    salmonPriorityAreas: {
-      layer: new ol.layer.Tile({
-        name: 'Salmon Priority Areas',
-        title: 'Salmon Priority Areas',
-        id: 'salmonPriorityAreas', // set id equal to x in app.map.layer.x
-        source: new ol.source.XYZ({
-          attributions: 'Ecotrust',
-          url: 'https://api.mapbox.com/styles/v1/ucsrbsupport/cjiyt12lz99ts2rmdixj5hau1/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoidWNzcmJzdXBwb3J0IiwiYSI6ImNqY3Fzanl6cDAxaGgzM3F6ZXVqeHI0eTYifQ.7T_7fsmV6QIuh_9EEo0wMw'
-        }),
-        visible: false,
-      }),
-    },
-    forestCover: {
-      layer: new ol.layer.Tile({
-        name: 'Forest Cover',
-        title: 'Forest Cover',
-        id: 'forestCover', // set id equal to x in app.map.layer.x
-        source: new ol.source.XYZ({
-          attributions: 'Ecotrust',
-          url: 'https://api.mapbox.com/styles/v1/ucsrbsupport/cjiwqrvyt8g102rn4i89lm9k9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoidWNzcmJzdXBwb3J0IiwiYSI6ImNqY3Fzanl6cDAxaGgzM3F6ZXVqeHI0eTYifQ.7T_7fsmV6QIuh_9EEo0wMw'
-        }),
-        visible: false,
-      }),
-    },
-    publicProtectedLand: {
-      layer: new ol.layer.Tile({
-        name: 'Public and protected lands',
-        title: 'Public and protected lands',
-        id: 'publicProtectedLand', // set id equal to x in app.map.layer.x
-        source: new ol.source.XYZ({
-          attributions: 'Ecotrust',
-          url: 'https://api.mapbox.com/styles/v1/ucsrbsupport/cjiwrc49c8gk52rn4009l4mhk/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoidWNzcmJzdXBwb3J0IiwiYSI6ImNqY3Fzanl6cDAxaGgzM3F6ZXVqeHI0eTYifQ.7T_7fsmV6QIuh_9EEo0wMw'
-        }),
-        visible: false,
-      }),
-    },
-    roads: {
-      layer: new ol.layer.Tile({
-        name: 'Roads',
-        title: 'Roads',
-        id: 'roads', // set id equal to x in app.map.layer.x
-        source: new ol.source.XYZ({
-          attributions: 'Ecotrust',
-          url: 'https://api.mapbox.com/styles/v1/ucsrbsupport/cjiyswskt99pv2rmdzjii99et/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoidWNzcmJzdXBwb3J0IiwiYSI6ImNqY3Fzanl6cDAxaGgzM3F6ZXVqeHI0eTYifQ.7T_7fsmV6QIuh_9EEo0wMw'
-        }),
-        visible: false,
-      }),
-    },
-    criticalHabitat: {
-      layer: new ol.layer.Tile({
-        name: 'Critical Habitat',
-        title: 'Critical Habitat',
-        id: 'criticalHabitat', // set id equal to x in app.map.layer.x
-        source: new ol.source.XYZ({
-          url: 'https://api.mapbox.com/styles/v1/ucsrbsupport/cjiwcw2wg9hz02srr549ehylf/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoidWNzcmJzdXBwb3J0IiwiYSI6ImNqY3Fzanl6cDAxaGgzM3F6ZXVqeHI0eTYifQ.7T_7fsmV6QIuh_9EEo0wMw'
-        }),
-        visible: false,
-      })
-    },
+    // roads: {
+    //   layer: new ol.layer.Tile({
+    //     name: 'Roads',
+    //     title: 'Roads',
+    //     id: 'roads', // set id equal to x in app.map.layer.x
+    //     source: new ol.source.XYZ({
+    //       attributions: 'Ecotrust',
+    //       url: 'https://api.mapbox.com/styles/v1/ucsrbsupport/cjiyswskt99pv2rmdzjii99et/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoidWNzcmJzdXBwb3J0IiwiYSI6ImNqY3Fzanl6cDAxaGgzM3F6ZXVqeHI0eTYifQ.7T_7fsmV6QIuh_9EEo0wMw'
+    //     }),
+    //     visible: false,
+    //   }),
+    // },
     satellite: {
       layer: new ol.layer.Tile({
         name: 'Satellite',
@@ -812,16 +648,9 @@ if (app.map.overlays) {
   app.map.overlays.getLayers().push(app.map.layer.draw.layer);
   app.map.overlays.getLayers().push(app.map.layer.huc12.layer);
   app.map.overlays.getLayers().push(app.map.layer.huc10.layer);
-  app.map.overlays.getLayers().push(app.map.layer.RMU.layer);
-  app.map.overlays.getLayers().push(app.map.layer.streams.layer);
-  // app.map.overlays.getLayers().push(app.map.layer.pourpoints.layer);
-  app.map.overlays.getLayers().push(app.map.layer.boundary.layer);
-  app.map.overlays.getLayers().push(app.map.layer.wetlands.layer);
-  app.map.overlays.getLayers().push(app.map.layer.salmonPriorityAreas.layer);
-  app.map.overlays.getLayers().push(app.map.layer.forestCover.layer);
-  app.map.overlays.getLayers().push(app.map.layer.publicProtectedLand.layer);
-  app.map.overlays.getLayers().push(app.map.layer.roads.layer);
-  app.map.overlays.getLayers().push(app.map.layer.criticalHabitat.layer);
+  // app.map.overlays.getLayers().push(app.map.layer.huc8.layer);
+  // app.map.overlays.getLayers().push(app.map.layer.county.layer);
+  // app.map.overlays.getLayers().push(app.map.layer.roads.layer);
 }
 
 app.map.scaleLine = new ol.control.ScaleLine();

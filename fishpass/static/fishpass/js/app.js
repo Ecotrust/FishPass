@@ -60,7 +60,6 @@ setInit = function() {
 
     app.state.setStep = 0;
     app.map.layer.draw.layer.getSource().clear();
-    app.panel.form.init()
 };
 
 reportInit = function() {
