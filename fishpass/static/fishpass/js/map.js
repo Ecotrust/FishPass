@@ -604,7 +604,6 @@ app.map.layer = {
             geometry: new ol.geom.Point(features[i].geometry.coordinates),
             id: features[i].properties.pad_id
           });
-          console.log(feature);
           feature.setStyle(app.map.styles.Point);
           app.map.layer.barriers.layer.getSource().addFeature(feature);
         }
