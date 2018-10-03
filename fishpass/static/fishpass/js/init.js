@@ -3,8 +3,8 @@ $( document ).ready(function() {
   // get barrier layer ajax
   app.request.get_barrier_layer()
     .then(function(response) {
-      var features = response.geojson.features;
-      app.map.layer.barriers.addFeatures(features);
+      var geojsonObject = response.geojson;
+      app.map.layer.barriers.addFeatures(geojsonObject);
       app.map.addLayer(app.map.layer.barriers.layer);
     })
 });

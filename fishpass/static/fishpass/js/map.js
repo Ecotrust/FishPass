@@ -588,25 +588,14 @@ app.map.layer = {
         name: 'Barriers',
         title: 'Barriers',
         id: 'barriers', // set id equal to x in app.map.layer.x
-        source: new ol.source.Vector({
-          attributions: 'Ecotrust',
-          format: new ol.format.GeoJSON(),
-        }),
         style: app.map.styles.Point,
         visible: true,
-        // renderBuffer: 20,
-        // minResolution: 2,
-        // maxResolution: 200,
       }),
-      addFeatures: function(features) {
-        for (var i = 0; i < features.length; i++) {
-          let feature = new ol.Feature({
-            geometry: new ol.geom.Point(features[i].geometry.coordinates),
-            id: features[i].properties.pad_id
-          });
-          feature.setStyle(app.map.styles.Point);
-          app.map.layer.barriers.layer.getSource().addFeature(feature);
-        }
+      addFeatures: function(geojsonObject) {
+        var vectorSource = new ol.source.Vector({
+          features: (new ol.format.GeoJSON()).readFeatures(geojsonObject)
+        });
+        app.map.layer.barriers.layer.setSource(vectorSource);
       },
       selectAction: focusAreaSelectAction
     },
@@ -661,8 +650,8 @@ app.map.layer = {
     }
 };
 
-app.map.layer.scenarios.layer.set('id','scenarios');
-app.map.layer.planningUnits.layer.set('id', 'planningUnits');
+app.map.layer.project.layer.set('id','project');
+app.map.layer.barriers.layer.set('id', 'planningUnits');
 
 app.map.overlays = false;
 for (var i=0; i < app.map.getLayers().getArray().length; i++) {
