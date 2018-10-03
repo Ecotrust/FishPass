@@ -1,0 +1,374 @@
+@supports(--var: 'value') {
+    /**
+     * Setting some variables mainly for reference because
+     * no support for css vars in IE  (╯°□°)╯
+     */
+    :root {
+        --primary: #3a5675;
+            --hover: #3a5675;
+        --secondary: #67b8c6;
+            --link: #67b8c6;
+        --accent: #e2e05e;
+        --bg: #EAF2F4;
+        --text: #58595b;
+
+        --margin-bottom: 1.5rem;
+
+        --400: 400;
+        --500: 500;
+        --700: 700;
+        --900: 900;
+    }
+}
+
+/* * {
+    box-sizing: border-box;
+} */
+
+html {
+    font-size: 1em;
+}
+
+body {
+    color: #58595b;
+    font-family: 'Libre Franklin', sans-serif;
+    font-weight: normal;
+}
+
+img {
+    height: auto;
+    max-width: 100%;
+}
+
+i.svg_icon {
+    display: inline-block;
+    height: 1rem;
+    margin: 0 .5rem 0 0;
+    width: 1rem;
+}
+
+    i.svg_icon img {
+        height: 100%;
+        width: 100%;
+    }
+
+hr {
+    background: #e2e05e;
+    border: none;
+    height: 10px;
+    margin: 1.5rem 0;
+}
+
+p {
+    font-size: 1em;
+    margin: 0 0 1.5rem;
+}
+
+a,
+.button-modal {
+    color: #67b8c6;
+    opacity: 1;
+    transition: 0.1s all ease-in;
+}
+
+a:hover,
+.button-modal:hover {
+    color: #3a5675;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+a.btn-outline-light {
+    border-width: 2px;
+    border-radius: 0;
+}
+
+h1 {
+    font-size: 2.5em;
+    color: #fff;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 2em;
+    font-weight: 700;
+}
+
+h3 {
+    color: #3a5675;
+    font-size: 1.125em;
+    font-weight: 700;
+}
+
+h4 {
+    color: #5d7452;
+    font-size: 1.5em;
+    font-weight: 500;
+}
+  h4.blue {
+    color: #67b8c6;
+  }
+
+h5 {
+    font-size: 1.25em;
+    font-weight: 500;
+}
+
+.bg-light {
+  background-color: #EAF2F4 !important;
+}
+
+.error {
+  color: red;
+}
+
+/**
+ * =========================================================================
+   Navbar
+ ===========================================================================
+ */
+
+.top-nav-wrap {
+    display: block;
+    height: 9vh;
+}
+
+.top-nav-wrap .navbar {
+    padding: 0 2rem;
+}
+
+nav .navbar-toggler {
+    background: #67b8c6;
+    border-radius: 50%;
+    border: none;
+    color: #58595b;
+    height: 5.25vh;
+    outline: none;
+    text-align: center;
+    position: relative;
+    padding: 0;
+    width: 5.25vh;
+}
+
+nav .navbar-toggler:after {
+    display: none;
+}
+
+nav .navbar-toggler .navbar-toggler-icon {
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 2.25vh;
+    line-height: 9vh;
+    display: block;
+    margin: 0 auto;
+    width: 100%;
+}
+
+nav .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
+    background-image: url('/static/fishpass/img/icon/i_close.svg');
+}
+nav .navbar-toggler[aria-expanded="false"] .navbar-toggler-icon {
+    background-image: url('/static/fishpass/img/icon/i_navicon.svg');
+}
+
+.top-nav-wrap .navbar h1 {
+    font-size: 2em;
+    line-height: 9vh;
+    margin: 0 2rem;
+}
+
+#menu {
+    left: 2rem;
+    padding: 0;
+    z-index: 3;
+}
+
+.username-wrap .account-action {
+    color: #67b8c6;
+    font-size: .875em;
+    font-weight: 700;
+    opacity: 1;
+    transition: 0.2s opacity ease-in-out;
+    text-transform: lowercase;
+}
+    .username-wrap .account-action:hover {
+        opacity: 0.8;
+        text-decoration: none;
+    }
+
+/**
+ * =========================================================================
+   Flatpage
+ ===========================================================================
+ */
+
+.flatpage header {
+    background: #58595B;
+}
+
+.flatpage .page-content {
+    padding: 4em 0;
+}
+
+/**
+ * =========================================================================
+   Profile / Accounts [mp-accounts]
+ ===========================================================================
+ */
+
+.profile-wrap {
+    background: #f1f6f8;
+    padding: 2em 4em;
+    max-width: 48em;
+}
+.profile-wrap p,
+.profile-wrap h1 {
+    color: #333;
+}
+
+.profile-wrap p:not(:empty) {
+    font-size: 1.25em;
+    margin: 1em 2em;
+}
+
+.profile-wrap .reduce-text-size {
+    font-size: .6125em;
+}
+
+.profile-img:not(:empty) {
+    border-radius: 50%;
+}
+
+.profile-buttons .btn {
+    display: inline-block;
+    margin: .5rem;
+}
+
+.profile-buttons + p:not(:empty) {
+    margin: .5rem;
+}
+
+#login-modal .accounts-form-wrap {
+    border: none;
+}
+
+/**
+ * =========================================================================
+    Modal
+ ===========================================================================
+ */
+
+.modal-content {
+    background: #3a5675;
+    border: none;
+    border-radius: 0;
+    color: #fff;
+}
+
+.modal-content .card {
+    background: #3a5675;
+}
+
+.modal .close {
+    color: #fff;
+}
+
+.modal-content input[type=submit] {
+    background-color: #fff;
+    border: none;
+    color: #58595b;
+    font-family: 'Cabin', 'Libre Franklin', sans-serif;
+    font-size: .9375em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin: .5rem 0;
+    padding: .5rem 1.25rem .4375rem;
+    opacity: 1;
+    text-transform: uppercase;
+    transition: 0.2s opacity ease-in-out;
+}
+
+    .modal-content input[type=submit]:hover {
+        opacity: 0.8;
+    }
+
+.modal-content input,
+.modal-content input[type='text'] {
+    font-size: 1em;
+    max-width: 100%;
+}
+
+.modal-content .left-inner-addon {
+    margin-bottom: 1rem;
+}
+
+.modal-content form > div > label {
+    font-size: .675em;
+}
+
+.modal-content .btn-link {
+    background: #fff;
+    color: #58595b;
+    font-family: 'Cabin', 'Libre Franklin', sans-serif;
+    font-weight: 700;
+    margin: 0 .25rem;
+    padding: .125rem .375rem;
+}
+
+.modal-content hr {
+    height: 3px;
+}
+
+.login-intro-wrap h2 {
+    font-size: 1.375em;
+    text-align: center;
+}
+
+.login-intro-wrap p {
+    display: none;
+}
+
+.login-form-wrap {
+    margin-bottom: 1rem;
+}
+
+.login-help-wrap a {
+    font-size: .875em;
+}
+
+#register-form input[type=submit] {
+    margin-top: 1.5rem;
+}
+
+/**
+ * =========================================================================
+   Footer
+ ===========================================================================
+ */
+
+footer {
+    padding: 3rem 0;
+}
+
+footer p {
+    font-size: 1em;
+    margin-bottom: .5rem;
+}
+
+footer hr {
+    margin-top: 2.5rem;
+}
+
+footer .pad-left {
+    padding-left: 3rem;
+}
+
+footer .footer-logo {
+    max-width: 94%;
+    max-height: 10rem;
+}
