@@ -140,26 +140,27 @@ var madrona = {
 
 function scenarioFormModel(options) {
     var self = this;
-    self.focus_area = ko.observable(false);
-    self.private_own = ko.observable(false);
-    self.pub_priv_own = ko.observable(false);
-    // self.pub_priv_own_input = ko.observable(false);
-    self.lsr_percent = ko.observable(false);
-    self.has_critical_habitat = ko.observable(false);
-    self.percent_roadless = ko.observable(false);
-    self.road_distance = ko.observable(false);
-    // self.road_distance_max = ko.observable(false);
-    self.percent_wetland = ko.observable(false);
-    self.percent_riparian = ko.observable(false);
-    self.slope = ko.observable(false);
-    self.percent_fractional_coverage = ko.observable(false);
-    self.percent_high_fire_risk_area = ko.observable(false);
-    self.landform_type = ko.observable(false);
-    self.landform_type_checkboxes_include_0 = ko.observable(true); //north
-    self.landform_type_checkboxes_include_1 = ko.observable(true); //south
-    self.landform_type_checkboxes_include_2 = ko.observable(true); //ridgetop
-    self.landform_type_checkboxes_include_3 = ko.observable(true); //floors
-    self.landform_type_checkboxes_include_4 = ko.observable(true); //east/west
+    // self.focus_area = ko.observable(false);
+    // self.private_own = ko.observable(false);
+    // self.pub_priv_own = ko.observable(false);
+    // // self.pub_priv_own_input = ko.observable(false);
+    // self.lsr_percent = ko.observable(false);
+    // self.has_critical_habitat = ko.observable(false);
+    // self.percent_roadless = ko.observable(false);
+    // self.road_distance = ko.observable(false);
+    // // self.road_distance_max = ko.observable(false);
+    // self.percent_wetland = ko.observable(false);
+    // self.percent_riparian = ko.observable(false);
+    // self.slope = ko.observable(false);
+    // self.percent_fractional_coverage = ko.observable(false);
+    // self.percent_high_fire_risk_area = ko.observable(false);
+    // self.landform_type = ko.observable(false);
+    // self.landform_type_checkboxes_include_0 = ko.observable(true); //north
+    // self.landform_type_checkboxes_include_1 = ko.observable(true); //south
+    // self.landform_type_checkboxes_include_2 = ko.observable(true); //ridgetop
+    // self.landform_type_checkboxes_include_3 = ko.observable(true); //floors
+    // self.landform_type_checkboxes_include_4 = ko.observable(true); //east/west
+    self.ownership_input = ko.observable(false);
 
     self.lastChange = (new Date()).getTime();
 
