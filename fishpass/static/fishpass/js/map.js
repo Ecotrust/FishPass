@@ -582,19 +582,20 @@ app.map.layer = {
       }),
       selectAction: focusAreaSelectAction
     },
-    scenarios: {
-        layer: mapSettings.getInitFilterResultsLayer('scenarios', false),
+
+    // create layer for openlayers barrier
+    // add map style for point
+    // change wkt to geojson, update addfeatures ()
+    // get barriers showing on map
+    project: {
+        layer: mapSettings.getInitFilterResultsLayer('project', false),
         source: function() {
-            return app.map.layer.scenarios.layer.getSource();
-        }
-    },
-    planningUnits: {
-        layer: mapSettings.getInitFilterResultsLayer('planning units', app.map.styles['Polygon']),
-        source: function() {
-            return app.map.layer.planningUnits.layer.getSource();
+            return app.map.layer.project.layer.getSource();
         },
         addFeatures: function(features) {
             features.forEach(function(el,i,arr) {
+                // replace addWKTFeatures with ol add geojson features
+                // add to layer
                 app.map.layer.planningUnits.layer.addWKTFeatures(el);
             });
         },

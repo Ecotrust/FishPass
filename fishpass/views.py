@@ -69,7 +69,7 @@ def get_geojson_from_queryset(query, project):
         }
         # convert attributes to json notation
         feat_dict = feature.to_dict(project)
-        for field in feat_dict.keys:
+        for field in feat_dict.keys():
             feat_json['properties'][field] = feat_dict[field]
 
         # apply geojson to return object
@@ -77,10 +77,29 @@ def get_geojson_from_queryset(query, project):
 
     return geojson
 
+def run_filter_query(filters):
+    from collections import OrderedDict
+    from fishpass.models import Barrier
+    # TODO: This would be nicer if it generically knew how to filter fields
+    # by name, and what kinds of filters they were. For now, hard code.
+    notes = []
+    query = Barrier.objects.all()
+
+    if 'area' in filters.keys() and filters['area']:
+        # RDH 1/8/18: filter(geometry__area_range(...)) does not seem available.
+        # query = query.filter(geometry__area__range=(filters['area_min'], filters['area_max']))
+
+        # RDH 1/9/18: Why can't we use the model's 'Run Filters' function?
+        pu_ids = [pu.pk for pu in query if pu.geometry.area <= float(filters['area_max']) and pu.geometry.area>= float(filters['area_min'])]
+        query = (query.filter(pk__in=pu_ids))
+
+    return (query, notes)
+
 # @cache_page(60 * 60) # 1 hour of caching
-def get_barrier_layer(request, project, query=False, notes=[],extra_context={}):
+def get_barrier_layer(request, project=None, query=False, notes=[],extra_context={}):
+    from features.views import check_user
     # Query for barriers and convert to geojson here.
-    #TODO: Include any ScenarioBarrierType, ScenarioBarrierStatus, ScenarioBarrier data
+    # TODO: Include any ScenarioBarrierType, ScenarioBarrierStatus, ScenarioBarrier data
     request = check_user(request)
     from django.db.models.query import QuerySet
     from django.contrib.gis.db.models.query import GeoQuerySet
@@ -90,7 +109,13 @@ def get_barrier_layer(request, project, query=False, notes=[],extra_context={}):
     json = []
     count = query.count()
 
-    geojson = get_geojson_from_queryset(query, project)
+    try:
+        geojson = get_geojson_from_queryset(query, project)
+    except:
+        import ipbd
+        ipbd.set_trace()
+        geojson = []
+
 
     results_dict = {
         'count': count,
@@ -106,7 +131,7 @@ def get_barrier_layer(request, project, query=False, notes=[],extra_context={}):
             return_dict[key] = extra_context[key]
 
     return_json = [return_dict]
-    return JsonResponse(return_json)
+    return JsonResponse(return_dict)
 
 def update_scenario_barrier(request):
     #Get form values
