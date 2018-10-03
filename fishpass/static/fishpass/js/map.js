@@ -582,9 +582,36 @@ app.map.layer = {
       }),
       selectAction: focusAreaSelectAction
     },
+    // openlayers layer for barriers
+    barriers: {
+      layer: new ol.layer.Vector({
+        name: 'Barriers',
+        title: 'Barriers',
+        id: 'barriers', // set id equal to x in app.map.layer.x
+        source: new ol.source.Vector({
+          attributions: 'Ecotrust',
+          format: new ol.format.GeoJSON(),
+        }),
+        style: app.map.styles.Point,
+        visible: true,
+        // renderBuffer: 20,
+        // minResolution: 2,
+        // maxResolution: 200,
+      }),
+      addFeatures: function(features) {
+        for (var i = 0; i < features.length; i++) {
+          let feature = new ol.Feature({
+            geometry: new ol.geom.Point(features[i].geometry.coordinates),
+            id: features[i].properties.pad_id
+          });
+          console.log(feature);
+          feature.setStyle(app.map.styles.Point);
+          app.map.layer.barriers.layer.getSource().addFeature(feature);
+        }
+      },
+      selectAction: focusAreaSelectAction
+    },
 
-    // create layer for openlayers barrier
-    // add map style for point
     // change wkt to geojson, update addfeatures ()
     // get barriers showing on map
     project: {

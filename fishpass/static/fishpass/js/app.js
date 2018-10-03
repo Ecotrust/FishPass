@@ -809,6 +809,18 @@ app.request = {
             }
         })
     },
+    get_barrier_layer: function() {
+      return $.ajax({
+          url: `/get_barrier_layer/`,
+          dataType: 'json',
+          success: function(response) {
+              return response;
+          },
+          error: function(response) {
+              console.log(`%cfail @ get downstream pourpoints: %o`, 'color: red', response);
+          }
+      })
+    },
     get_downstream_pour_points: function(id) {
         if (!id) {
             id = app.map.selectedFeature.getProperties().ppt_ID;
