@@ -582,19 +582,47 @@ app.map.layer = {
       }),
       selectAction: focusAreaSelectAction
     },
-    scenarios: {
-        layer: mapSettings.getInitFilterResultsLayer('scenarios', false),
-        source: function() {
-            return app.map.layer.scenarios.layer.getSource();
+    // openlayers layer for barriers
+    barriers: {
+      layer: new ol.layer.Vector({
+        name: 'Barriers',
+        title: 'Barriers',
+        id: 'barriers', // set id equal to x in app.map.layer.x
+        source: new ol.source.Vector({
+          attributions: 'Ecotrust',
+          format: new ol.format.GeoJSON(),
+        }),
+        style: app.map.styles.Point,
+        visible: true,
+        // renderBuffer: 20,
+        // minResolution: 2,
+        // maxResolution: 200,
+      }),
+      addFeatures: function(features) {
+        for (var i = 0; i < features.length; i++) {
+          let feature = new ol.Feature({
+            geometry: new ol.geom.Point(features[i].geometry.coordinates),
+            id: features[i].properties.pad_id
+          });
+          console.log(feature);
+          feature.setStyle(app.map.styles.Point);
+          app.map.layer.barriers.layer.getSource().addFeature(feature);
         }
+      },
+      selectAction: focusAreaSelectAction
     },
-    planningUnits: {
-        layer: mapSettings.getInitFilterResultsLayer('planning units', app.map.styles['Polygon']),
+
+    // change wkt to geojson, update addfeatures ()
+    // get barriers showing on map
+    project: {
+        layer: mapSettings.getInitFilterResultsLayer('project', false),
         source: function() {
-            return app.map.layer.planningUnits.layer.getSource();
+            return app.map.layer.project.layer.getSource();
         },
         addFeatures: function(features) {
             features.forEach(function(el,i,arr) {
+                // replace addWKTFeatures with ol add geojson features
+                // add to layer
                 app.map.layer.planningUnits.layer.addWKTFeatures(el);
             });
         },
