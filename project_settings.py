@@ -257,8 +257,6 @@ BIOS_URL = 'https://map.dfg.ca.gov/bios/?al=ds69&col=pad_id&val='
 GET_SCENARIOS_URL = '/fishpass/get_scenarios/Project/'
 SCENARIO_FORM_URL = '/features/project/form/'
 
-SEARCH_DISABLED = True
-
 DS_TREATMENT_CHOICES = [
     ('adjust','Adjustable'),
     ('consider','Non-adjustable'),
@@ -276,6 +274,11 @@ try:
     ### END MODULE SETTINGS IMPORT ###
 except ImportError:
     pass
+
+# Visualize Overrides
+
+SEARCH_DISABLED = True
+
 
 # Accounts Overrides
 ADMIN_URL = "/admin"

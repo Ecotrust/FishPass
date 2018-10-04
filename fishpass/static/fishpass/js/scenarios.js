@@ -111,7 +111,10 @@ var madrona = {
                 dataType: 'json',
                 success: function(result) {
                     app.loadingAnimation.hide();
-                    window.alert('TODO: redirect to report now!');
+                    // window.alert('TODO: redirect to report now!');
+                    // Get scenario ID from result
+                    // Redirect window to /report/SCENARIO_ID/
+                    document.location.href = '/get_report/' + result['X-Madrona-Select'] + '/';
                     // app.state.setStep = 'result'; // go to results
                     // app.resultsInit(result['X-Madrona-Show']);
                     // app.viewModel.scenarios.addScenarioToMap(null, {uid: result['X-Madrona-Show']});

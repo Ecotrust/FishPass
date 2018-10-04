@@ -42,7 +42,7 @@ urlpatterns = [
 
     url(r'^get_user_scenario_list/$', views.get_user_scenario_list),
     # TODO: pass project_id
-    url(r'^get_report/$', views.get_report),
+    url(r'^get_report/(?P<projid>[\w_]+)/$', views.get_report),
     # TODO: pass project_id
     url(r'^export_report/$', views.export_report),
 

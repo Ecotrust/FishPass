@@ -323,6 +323,21 @@ class Project(Scenario):
 
         return result
 
+    def to_dict(self):
+        return {
+            'treat_downstream': self.treat_downstream,
+            'ownership_input_checkboxes': self.ownership_input_checkboxes,
+            'assign_cost': self.assign_cost,
+            'budget_type': self.budget_type,
+            # TODO: pick relevent budget fields based on budget_type
+            # TODO: get project-specific barrier type/status settings
+            # TODO: get barrier-specific settings (?)
+            'report': {
+                'foo': 'foo',
+                'bar': 'bar'
+            }
+        }
+
     class Options:
         verbose_name = 'Project'
         # icon_url = 'marco/img/multi.png'

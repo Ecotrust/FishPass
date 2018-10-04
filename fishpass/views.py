@@ -183,18 +183,19 @@ def update_scenario_barrier(request):
     return JsonResponse({})
 
 
-def get_report(request, projectId, template=loader.get_template('fishpass/home.html'), context={'title': 'FishPASS - Report'}):
-    # NOTE: YES THIS IS IT'S OWN TEMPLATE/PAGE!!!
-    # Get and verify user account
+def get_report(request, projid, template=loader.get_template('fishpass/report.html'), context={'title': 'FishPASS - Report'}):
+    from features.registry import get_feature_by_uid
+
+    #TODO: Get and verify user account || sharing permissions
     # verify user ownership of project
-    # Generate project tabular content
+    project = get_feature_by_uid(projid)
+
+    #TODO: generate geojson of solution
     #   Do this in a separate view
-    # generate barrier-specific tabular content
-    #   Do this in a separate view
-    # generate geojson of solution
-    #   Do this in a separate view
+    #   Should come from scenarios.views.get_filter_results
     # TODO: sort out filter vs. all results
     #   this can be managed on front end
+    context['project'] = project.to_dict()
     return HttpResponse(template.render(context, request))
 
 def export_report(request):
