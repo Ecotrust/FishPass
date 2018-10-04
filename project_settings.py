@@ -109,7 +109,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
@@ -278,6 +277,9 @@ try:
 except ImportError:
     pass
 
+# Accounts Overrides
+ADMIN_URL = "/admin"
+CMS_ADMIN_BUTTON = False
 RECAPTCHA_PUBLIC_KEY = 'SiteKey'
 RECAPTCHA_PRIVATE_KEY = 'SetInLocalSettings'
 
