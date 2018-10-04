@@ -1,0 +1,17 @@
+========== Commit Format ==========
+<type>(<module or scope>): <subject>
+<BLINK LINE>
+<body>(optional)
+<BLINK LINE>
+<footer>(optional)
+
+============= Sample ==============
+fix(shape): update aborting animation logic
+
+Abort the animating post process when "tap" occurs or velocity is zero at inside border.
+
+Ref #30
+
+============ See More =============
+https://github.com/naver/billboard.js/blob/master/CONTRIBUTING.md#commit-log-guidelines
+

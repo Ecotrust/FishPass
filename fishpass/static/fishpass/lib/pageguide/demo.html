@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<HTML>
+  <head>
+    <link rel="stylesheet" href="css/pageguide.min.css">
+  </head>
+  <body>
+
+    <div style="margin:10px; padding:5px;">
+      <table>
+        <tr>
+          <td class="first_element_to_target">1a</td>
+          <td id="second_element_to_target">1b</td>
+        </tr>
+        <tr>
+          <td class="third_element_to_target">2a<div style="background-color:red" class="id_here">foo</div></td>
+          <td id="fourth_element_to_target">2b</td>
+        </tr>
+      </table>
+    </div>
+
+    <ul id="tlyPageGuide" data-tourtitle="REPLACE THIS WITH A TITLE">
+      <li class="tlypageguide_left" data-tourtarget=".first_element_to_target">
+        <div>
+          Here is the first item description. The number will appear to the left of the element.
+        </div>
+      </li>
+      <li class="tlypageguide_right" data-tourtarget="#second_element_to_target">
+        <div>
+          Here is the second item description. The number will appear to the right of the element.
+        </div>
+      </li>
+      <li class="tlypageguide_top" data-tourtarget=".third_element_to_target > div.is_here">
+        <div>
+          Here is the third item description. The number will appear above the element.
+        </div>
+      </li>
+      <li class="tlypageguide_bottom" data-tourtarget="#fourth_element_to_target">
+        <div>
+          Here is the fourth item description. The number will appear below the element.
+        </div>
+      </li>
+    </ul>
+
+    <!--
+      <section>
+        <div class="big_arrow_right">
+          <span>See pageguide.js in action!</span>
+        </div>
+        <p class="description">
+          pageguide.js is an interactive visual guide to elements on web pages.
+          <br>
+          Instead of cluttering your interface with static help message, or explanatory text,
+          <br>
+          add a pageguide and let your users learn about new features and functions.
+        </p>
+
+        <div class="first_ftw tlypageguide_shadow tlypageguide_shadow0">
+            Need some more information about this box?<br>Click the page guide button!
+        </div>
+
+        <div class="second_ftw tlypageguide_shadow tlypageguide_shadow1">
+            This too! Click the page guide button!
+        </div>
+
+        <h2>
+          It's easy to implement and non-invasive:
+        </h2>
+        <ol class="steps">
+          <li>Add references to pageguide.js &amp; pageguide.css</li>
+          <li>Add a simple &lt;ul&gt; to pages you want page guide to appear on</li>
+          <li>
+            Add the following block of code to your page
+            <pre><code>&lt;script type="text/javascript"&gt;<br>    $(document).ready(function() {<br>        tl.pg.init();<br>    })<br>&lt;/script&gt;</code></pre>
+          </li>
+          <li>Profit! (and measure it with built-in interaction tracking hooks).</li>
+        </ol>
+        <p>
+          If you like to learn by example, view the source of this page and check out how we did it!
+        </p>
+        <div class="more_here tlypageguide_shadow tlypageguide_shadow2">
+          <span>
+            More down here?  Let pageguide.js take care of the scrolling for you.
+          </span>
+        </div>
+
+        <div class="way_down_here tlypageguide_shadow tlypageguide_shadow3">
+            <a href="https://github.com/tracelytics/pageguide" title="View on Github">
+                <img src="img/octocat.png" width-"174"="" height="174">
+                Check it out on Github!
+            </a>
+        </div>
+      </section>
+    -->
+
+    <!--
+      <div id="tlyPageGuideWrapper"><div title="Launch Page Guide" class="tlypageguide_toggle" style="right: -120px;">page guide<div><span>The best way to highlight functionality</span></div><a href="#" class="tlypageguide_close" title="close guide">close guide »</a></div><div id="tlyPageGuideWelcome">
+        <h3>Welcome to pageguide.js</h3>
+        <p>Here's an example welcome message: Interested in pageguide.js? Fire up our tour to learn more!</p>
+        <div class="modal-button-container">
+            <button class="tlypageguide_start">let's go</button>
+            <button class="tlypageguide_ignore">not now</button>
+            <button class="tlypageguide_dismiss">got it, thanks</button>
+        </div>
+      </div><ul id="tlyPageGuide" data-tourtitle="The best way to highlight functionality">
+        <li class="tlypageguide_left tlypageguide-active" data-tourtarget=".first_ftw" style="left: 505px; top: 264px;">
+          <div>
+            pageguide.js attaches CSS pseudo elements to whatever features you define on your pages.
+            The numbered arrows can be placed on top, bottom, left or right of whatever you are trying to highlight.
+          </div>
+        </li>
+        <li class="tlypageguide_left" data-tourtarget=".second_ftw" style="left: 505px; top: 356px;">
+          <div>
+            Change the style of the pageguide as much as you want. We include both CSS and LESS in the repo. We even attach a class
+            to the body of the page when the guide is open.
+          </div>
+        </li>
+        <li class="tlypageguide_left" data-tourtarget=".more_here" style="left: 505px; top: 798px;">
+          <div>
+            The page guide also scrolls for you.  Just use the forward and back arrows on the left to move been elements.
+          </div>
+        </li>
+        <li class="tlypageguide_top" data-tourtarget=".way_down_here" style="left: 738px; top: 1607px;">
+          <div>
+            We include custom tracking for all the actions of the pageguide. Simply toss in your tracking code from Mixpanel, KISSMetrics, HubSpot, etc.
+            and find out what people are interested in.
+          </div>
+        </li>
+      </ul><div id="tlyPageGuideMessages" style="height: 0px; display: none; overflow: hidden;"><a href="#" class="tlypageguide_close" title="Close Guide">close</a><span style="text-indent: 0px;">1</span><div>
+            pageguide.js attaches CSS pseudo elements to whatever features you define on your pages.
+            The numbered arrows can be placed on top, bottom, left or right of whatever you are trying to highlight.
+          </div><a href="#" class="tlypageguide_back" title="Previous">Previous</a><a href="#" class="tlypageguide_fwd" title="Next">Next</a></div></div>
+
+    -->
+
+      <!-- <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script> -->
+      <!-- <script src="https://code.jquery.com/jquery-2.0.0.min.js" integrity="sha256-1IKHGl6UjLSIT6CXLqmKgavKBXtr0/jJlaGMEkh+dhw=" crossorigin="anonymous"></script> -->
+      <!-- <script src="https://code.jquery.com/jquery-2.0.0.min.js"></script> -->
+      <!-- <script src="https://code.jquery.com/jquery-2.0.0.min.js" integrity="sha256-1IKHGl6UjLSIT6CXLqmKgavKBXtr0/jJlaGMEkh+dhw=" crossorigin="anonymous"></script> -->
+      <!-- <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script> -->
+      <!-- <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script> -->
+      <script src="http://localhost:8111/static/ucsrb/js/jquery-3.2.1.min.js"></script>
+      <script src="js/pageguide.min.js"></script>
+      <script type="text/javascript">
+          $(document).ready(function() {
+              tl.pg.init();
+          })
+      </script>
+  </body>
+</HTML>

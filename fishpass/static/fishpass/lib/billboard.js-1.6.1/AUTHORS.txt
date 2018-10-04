@@ -1,0 +1,20 @@
+billboard.js authors ordered by first contribution.
+
+Jae Sung Park <alberto.park@gmail.com>
+Son Chan Uk <sculove@gmail.com>
+Kim Joo Hwee <kjhwee91@gmail.com>
+Yun Hwa Heo <yunhwa.heo@navercorp.com>
+Petr Vítek <rattus.PV@gmail.com>
+Mark Winter <wintermarkedward@gmail.com>
+Hansol Lim <dev.hansollim@gmail.com>
+Gyuil Han <cnabro91@gmail.com>
+Julien Castelain <jcastelain@gmail.com>
+Kim Jong Hyen <fussaep@gmail.com>
+dtc03012 <dtc03012@naver.com>
+Kim Dong Min <dkrahd12@gmail.com>
+Russell Shingleton <reshingleton@gmail.com>
+Matthias Komarek <matthias@mkomarek.de>
+Tony Quetano <tony.quetano@planttheidea.com>
+EunChan Park <pec9399@naver.com>
+Ina Ryu <ina.ryu@navercorp.com>
+Lennert Claeys <lennert.claeys@coscale.com>
