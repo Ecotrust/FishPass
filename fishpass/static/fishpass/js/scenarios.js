@@ -341,7 +341,7 @@ function scenarioFormModel(options) {
 
     self.getUpdatedFilterCount = function() {
         $.ajax({
-            url: '/scenario/get_filter_count',
+            url: '/scenarios/get_filter_count',
             type: 'GET',
             data: self.filters,
             success: function(data) {
