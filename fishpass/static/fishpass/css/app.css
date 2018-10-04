@@ -451,18 +451,18 @@ Map controls
 }
 
 .ol-geo-search > .ol-geo-search-wrap > button {
-    background: url('/static/ucsrb/img/icon/i_search.svg') rgba(255,255,255,0.66) 50% 50% no-repeat;
+    background: url('/static/fishpass/img/icon/i_search.svg') rgba(255,255,255,0.66) 50% 50% no-repeat;
     background-size: auto 60%;
     display: inline-block;
     vertical-align: top;
 }
 
 .ol-geo-search > .ol-geo-search-wrap > button:active {
-    background: url('/static/ucsrb/img/icon/i_close.svg') rgba(255,255,255,1) 50% 50% no-repeat;
+    background: url('/static/fishpass/img/icon/i_close.svg') rgba(255,255,255,1) 50% 50% no-repeat;
 }
 
 .ol-geo-search > .ol-geo-search-wrap > button.close {
-    background: url('/static/ucsrb/img/icon/i_close.svg') rgba(255,255,255,1) 50% 50% no-repeat;
+    background: url('/static/fishpass/img/icon/i_close.svg') rgba(255,255,255,1) 50% 50% no-repeat;
     background-size: 60%;
 }
 
@@ -502,7 +502,7 @@ Map controls
 }
 
 .layer-switcher button {
-    background: url('/static/ucsrb/img/icon/i_layers.svg') rgba(58,86,117,1) 50% no-repeat;
+    background: url('/static/fishpass/img/icon/i_layers.svg') rgba(58,86,117,1) 50% no-repeat;
     background-size: auto 60%;
 }
 
@@ -576,13 +576,13 @@ Map controls
 /* show grey icon */
 .layer-switcher .layer input[type="checkbox"] + label:before,
 .layer-switcher .layer input[type="radio"] + label:before {
-    background-image: url('/static/ucsrb/img/icon/i_invisible.svg');
+    background-image: url('/static/fishpass/img/icon/i_invisible.svg');
 }
 
 /* show light green icon */
 .layer-switcher .layer input[type="checkbox"]:checked + label:before,
 .layer-switcher .layer input[type="radio"]:checked + label:before {
-    background-image: url('/static/ucsrb/img/icon/i_visible_light.svg');
+    background-image: url('/static/fishpass/img/icon/i_visible_light.svg');
 }
 
 #map .tooltip {
