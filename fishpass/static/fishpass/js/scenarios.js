@@ -111,13 +111,14 @@ var madrona = {
                 dataType: 'json',
                 success: function(result) {
                     app.loadingAnimation.hide();
-                    app.state.setStep = 'result'; // go to results
-                    app.resultsInit(result['X-Madrona-Show']);
-                    app.viewModel.scenarios.addScenarioToMap(null, {uid: result['X-Madrona-Show']});
-                    app.viewModel.scenarios.loadingMessage(false);
-                    // clearInterval(barTimer);
-                    // app.viewModel.scenarios.loadCollectionsFromServer();
-                    console.log(`%c form submitted: %o`, 'color: green;', result);
+                    window.alert('TODO: redirect to report now!');
+                    // app.state.setStep = 'result'; // go to results
+                    // app.resultsInit(result['X-Madrona-Show']);
+                    // app.viewModel.scenarios.addScenarioToMap(null, {uid: result['X-Madrona-Show']});
+                    // app.viewModel.scenarios.loadingMessage(false);
+                    // // clearInterval(barTimer);
+                    // // app.viewModel.scenarios.loadCollectionsFromServer();
+                    // console.log(`%c form submitted: %o`, 'color: green;', result);
                 },
                 error: function(result) {
                     app.loadingAnimation.hide();
@@ -358,38 +359,31 @@ function scenarioFormModel(options) {
 
         (function() {
             var request = $.ajax({
-                url: '/scenario/get_filter_results',
+                url: '/scenarios/get_filter_results',
                 type: 'GET',
                 data: self.filters,
                 dataType: 'json',
                 success: function(data) {
                     if (self.currentGridRequest() === request) {
-                        var wkt = data[0].wkt,
-                            featureCount = data[0].count,
-                            area_m2 = data[0].area_m2;
-                            area_acres = data[0].area_acres;
-                            if (data[0].notes.length > 0) {
-                              self.filterNotesMessage(data[0].notes);
-                              self.filterNotesExist(true);
-                            }
+                        var geojson = data[0].geojson,
+                            featureCount = data[0].count;
+                        if (data[0].notes.length > 0) {
+                          self.filterNotesMessage(data[0].notes);
+                          self.filterNotesExist(true);
+                        }
                         self.updatedFilterResultsLayer.removeAllFeatures();
-                        if (featureCount && wkt) {
-                            self.updatedFilterResultsLayer.addWKTFeatures(wkt);
+                        if (featureCount && geojson) {
+                            // self.updatedFilterResultsLayer.addWKTFeatures(wkt);
+                            console.log('TODO: need to update Barriers layer with new GeoJSON now!')
                         }
                         self.updatedFilterResultsLayer.setVisibility(true);
-                        acres = area_acres;
-                        self.gridCellsRemaining(parseInt(acres) + ' acres');
+                        self.gridCellsRemaining(featureCount);
 
-                      if (parseInt(acres) < parseInt(app.map.draw.maxAcres)) {
-                          $('.submit_button').removeClass('disabled');
-                          $('#scenarios-form .alert').addClass('d-none');
-                      } else {
-                          if ($('#scenarios-form .alert').length > 0) {
-                              $('#scenarios-form .alert').removeClass('d-none');
-                          } else {
-                              $('#scenarios-form').append(`<div class="alert alert-warning" role="alert">Too large of area. Filter to less than ${app.map.draw.maxAcres} acres.`);
-                          }
-                      }
+                        if ($('#scenarios-form .alert').length > 0) {
+                            $('#scenarios-form .alert').removeClass('d-none');
+                        } else {
+                            $('#scenarios-form').append(`<div class="alert alert-warning" role="alert" data-bind="text: self.filterNotesMessage()"></div>`);
+                        }
 
                         self.showButtonSpinner(false);
                     }

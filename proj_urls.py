@@ -17,7 +17,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 ### INSERT ADDITIONAL IMPORTS HERE ###
 import accounts.urls
-import fishpass
+from fishpass.views import get_filter_results, get_filter_count
 ### END PROJECT URL IMPORTS ###
 
 urlpatterns = [
@@ -25,6 +25,8 @@ urlpatterns = [
     ### INSERT PROJECT URL INCLUDES HERE ###
     url(r'^features/', include('features.urls')),
     url(r'^manipulators/', include('manipulators.urls')),
+    url(r'^scenarios/get_filter_results', get_filter_results),
+    url(r'^scenarios/get_filter_count', get_filter_count),
     url(r'^scenarios/', include('scenarios.urls')),
     url(r'^account/auth/', include('social.apps.django_app.urls', namespace='social')),
     url(r'^accounts/', include('accounts.urls', namespace="account")),

@@ -244,11 +244,13 @@ class Project(Scenario):
     ]
 
     # RDH: Is focus region going to be a multipolygon clone of the FocusAreas selected?
-    focus_region = models.ForeignKey(FocusArea)
+    # focus_region = models.ForeignKey(FocusArea)
     # This sounds like the same thing as how focus_region is used above... RDH likes how this one will be cleaned up
     #   with any changed/deleted Project records.
-    target_area = gismodels.MultiPolygonField(srid=GEOMETRY_DB_SRID,
-    null=True, blank=True, verbose_name="Target Area")
+    # target_area = gismodels.MultiPolygonField(srid=GEOMETRY_DB_SRID,
+    # null=True, blank=True, verbose_name="Target Area")
+
+    target_area_input = models.TextField(blank=True,null=True,default=None,help_text="list of FocusArea IDs that make up the target area geometry")
 
     treat_downstream = models.CharField(max_length=30, default='consider', choices=settings.DS_TREATMENT_CHOICES)
 
@@ -267,7 +269,7 @@ class Project(Scenario):
     max_budget = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])
     batch_increment = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(1)])
 
-    objects = ShareableGeoManager()
+    # objects = ShareableGeoManager()
 
     # TODO: determine best way to store optipass results in scenario model
     # results = models.TextField(null=True,blank=True,default=None)
@@ -275,23 +277,19 @@ class Project(Scenario):
     def run_filters(self, query):
         # from scenarios.views import run_filter_query
         # Who calls this? Where does it go? When is the new layer created?
-        # import ipdb; ipdb.set_trace()
 
         filters = {}
         # TODO: If form.target_area?
-        if self.target_area:
-            # TODO: This should come in as stringified GeoJSON:
-            #   Convert to a Multipolygon and save to self.target_area
-            # filters['target_area'] = self.target_area
-            query = query.filter(geometry__intersects=self.taget_area)
+        # if self.target_area_input:
+        #     # TODO: This should come in as a list of focus area ids:
+        #     #   Convert to a Multipolygon
+        #     # filters['target_area'] = self.target_area
+        #     query = query.filter(geometry__intersects={Multipolygon})
 
         if self.ownership_input:
-            # filters['ownership_input'] = self.ownership_input
-            ownership_list = eval(self.ownership_input)
             ownership_keys = []
-            for key in ownership_list.keys():
-                if ownership_list[key]:
-                    ownership_keys.append(key)
+            for key in eval(self.ownership_input_checkboxes):
+                ownership_keys.append(int(key))
             query = query.filter(ownership_type__in=ownership_keys)
 
         # filters['treat_downstream'] = self.treat_downstream
@@ -308,6 +306,22 @@ class Project(Scenario):
         query = Barrier.objects.filter(pad_id__in=query_ids)
 
         return query
+
+    def run(self, result=None):
+        # if self.focus_area_input:
+        #     result = Barrier.objects.filter(geometry__intersects=self.focus_area_input.geometry)
+        # else:
+        result = Barrier.objects.all()
+        if result.count() > 0:
+            # return super(type(self), self).run(result)
+            result = self.run_filters(result)
+            self.active = True
+            if result.count() > 0:
+                self.satisfied = True
+            else:
+                self.satisfied = False
+
+        return result
 
     class Options:
         verbose_name = 'Project'

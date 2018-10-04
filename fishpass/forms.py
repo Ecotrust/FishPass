@@ -18,15 +18,23 @@ class HiddenScenarioBooleanField(forms.BooleanField):
     )
 
 class ProjectForm(ScenarioForm):
-    from fishpass.models import FocusArea
+    from fishpass.models import FocusArea, OwnershipType
 
     # TODO: Select FocusArea Layer
 
-    target_area = HiddenScenarioBooleanField(
-        label="Filter By Boundary",
-        help_text="This should be true: ALWAYS",
-        initial=True
-    )
+    # focus_region = HiddenScenarioBooleanField(
+    #     label="Filter By Boundary",
+    #     help_text="This should be true: ALWAYS",
+    #     initial=True,
+    #     required=False,
+    # )
+    #
+    # target_area = HiddenScenarioBooleanField(
+    #     label="Filter By Boundary",
+    #     help_text="This should be true: ALWAYS",
+    #     initial=True,
+    #     required=False,
+    # )
 
     target_area_input = forms.CharField(
         widget=forms.Textarea,
@@ -39,7 +47,8 @@ class ProjectForm(ScenarioForm):
         choices = settings.DS_TREATMENT_CHOICES,
         label="Downstream Treatment",
         help_text="Should downstream mitigation be an option ('adjustable'), should downstream passability be considered in optimization ('non-adjustable'), or completely ignored ('excluded')?",
-        required=True,
+        # required=True,
+        required=False,
         initial='consider'
     )
 
@@ -52,13 +61,16 @@ class ProjectForm(ScenarioForm):
     ownership_input = HiddenScenarioBooleanField(
         label="Filter By Ownership",
         # help_text="This should be true: ALWAYS",
-        initial=False
+        initial=False,
+        required=False,
     )
 
     ownership_input_options = ((x, settings.OWNERSHIP_LOOKUP[x]) for x in settings.OWNERSHIP_LOOKUP.keys())
-    initial_ownership = (x for x in settings.OWNERSHIP_LOOKUP.keys())
+    initial_ownership = list(set([str(x.id) for x in OwnershipType.objects.all()] + [x for x in settings.OWNERSHIP_LOOKUP.keys()]))
+
     ownership_input_checkboxes = forms.MultipleChoiceField(
-        required=True,
+        # required=True,
+        required=False,
         choices=ownership_input_options,
         widget=forms.CheckboxSelectMultiple(),
         initial=initial_ownership,
@@ -176,6 +188,41 @@ class ProjectForm(ScenarioForm):
                     step_dict['fields'] = []
                 return_list.append(step_dict)
         return return_list
+
+    def clean_focus_area_input(self):
+        return FocusArea.objects.get(pk=self.cleaned_data['focus_area_input'])
+
+    def is_valid(self, *args, **kwargs):
+        if len(self.errors.keys()) == 1 and 'ownership_input_checkboxes' in self.errors.keys() and len(self.errors['ownership_input_checkboxes']) == 1 and 'is not one of the available choices.' in self.errors['ownership_input_checkboxes'][0]:
+            del self._errors['ownership_input_checkboxes']
+        return super(ScenarioForm, self).is_valid()
+
+    def clean(self):
+        super(FeatureForm, self).clean()
+        try:
+            if 'ownership_input_checkboxes' not in self.cleaned_data.keys() and self.cleaned_data['ownership_input'] == True:
+                checkdata = self.data.getlist('ownership_input_checkboxes')
+                checklist = False
+                for box in checkdata:
+                    if not box == 'False':
+                        checklist = True
+                        self.cleaned_data['ownership_input_checkboxes'] = str([str(x) for x in box.split(',')])
+                if not checklist:
+                    self.data.__delitem__('ownership_input_checkboxes')
+        except Exception as e:
+            print(e)
+            pass
+        return self.cleaned_data
+
+    # def save(self, commit=True):
+    #     inst = super(TreatmentScenarioForm, self).save(commit=True)
+    #     inst.aggregate_report = inst.aggregate_results()
+    #     # if self.data.get('clear_support_file'):
+    #     #     inst.support_file = None
+    #     if commit:
+    #         inst.save()
+    #     return inst
+
 
     class Meta(ScenarioForm.Meta):
         model = Project

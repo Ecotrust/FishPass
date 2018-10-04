@@ -604,7 +604,6 @@ app.map.layer = {
             geometry: new ol.geom.Point(features[i].geometry.coordinates),
             id: features[i].properties.pad_id
           });
-          console.log(feature);
           feature.setStyle(app.map.styles.Point);
           app.map.layer.barriers.layer.getSource().addFeature(feature);
         }
@@ -662,8 +661,8 @@ app.map.layer = {
     }
 };
 
-app.map.layer.scenarios.layer.set('id','scenarios');
-app.map.layer.planningUnits.layer.set('id', 'planningUnits');
+// app.map.layer.scenarios.layer.set('id','scenarios');
+// app.map.layer.planningUnits.layer.set('id', 'planningUnits');
 
 app.map.overlays = false;
 for (var i=0; i < app.map.getLayers().getArray().length; i++) {

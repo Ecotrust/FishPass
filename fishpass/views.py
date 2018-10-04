@@ -95,6 +95,49 @@ def run_filter_query(filters):
 
     return (query, notes)
 
+'''
+'''
+@cache_page(60 * 60) # 1 hour of caching
+def get_filter_count(request, query=False, notes=[]):
+    from django.db.models.query import QuerySet
+    from django.contrib.gis.db.models.query import GeoQuerySet
+    if not type(query) in [QuerySet, GeoQuerySet] :
+        filter_dict = dict(request.GET.items())
+        (query, notes) = run_filter_query(filter_dict)
+    return HttpResponse(query.count(), status=200)
+
+'''
+'''
+@cache_page(60 * 60) # 1 hour of caching
+def get_filter_results(request, query=False, notes=[], extra_context={}):
+    from features.views import check_user
+    request = check_user(request)
+    from django.db.models.query import QuerySet
+    from django.contrib.gis.db.models.query import GeoQuerySet
+    if not type(query) in [QuerySet, GeoQuerySet] :
+        filter_dict = dict(request.GET.items())
+        (query, notes) = run_filter_query(filter_dict)
+    count = query.count()
+    #TODO: get geojson. Update Barrier layer on return if ('show filter results' = True)
+    geojson = None
+
+    results_dict = {
+        'count': count,
+        'geojson': geojson,
+        'notes': notes
+    }
+    try:
+        # For Py 3.5 and better:
+        return_dict = {**results_dict, **extra_context}
+    except:
+        return_dict = results_dict
+        for key in extra_context.keys():
+            return_dict[key] = extra_context[key]
+    return_json = [return_dict]
+
+    # return # of grid cells and dissolved geometry in geojson
+    return HttpResponse(json.dumps(return_json))
+
 # @cache_page(60 * 60) # 1 hour of caching
 def get_barrier_layer(request, project=None, query=False, notes=[],extra_context={}):
     from features.views import check_user
