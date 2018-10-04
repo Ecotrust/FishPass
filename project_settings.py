@@ -174,23 +174,28 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.contenttypes',
     'django.contrib.gis',
+    'django.contrib.flatpages',
     'marineplanner',
     'core',
     'compressor',
+    'captcha',
+    'import_export',
+    # 'social.apps.django_app.default',
+    # 'social_django',
     ### BEGIN INSERTED INSTALLED APPS ###
     'fishpass',
     'features',
     'manipulators',
-    'scenarios',
     'accounts',
     'data_manager',
-    'drawing',
-    'rpc4django',
     'visualize',
     'nursery',
-    'django.contrib.flatpages',
+    'drawing',
+    'rpc4django',
+    'analysistools',
+    'scenarios',
     ### END INSERTED INSTALLED APPS ###
-    'captcha',
+    'ckeditor',
 ]
 
 # GET_SCENARIOS_URL = '/get_scenarios'
