@@ -190,6 +190,7 @@ class ProjectForm(ScenarioForm):
         return return_list
 
     def clean_focus_area_input(self):
+        import ipdb; ipdb.set_trace()
         return FocusArea.objects.get(pk=self.cleaned_data['focus_area_input'])
 
     def is_valid(self, *args, **kwargs):
@@ -214,14 +215,14 @@ class ProjectForm(ScenarioForm):
             pass
         return self.cleaned_data
 
-    # def save(self, commit=True):
-    #     inst = super(TreatmentScenarioForm, self).save(commit=True)
-    #     inst.aggregate_report = inst.aggregate_results()
-    #     # if self.data.get('clear_support_file'):
-    #     #     inst.support_file = None
-    #     if commit:
-    #         inst.save()
-    #     return inst
+    def save(self, commit=True):
+        import ipdb; ipdb.set_trace()
+        inst = super(ProjectForm, self).save(commit=True)
+        # TODO: Run OptiPass
+        from fishpass.views import optipass
+        inst = optipass(inst)
+        inst.save()
+        return inst
 
 
     class Meta(ScenarioForm.Meta):

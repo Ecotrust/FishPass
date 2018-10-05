@@ -223,20 +223,9 @@ class FocusArea(models.Model):
         else:
             return u'%s: %s' % (self.unit_type, self.unit_id)
 
-# TODO: Move this logic (and caller) into views.py
-def get_ds_ids(barrier, barrier_pad_ids, ds_ids):
-    if barrier.downstream_id not in barrier_pad_ids and barrier.downstream_id not in ds_ids:
-        ds_ids.append(barrier.downstream_id)
-    try:
-        ds_barrier = Barrier.objects.get(pad_id=downstream_id)
-        ds_ids = get_ds_ids(ds_barrier, barrier_pad_ids, ds_ids)
-    except:
-        pass
-    return ds_ids
-
 @register
 class Project(Scenario):
-    from features.managers import ShareableGeoManager
+    # from features.managers import ShareableGeoManager
     # OWNERSHIP_CHOICES = [(key, settings.OWNERSHIP_LOOKUP[key]) for key in settings.OWNERSHIP_LOOKUP.keys()]
     BUDGET_CHOICES = [
         ('budget','Fixed Budget'),
@@ -275,6 +264,7 @@ class Project(Scenario):
     # results = models.TextField(null=True,blank=True,default=None)
 
     def run_filters(self, query):
+        from fishpass.views import get_ds_ids
         # from scenarios.views import run_filter_query
         # Who calls this? Where does it go? When is the new layer created?
 
@@ -293,18 +283,13 @@ class Project(Scenario):
             query = query.filter(ownership_type__in=ownership_keys)
 
         # filters['treat_downstream'] = self.treat_downstream
-        if self.treat_downstream == 'ignore':
-            return query
-        else:
+        if self.treat_downstream == 'adjust':
             barrier_pad_ids = [x.pad_id for x in query]
             ds_ids = []
             for barrier in query:
                 ds_ids = get_ds_ids(barrier, barrier_pad_ids, ds_ids)
-
-        # TODO: How to apply knowledge of DS vs barriers in target area?
-        query_ids = barrier_pad_ids + ds_ids
-        query = Barrier.objects.filter(pad_id__in=query_ids)
-
+            query_ids = barrier_pad_ids + ds_ids
+            query = Barrier.objects.filter(pad_id__in=query_ids)
         return query
 
     def run(self, result=None):
