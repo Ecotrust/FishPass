@@ -37,6 +37,7 @@ FishPass - Web Frontend Interface for OptiPass
 1. Enable Anonymous User
    * TODO: decide if this is a valid use case, document if so.
 1. See steps below for installing OptiPass
+1. `dj import_focus_areas /usr/local/apps/marineplanner-core/apps/FishPass/layers/counties.zip County`
    
 ### Production Server Setup:
 #### Bootstrap MarinePlanner
@@ -110,6 +111,11 @@ Load Data:
    * NOTE: This directory will be available when Ryan merges the OptiPass branch in
 1. `sudo chmod +x /usr/local/apps/marineplanner-core/apps/FishPass/OptiPass/OptiPassMain.out`
 1. [Install and Configure Instructions](https://github.com/Ecotrust/FishPass/wiki/Installing-OptiPass-Executable)
+
+#### Import FocusAreas
+1. `dj import_focus_areas /usr/local/apps/marineplanner-core/apps/FishPass/layers/counties.zip County`
+   * you will have to change the file and supplied Focus Area type for other layers
+   * See project_settings.py's FOCUS_AREA_TYPES for the other options
 
 #### Install and Configure NGINX and UWSGI
 1. Copy configuration script:
