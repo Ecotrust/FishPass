@@ -103,6 +103,13 @@ Create Shortcut 'dj':
 Load Data:
 1. `dj import_PAD /usr/local/apps/marineplanner-core/apps/FishPass/input_files/FISHPass_Input_20180410.xls`
 
+#### Install Optipass
+1. Get a copy of the OptiPass command line executable (c) Jesse O'Hanley
+1. Copy it to /usr/local/apps/marineplanner-core/apps/FishPass/OptiPass/
+   * NOTE: This directory will be available when Ryan merges the OptiPass branch in
+1. `sudo chmod +x /usr/local/apps/marineplanner-core/apps/FishPass/OptiPass/OptiPassMain.out`
+1. Install libCbc.so.3 (instructions coming...)
+
 #### Install and Configure NGINX and UWSGI
 1. Copy configuration script:
    * `ln -s /usr/local/apps/marineplanner-core/apps/FishPass/scripts/configure_production.sh /usr/local/apps/marineplanner-core/scripts/`
