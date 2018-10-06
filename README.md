@@ -36,6 +36,7 @@ FishPass - Web Frontend Interface for OptiPass
       * In what order
 1. Enable Anonymous User
    * TODO: decide if this is a valid use case, document if so.
+1. See steps below for installing OptiPass
    
 ### Production Server Setup:
 #### Bootstrap MarinePlanner
@@ -108,7 +109,7 @@ Load Data:
 1. Copy it to /usr/local/apps/marineplanner-core/apps/FishPass/OptiPass/
    * NOTE: This directory will be available when Ryan merges the OptiPass branch in
 1. `sudo chmod +x /usr/local/apps/marineplanner-core/apps/FishPass/OptiPass/OptiPassMain.out`
-1. Install libCbc.so.3 (instructions coming...)
+1. [Install and Configure Instructions](https://github.com/Ecotrust/FishPass/wiki/Installing-OptiPass-Executable)
 
 #### Install and Configure NGINX and UWSGI
 1. Copy configuration script:
