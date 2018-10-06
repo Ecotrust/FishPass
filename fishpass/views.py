@@ -192,10 +192,11 @@ def get_ds_ids(barrier, barrier_pad_ids, ds_ids):
         pass
     return ds_ids
 
-def createOptiPassInputFile(project):
+def createOptiPassInputFile(project, file_location):
     from fishpass.models import FocusArea, Barrier, ScenarioBarrier, ScenarioBarrierType, ScenarioBarrierStatus, BarrierType, BarrierStatus
-    # TODO: get list of barriers - can get from project.run(), but do these include downstream? How to know?
-    barriers = project.run()
+    from datetime import datetime
+    # get list of barriers
+    barriers = [x for x in project.run()]
     # get downstream barriers
     # if treat_downstream is 'adjust', ds_ids are already in barriers. If 'ignore' we don't want them.
     ds_barriers = []
@@ -204,24 +205,31 @@ def createOptiPassInputFile(project):
         barrier_pad_ids = [x.pad_id for x in barriers]
         for barrier in barriers:
             ds_ids = get_ds_ids(barrier, barrier_pad_ids, ds_ids)
+        if 0 in ds_ids:
+            ds_ids.remove(0)
         for ds_id in ds_ids:
-            ds_barriers.append(Barrier.objects.get(pad_id=ds_id))
+            ds_barriers.append(Barrier.objects.get(pad_id=int(ds_id)))
 
-    #   determine how to handle different downstream treatment strategies
-    file_location = '/media/input/%s.csv' % project.uid
-    # write csv to file_location
     barrier_dicts = []
-    # Determine headers
-    extra_headers = []
-    fa_ids = FocusArea.objects.filter(id__in=eval(project.target_area_input))
+    if len(project.target_area_input) > 1:
+        fa_ids = FocusArea.objects.filter(id__in=eval(project.target_area_input))
+    else:
+        fa_ids = FocusArea.objects.filter(unit_type='County')
+
     if fa_ids.count() < 1:
         raise Exception('ERROR: fishpass.views.createOptiPassInputFile -- fa_ids MUST be at least 1!!!')
 
+    startLoopTime = datetime.now()
     for barrier in barriers + ds_barriers:
-        include = True
         prepass = False
         postpass = False
         cost = False
+        # NPROJ: The number of actions that can be taken on a barrier. This is not able to be greater than 1
+        #   for the purposes of this tool
+        nproj = 0
+        # ACTION: Force project to be in the mitigation solution, 0<=consider, -1<=never, nproj<=force
+        action = 0
+        # FOCUS: Is the barrier in the focus area or not?
         if barrier in barriers:
             focus=1
         else:
@@ -233,15 +241,14 @@ def createOptiPassInputFile(project):
             project_barrier = proj_barrier_records[0]
             prepass = project_barrier.pre_pass
             postpass = project_barrier.post_pass
-            cost = project_barrier.cost
+            if project_barrier.cost:
+                cost = project_barrier.cost
             if project_barrier.action == 'include':
-                focus = 1
-                nproj = 1
-                # action = 1
+                action = 1
             elif project_barrier.action == 'consider':
-                nproj = 1
-            else:
-                include = False
+                action = 0
+            elif project_barrier.action == 'exclude':
+                action = -1
         if not prepass:
             proj_status_records = ScenarioBarrierStatus.objects.filter(project=project,barrier_status=barrier.barrier_status)
             if proj_status_records.count() == 1:
@@ -260,28 +267,135 @@ def createOptiPassInputFile(project):
                 postpass = barrier.site_type.default_post_passability
             if not cost:
                 cost = barrier.site_type.default_cost
+        if not cost or not str(cost).is_numeric():
+            nproj = 0
+            cost = "NA"
+        elif not project.assign_cost:
+            cost = 1
 
-        if include:
-            barrier_dict = {
-                'BARID': barrier.pad_id,
-                'REGION': FocusArea.get(geometry__intersects=barrier.geometry, unit_type=fa_ids[0].unit_type).description,    # I wonder if this should be a stringified ID
-                'FOCUS': focus,
-                'DSID': barrier.downstream_id,
-                'USHAB': barrier.upstream_miles,
-                'PREPASS': prepass,
-                # 'NPROJ': nproj,
-                # 'ACTION': action,
-                # 'COST': cost,
-                # 'POSTPASS': postpass
-            }
-        # for header in extra_headers: (COST#, POSTPASS#)
+        if not barrier.downstream_id or barrier.downstream_id == 0:
+            dsid = "NA"
+        else:
+            dsid = barrier.downstream_id
 
+        barrier_dict = {
+            'BARID': barrier.pad_id,
+            'REGION': FocusArea.objects.get(geometry__covers=barrier.geometry, unit_type=fa_ids[0].unit_type).description,    # I wonder if this should be a stringified ID
+            'FOCUS': focus,
+            'DSID': dsid,
+            'USHAB': barrier.upstream_miles,
+            'PREPASS': prepass,
+            'NPROJ': nproj,
+            'ACTION': action,
+            'COST': cost,
+            'POSTPASS': postpass,
+        }
 
+        barrier_dicts.append(barrier_dict)
+
+    endLoopTime = datetime.now()
+    if (endLoopTime-startLoopTime).total_seconds() > 10:
+        print("Time to gather barrier data: %s" % str((endLoopTime - startLoopTime).total_seconds()))
+    # write csv to file_location
+    import csv
+    fieldnames = ['BARID','REGION','FOCUS','DSID','USHAB','PREPASS','NPROJ','ACTION']
+    if len(barrier_dict.keys()) == len(fieldnames) + 2:
+        fieldnames = fieldnames + ['COST','POSTPASS']
+    else:
+        num_runs = (len(barrier_dict.keys()) - len(fieldnames))/2
+        for count in [x for x in range(1,num_rows+1)]:
+            fieldnames.append('COST%d' % count)
+            fieldnames.append('POSTPASS%d' % count)
+    with open(file_location, 'w') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        for bar_dict in barrier_dicts:
+            writer.writerow(bar_dict)
     return file_location
 
+def addOutfileToReport(outfile, project):
+    # working off the assumption that we aren't passing wieghts, or multiple
+    #   projects or targets, this header should stay consistent
+
+    from fishpass.models import ProjectReport, ProjectReportBarrier
+    report_dict = {'project': project}
+    report_obj = False
+    errors = None
+
+    with open(outfile) as txt:
+        for row in txt:
+            if report_obj:
+                if not row == '\n' and 'BARID' not in row and 'ACTION' not in row and '\t' in row:
+                    try:
+                        barrier_record = row.split('\t')
+                        if int(barrier_record[1]) in [0,1]:
+                            ProjectReportBarrier.objects.create(project_report=report_obj, barrier_id=barrier_record[0], action=int(barrier_record[1]))
+                    except:
+                        if errors:
+                            pass
+                        else:
+                            errors = True
+                            import ipdb; ipdb.set_trace()
+            else:
+                if 'BUDGET:' in row:
+                    report_dict['budget'] = float(row.split('\t')[1])
+                elif 'STATUS:' in row:
+                    report_dict['status'] = row.split('\t')[1].split('\n')[0]
+                elif '%OPTGAP:' in row:
+                    report_dict['optgap'] = float(row.split('\t')[1])
+                elif 'PTNL_HABITAT:' in row:
+                    report_dict['ptnl_habitat'] = float(row.split('\t')[1])
+                elif 'NETGAIN:' in row:
+                    report_dict['netgain'] = float(row.split('\t')[1])
+                elif row == '\n':
+                    report_obj, created = ProjectReport.objects.get_or_create(**report_dict)
 
 def optipass(project):
-    input_file = createOptiPassInputFile(project)
+    import os, shutil, subprocess
+    csv_dir = '/tmp/%s' % project.uid
+    os.mkdir(csv_dir)
+    input_file = os.path.join(csv_dir,'input.csv')
+    createOptiPassInputFile(project, input_file)
+    # Sort out batch or budget soln
+    budget_list = []
+    if project.budget_type == 'batch':
+        itr_budget = project.min_budget
+        while itr_budget < project.max_budget:
+            budget_list.append(itr_budget)
+            itr_budget += project.batch_increment
+        budget_list.append(project.max_budget)
+    else:
+        budget_list.append(project.budget)
+
+    # Downstream treatment strategy
+    if project.treat_downstream == 'adjust':
+        dsbar_impacts = 0
+    elif project.treat_downstream == 'ignore':
+        dsbar_impacts = 2
+    else:
+        dsbar_impacts = 1
+
+    # Craft command
+    for count, budget in enumerate(budget_list):
+        outfile = "%s/output_%d.txt" % (csv_dir, count)
+        process_list = [
+            settings.OPTIPASS_PROGRAM,
+            "-f", input_file,
+            "-o", outfile,
+            "-b", str(budget),
+            "-d", str(dsbar_impacts),
+            ">", "/dev/null", "2>&1"    #Let's not overload our logs with the output
+        ]
+
+        # Run Command
+        subprocess.run(process_list)
+
+        # Convert output into project report
+        addOutfileToReport(outfile, project)
+
+    # Delete input file (AND output, if one created)
+    shutil.rmtree(csv_dir)
+    return project
 
 
 def get_report(request, projid, template=loader.get_template('fishpass/report.html'), context={'title': 'FishPASS - Report'}):

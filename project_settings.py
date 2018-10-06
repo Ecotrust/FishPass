@@ -20,6 +20,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ASSETS_DIR = os.path.realpath(os.path.join(BASE_DIR, '..', 'assets'))
 STYLES_DIR = os.path.realpath(os.path.join(ASSETS_DIR, 'styles'))
 
+OPTIPASS_PROGRAM = os.path.realpath(os.path.join(BASE_DIR, '..', 'apps', 'FishPass', 'OptiPass', 'OptiPassMain.out'))
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
@@ -219,6 +221,7 @@ FOCUS_AREA_FIELD_ID_LOOKUP = {
     'Region': 'region_id',
     'State': 'state_id'
 }
+# This is only used for importing the PAD. Geometry_DB_SRID is used for import FocusAreas
 IMPORT_SRID = 4326
 
 # Setting internal DB SRID to an Equal Area projection would allow us to natively calculate area.

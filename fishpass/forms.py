@@ -216,9 +216,8 @@ class ProjectForm(ScenarioForm):
         return self.cleaned_data
 
     def save(self, commit=True):
-        import ipdb; ipdb.set_trace()
         inst = super(ProjectForm, self).save(commit=True)
-        # TODO: Run OptiPass
+        # Run OptiPass
         from fishpass.views import optipass
         inst = optipass(inst)
         inst.save()

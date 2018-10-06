@@ -225,7 +225,7 @@ class FocusArea(models.Model):
 
 @register
 class Project(Scenario):
-    # from features.managers import ShareableGeoManager
+    from features.managers import ShareableGeoManager
     # OWNERSHIP_CHOICES = [(key, settings.OWNERSHIP_LOOKUP[key]) for key in settings.OWNERSHIP_LOOKUP.keys()]
     BUDGET_CHOICES = [
         ('budget','Fixed Budget'),
@@ -252,15 +252,15 @@ class Project(Scenario):
     ownership_input = models.BooleanField(default=False,verbose_name="Select ownership types")
     ownership_input_checkboxes = models.TextField(blank=True, null=True, default=None)
     assign_cost = models.BooleanField(default=True,verbose_name="Assign Barrier Costs",help_text="Consider the unique cost of mitigating each barrier by $")
-    budget_type = models.CharField(max_length=40, default='budget', verbose_name="Fixed Budget or Range")
+    budget_type = models.CharField(max_length=40, default='budget', choices=BUDGET_CHOICES, verbose_name="Fixed Budget or Range")
     budget = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])
     min_budget = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])
     max_budget = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])
     batch_increment = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(1)])
 
-    # objects = ShareableGeoManager()
+    objects = ShareableGeoManager()
 
-    # TODO: determine best way to store optipass results in scenario model
+    # See ProjectReport and ProjectReportBarrier
     # results = models.TextField(null=True,blank=True,default=None)
 
     def run_filters(self, query):
@@ -331,6 +331,20 @@ class Project(Scenario):
         # form_template = 'fishpass/project_form.html'
         # show_template = 'scenarios/show.html'
         show_template = 'fishpass/demo.html'
+
+class ProjectReport(models.Model):
+    project = models.ForeignKey(Project)
+    budget = models.IntegerField()
+    status = models.CharField(max_length=10)
+    optgap = models.FloatField(verbose_name='percent optimality gap')
+    ptnl_habitat = models.FloatField(verbose_name='potential habitat')
+    netgain = models.FloatField(verbose_name='net gain')
+
+class ProjectReportBarrier(models.Model):
+    project_report = models.ForeignKey(ProjectReport)
+    barrier_id = models.CharField(max_length=50)
+    action = models.IntegerField()
+
 
 # outside of scenario model, between pad and user entry
 class ScenarioBarrier(models.Model):

@@ -95,9 +95,9 @@ class Command(BaseCommand):
             if in_type == 'HUC12':
                 id_field = 'HUC_12'
                 desc_field = 'HU_12_NAME'
-            if in_type == 'RMU':
-                id_field = 'ET_UID'
-                desc_field = 'MgmtDescri'
+            if in_type == 'County':
+                id_field = 'CNTYIDFP'
+                desc_field = 'NAME'
             # if in_type == 'PourPoint':
             #     id_field = 'ppt_ID'
             if in_type == 'PourPointOverlap':
@@ -129,7 +129,7 @@ class Command(BaseCommand):
                     description = str(shapeRecord.record[unit_desc_index])
                 else:
                     description = None
-                geometry = GEOSGeometry(json.dumps(shapeRecord.shape.__geo_interface__), srid=settings.IMPORT_SRID)
+                geometry = GEOSGeometry(json.dumps(shapeRecord.shape.__geo_interface__), srid=settings.GEOMETRY_DB_SRID)
                 if geometry.geom_type == 'Polygon':
                     multiGeometry = MultiPolygon((geometry))
                 elif geometry.geom_type == 'MultiPolygon':
