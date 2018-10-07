@@ -357,15 +357,11 @@ class ProjectReport(models.Model):
             cache_key = "%s_barriers" % self.uid()
         barrier_dict = cache.get(cache_key)
         if not barrier_dict:
-            print('========= Creating new barrier_dict ============')
-            # TODO: Add 'barriers' to this dict, lump entire report into 1 go.
             if action_only:
                 barriers = ProjectReportBarrier.objects.filter(project_report=self, action=1).order_by('barrier_id')
             else:
                 barriers = ProjectReportBarrier.objects.filter(project_report=self).order_by('barrier_id')
             barrier_dict = {}
-            print('========= Finding Barriers ============')
-            print('Barrier Count: %d' % barriers.count())
             for barrier in barriers:
                 barrier_object = Barrier.objects.get(pad_id=int(barrier.barrier_id))
                 barrier_dict[barrier.barrier_id] = barrier_object.to_dict()
@@ -375,11 +371,7 @@ class ProjectReport(models.Model):
                     barrier_dict[barrier.barrier_id]['action'] = 'Do not treat'
 
             # Cache for 1 week, will be reset if layer data changes
-            print('========= setting key %s ============' % cache_key)
             cache.set(cache_key, barrier_dict, 60*60*24*7)
-        else:
-            print('========= Cache Key found: %s ============' % cache_key)
-            print('Barrier Count: %d' % len(barrier_dict.keys()))
         return barrier_dict
 
     def to_dict(self):
