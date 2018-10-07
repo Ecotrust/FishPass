@@ -1,0 +1,15 @@
+h1 {
+  color: black;
+}
+
+h2 {
+  margin: 1.5em;
+}
+
+table {
+  margin: 2em;
+}
+
+table, th, td {
+  border: 1px solid black;
+}

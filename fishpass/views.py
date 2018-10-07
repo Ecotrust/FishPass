@@ -320,22 +320,14 @@ def addOutfileToReport(outfile, project):
     from fishpass.models import ProjectReport, ProjectReportBarrier
     report_dict = {'project': project}
     report_obj = False
-    errors = None
 
     with open(outfile) as txt:
         for row in txt:
             if report_obj:
                 if not row == '\n' and 'BARID' not in row and 'ACTION' not in row and '\t' in row:
-                    try:
-                        barrier_record = row.split('\t')
-                        if int(barrier_record[1]) in [0,1]:
-                            ProjectReportBarrier.objects.create(project_report=report_obj, barrier_id=barrier_record[0], action=int(barrier_record[1]))
-                    except:
-                        if errors:
-                            pass
-                        else:
-                            errors = True
-                            import ipdb; ipdb.set_trace()
+                    barrier_record = row.split('\t')
+                    if int(barrier_record[1]) in [0,1]:
+                        ProjectReportBarrier.objects.create(project_report=report_obj, barrier_id=barrier_record[0], action=int(barrier_record[1]))
             else:
                 if 'BUDGET:' in row:
                     report_dict['budget'] = float(row.split('\t')[1])
@@ -397,23 +389,40 @@ def optipass(project):
     shutil.rmtree(csv_dir)
     return project
 
-
+# TODO: Cache this! Delete cache on ProjectReport save
 def get_report(request, projid, template=loader.get_template('fishpass/report.html'), context={'title': 'FishPASS - Report'}):
     from features.registry import get_feature_by_uid
+    from fishpass.models import ProjectReport, ProjectReportBarrier
 
     #TODO: Get and verify user account || sharing permissions
     # verify user ownership of project
     project = get_feature_by_uid(projid)
+    action_only = False
+    if request.method == 'GET':
+        try:
+            action_only = request.GET['action_only']
+            if action_only:
+                action_only = True
+        except:
+            pass
+    if action_only:
+        report = ProjectReport.objects.get(project=project, action=1)
+    else:
+        report = ProjectReport.objects.get(project=project)
+    # barriers = ProjectReportBarriers.objects.filter(project=project).order_by('barrier_id')
 
     #TODO: generate geojson of solution
     #   Do this in a separate view
     #   Should come from scenarios.views.get_filter_results
     # TODO: sort out filter vs. all results
     #   this can be managed on front end
+    context['title'] = str(project)
     context['project'] = project.to_dict()
+    context['report'] = report.to_dict()
+    context['barriers'] = report.barriers_dict(action_only)
     return HttpResponse(template.render(context, request))
 
-def export_report(request):
+def export_report(request, projid):
     #TODO: generate report as 1 or more CSVs and export (zipped if necessary)
     return JsonResponse({})
 

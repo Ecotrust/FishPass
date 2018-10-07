@@ -263,6 +263,9 @@ class Project(Scenario):
     # See ProjectReport and ProjectReportBarrier
     # results = models.TextField(null=True,blank=True,default=None)
 
+    def __str__(self):
+        return self.name
+
     def run_filters(self, query):
         from fishpass.views import get_ds_ids
         # from scenarios.views import run_filter_query
@@ -339,6 +342,65 @@ class ProjectReport(models.Model):
     optgap = models.FloatField(verbose_name='percent optimality gap')
     ptnl_habitat = models.FloatField(verbose_name='potential habitat')
     netgain = models.FloatField(verbose_name='net gain')
+
+    def uid(self):
+        return "%s_report" % self.project.uid
+
+    def __str__(self):
+        return "%s Report" % str(self.project)
+
+    def barriers_dict(self, action_only=False):
+        from django.core.cache import cache
+        if action_only:
+            cache_key = "%s_barriers_action_only" % self.uid()
+        else:
+            cache_key = "%s_barriers" % self.uid()
+        barrier_dict = cache.get(cache_key)
+        if not barrier_dict:
+            print('========= Creating new barrier_dict ============')
+            # TODO: Add 'barriers' to this dict, lump entire report into 1 go.
+            if action_only:
+                barriers = ProjectReportBarrier.objects.filter(project_report=self, action=1).order_by('barrier_id')
+            else:
+                barriers = ProjectReportBarrier.objects.filter(project_report=self).order_by('barrier_id')
+            barrier_dict = {}
+            print('========= Finding Barriers ============')
+            print('Barrier Count: %d' % barriers.count())
+            for barrier in barriers:
+                barrier_object = Barrier.objects.get(pad_id=int(barrier.barrier_id))
+                barrier_dict[barrier.barrier_id] = barrier_object.to_dict()
+                if barrier.action == 1:
+                    barrier_dict[barrier.barrier_id]['action'] = 'Treat'
+                else:
+                    barrier_dict[barrier.barrier_id]['action'] = 'Do not treat'
+
+            # Cache for 1 week, will be reset if layer data changes
+            print('========= setting key %s ============' % cache_key)
+            cache.set(cache_key, barrier_dict, 60*60*24*7)
+        else:
+            print('========= Cache Key found: %s ============' % cache_key)
+            print('Barrier Count: %d' % len(barrier_dict.keys()))
+        return barrier_dict
+
+    def to_dict(self):
+        out_dict = {
+            'project': str(self.project),
+            'budget': self.budget,
+            'status': self.status,
+            'optgap': self.optgap,
+            'ptnl_habitat': self.ptnl_habitat,
+            'netgain': self.netgain,
+            'geojson': {}, # TODO
+        }
+
+        return out_dict
+
+    def save(self, *args, **kwargs):
+        from django.core.cache import cache
+        cache.delete("%s_barriers_action_only" % self.uid())
+        cache.delete("%s_barriers" % self.uid())
+        super(ProjectReport, self).save(*args, **kwargs)
+
 
 class ProjectReportBarrier(models.Model):
     project_report = models.ForeignKey(ProjectReport)

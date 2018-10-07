@@ -1,13 +1,52 @@
-{% extends "base.html" %}
+{% extends "fishpass/base.html" %}
 {% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'fishpass/css/report.css' %}">
+{% endblock extra_css %}
 
 {% block content %}
   <div id="map" class="map"></div>
   <section id="agg-report">
     <h1>Agg Report</h1>
+    <table>
+      <tr>
+        <th>Total Cost</th>
+        <th>Status</th>
+        <th>% Optimality Gap</th>
+        <th>Potential Habitat</th>
+        <th>Net Gain</th>
+      </tr>
+      <tr>
+        <td>{{ report.budget }}</td>
+        <td>{{ report.status }}</td>
+        <td>{{ report.optgap }}</td>
+        <td>{{ report.ptnl_habitat }}</td>
+        <td>{{ report.netgain}}</td>
+      </tr>
+    </table>
   </section>
   <section id="barrier-report">
     <h1>Barrier Report</h1>
+    {% for barrier_id,barrier_data in barriers.items %}
+      {% if forloop.counter < 5 %}
+        <h2>{{ barrier_id }}</h2>
+        <table>
+          {% for key,value in barrier_data.items %}
+            {% if key != 'pad_id' %}
+              <tr>
+                <th>{{ key }}</th>
+                <td>{{ value }}</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        </table>
+      {% else %}
+        {{ barrier_id }}
+      {% endif %}
+    {% endfor %}
+    <!-- <p>{/{ barriers }}</p> -->
+
   </section>
   <button>Download</button>
 {% endblock content %}
