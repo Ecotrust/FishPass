@@ -343,9 +343,11 @@ def addOutfileToReport(outfile, project):
                     report_obj, created = ProjectReport.objects.get_or_create(**report_dict)
 
 def optipass(project):
-    import os, shutil, subprocess
+    import os, shutil, stat, subprocess
     csv_dir = '/tmp/%s' % project.uid
     os.mkdir(csv_dir)
+    os.chmod(csv_dir, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+    shutil.chown(csv_dir, group=settings.PYTHON_USER_GROUP)
     input_file = os.path.join(csv_dir,'input.csv')
     createOptiPassInputFile(project, input_file)
     # Sort out batch or budget soln

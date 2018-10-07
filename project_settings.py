@@ -266,6 +266,8 @@ DS_TREATMENT_CHOICES = [
     ('ignore','Excluded'),
 ]
 
+PYTHON_USER_GROUP = 'adm'
+
 try:
     ### START MODULE SETTINGS IMPORT ###
     from features.settings import *
