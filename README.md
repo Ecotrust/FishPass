@@ -112,6 +112,13 @@ Load Data:
 1. `sudo chmod +x /usr/local/apps/marineplanner-core/apps/FishPass/OptiPass/OptiPassMain.out`
 1. [Install and Configure Instructions](https://github.com/Ecotrust/FishPass/wiki/Installing-OptiPass-Executable)
 
+#### User Permissions
+Files and folders created by the web-app will be performed by www-data, however OptiPass is likely to run as another user. To fix this, while logged in as the user you are using to install everything (most likely ubuntu), type the following:
+'''
+sudo usermod -a -G www-data ubuntu
+'''
+NOTE: You will need to change that last part if you are not running ubuntu.
+
 #### Import FocusAreas
 1. `dj import_focus_areas /usr/local/apps/marineplanner-core/apps/FishPass/layers/counties.zip County`
    * you will have to change the file and supplied Focus Area type for other layers
