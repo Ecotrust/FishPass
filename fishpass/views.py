@@ -344,7 +344,7 @@ def addOutfileToReport(outfile, project):
 
 def optipass(project):
     import os, subprocess
-    input_file = '%s_input.csv' % project.uid
+    input_file = os.path.join(settings.CSV_BASE_DIR, '%s_input.csv' % project.uid)
     createOptiPassInputFile(project, input_file)
     # Sort out batch or budget soln
     budget_list = []
@@ -367,7 +367,7 @@ def optipass(project):
 
     # Craft command
     for count, budget in enumerate(budget_list):
-        outfile = "%s_output_%d.txt" % (project.uid, count)
+        outfile = os.path.join(settings.CSV_BASE_DIR, "%s_output_%d.txt" % (project.uid, count))
         process_list = [
             settings.OPTIPASS_PROGRAM,
             "-f", input_file,
