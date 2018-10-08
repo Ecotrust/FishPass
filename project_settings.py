@@ -188,10 +188,8 @@ INSTALLED_APPS = [
     'features',
     'manipulators',
     'accounts',
-    'data_manager',
     'visualize',
     'nursery',
-    'drawing',
     'rpc4django',
     'analysistools',
     'scenarios',
@@ -277,8 +275,6 @@ try:
     from features.settings import *
     from scenarios.settings import *
     from accounts.settings import *
-    from data_manager.settings import *
-    from drawing.settings import *
     from visualize.settings import *
     ### END MODULE SETTINGS IMPORT ###
 except ImportError:
@@ -287,6 +283,9 @@ except ImportError:
 # Visualize Overrides
 
 SEARCH_DISABLED = True
+
+# Data-Manager Overrides (needed for Flatpages, not provided since data-manager was dropped)
+SITE_ID = 1
 
 
 # Accounts Overrides

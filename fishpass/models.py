@@ -19,6 +19,10 @@ class BarrierType(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = 'Barrier Type'
+        verbose_name_plural = 'Barrier Types'
+
 class BarrierStatus(models.Model):
     name = models.CharField(max_length=90)
     default_pre_passability = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],default=1.0, verbose_name='Pre-passability')
@@ -27,6 +31,10 @@ class BarrierStatus(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = 'Barrier Status'
+        verbose_name_plural = 'Barrier Statuses'
+
 class OwnershipType(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
@@ -34,6 +42,10 @@ class OwnershipType(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        verbose_name = 'Ownership Type'
+        verbose_name_plural = 'Ownership Types'
 
 class Barrier(models.Model):
     # PAD_ID
@@ -188,11 +200,19 @@ class Barrier(models.Model):
         self.geometry = Point(self.longitude, self.latitude,None,4326)
         super(Barrier, self).save(*args, **kwargs)
 
+    class Meta:
+        verbose_name = 'Barrier'
+        verbose_name_plural = 'Barriers'
+
 class BarrierCost(models.Model):
     # We want these to persist when new PAD imports are made, so we don't use FK to Barrier
     # However, we should delete any of these that no longer match a barrier after import
     pad_id = models.IntegerField(primary_key=True)
     cost = models.IntegerField(validators=[MinValueValidator(0.0)])
+
+    class Meta:
+        verbose_name = 'Barrier Cost'
+        verbose_name_plural = 'Barrier Costs'
 
 class FocusArea(models.Model):
     UNIT_TYPE_CHOICES = []
@@ -222,6 +242,10 @@ class FocusArea(models.Model):
             return u'%s' % self.description
         else:
             return u'%s: %s' % (self.unit_type, self.unit_id)
+
+    class Meta:
+        verbose_name = 'Focus Area'
+        verbose_name_plural = 'Focus Areas'
 
 @register
 class Project(Scenario):
@@ -335,6 +359,10 @@ class Project(Scenario):
         # show_template = 'scenarios/show.html'
         show_template = 'fishpass/demo.html'
 
+    class Meta:
+        verbose_name = 'Project'
+        verbose_name_plural = 'Projects'
+
 class ProjectReport(models.Model):
     project = models.ForeignKey(Project)
     budget = models.IntegerField()
@@ -393,11 +421,19 @@ class ProjectReport(models.Model):
         cache.delete("%s_barriers" % self.uid())
         super(ProjectReport, self).save(*args, **kwargs)
 
+    class Meta:
+        verbose_name = 'Project Report'
+        verbose_name_plural = 'Project Reports'
+
 
 class ProjectReportBarrier(models.Model):
     project_report = models.ForeignKey(ProjectReport)
     barrier_id = models.CharField(max_length=50)
     action = models.IntegerField()
+
+    class Meta:
+        verbose_name = 'Project Report Barrier'
+        verbose_name_plural = 'Project Report Barriers'
 
 
 # outside of scenario model, between pad and user entry
@@ -414,6 +450,10 @@ class ScenarioBarrier(models.Model):
     cost = models.FloatField(null=True,blank=True,default=None,verbose_name="Estimated cost to mitigate")
     action = models.CharField(max_length= 30, choices=ACTION_CHOICES, default='consider')
 
+    class Meta:
+        verbose_name = 'Project-Specific Barrier Setting'
+        verbose_name_plural = 'Project-Specific Barrier Settings'
+
 class ScenarioBarrierType(models.Model):
     project = models.ForeignKey(Project)
     barrier_type = models.ForeignKey(BarrierType)
@@ -422,24 +462,15 @@ class ScenarioBarrierType(models.Model):
     fixable = models.BooleanField(default=True)
     barrier_specific = models.BooleanField(default=False)
 
+    class Meta:
+        verbose_name = 'Project-Specific Barrier Type Setting'
+        verbose_name_plural = 'Project-Specific Barrier Type Settings'
+
 class ScenarioBarrierStatus(models.Model):
     project = models.ForeignKey(Project)
     barrier_status = models.ForeignKey(BarrierStatus)
     default_pre_passability = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],default=1.0, verbose_name='Pre-passability')
 
-#class Default(models.Model):
-# No. Barriers (no need)
-# HUC size (?)
-# Cost method (defaults)
-# Barrier Status (own model)
-# Weightings (outside of scope)
-# Site Type (own model)
-# Ownership (own model)
-# PAD ESU/DPS (outside of scope)
-# Species/ESU/DPS (outside of scope)
-# HUC12/Name/Region (Focus Area + shapefiles)
-# Code/Region (Focus Area)
-
-#class DefaultCost(models.Model):
-# PAD_ID/SiteType/Comments(1/2/3) (Barrier)
-# Cost (BarrierCost)
+    class Meta:
+        verbose_name = 'Project-Specific Barrier Status Setting'
+        verbose_name_plural = 'Project-Specific Barrier Status Settings'
