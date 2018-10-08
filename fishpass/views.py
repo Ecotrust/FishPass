@@ -343,12 +343,8 @@ def addOutfileToReport(outfile, project):
                     report_obj, created = ProjectReport.objects.get_or_create(**report_dict)
 
 def optipass(project):
-    import os, shutil, stat, subprocess
-    csv_dir = '/tmp/%s' % project.uid
-    os.mkdir(csv_dir)
-    os.chmod(csv_dir, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
-    shutil.chown(csv_dir, group=settings.PYTHON_USER_GROUP)
-    input_file = os.path.join(csv_dir,'input.csv')
+    import os, subprocess
+    input_file = '%s_input.csv' % project.uid
     createOptiPassInputFile(project, input_file)
     # Sort out batch or budget soln
     budget_list = []
@@ -371,7 +367,7 @@ def optipass(project):
 
     # Craft command
     for count, budget in enumerate(budget_list):
-        outfile = "%s/output_%d.txt" % (csv_dir, count)
+        outfile = "%s_output_%d.txt" % (project.uid, count)
         process_list = [
             settings.OPTIPASS_PROGRAM,
             "-f", input_file,
@@ -387,11 +383,13 @@ def optipass(project):
         # Convert output into project report
         addOutfileToReport(outfile, project)
 
-    # Delete input file (AND output, if one created)
-    shutil.rmtree(csv_dir)
+        # remove output file
+        os.remove(outfile)
+
+    # Delete input file
+    os.remove(input_file)
     return project
 
-# TODO: Cache this! Delete cache on ProjectReport save
 def get_report(request, projid, template=loader.get_template('fishpass/report.html'), context={'title': 'FishPASS - Report'}):
     from features.registry import get_feature_by_uid
     from fishpass.models import ProjectReport, ProjectReportBarrier
@@ -411,7 +409,6 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
         report = ProjectReport.objects.get(project=project, action=1)
     else:
         report = ProjectReport.objects.get(project=project)
-    # barriers = ProjectReportBarriers.objects.filter(project=project).order_by('barrier_id')
 
     #TODO: generate geojson of solution
     #   Do this in a separate view
@@ -426,13 +423,4 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
 
 def export_report(request, projid):
     #TODO: generate report as 1 or more CSVs and export (zipped if necessary)
-    return JsonResponse({})
-
-def run_optipass(request):
-    # get scenario ID from request
-    # get scenario object
-    # convert scenario into optipass input format
-    # run optipass command
-    # consume optipass output
-    # save results to scenario object
     return JsonResponse({})

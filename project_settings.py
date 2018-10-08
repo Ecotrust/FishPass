@@ -268,6 +268,10 @@ DS_TREATMENT_CHOICES = [
 
 PYTHON_USER_GROUP = 'adm'
 
+MEDIA_ROOT = os.path.realpath(os.path.join(BASE_DIR, '..', 'apps', 'FishPass', 'fishpass', 'media'))
+# CSV_BASE_DIR = '/tmp'
+CSV_BASE_DIR = MEDIA_ROOT
+
 try:
     ### START MODULE SETTINGS IMPORT ###
     from features.settings import *
