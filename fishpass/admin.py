@@ -66,6 +66,19 @@ class OwnershipTypeAdmin(admin.ModelAdmin):
         else:
             return []
 
+class BarrierCostAdmin(admin.ModelAdmin):
+    list_display = ('pad_id', 'cost')
+    search_fields = ['pad_id']
+    ordering = ('pad_id',)
+
+    def formatted_cost(self, obj):
+        if obj.cost:
+            return '${:,.0f}'.format(obj.cost)
+        else:
+            return '-'
+    formatted_cost.admin_order_field = 'cost'
+    formatted_cost.short_description = 'Cost'
+
 
 # blatantly ripped off from Anatolij at https://stackoverflow.com/a/18559785/706797
 from django.contrib.flatpages.admin import FlatPageAdmin
@@ -86,6 +99,7 @@ admin.site.register(FlatPage, FlatPageCustom)
 geoadmin.site.register(Barrier, BarrierAdmin)
 geoadmin.site.register(BarrierType, BarrierTypeAdmin)
 geoadmin.site.register(BarrierStatus, BarrierStatusAdmin)
+geoadmin.site.register(BarrierCost, BarrierCostAdmin)
 geoadmin.site.register(OwnershipType, OwnershipTypeAdmin)
 geoadmin.site.register(Project, ProjectAdmin)
 geoadmin.site.register(FocusArea, FocusAreaAdmin)
