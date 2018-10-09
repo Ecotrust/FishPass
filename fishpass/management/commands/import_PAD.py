@@ -97,7 +97,7 @@ class Command(BaseCommand):
                     print('row: %d, value:%s' % (row_num, row_dict))
                     import ipdb; ipdb.set_trace()
 
-        print('deleting mismatched barrier cost overrides')
-        for barrierCost in BarrierCost.objects.all():
-            if Barrier.objects.filter(pad_id=barrierCost.pad_id).count() == 0:
-                barrierCost.delete()
+        # print('deleting mismatched barrier cost overrides')
+        # for barrierCost in BarrierCost.objects.all():
+        #     if Barrier.objects.filter(pad_id=barrierCost.pad_id).count() == 0:
+        #         barrierCost.delete()

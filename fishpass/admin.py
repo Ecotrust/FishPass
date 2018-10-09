@@ -9,6 +9,8 @@ class BarrierAdmin(OSMGeoAdmin):
     list_display = ('pad_id', 'site_name', 'site_type', 'barrier_status', 'stream_name', 'tributary_to', 'county', 'huc12_name', 'huc10_name')
     search_fields = ['pad_id', 'site_name', 'site_type__name', 'barrier_status__name', 'stream_name', 'tributary_to', 'county', 'huc12_name', 'huc10_name']
 
+    change_list_template = 'admin/fishpass/barrier_change_list.html'
+
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('name', 'user', 'description', 'budget', 'min_budget', 'max_budget',)
     search_fields = ['name', 'user', 'description']

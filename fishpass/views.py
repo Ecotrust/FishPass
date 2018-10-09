@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.template import loader
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -426,3 +426,59 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
 def export_report(request, projid):
     #TODO: generate report as 1 or more CSVs and export (zipped if necessary)
     return JsonResponse({})
+
+'''
+given a data_manager fixture file name, load the data into the database
+fixture must be a string of the file location.
+'''
+def load_PAD_file(infile, user):
+    import os
+    from django.core import management
+    from django.db.models.fields.files import FieldFile
+    from django.core.files.uploadedfile import InMemoryUploadedFile
+    from django.core.files.storage import default_storage
+
+    # TODO: if user.is_superuser:
+
+    if type(infile) == InMemoryUploadedFile:
+        from django.core.files.storage import default_storage
+        infile_name = infile.name
+
+        with default_storage.open(infile_name, 'wb+') as destination:
+            for chunk in infile.chunks():
+                destination.write(chunk)
+
+    elif type(infile) == FieldFile:
+        infile_name = infile.file.name
+
+    else:
+        infile_name = str(infile)
+
+    infile_name = os.path.join(settings.MEDIA_ROOT, infile_name)
+
+    try:
+        management.call_command('import_PAD', infile_name)
+    except:
+        pass
+    try:
+        os.remove(infile_name)
+    except:
+        pass
+    return True
+
+def import_PAD(request, template=loader.get_template('admin/import_PAD.html'), extra_context={}):
+    from django.core import management
+    from fishpass.forms import UploadPADForm
+    if request.method == 'POST':
+        form = UploadPADForm(request.POST, request.FILES)
+        if form.is_valid():
+            load_PAD_file(request.FILES['file'], request.user)
+            return HttpResponseRedirect('/adminfishpass/barrier/')    # success url
+    else:
+        form = UploadPADForm()
+    context =  {
+        'form': form
+    }
+
+    context.update(extra_context)
+    return HttpResponse(template.render(context, request))

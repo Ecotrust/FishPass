@@ -17,10 +17,12 @@ from django.conf.urls import include, url
 from django.contrib import admin
 ### INSERT ADDITIONAL IMPORTS HERE ###
 import accounts.urls
-from fishpass.views import get_filter_results, get_filter_count
+from fishpass.views import get_filter_results, get_filter_count, import_PAD
 ### END PROJECT URL IMPORTS ###
 
 urlpatterns = [
+    url(r'^admin/import_PAD/?', import_PAD),
+    url(r'^adminfishpass/import_PAD/?', import_PAD),
     url(r'^admin/?', admin.site.urls),
     ### INSERT PROJECT URL INCLUDES HERE ###
     url(r'^features/', include('features.urls')),

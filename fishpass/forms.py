@@ -230,3 +230,7 @@ class ProjectForm(ScenarioForm):
         for f in model.output_fields():
             exclude.append(f.attname)
         widgets = {}
+
+
+class UploadPADForm(forms.Form):
+    file = forms.FileField()

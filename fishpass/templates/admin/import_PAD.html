@@ -1,0 +1,31 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a>
+     &rsaquo; Import PAD Data
+    </div>
+{% endblock %}
+
+{% block title %}Import PAD Data{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <h1>IMPORT PAD</h1>
+  <form enctype="multipart/form-data" id="import_pad_form" method="post" action="/admin/import_PAD/">
+
+    {% csrf_token %}
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+
+    {% for field in form.visible_fields %}
+        {{ field.errors }}
+        {{ field.help_text }}
+        {{ field }}
+    {% endfor %}
+
+    <input type="submit" name="submit" value="Import PAD" />
+  </form>
+</div>
+{% endblock %}
