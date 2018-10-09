@@ -47,25 +47,45 @@ class OwnershipType(models.Model):
         verbose_name = 'Ownership Type'
         verbose_name_plural = 'Ownership Types'
 
+class BlockedSpeciesType(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Blocked Species Type"
+        verbose_name_plural = "Blocked Species Types"
+
+class TreatmentStatus(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Treatment Status"
+        verbose_name_plural = "Treatment Statuses"
+
 class Barrier(models.Model):
     # PAD_ID
     pad_id = models.IntegerField(primary_key=True,verbose_name="Barrier ID",help_text="The barrier ID as assigned in the PAD")
     # PassageID - ???
-    passage_id = models.IntegerField(verbose_name="Passage ID")
+    passage_id = models.IntegerField(verbose_name="Passage ID",null=True,blank=True,default=None)
     # StreamName
-    stream_name = models.CharField(max_length=255,verbose_name="Stream Name",help_text="The name of the waterbody obstructed by this barrier")
+    stream_name = models.CharField(max_length=255,null=True,blank=True,default=None,verbose_name="Stream Name",help_text="The name of the waterbody obstructed by this barrier")
     # TributaryTo
-    tributary_to = models.CharField(max_length=255,verbose_name="Tributary To",help_text="The waterbody that this obstructed waterbody flows into")
+    tributary_to = models.CharField(max_length=255,null=True,blank=True,default=None,verbose_name="Tributary To",help_text="The waterbody that this obstructed waterbody flows into")
     # SiteName
-    site_name = models.CharField(max_length=255,verbose_name="Site Name",help_text="Name of the site at which barrier is located, or name of the barrier itself")
+    site_name = models.CharField(max_length=255,null=True,blank=True,default=None,verbose_name="Site Name",help_text="Name of the site at which barrier is located, or name of the barrier itself")
     # SiteType
     site_type = models.ForeignKey(BarrierType,verbose_name="Barrier Type",)
     # BarStatus
     barrier_status = models.ForeignKey(BarrierStatus,verbose_name="Barrier Status")
     # Protocol
-    protocol = models.CharField(max_length=255,verbose_name="Protocol",help_text="How the barrier was identified")
+    protocol = models.CharField(max_length=255,null=True,blank=True,default=None,verbose_name="Protocol",help_text="How the barrier was identified")
     # AssessedBy
-    assessed_by = models.CharField(max_length=255,verbose_name="Assessed By")
+    assessed_by = models.CharField(max_length=255,null=True,blank=True,default=None,verbose_name="Assessed By")
     #TODO: determine HUC codes, etc... by lat/lon intersection with FocusAreas
     #HUC8_Code
     huc8_code = models.IntegerField(null=True,blank=True,default=None,verbose_name="HUC 8 ID")
@@ -92,7 +112,7 @@ class Barrier(models.Model):
     # Point_Y
     latitude = models.FloatField(validators=[MinValueValidator(-90.0), MaxValueValidator(90.0)],verbose_name="Latitude (y value)")
     # State
-    state = models.CharField(max_length=5,default="CA")
+    state = models.CharField(max_length=5,null=True,blank=True,default=None)
     # Updated (YYYY-MM-DD)
     updated = models.DateField(null=True,blank=True,default=None,verbose_name="Date Updated")
     # ESU_COHO
@@ -108,6 +128,15 @@ class Barrier(models.Model):
     downstream_id = models.IntegerField(null=True,blank=True,default=None,verbose_name="Downstream Barrier ID")
     # DS_Barrier
     downstream_barrier_count = models.IntegerField(validators=[MinValueValidator(0)],default=0,verbose_name="Downstream Barrier Count")
+
+    road = models.CharField(max_length=255, null=True, blank=True, default=None)                         # New in PAD - add to model!
+    post_mile = models.FloatField(null=True, blank=True, default=None, verbose_name="Post Mile Marker")                # New in PAD - add to model!
+    species_blocked = models.ForeignKey(BlockedSpeciesType, null=True, blank=True, default=None, verbose_name="Blocked Species Type")    # New in PAD - add to model!
+    notes = models.TextField(null=True,blank=True,default=None)                       # New in PAD - add to model!
+    treatment_status = models.ForeignKey(TreatmentStatus,null=True,blank=True,default=None,verbose_name='Treatment Status')        # New in PAD - add to model!
+    treatment_recommendation = models.TextField(null=True,blank=True,default=None,verbose_name="Treatment Recommendation")                       # New in PAD - add to model!
+    image_link = models.CharField(max_length=255,null=True, blank=True, default=None,verbose_name="Image Link")                  # New in PAD - add to model!
+
     geometry = gismodels.PointField(null=True,blank=True,default=None,srid=settings.GEOMETRY_DB_SRID)
 
     def to_dict(self, project=None, downstream=False):
