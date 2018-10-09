@@ -30,14 +30,19 @@ FishPass - Web Frontend Interface for OptiPass
 1. Set your Local Settings
    * TODO: see fishpass/local_settings.py.template
 1. Import your data
-   * TODO: see [UCSRB Notes](https://github.com/Ecotrust/ucsrb#load-your-data)
-      * Where to put files
-      * What to run to import them
-      * In what order
+   * To load initial data:  `dj loaddata /usr/local/apps/marineplanner-core/apps/FishPass/fishpass/fixtures/initial_setup.json`
+   * To load an updated PAD file:
+      * log in as an admin
+      * Use this form: [http://localhost:8000/adminfishpass/import_PAD/](http://localhost:8000/adminfishpass/import_PAD/)
+    * To load new FocusAreas:
+       * run `dj import_focus_areas ZIPFILE TYPE` where:
+          * `ZIPFILE` is a zipped shapefile in 3857
+          * `TYPE` is on of the approved Focus Area types (see fishpass/project_settings.py `FOCUS_AREA_TYPES`)
+          * example: `dj import_focus_areas /usr/local/apps/marineplanner-core/apps/FishPass/layers/counties.zip County`
+             * County data is currently already included in loading the initial_data.json fixture
 1. Enable Anonymous User
    * TODO: decide if this is a valid use case, document if so.
 1. See steps below for installing OptiPass
-1. `dj import_focus_areas /usr/local/apps/marineplanner-core/apps/FishPass/layers/counties.zip County`
    
 ### Production Server Setup:
 #### Bootstrap MarinePlanner
@@ -103,7 +108,7 @@ Create Shortcut 'dj':
 
 
 Load Data:
-1. `dj import_PAD /usr/local/apps/marineplanner-core/apps/FishPass/input_files/FISHPass_Input_20180410.xls`
+1. `dj loaddata /usr/local/apps/marineplanner-core/apps/FishPass/fishpass/fixtures/initial_setup.json`
 
 #### Install Optipass
 1. Get a copy of the OptiPass command line executable (c) Jesse O'Hanley
