@@ -267,7 +267,7 @@ def createOptiPassInputFile(project, file_location):
                 postpass = barrier.site_type.default_post_passability
             if not cost:
                 cost = barrier.site_type.default_cost
-        if not cost or not str(cost).is_numeric():
+        if not cost or not str(cost).isnumeric():
             nproj = 0
             cost = "NA"
         elif not project.assign_cost:
