@@ -18,6 +18,16 @@ class Command(BaseCommand):
         from io import StringIO, BytesIO
         from fishpass.models import Barrier, BarrierType, BarrierStatus, OwnershipType, FocusArea, BarrierCost, BlockedSpeciesType, TreatmentStatus
 
+        def format_return(success, errors, warnings, import_count=None):
+            # We need info about how this ran, but management commands are required to return a string, so.... json to the rescue!
+            import json
+            return json.dumps({
+                'success': success,
+                'errors': errors,
+                'warnings': warnings,
+                'import_count': import_count
+            })
+
         print("IMPORTING PAD")
 
         field_lookup = {
@@ -85,11 +95,11 @@ class Command(BaseCommand):
         except FileNotFoundError:
             errors.append('%s not found' % options['file'])
             print(errors[-1])
-            sys.exit(errors[-1])
+            return(format_return(False, errors, warnings))
         except:
             errors.append('Could not open %s as .xls or workbook does not have a worksheet.' % options['file'])
             print(errors[-1])
-            sys.exit(errors[-1])
+            return(format_return(False, errors, warnings))
 
         # for each line
         headers = []
@@ -101,9 +111,9 @@ class Command(BaseCommand):
                 if row_num == 0:
                     headers.append(sheet.cell_value(row_num,col_num))
                     if sheet.cell_value(row_num,col_num) not in field_lookup.keys():
-                        warnings.append('%s not in list of accepted column names. Column will be ignored.')
+                        warnings.append('Column header "%s" not in list of accepted column names. Column will be ignored.' % sheet.cell_value(row_num,col_num))
                         print(warnings[-1])
-                else:
+                elif headers[col_num] in field_lookup.keys():
                     if sheet.cell_value(row_num,col_num) == '':
                         row_dict[field_lookup[headers[col_num]]] = None
                     else:
@@ -124,7 +134,7 @@ class Command(BaseCommand):
                         errors.append('Could not find required header %s%s' % (either, ' or '.join(available_PAD_options)))
                         print(errors[-1])
                 if len(errors) > 0:
-                    sys.exit('; '.join(errors))
+                    return(format_return(False, errors, warnings))
                 else:
                     print('deleting all old barrier records')
                     Barrier.objects.all().delete()
@@ -170,3 +180,4 @@ class Command(BaseCommand):
         #         barrierCost.delete()
 
         print("%d barriers added." % import_count)
+        return(format_return(True, errors, warnings, import_count))

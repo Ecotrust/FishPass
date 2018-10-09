@@ -1,4 +1,9 @@
 {% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+<link rel="stylesheet" href="{% static 'fishpass/css/admin.css' %}"/>
+{% endblock %}
 
 {% block breadcrumbs %}
     <div class="breadcrumbs">
@@ -9,9 +14,41 @@
 
 {% block title %}Import PAD Data{% endblock %}
 
+
 {% block content %}
 <div id="content-main">
-  <h1>IMPORT PAD</h1>
+  <ul class="object-tools">
+    <li>
+      <a href="/adminfishpass/barrier/">Return to Barriers</a>
+    </li>
+  </ul>
+  <h1>IMPORT PAD Excel Worksheet</h1>
+
+  {% if errors %}
+  <div class='errors'>
+    <span class='title'>Errors:</span>
+    {% for error in errors %}
+    <p>{{ error }}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if warnings %}
+  <div class='warnings'>
+    <span class='title'>Warnings:</span>
+    {% for warning in warnings %}
+    <p>{{ warning }}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if success %}
+  <div class='success'>
+    <span class='title'>Success:</span>
+    <p>{{ success }}</p>
+  </div>
+  {% endif %}
+
   <form enctype="multipart/form-data" id="import_pad_form" method="post" action="/admin/import_PAD/">
 
     {% csrf_token %}
@@ -27,5 +64,6 @@
 
     <input type="submit" name="submit" value="Import PAD" />
   </form>
+
 </div>
 {% endblock %}

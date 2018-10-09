@@ -1,0 +1,33 @@
+.errors, .warnings, .success{
+  border-radius: 10px;
+  padding: 15px;
+  margin: 5px 0;
+}
+
+.errors {
+  border: 1px solid red;
+  background: #FCC;
+}
+.errors .title {
+  color: red;
+}
+
+.warnings {
+  border: 1px solid orange;
+  background: #FFC;
+}
+.warnings .title {
+  color: orange;
+}
+
+.success {
+  border: 1px solid green;
+  background: #CFC;
+}
+.success .title {
+  color: green;
+}
+
+.object-tools {
+  margin-top: 0;
+}
