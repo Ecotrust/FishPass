@@ -16,7 +16,7 @@ class Command(BaseCommand):
         import xlrd
         from datetime import datetime
         from io import StringIO, BytesIO
-        from fishpass.models import Barrier, BarrierType, BarrierStatus, OwnershipType, FocusArea, BarrierCost, BlockedSpeciesType
+        from fishpass.models import Barrier, BarrierType, BarrierStatus, OwnershipType, FocusArea, BarrierCost, BlockedSpeciesType, TreatmentStatus
 
         print("IMPORTING PAD")
 
@@ -55,8 +55,8 @@ class Command(BaseCommand):
             'ESU_COHO': 'esu_coho',
             'ESU_STEEL': 'esu_steelhead',
             'ESU_CHIN': 'esu_chinook',
-            'ACCESSIBLE': 'accessible',
-            'LIKELYEXP': 'likely_exp',
+            'ACCESSIBLE': 'accessible',             # New in PAD - add to model!
+            'LIKELYEXP': 'likely_exp',              # New in PAD - add to model!
             'OwnershipType': 'ownership_type',              # Missing in latest PAD
             'DS_Barrier': 'downstream_barrier_count',       # Missing in latest PAD
             'Updated': 'updated',                           # Missing in latest PAD
@@ -72,18 +72,20 @@ class Command(BaseCommand):
             'upstream_miles',
         ]
 
-        required_field_reverse_lookup = [{x: [y for y in field_lookup.keys() if x == field_lookup[y]]} for x in REQUIRED_MODEL_FIELDS]
+        required_field_reverse_lookup = {}
+        for x in REQUIRED_MODEL_FIELDS:
+            required_field_reverse_lookup[x] = [y for y in field_lookup.keys() if x == field_lookup[y]]
 
         warnings = []
         errors = []
 
-        print('reading PAD excel sheet')
         try:
             book = xlrd.open_workbook(options['file'])
             sheet = book.sheet_by_index(0)
         except FileNotFoundError:
-            print('%s not found' % options['file'])
-            import ipdb; ipdb.set_trace()
+            errors.append('%s not found' % options['file'])
+            print(errors[-1])
+            sys.exit(errors[-1])
         except:
             errors.append('Could not open %s as .xls or workbook does not have a worksheet.' % options['file'])
             print(errors[-1])
@@ -91,6 +93,7 @@ class Command(BaseCommand):
 
         # for each line
         headers = []
+        import_count = 0
         for row_num in range(sheet.nrows):
             sheet.row(row_num)
             row_dict = {}
@@ -142,23 +145,28 @@ class Command(BaseCommand):
                 ownershipType.name = ownership_name
                 ownershipType.save()
                 row_dict['ownership_type'] = ownershipType
-                if row_dict.has_key('species_blocked'):
+                if 'species_blocked' in row_dict.keys() and row_dict['species_blocked']:
                     (species_block_type, created) = BlockedSpeciesType.objects.get_or_create(name=row_dict['species_blocked'].lower().title())
                     row_dict['species_blocked'] = species_block_type
-                if row_dict.has_key('treatment_status'):
+                if 'treatment_status' in row_dict.keys() and row_dict['treatment_status']:
                     (treatment_status_type, created) = TreatmentStatus.objects.get_or_create(name=row_dict['treatment_status'].lower().title())
                     row_dict['treatment_status'] = treatment_status_type
                 # parse datetime
-                updated = datetime(*xlrd.xldate_as_tuple(row_dict['updated'], book.datemode))
-                row_dict['updated'] = updated
+                if 'updated' in row_dict.keys() and row_dict['updated']:
+                    updated = datetime(*xlrd.xldate_as_tuple(row_dict['updated'], book.datemode))
+                    row_dict['updated'] = updated
                 try:
                     # create Barrier
                     Barrier.objects.create(**row_dict)
+                    import_count += 1
                 except ValueError:
-                    print('row: %d, value:%s' % (row_num, row_dict))
-                    import ipdb; ipdb.set_trace()
+                    warnings.append('row: %d, value:%s' % (row_num, row_dict))
+                    print(warnings[-1])
+                    pass
 
         # print('deleting mismatched barrier cost overrides')
         # for barrierCost in BarrierCost.objects.all():
         #     if Barrier.objects.filter(pad_id=barrierCost.pad_id).count() == 0:
         #         barrierCost.delete()
+
+        print("%d barriers added." % import_count)

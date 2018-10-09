@@ -137,6 +137,10 @@ class Barrier(models.Model):
     treatment_recommendation = models.TextField(null=True,blank=True,default=None,verbose_name="Treatment Recommendation")                       # New in PAD - add to model!
     image_link = models.CharField(max_length=255,null=True, blank=True, default=None,verbose_name="Image Link")                  # New in PAD - add to model!
 
+    # TODO: WHAT ARE THESE (types)?!
+    accessible = models.TextField(null=True,blank=True,default=None,verbose_name='Accessible?')             # New in PAD - add to model!
+    likely_exp = models.TextField(null=True,blank=True,default=None)
+
     geometry = gismodels.PointField(null=True,blank=True,default=None,srid=settings.GEOMETRY_DB_SRID)
 
     def to_dict(self, project=None, downstream=False):
@@ -179,6 +183,26 @@ class Barrier(models.Model):
                 if override_barrier.action:
                     override_fields['action'] = override_barrier.action
 
+        if self.updated:
+            updated = self.updated.strftime('%Y-%m-%d')
+        else:
+            updated = None
+
+        if self.species_blocked:
+            species_blocked = str(self.species_blocked)
+        else:
+            species_blocked = None
+
+        if self.treatment_status:
+            treatment_status = str(self.treatment_status)
+        else:
+            treatment_status = None
+
+        if self.image_link:
+            image_link = str(self.image_link)
+        else:
+            image_link = None
+
         return {
             'pad_id': self.pad_id,
             'passage_id': self.passage_id,
@@ -205,7 +229,7 @@ class Barrier(models.Model):
             'longitude': self.longitude,
             'latitude': self.latitude,
             'state': self.state,
-            'updated': self.updated.strftime('%Y-%m-%d'),
+            'updated': updated,
             'esu_coho': self.esu_coho,
             'esu_chinook': self.esu_chinook,
             'esu_steelhead': self.esu_steelhead,    # Steelhead have DPS, not ESU - fix by sharing label and value
@@ -219,6 +243,15 @@ class Barrier(models.Model):
             'fixable': override_fields['fixable'],
             'action': override_fields['action'],
             'downstream_only': downstream,
+            'road' : self.road,
+            'post_mile': self.post_mile,
+            'species_blocked': species_blocked,
+            'notes': self.notes,
+            'treatment_status': treatment_status,
+            'treatment_recommendation': self.treatment_recommendation,
+            'image_link': image_link,
+            'accessible': self.accessible,
+            'likely_exp': self.likely_exp,
         }
 
     def __str__(self):

@@ -155,8 +155,6 @@ def get_barrier_layer(request, project=None, query=False, notes=[],extra_context
     try:
         geojson = get_geojson_from_queryset(query, project)
     except:
-        import ipbd
-        ipbd.set_trace()
         geojson = []
 
 
@@ -439,7 +437,6 @@ def load_PAD_file(infile, user):
     from django.core.files.storage import default_storage
 
     # TODO: if user.is_superuser:
-    print("LOAD PAD VIEW")
 
     if type(infile) == InMemoryUploadedFile:
         from django.core.files.storage import default_storage
@@ -449,7 +446,6 @@ def load_PAD_file(infile, user):
             for chunk in infile.chunks():
                 destination.write(chunk)
 
-        print("CHUNKS WRITTEN")
 
     elif type(infile) == FieldFile:
         infile_name = infile.file.name
@@ -460,12 +456,9 @@ def load_PAD_file(infile, user):
     infile_name = os.path.join(settings.MEDIA_ROOT, infile_name)
 
     try:
-        print("CALLING PAD IMPORT")
         management.call_command('import_PAD', infile_name)
     except:
         print("PAD IMPORT FAILED")
-        import ipdb; ipdb.set_trace()
-        pass
     try:
         os.remove(infile_name)
     except:
