@@ -263,6 +263,12 @@ class Project(Scenario):
     # target_area = gismodels.MultiPolygonField(srid=GEOMETRY_DB_SRID,
     # null=True, blank=True, verbose_name="Target Area")
 
+    UNIT_TYPE_CHOICES = []
+    for type in settings.FOCUS_AREA_TYPES:
+        UNIT_TYPE_CHOICES.append((type, type))
+
+    spatial_organization = models.CharField(max_length=50, null=True, blank=True, default=None, choices=UNIT_TYPE_CHOICES)
+
     target_area_input = models.TextField(blank=True,null=True,default=None,help_text="list of FocusArea IDs that make up the target area geometry")
 
     treat_downstream = models.CharField(max_length=30, default='consider', choices=settings.DS_TREATMENT_CHOICES)
@@ -354,7 +360,7 @@ class Project(Scenario):
         verbose_name = 'Project'
         # icon_url = 'marco/img/multi.png'
         form = 'fishpass.forms.ProjectForm'
-        form_template = 'scenarios/form.html'
+        form_template = 'fishpass/scenarios/fishpass_form.html'
         # form_template = 'fishpass/project_form.html'
         # show_template = 'scenarios/show.html'
         show_template = 'fishpass/demo.html'

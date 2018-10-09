@@ -21,6 +21,17 @@ class ProjectForm(ScenarioForm):
     from fishpass.models import FocusArea, OwnershipType
 
     # TODO: Select FocusArea Layer
+    UNIT_TYPE_CHOICES = []
+    for type in settings.FOCUS_AREA_TYPES:
+        UNIT_TYPE_CHOICES.append((type, type))
+
+    spatial_organization = forms.ChoiceField(
+        choices = UNIT_TYPE_CHOICES,
+        label="spatial organization",
+        # help_text="",
+        required=True,
+        initial='County'
+    )
 
     # focus_region = HiddenScenarioBooleanField(
     #     label="Filter By Boundary",
@@ -146,6 +157,7 @@ class ProjectForm(ScenarioForm):
         names = [
             # (bool_field, min, max, field, [checkboxes])
             # ('target_area', None, None, 'target_area_input'),
+            (None, None, None, 'spatial_organization'),
             (None, None, None, 'target_area_input'),
             (None, None, None, 'treat_downstream'),
 
@@ -216,6 +228,7 @@ class ProjectForm(ScenarioForm):
         return self.cleaned_data
 
     def save(self, commit=True):
+        # remove fields that are not on current model (FocusArea.unit_type)
         inst = super(ProjectForm, self).save(commit=True)
         # Run OptiPass
         from fishpass.views import optipass
