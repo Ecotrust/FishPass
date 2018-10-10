@@ -44,8 +44,8 @@ class OwnershipType(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = 'Ownership Type'
-        verbose_name_plural = 'Ownership Types'
+        verbose_name = 'Lookup - Ownership Type'
+        verbose_name_plural = 'Lookup - Ownership Types'
 
 class BlockedSpeciesType(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -54,8 +54,8 @@ class BlockedSpeciesType(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Blocked Species Type"
-        verbose_name_plural = "Blocked Species Types"
+        verbose_name = "Lookup - Blocked Species Type"
+        verbose_name_plural = "Lookup - Blocked Species Types"
 
 class TreatmentStatus(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -64,8 +64,8 @@ class TreatmentStatus(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "Treatment Status"
-        verbose_name_plural = "Treatment Statuses"
+        verbose_name = "Lookup - Treatment Status"
+        verbose_name_plural = "Lookup - Treatment Statuses"
 
 class Barrier(models.Model):
     # PAD_ID
@@ -317,8 +317,8 @@ class FocusArea(models.Model):
             return u'%s: %s' % (self.unit_type, self.unit_id)
 
     class Meta:
-        verbose_name = 'Focus Area'
-        verbose_name_plural = 'Focus Areas'
+        verbose_name = 'Lookup - Focus Area'
+        verbose_name_plural = 'Lookup - Focus Areas'
 
 @register
 class Project(Scenario):

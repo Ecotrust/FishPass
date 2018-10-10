@@ -5,6 +5,8 @@ from .models import *
 from django.contrib.gis import admin as geoadmin
 from django.contrib.gis.admin import GeoModelAdmin, OSMGeoAdmin
 
+admin.site.index_template = "admin/fishpass/index.html"
+
 class BarrierAdmin(OSMGeoAdmin):
     list_display = ('pad_id', 'site_name', 'site_type', 'barrier_status', 'stream_name', 'tributary_to', 'county', 'huc12_name', 'huc10_name')
     search_fields = ['pad_id', 'site_name', 'site_type__name', 'barrier_status__name', 'stream_name', 'tributary_to', 'county', 'huc12_name', 'huc10_name']
