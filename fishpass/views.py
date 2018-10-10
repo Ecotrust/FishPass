@@ -155,8 +155,6 @@ def get_barrier_layer(request, project=None, query=False, notes=[],extra_context
     try:
         geojson = get_geojson_from_queryset(query, project)
     except:
-        import ipbd
-        ipbd.set_trace()
         geojson = []
 
 
@@ -432,13 +430,19 @@ given a data_manager fixture file name, load the data into the database
 fixture must be a string of the file location.
 '''
 def load_PAD_file(infile, user):
-    import os
+    import os, json
     from django.core import management
     from django.db.models.fields.files import FieldFile
     from django.core.files.uploadedfile import InMemoryUploadedFile
     from django.core.files.storage import default_storage
 
-    # TODO: if user.is_superuser:
+    if not user.has_perm('fishpass.add_barrier'):
+        return {
+            'success': False,
+            'errors': ['User not permitted to add barriers.'],
+            'warnings': [],
+            'import_count': None
+        }
 
     if type(infile) == InMemoryUploadedFile:
         from django.core.files.storage import default_storage
@@ -447,6 +451,7 @@ def load_PAD_file(infile, user):
         with default_storage.open(infile_name, 'wb+') as destination:
             for chunk in infile.chunks():
                 destination.write(chunk)
+
 
     elif type(infile) == FieldFile:
         infile_name = infile.file.name
@@ -457,25 +462,120 @@ def load_PAD_file(infile, user):
     infile_name = os.path.join(settings.MEDIA_ROOT, infile_name)
 
     try:
-        management.call_command('import_PAD', infile_name)
+        json_dict_response = management.call_command('import_PAD', infile_name)
+        response = json.loads(json_dict_response)
     except:
-        pass
+        return {
+            'success': False,
+            'errors': ['PAD IMPORT FAILED - Internal error'],
+            'warnings': [],
+            'import_count': None
+        }
     try:
         os.remove(infile_name)
     except:
         pass
-    return True
+    else:
+        return response
+
+def load_barrier_cost_file(infile, user):
+    import os, json
+    from django.core import management
+    from django.db.models.fields.files import FieldFile
+    from django.core.files.uploadedfile import InMemoryUploadedFile
+    from django.core.files.storage import default_storage
+
+    if not user.has_perm('fishpass.add_barriercost'):
+        return {
+            'success': False,
+            'errors': ['User not permitted to add barrier-specific data.'],
+            'warnings': [],
+            'import_count': None
+        }
+
+    if type(infile) == InMemoryUploadedFile:
+        from django.core.files.storage import default_storage
+        infile_name = infile.name
+
+        with default_storage.open(infile_name, 'wb+') as destination:
+            for chunk in infile.chunks():
+                destination.write(chunk)
+
+
+    elif type(infile) == FieldFile:
+        infile_name = infile.file.name
+
+    else:
+        infile_name = str(infile)
+
+    infile_name = os.path.join(settings.MEDIA_ROOT, infile_name)
+
+    try:
+        json_dict_response = management.call_command('import_barrier_costs', infile_name)
+        response = json.loads(json_dict_response)
+    except:
+        return {
+            'success': False,
+            'errors': ['BARRIER DATA IMPORT FAILED - Internal error'],
+            'warnings': [],
+            'import_count': None
+        }
+    try:
+        os.remove(infile_name)
+    except:
+        pass
+    else:
+        return response
 
 def import_PAD(request, template=loader.get_template('admin/import_PAD.html'), extra_context={}):
     from django.core import management
     from fishpass.forms import UploadPADForm
+    extra_context['errors'] = []
+    extra_context['warnings'] = []
+    extra_context['success'] = None
     if request.method == 'POST':
         form = UploadPADForm(request.POST, request.FILES)
         if form.is_valid():
-            load_PAD_file(request.FILES['file'], request.user)
-            return HttpResponseRedirect('/adminfishpass/barrier/')    # success url
+            response = load_PAD_file(request.FILES['file'], request.user)
+            if response['success'] and len(response['errors']) == 0:
+                if len(response['warnings']) > 0:
+                    extra_context['warnings'] = response['warnings']
+                extra_context['success'] = 'Success: %d barriers imported!' % response['import_count']
+            else:
+                if len(response['errors']) > 0:
+                    extra_context['errors'] = response['errors']
+                if len(response['warnings']) > 0:
+                    extra_context['warnings'] = response['warnings']
     else:
         form = UploadPADForm()
+    context =  {
+        'form': form
+    }
+
+    context.update(extra_context)
+    return HttpResponse(template.render(context, request))
+
+def import_barrier_costs(request, template=loader.get_template('admin/import_barrier_cost.html'), extra_context={}):
+    from django.core import management
+    from fishpass.forms import UploadBarrierCostForm
+    extra_context['errors'] = []
+    extra_context['warnings'] = []
+    extra_context['success'] = None
+    if request.method == 'POST':
+        form = UploadBarrierCostForm(request.POST, request.FILES)
+        if form.is_valid():
+            response = load_barrier_cost_file(request.FILES['file'], request.user)
+            if response['success'] and len(response['errors']) == 0:
+                if len(response['warnings']) > 0:
+                    extra_context['warnings'] = response['warnings']
+                extra_context['success'] = 'Success: %d barrier-specific records imported!' % response['import_count']
+            else:
+                if len(response['errors']) > 0:
+                    extra_context['errors'] = response['errors']
+                if len(response['warnings']) > 0:
+                    extra_context['warnings'] = response['warnings']
+    else:
+        form = UploadBarrierCostForm()
     context =  {
         'form': form
     }

@@ -44,28 +44,48 @@ class OwnershipType(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = 'Ownership Type'
-        verbose_name_plural = 'Ownership Types'
+        verbose_name = 'Lookup - Ownership Type'
+        verbose_name_plural = 'Lookup - Ownership Types'
+
+class BlockedSpeciesType(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Lookup - Blocked Species Type"
+        verbose_name_plural = "Lookup - Blocked Species Types"
+
+class TreatmentStatus(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "Lookup - Treatment Status"
+        verbose_name_plural = "Lookup - Treatment Statuses"
 
 class Barrier(models.Model):
     # PAD_ID
     pad_id = models.IntegerField(primary_key=True,verbose_name="Barrier ID",help_text="The barrier ID as assigned in the PAD")
     # PassageID - ???
-    passage_id = models.IntegerField(verbose_name="Passage ID")
+    passage_id = models.IntegerField(verbose_name="Passage ID",null=True,blank=True,default=None)
     # StreamName
-    stream_name = models.CharField(max_length=255,verbose_name="Stream Name",help_text="The name of the waterbody obstructed by this barrier")
+    stream_name = models.CharField(max_length=255,null=True,blank=True,default=None,verbose_name="Stream Name",help_text="The name of the waterbody obstructed by this barrier")
     # TributaryTo
-    tributary_to = models.CharField(max_length=255,verbose_name="Tributary To",help_text="The waterbody that this obstructed waterbody flows into")
+    tributary_to = models.CharField(max_length=255,null=True,blank=True,default=None,verbose_name="Tributary To",help_text="The waterbody that this obstructed waterbody flows into")
     # SiteName
-    site_name = models.CharField(max_length=255,verbose_name="Site Name",help_text="Name of the site at which barrier is located, or name of the barrier itself")
+    site_name = models.CharField(max_length=255,null=True,blank=True,default=None,verbose_name="Site Name",help_text="Name of the site at which barrier is located, or name of the barrier itself")
     # SiteType
     site_type = models.ForeignKey(BarrierType,verbose_name="Barrier Type",)
     # BarStatus
     barrier_status = models.ForeignKey(BarrierStatus,verbose_name="Barrier Status")
     # Protocol
-    protocol = models.CharField(max_length=255,verbose_name="Protocol",help_text="How the barrier was identified")
+    protocol = models.CharField(max_length=255,null=True,blank=True,default=None,verbose_name="Protocol",help_text="How the barrier was identified")
     # AssessedBy
-    assessed_by = models.CharField(max_length=255,verbose_name="Assessed By")
+    assessed_by = models.CharField(max_length=255,null=True,blank=True,default=None,verbose_name="Assessed By")
     #TODO: determine HUC codes, etc... by lat/lon intersection with FocusAreas
     #HUC8_Code
     huc8_code = models.IntegerField(null=True,blank=True,default=None,verbose_name="HUC 8 ID")
@@ -92,7 +112,7 @@ class Barrier(models.Model):
     # Point_Y
     latitude = models.FloatField(validators=[MinValueValidator(-90.0), MaxValueValidator(90.0)],verbose_name="Latitude (y value)")
     # State
-    state = models.CharField(max_length=5,default="CA")
+    state = models.CharField(max_length=5,null=True,blank=True,default=None)
     # Updated (YYYY-MM-DD)
     updated = models.DateField(null=True,blank=True,default=None,verbose_name="Date Updated")
     # ESU_COHO
@@ -108,6 +128,19 @@ class Barrier(models.Model):
     downstream_id = models.IntegerField(null=True,blank=True,default=None,verbose_name="Downstream Barrier ID")
     # DS_Barrier
     downstream_barrier_count = models.IntegerField(validators=[MinValueValidator(0)],default=0,verbose_name="Downstream Barrier Count")
+
+    road = models.CharField(max_length=255, null=True, blank=True, default=None)                         # New in PAD - add to model!
+    post_mile = models.FloatField(null=True, blank=True, default=None, verbose_name="Post Mile Marker")                # New in PAD - add to model!
+    species_blocked = models.ForeignKey(BlockedSpeciesType, null=True, blank=True, default=None, verbose_name="Blocked Species Type")    # New in PAD - add to model!
+    notes = models.TextField(null=True,blank=True,default=None)                       # New in PAD - add to model!
+    treatment_status = models.ForeignKey(TreatmentStatus,null=True,blank=True,default=None,verbose_name='Treatment Status')        # New in PAD - add to model!
+    treatment_recommendation = models.TextField(null=True,blank=True,default=None,verbose_name="Treatment Recommendation")                       # New in PAD - add to model!
+    image_link = models.CharField(max_length=255,null=True, blank=True, default=None,verbose_name="Image Link")                  # New in PAD - add to model!
+
+    # TODO: WHAT ARE THESE (types)?!
+    accessible = models.TextField(null=True,blank=True,default=None,verbose_name='Accessible?')             # New in PAD - add to model!
+    likely_exp = models.TextField(null=True,blank=True,default=None)
+
     geometry = gismodels.PointField(null=True,blank=True,default=None,srid=settings.GEOMETRY_DB_SRID)
 
     def to_dict(self, project=None, downstream=False):
@@ -150,6 +183,26 @@ class Barrier(models.Model):
                 if override_barrier.action:
                     override_fields['action'] = override_barrier.action
 
+        if self.updated:
+            updated = self.updated.strftime('%Y-%m-%d')
+        else:
+            updated = None
+
+        if self.species_blocked:
+            species_blocked = str(self.species_blocked)
+        else:
+            species_blocked = None
+
+        if self.treatment_status:
+            treatment_status = str(self.treatment_status)
+        else:
+            treatment_status = None
+
+        if self.image_link:
+            image_link = str(self.image_link)
+        else:
+            image_link = None
+
         return {
             'pad_id': self.pad_id,
             'passage_id': self.passage_id,
@@ -176,7 +229,7 @@ class Barrier(models.Model):
             'longitude': self.longitude,
             'latitude': self.latitude,
             'state': self.state,
-            'updated': self.updated.strftime('%Y-%m-%d'),
+            'updated': updated,
             'esu_coho': self.esu_coho,
             'esu_chinook': self.esu_chinook,
             'esu_steelhead': self.esu_steelhead,    # Steelhead have DPS, not ESU - fix by sharing label and value
@@ -190,6 +243,15 @@ class Barrier(models.Model):
             'fixable': override_fields['fixable'],
             'action': override_fields['action'],
             'downstream_only': downstream,
+            'road' : self.road,
+            'post_mile': self.post_mile,
+            'species_blocked': species_blocked,
+            'notes': self.notes,
+            'treatment_status': treatment_status,
+            'treatment_recommendation': self.treatment_recommendation,
+            'image_link': image_link,
+            'accessible': self.accessible,
+            'likely_exp': self.likely_exp,
         }
 
     def __str__(self):
@@ -206,13 +268,24 @@ class Barrier(models.Model):
 
 class BarrierCost(models.Model):
     # We want these to persist when new PAD imports are made, so we don't use FK to Barrier
-    # However, we should delete any of these that no longer match a barrier after import
     pad_id = models.IntegerField(primary_key=True)
-    cost = models.IntegerField(validators=[MinValueValidator(0.0)])
+    cost = models.IntegerField(validators=[MinValueValidator(0.0)],null=True,blank=True,default=None)
+    site_type = models.ForeignKey(BarrierType,null=True,blank=True,default=None,verbose_name="Barrier Type")
+    barrier_status = models.ForeignKey(BarrierStatus,null=True,blank=True,default=None,verbose_name="Barrier Status")
+    comment = models.TextField(null=True,blank=True,default=None,verbose_name="Comments")
+
+    def __str__(self):
+        try:
+            barrier = Barrier.objects.get(pad_id=self.pad_id)
+            barrier_name = str(barrier)
+        except:
+            barrier_name = str(pad_id)
+            pass
+        return "%s Costs" % barrier_name
 
     class Meta:
-        verbose_name = 'Barrier Cost'
-        verbose_name_plural = 'Barrier Costs'
+        verbose_name = 'Barrier Specific Override'
+        verbose_name_plural = 'Barrier Specific Overrides'
 
 class FocusArea(models.Model):
     UNIT_TYPE_CHOICES = []
@@ -244,8 +317,8 @@ class FocusArea(models.Model):
             return u'%s: %s' % (self.unit_type, self.unit_id)
 
     class Meta:
-        verbose_name = 'Focus Area'
-        verbose_name_plural = 'Focus Areas'
+        verbose_name = 'Lookup - Focus Area'
+        verbose_name_plural = 'Lookup - Focus Areas'
 
 @register
 class Project(Scenario):

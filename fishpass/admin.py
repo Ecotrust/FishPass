@@ -5,6 +5,8 @@ from .models import *
 from django.contrib.gis import admin as geoadmin
 from django.contrib.gis.admin import GeoModelAdmin, OSMGeoAdmin
 
+admin.site.index_template = "admin/fishpass/index.html"
+
 class BarrierAdmin(OSMGeoAdmin):
     list_display = ('pad_id', 'site_name', 'site_type', 'barrier_status', 'stream_name', 'tributary_to', 'county', 'huc12_name', 'huc10_name')
     search_fields = ['pad_id', 'site_name', 'site_type__name', 'barrier_status__name', 'stream_name', 'tributary_to', 'county', 'huc12_name', 'huc10_name']
@@ -69,8 +71,8 @@ class OwnershipTypeAdmin(admin.ModelAdmin):
             return []
 
 class BarrierCostAdmin(admin.ModelAdmin):
-    list_display = ('pad_id', 'cost')
-    search_fields = ['pad_id']
+    list_display = ('pad_id', 'formatted_cost', 'site_type', 'barrier_status', 'comment')
+    search_fields = ['pad_id', 'site_type', 'barrier_status', 'comment']
     ordering = ('pad_id',)
 
     def formatted_cost(self, obj):
@@ -81,6 +83,17 @@ class BarrierCostAdmin(admin.ModelAdmin):
     formatted_cost.admin_order_field = 'cost'
     formatted_cost.short_description = 'Cost'
 
+    change_list_template = 'admin/fishpass/barriercost_change_list.html'
+
+class BlockedSpeciesTypeAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ['name']
+    ordering = ('name',)
+
+class TreatmentStatusAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ['name']
+    ordering = ('name',)
 
 # blatantly ripped off from Anatolij at https://stackoverflow.com/a/18559785/706797
 from django.contrib.flatpages.admin import FlatPageAdmin
@@ -94,7 +107,6 @@ class FlatPageCustom(FlatPageAdmin):
         models.TextField: {'widget': CKEditorWidget}
     }
 
-
 admin.site.unregister(FlatPage)
 admin.site.register(FlatPage, FlatPageCustom)
 
@@ -105,3 +117,5 @@ geoadmin.site.register(BarrierCost, BarrierCostAdmin)
 geoadmin.site.register(OwnershipType, OwnershipTypeAdmin)
 geoadmin.site.register(Project, ProjectAdmin)
 geoadmin.site.register(FocusArea, FocusAreaAdmin)
+geoadmin.site.register(BlockedSpeciesType, BlockedSpeciesTypeAdmin)
+geoadmin.site.register(TreatmentStatus, TreatmentStatusAdmin)

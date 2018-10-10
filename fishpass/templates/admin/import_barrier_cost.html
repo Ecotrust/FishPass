@@ -1,0 +1,109 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+<link rel="stylesheet" href="{% static 'fishpass/css/admin.css' %}"/>
+{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a>
+     &rsaquo; Import Barrier-Specific Details
+    </div>
+{% endblock %}
+
+{% block title %}Import Barrier-Specific Details{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <ul class="object-tools">
+    <li>
+      <a href="/adminfishpass/barriercost/">Return to Barrier Details List</a>
+    </li>
+  </ul>
+  <h1>IMPORT Barrier-Specific Details Excel Worksheet</h1>
+
+  {% if errors %}
+  <div class='errors'>
+    <span class='title'>Errors:</span>
+    {% for error in errors %}
+    <p>{{ error }}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if warnings %}
+  <div class='warnings'>
+    <span class='title'>Warnings:</span>
+    {% for warning in warnings %}
+    <p>{{ warning }}</p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if success %}
+  <div class='success'>
+    <span class='title'>Success:</span>
+    <p>{{ success }}</p>
+  </div>
+  {% endif %}
+
+  <form enctype="multipart/form-data" id="import_pad_form" method="post" action="/admin/import_barrier_costs/">
+
+    {% csrf_token %}
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+
+    {% for field in form.visible_fields %}
+        {{ field.errors }}
+        {{ field.help_text }}
+        {{ field }}
+    {% endfor %}
+
+    <input type="submit" name="submit" value="Import Barrier Details" />
+  </form>
+
+  <div class='requirements'>
+    <span class='title'>FileRequirements:</span>
+    <p>
+      Your import file must meet the following criteria:
+      <ul>
+        <li>It must be a Microsoft Excel Spreadsheet (.xls or .xlsx)</li>
+        <li>It must have a column with the header: "PAD_ID"
+          <ul>
+            <li>captialization and punctuation count</li>
+            <li>Values must be integers representing barrier IDs in the PAD</li>
+          </ul>
+        </li>
+      </ul>
+    </p>
+    <p>
+      Other optional fields:
+      <ul>
+        <li>Cost
+          <ul>
+            <li>Values must be integers. Decimal values will be ignored.</li>
+          </ul>
+        </li>
+        <li>SiteType
+          <ul>
+            <li>The name of a <a href="/adminfishpass/barriertype/">barrier type</a></li>
+          </ul>
+        </li>
+        <li>Bar_Stat
+          <ul>
+            <li>The name of a <a href="/adminfishpass/barrierstatus/">barrier status</a></li>
+          </ul>
+        </li>
+        <li>Anything Else
+          <ul>
+            <li>Any other field will have its content and header included in the 'comment' field</li>
+          </ul>
+        </li>
+      </ul>
+    </p>
+  </div>
+
+</div>
+{% endblock %}
