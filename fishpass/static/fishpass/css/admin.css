@@ -1,4 +1,4 @@
-.errors, .warnings, .success{
+.errors, .warnings, .success, .requirements{
   border-radius: 10px;
   padding: 15px;
   margin: 5px 0;
@@ -26,6 +26,11 @@
 }
 .success .title {
   color: green;
+}
+
+.requirements {
+  border: 1px solid black;
+  background: #CCC;
 }
 
 .object-tools {

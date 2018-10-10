@@ -64,5 +64,46 @@
     <input type="submit" name="submit" value="Import Barrier Details" />
   </form>
 
+  <div class='requirements'>
+    <span class='title'>FileRequirements:</span>
+    <p>
+      Your import file must meet the following criteria:
+      <ul>
+        <li>It must be a Microsoft Excel Spreadsheet (.xls or .xlsx)</li>
+        <li>It must have a column with the header: "PAD_ID"
+          <ul>
+            <li>captialization and punctuation count</li>
+            <li>Values must be integers representing barrier IDs in the PAD</li>
+          </ul>
+        </li>
+      </ul>
+    </p>
+    <p>
+      Other optional fields:
+      <ul>
+        <li>Cost
+          <ul>
+            <li>Values must be integers. Decimal values will be ignored.</li>
+          </ul>
+        </li>
+        <li>SiteType
+          <ul>
+            <li>The name of a <a href="/adminfishpass/barriertype/">barrier type</a></li>
+          </ul>
+        </li>
+        <li>Bar_Stat
+          <ul>
+            <li>The name of a <a href="/adminfishpass/barrierstatus/">barrier status</a></li>
+          </ul>
+        </li>
+        <li>Anything Else
+          <ul>
+            <li>Any other field will have its content and header included in the 'comment' field</li>
+          </ul>
+        </li>
+      </ul>
+    </p>
+  </div>
+
 </div>
 {% endblock %}

@@ -83,6 +83,15 @@ class BarrierCostAdmin(admin.ModelAdmin):
 
     change_list_template = 'admin/fishpass/barriercost_change_list.html'
 
+class BlockedSpeciesTypeAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ['name']
+    ordering = ('name',)
+
+class TreatmentStatusAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ['name']
+    ordering = ('name',)
 
 # blatantly ripped off from Anatolij at https://stackoverflow.com/a/18559785/706797
 from django.contrib.flatpages.admin import FlatPageAdmin
@@ -96,7 +105,6 @@ class FlatPageCustom(FlatPageAdmin):
         models.TextField: {'widget': CKEditorWidget}
     }
 
-
 admin.site.unregister(FlatPage)
 admin.site.register(FlatPage, FlatPageCustom)
 
@@ -107,3 +115,5 @@ geoadmin.site.register(BarrierCost, BarrierCostAdmin)
 geoadmin.site.register(OwnershipType, OwnershipTypeAdmin)
 geoadmin.site.register(Project, ProjectAdmin)
 geoadmin.site.register(FocusArea, FocusAreaAdmin)
+geoadmin.site.register(BlockedSpeciesType, BlockedSpeciesTypeAdmin)
+geoadmin.site.register(TreatmentStatus, TreatmentStatusAdmin)

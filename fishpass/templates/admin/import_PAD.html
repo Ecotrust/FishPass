@@ -65,5 +65,236 @@
     <input type="submit" name="submit" value="Import PAD" />
   </form>
 
+  <div class='requirements'>
+    <span class='title'>FileRequirements:</span>
+    <p>
+      Your import file must meet the following criteria:
+      <ul>
+        <li>It must be a Microsoft Excel Spreadsheet (.xls or .xlsx)</li>
+        <li>It must have columns with the following headers:
+          <ul>
+            <li>"PAD_ID"
+              <ul>
+                <li>captialization and punctuation count</li>
+                <li>Values must be integers representing barrier IDs in the PAD</li>
+              </ul>
+            </li>
+            <li>SiteType
+              <ul>
+                <li>The name of a <a href="/adminfishpass/barriertype/">barrier type</li>
+              </ul>
+            </li>
+            <li>BarStatus
+              <ul>
+                <li>The name of a <a href="/adminfishpass/barrierstatus/">barrier status</a></li>
+              </ul>
+            </li>
+            <li>Point_X
+              <ul>
+                <li>An integer longitude coordinate value between -180.0 and 180.0 (no ddm)</li>
+              </ul>
+            </li>
+            <li>Point_Y
+              <ul>
+                <li>An integer longitude coordinate value between -90.0 and 90.0 (no ddm)</li>
+              </ul>
+            </li>
+            <li>Miles_Upst
+              <ul>
+                <li>A positive float (decimal) value</li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </p>
+    <p>
+      Other optional fields:
+      <ul>
+        <li>PassageID
+          <ul>
+            <li>Integer</li>
+          </ul>
+        </li>
+        <li>StreamName
+          <ul>
+            <li>Name of the stream that is obstructed</li>
+          </ul>
+        </li>
+        <li>TributaryTo
+          <ul>
+            <li>Name of the waterbody that this stream flows into.</li>
+          </ul>
+        </li>
+        <li>SiteName
+          <ul>
+            <li>Name of the obstruction site</li>
+          </ul>
+        </li>
+        <li>Road
+          <ul>
+            <li>String</li>
+          </ul>
+        </li>
+        <li>PostMile
+          <ul>
+            <li>Float (decimal)</li>
+          </ul>
+        </li>
+        <li>Protocol
+          <ul>
+            <li>description of how the barrier was identified</li>
+          </ul>
+        </li>
+        <li>AssessedBy
+          <ul>
+            <li>String</li>
+          </ul>
+        </li>
+        <li>SpeciesBlocked
+          <ul>
+            <li>Type of species blocked by barrier</li>
+            <li>String</li>
+            <li>If it is not in the current <a href="/adminfishpass/blockedspecies/">list of Blocked Species</a>, it will be added.</li>
+            <li>If it is in the current list, it will reference that record</li>
+          </ul>
+        </li>
+        <li>Notes
+          <ul>
+            <li>Sting</li>
+          </ul>
+        </li>
+        <li>TrtStatus
+          <ul>
+            <li>Treatment Status</li>
+            <li>String</li>
+            <li>If it is not in the current <a href="/adminfishpass/treatmentstatus/">list of Treatment Statuses</a>, it will be added.</li>
+            <li>If it is in the current list, it will reference that record</li>
+          </ul>
+        </li>
+        <li>TrtRecom
+          <ul>
+            <li>Treatment Recommendation</li>
+          </ul>
+        </li>
+        <li>Photo
+          <ul>
+            <li>String: Link to image of barrier available online</li>
+          </ul>
+        </li>
+        <li>HUC8_Code
+          <ul>
+            <li>Integer</li>
+          </ul>
+        </li>
+        <li>HUC8_Name
+          <ul>
+            <li>String</li>
+          </ul>
+        </li>
+        <li>HUC10_Code
+          <ul>
+            <li>Integer</li>
+          </ul>
+        </li>
+        <li>HUC10_Name
+          <ul>
+            <li>String</li>
+          </ul>
+        </li>
+        <li>HUC12_Code
+          <ul>
+            <li>Integer</li>
+          </ul>
+        </li>
+        <li>HUC12_Name
+          <ul>
+            <li>String</li>
+          </ul>
+        </li>
+        <li>County
+          <ul>
+            <li>County Name</li>
+          </ul>
+        </li>
+        <li>OwnershipCodePAD
+          <ul>
+            <li>Integer representation of an <a href="/adminfishpass/ownershiptype/">ownership type</a> (same as 'OwnershipType')</li>
+          </ul>
+        </li>
+        <li>NHDCOMID
+          <ul>
+            <li>Integer</li>
+          </ul>
+        </li>
+        <li>NHDComMeas
+          <ul>
+            <li>Float (decimal)</li>
+          </ul>
+        </li>
+        <li>DS_ID
+          <ul>
+            <li>Integer: PAD ID of barrier immediately downstream</li>
+          </ul>
+        </li>
+        <li>DS_Num
+          <ul>
+            <li>Integer: Number of downstream barriers (same as 'DS_Barrier')</li>
+          </ul>
+        </li>
+        <li>ESU_COHO
+          <ul>
+            <li>Coho Salmon ESU name</li>
+          </ul>
+        </li>
+        <li>ESU_STEEL
+          <ul>
+            <li>Steelhead Salmon ESU name</li>
+          </ul>
+        </li>
+        <li>ESU_CHIN
+          <ul>
+            <li>Chinook Salmon ESU name</li>
+          </ul>
+        </li>
+        <li>ACCESSIBLE
+          <ul>
+            <li>String</li>
+          </ul>
+        </li>
+        <li>LIKELYEXP
+          <ul>
+            <li>String</li>
+          </ul>
+        </li>
+        <li>OwnershipType
+          <ul>
+            <li>Integer representation of an <a href="/adminfishpass/ownershiptype/">ownership type</a> (same as 'OwnershipCodePAD')</li>
+          </ul>
+        </li>
+        <li>DS_Barrier
+          <ul>
+            <li>Integer: Number of downstream barriers (same as 'DS_NUM')</li>
+          </ul>
+        </li>
+        <li>Updated
+          <ul>
+            <li>The date this record was last updated (must be recognized as date by Excel)</li>
+          </ul>
+        </li>
+        <li>State
+          <ul>
+            <li>Two character ID of state (i.e. 'CA')</li>
+          </ul>
+        </li>
+        <li>Anything Else
+          <ul>
+            <li>Any other field will be ignored and left out of the database.</li>
+          </ul>
+        </li>
+      </ul>
+    </p>
+  </div>
+
 </div>
 {% endblock %}
