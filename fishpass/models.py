@@ -268,13 +268,24 @@ class Barrier(models.Model):
 
 class BarrierCost(models.Model):
     # We want these to persist when new PAD imports are made, so we don't use FK to Barrier
-    # However, we should delete any of these that no longer match a barrier after import
     pad_id = models.IntegerField(primary_key=True)
-    cost = models.IntegerField(validators=[MinValueValidator(0.0)])
+    cost = models.IntegerField(validators=[MinValueValidator(0.0)],null=True,blank=True,default=None)
+    site_type = models.ForeignKey(BarrierType,null=True,blank=True,default=None,verbose_name="Barrier Type")
+    barrier_status = models.ForeignKey(BarrierStatus,null=True,blank=True,default=None,verbose_name="Barrier Status")
+    comment = models.TextField(null=True,blank=True,default=None,verbose_name="Comments")
+
+    def __str__(self):
+        try:
+            barrier = Barrier.objects.get(pad_id=self.pad_id)
+            barrier_name = str(barrier)
+        except:
+            barrier_name = str(pad_id)
+            pass
+        return "%s Costs" % barrier_name
 
     class Meta:
-        verbose_name = 'Barrier Cost'
-        verbose_name_plural = 'Barrier Costs'
+        verbose_name = 'Barrier Specific Override'
+        verbose_name_plural = 'Barrier Specific Overrides'
 
 class FocusArea(models.Model):
     UNIT_TYPE_CHOICES = []

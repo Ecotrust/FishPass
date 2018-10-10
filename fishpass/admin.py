@@ -69,8 +69,8 @@ class OwnershipTypeAdmin(admin.ModelAdmin):
             return []
 
 class BarrierCostAdmin(admin.ModelAdmin):
-    list_display = ('pad_id', 'cost')
-    search_fields = ['pad_id']
+    list_display = ('pad_id', 'formatted_cost', 'site_type', 'barrier_status', 'comment')
+    search_fields = ['pad_id', 'site_type', 'barrier_status', 'comment']
     ordering = ('pad_id',)
 
     def formatted_cost(self, obj):
@@ -80,6 +80,8 @@ class BarrierCostAdmin(admin.ModelAdmin):
             return '-'
     formatted_cost.admin_order_field = 'cost'
     formatted_cost.short_description = 'Cost'
+
+    change_list_template = 'admin/fishpass/barriercost_change_list.html'
 
 
 # blatantly ripped off from Anatolij at https://stackoverflow.com/a/18559785/706797

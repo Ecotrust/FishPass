@@ -234,3 +234,6 @@ class ProjectForm(ScenarioForm):
 
 class UploadPADForm(forms.Form):
     file = forms.FileField()
+
+class UploadBarrierCostForm(forms.Form):
+    file = forms.FileField()
