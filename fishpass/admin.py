@@ -106,6 +106,8 @@ class FlatPageCustom(FlatPageAdmin):
     formfield_overrides = {
         models.TextField: {'widget': CKEditorWidget}
     }
+    class Meta:
+        fields = '__all__'
 
 admin.site.unregister(FlatPage)
 admin.site.register(FlatPage, FlatPageCustom)

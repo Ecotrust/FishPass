@@ -20,6 +20,8 @@ import accounts.urls
 from fishpass.views import get_filter_results, get_filter_count, import_PAD, import_barrier_costs
 ### END PROJECT URL IMPORTS ###
 
+from django.contrib.flatpages import views
+
 urlpatterns = [
     url(r'^admin/import_PAD/?', import_PAD),
     url(r'^adminfishpass/import_PAD/?', import_PAD),
@@ -38,6 +40,11 @@ urlpatterns = [
     url(r'^drawing/', include('drawing.urls')),
     url(r'^visualize/', include('visualize.urls')),
     url(r'^fishpass/', include('fishpass.urls')),
+
+    ### FlatPages
+    url(r'^pages/', include('django.contrib.flatpages.urls')),
+    url(r'^(?P<url>.*/)$', views.flatpage),
+
     url(r'^', include('fishpass.urls')),
     # url(r'^', fishpass.views.home, name='home'),
     ### END PROJECT URL INCLUDES ###
@@ -45,4 +52,5 @@ urlpatterns = [
     # url(r'^account/auth/', include('social.apps.django_app.urls', namespace='social')),
     # url(r'^account/', include('accounts.urls', namespace="account")),
     # url(r'^data_manager/', include('data_manager.urls', namespace="data_manager")),
+
 ]
