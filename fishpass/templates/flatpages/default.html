@@ -1,0 +1,15 @@
+{% extends "fishpass/base.html" %}
+{% load static %}
+
+{% block title %}FishPass: {{ flatpage.title }}{% endblock %}
+
+{% block site_style %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'fishpass/css/flatpages.css' %}" />
+{% endblock site_style %}
+
+{% block content %}
+<div class="flatpage_content">
+{{ flatpage.content }}
+</div>
+{% endblock %}
