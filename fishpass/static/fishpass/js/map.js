@@ -10,7 +10,7 @@ app.map.zoomToExtent = function zoomToExtent(extent) {
 }
 
 app.map.styles = {
-    'Point': function(feature, resolution) {
+    Point: function(feature, resolution) {
       var radius = 5;
       if (resolution < 5) {
           radius = 12;
@@ -31,7 +31,7 @@ app.map.styles = {
         zIndex: 9
       });
     },
-    'PointSelected': function(feature, resolution) {
+    PointSelected: function(feature, resolution) {
       var radius = 8;
       if (resolution < 5) {
           radius = 16;
@@ -52,7 +52,7 @@ app.map.styles = {
         zIndex: 10
       });
     },
-    'LineString': new ol.style.Style({
+    LineString: new ol.style.Style({
         stroke: new ol.style.Stroke({
             color: '#67b8c6',
             lineCap: 'cap',
@@ -61,7 +61,7 @@ app.map.styles = {
         }),
         zIndex: 2
     }),
-    'LineStringSelected': new ol.style.Style({
+    LineStringSelected: new ol.style.Style({
         stroke: new ol.style.Stroke({
             color: '#3a5675',
             width: 6,
@@ -78,7 +78,7 @@ app.map.styles = {
         }),
         zIndex: 4
     }),
-    'Polygon': new ol.style.Style({
+    Polygon: new ol.style.Style({
         stroke: new ol.style.Stroke({
             color: 'rgba(0, 0, 0, 0)',
             // lineDash: [12],
@@ -92,7 +92,7 @@ app.map.styles = {
         }),
         zIndex: 2
     }),
-    'PolygonSelected': new ol.style.Style({
+    PolygonSelected: new ol.style.Style({
         stroke: new ol.style.Stroke({
             color: '#58595b',
             lineDash: [12],
@@ -105,7 +105,7 @@ app.map.styles = {
         }),
         zIndex: 4
     }),
-    'FocusArea': new ol.style.Style({
+    FocusArea: new ol.style.Style({
         stroke: new ol.style.Stroke({
             color: '#303030',
             lineCap: 'butt',
@@ -118,7 +118,7 @@ app.map.styles = {
         }),
         zIndex: 4
     }),
-    'FocusAreaSelect': new ol.style.Style({
+    FocusAreaSelect: new ol.style.Style({
         stroke: new ol.style.Stroke({
             color: '#aa6600',
             lineCap: 'butt',
@@ -131,7 +131,7 @@ app.map.styles = {
         }),
         zIndex: 4
     }),
-    'ReportArea': new ol.style.Style({
+    ReportArea: new ol.style.Style({
         stroke: new ol.style.Stroke({
             color: '#3A5675',
             lineCap: 'butt',
@@ -488,12 +488,18 @@ app.map.layer = {
         name: 'County',
         title: 'County',
         id: 'county',
-        source: new ol.format.MVT({
-          featureClass: ol.Feature
+        source: new ol.source.VectorTile({
+          format: new ol.format.MVT({
+            featureClass: ol.Feature
+          }),
+          url: `https://api.mapbox.com/v4/${app.mapbox.layers.county.id}/{z}/{x}/{y}.mvt?access_token=${app.mapbox.key}`
         }),
-        url: `https://api.mapbox.com/v4/${app.mapbox.layers.county.id}/{z}/{x}/{y}.mvt?access_token=${app.mapbox.key}`
-      })
-    }
+        style: app.map.styles.FocusArea,
+        visible: true,
+        renderBuffer: 500
+      }),
+      selectAction: focusAreaSelectAction
+    },
 
     // openlayers layer for barriers
     barriers: {
@@ -591,6 +597,7 @@ for (var i=0; i < app.map.getLayers().getArray().length; i++) {
 if (app.map.overlays) {
   app.map.overlays.getLayers().push(app.map.layer.huc12.layer);
   app.map.overlays.getLayers().push(app.map.layer.huc10.layer);
+  app.map.overlays.getLayers().push(app.map.layer.county.layer);
   // app.map.overlays.getLayers().push(app.map.layer.huc8.layer);
   // app.map.overlays.getLayers().push(app.map.layer.county.layer);
   // app.map.overlays.getLayers().push(app.map.layer.roads.layer);

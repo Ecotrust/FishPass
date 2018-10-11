@@ -33,36 +33,15 @@ var app = {
 }
 
 function selectSpatialOrganization(event) {
-    // You can use “this” to refer to the selected element.
-    app.request.get_spatial_organization_layer(event.target.value, function(geojsonObject) {
-      app.map.layer.spatialOrganization.addFeatures(geojsonObject);
-      // app.map.interaction.focusAreaSelection.clearSelected();
-      app.map.interaction.focusAreaSelected = new ol.interaction.Select({source: app.map.layer.spatialOrganization.layer.getSource()});
-      app.map.interaction.focusAreaSelected.on('select', function(event) {
-        // TODO make sure only passing param that API is expecting
-        app.map.interaction.focusAreaSelection.addSelected(event.target.getFeatures());
-      })
-    })
+  var unitType = event.target.value.toLowerCase();
+  if (app.map.layer.hasOwnProperty(unitType)) {
+    app.map.layer[unitType].layer.setVisible(true);
+    app.map.selection.setSelect(app.map.interaction.selectFilter);
+  }
 };
 
 function spatialOrgLoad() {
-  // TODO: add  defualt value
   document.getElementById('id_spatial_organization').onchange = selectSpatialOrganization;
-
-  app.map.interaction = {};
-
-  // check if this can go away and just use ol.selected features (if available for multiselect)
-  app.map.interaction.focusAreaSelection = '';
-
-  app.map.interaction.focusAreaSelection.clearSelected = function() {
-    app.map.interaction.focusAreaSelection = '';
-    app.clearTargetAreaInput()
-  }
-
-  app.map.interaction.focusAreaSelection.addSelected = function(selected) {
-    app.map.interaction.focusAreaSelection += selected;
-    app.addIdToTargetAreaInput();
-  }
 
   app.clearTargetAreaInput = function() {
     document.getElementById('id_target_area_input').value = '';

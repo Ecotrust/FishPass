@@ -1,10 +1,17 @@
 $( document ).ready(function() {
+  // app.panel.form.init moves panel right
+  // creates new scenario
+  // then runs initFiltering
+    // initFiltering sets up the filter form
   app.panel.form.init();
+
   // get barrier layer ajax
   app.request.get_barrier_layer()
     .then(function(response) {
-      var geojsonObject = response.geojson;
-      app.map.layer.barriers.addFeatures(geojsonObject);
-      app.map.addLayer(app.map.layer.barriers.layer);
+      if (response) {
+        var geojsonObject = response.geojson;
+        app.map.layer.barriers.addFeatures(geojsonObject);
+        app.map.addLayer(app.map.layer.barriers.layer);
+      }
     })
 });

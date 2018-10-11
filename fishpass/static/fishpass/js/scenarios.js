@@ -1308,6 +1308,8 @@ function scenariosModel(options) {
                 // app.loadingAnimation.hide();
                 // window.dispatchEvent(new Event('resize'));
                 spatialOrgLoad();
+                // set up selection
+                app.map.selection.setSelect(app.map.interaction.selectFilter);
             },
             error: function (result) {
                 console.log('failure at scenarios.js "createNewScenario".');
