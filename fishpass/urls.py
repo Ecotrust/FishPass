@@ -15,6 +15,7 @@ urlpatterns = [
 
     ### Mapping/Optimization
     url(r'^get_barrier_layer/$', views.get_barrier_layer),
+    url(r'^get_focus_area_geojson_by_type/?', views.get_focus_area_geojson_by_type),
 
     url(r'^get_user_scenario_list/$', views.get_user_scenario_list),
     url(r'^get_report/(?P<projid>[\w_]+)/$', views.get_report),

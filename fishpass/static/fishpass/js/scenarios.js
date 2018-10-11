@@ -1307,6 +1307,7 @@ function scenariosModel(options) {
                 }
                 // app.loadingAnimation.hide();
                 // window.dispatchEvent(new Event('resize'));
+                spatialOrgLoad();
             },
             error: function (result) {
                 console.log('failure at scenarios.js "createNewScenario".');

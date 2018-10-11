@@ -219,6 +219,9 @@ FOCUS_AREA_FIELD_ID_LOOKUP = {
     'Region': 'region_id',
     'State': 'state_id'
 }
+
+DEFAULT_FOCUS_AREA_TYPE = 'County'
+
 # This is only used for importing the PAD. Geometry_DB_SRID is used for import FocusAreas
 IMPORT_SRID = 4326
 

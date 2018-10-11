@@ -7,6 +7,7 @@ import json
 from django.conf import settings
 from django.views.decorators.cache import cache_page
 from accounts.forms import LogInForm, SignUpForm
+from django.contrib.gis.geos.collections import *
 
 def accounts_context():
     context = {
@@ -39,6 +40,21 @@ def demo(request, template='fishpass/demo.html'):
     from scenarios import views as scenarios_views
     return scenarios_views.demo(request, template)
 
+# get geo query set from focusarea model
+# return geojson
+def get_focus_area_geojson_by_type(request):
+    from fishpass.models import FocusArea
+    unit_type = settings.DEFAULT_FOCUS_AREA_TYPE
+    if request.method == 'GET':
+        try:
+            unit_type = request.GET['unitType']
+        except:
+            pass
+    focus_area_qs = FocusArea.objects.filter(unit_type=unit_type)
+    geojson = get_geojson_from_queryset(focus_area_qs)
+    return JsonResponse(geojson)
+
+
 def get_user_scenario_list(request):
     #TODO: use "scenarios.views.get_scenarios" if possible.
     from fishpass.models import Project
@@ -52,26 +68,45 @@ def get_user_scenario_list(request):
         })
     return JsonResponse(sorted(user_scenarios_list, key=lambda k: k['name'].lower()), safe=False)
 
-def get_geojson_from_queryset(query, project):
+def get_geojson_from_queryset(query, project=None):
     geojson = {
         "type": "FeatureCollection",
         "features": []
     }
     for feature in query:
         # derive geojson
-        feat_json = {
-            "type": "Feature",
-            "geometry": {
-                "type": "Point",
-                "coordinates": [feature.geometry.x, feature.geometry.y]
-            },
-            "properties": {}
-        }
-        # convert attributes to json notation
-        feat_dict = feature.to_dict(project)
-        for field in feat_dict.keys():
-            feat_json['properties'][field] = feat_dict[field]
+        if hasattr(feature, 'geometry') and (type(feature.geometry) == Polygon or type(feature.geometry) == MultiPolygon):
+            try:
+                feat_json = {
+                    "type": "Feature",
+                    "geometry": json.loads(feature.geometry.geojson),
+                    "properties": {}
+                }
+            except:
+                import ipdb
+                ipdb.set_trace()
+        else:
+            try:
+                feat_json = {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [feature.geometry.x, feature.geometry.y]
+                    },
+                    "properties": {}
+                }
+            except:
+                import ipdb
+                ipdb.set_trace()
+                print('barriererror')
 
+        # convert attributes to json notation
+        if project:
+            feat_dict = feature.to_dict(project)
+            for field in feat_dict.keys():
+                feat_json['properties'][field] = feat_dict[field]
+        else:
+            feat_json['properties']['id'] = feature.pk
         # apply geojson to return object
         geojson['features'].append(feat_json)
 

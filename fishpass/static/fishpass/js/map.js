@@ -10,22 +10,37 @@ app.map.zoomToExtent = function zoomToExtent(extent) {
 }
 
 app.map.styles = {
-    'Point': new ol.style.Style({
+    'Point': function(feature, resolution) {
+      var radius = 5;
+      if (resolution < 5) {
+          radius = 12;
+      } else if (resolution < 40) {
+          radius = 7;
+      }
+      return new ol.style.Style({
         image: new ol.style.Circle({
-            radius: 4,
+            radius: radius,
             fill:  new ol.style.Fill({
-                color: '#67b8c6',
+                color: '#ffffff'
             }),
             stroke: new ol.style.Stroke({
-                color: '#ffffff',
-                width: 2,
+                color: '#aaffff',
+                width: 3,
             }),
         }),
-        zIndex: 2,
-    }),
-    'PointSelected': new ol.style.Style({
+        zIndex: 9
+      });
+    },
+    'PointSelected': function(feature, resolution) {
+      var radius = 8;
+      if (resolution < 5) {
+          radius = 16;
+      } else if (resolution < 40) {
+          radius = 10;
+      }
+      return new ol.style.Style({
         image: new ol.style.Circle({
-            radius: 8,
+            radius: radius,
             fill:  new ol.style.Fill({
                 color: '#4D4D4D',
             }),
@@ -34,8 +49,9 @@ app.map.styles = {
                 width: 3,
             }),
         }),
-        zIndex: 5
-    }),
+        zIndex: 10
+      });
+    },
     'LineString': new ol.style.Style({
         stroke: new ol.style.Stroke({
             color: '#67b8c6',
@@ -102,6 +118,19 @@ app.map.styles = {
         }),
         zIndex: 4
     }),
+    'FocusAreaSelect': new ol.style.Style({
+        stroke: new ol.style.Stroke({
+            color: '#aa6600',
+            lineCap: 'butt',
+            lineJoin: 'miter',
+            width: 2,
+            miterLimit: 2
+        }),
+        fill: new ol.style.Fill({
+            color: 'rgba(180, 80, 0, 0.8)'
+        }),
+        zIndex: 4
+    }),
     'ReportArea': new ol.style.Style({
         stroke: new ol.style.Stroke({
             color: '#3A5675',
@@ -111,106 +140,10 @@ app.map.styles = {
             miterLimit: 2
         }),
         fill: new ol.style.Fill({
-            color: 'rgba(0, 0, 0, 0)'
+            color: 'rgba(0, 0, 0, 0.4)'
         }),
         zIndex: 4
     }),
-    'Streams': function(feature, resolution) {
-        var width = 2.25;
-        if (resolution < 6) {
-            width = 14;
-        } else if (resolution < 10) {
-            width = 11;
-        } else if (resolution < 20) {
-            width = 9;
-        } else if (resolution < 40) {
-            width = 6;
-        } else if (resolution < 90) {
-            width = 5;
-        } else if (resolution < 130) {
-            width = 3.5;
-        }
-        return new ol.style.Style({
-            stroke: new ol.style.Stroke({
-                color: 'rgba(103, 184, 198, .75)',
-                lineCap: 'round',
-                lineJoin: 'round',
-                width: width,
-            }),
-            zIndex: 3
-        });
-    },
-    'PourPoint': function(feature, resolution) {
-      var radius = 5;
-      if (resolution < 5) {
-          radius = 12;
-      } else if (resolution < 40) {
-          radius = 7;
-      }
-      return new ol.style.Style({
-        image: new ol.style.Circle({
-            radius: radius,
-            fill:  new ol.style.Fill({
-                color: '#ffffff'
-            }),
-            stroke: new ol.style.Stroke({
-                color: '#aaffff',
-                width: 3,
-            }),
-        }),
-        zIndex: 9
-      });
-    },
-    'PourPointSelected': function(feature, resolution) {
-      var radius = 8;
-      if (resolution < 5) {
-          radius = 16;
-      } else if (resolution < 40) {
-          radius = 10;
-      }
-      return new ol.style.Style({
-        image: new ol.style.Circle({
-            radius: radius,
-            fill:  new ol.style.Fill({
-                color: '#4D4D4D',
-            }),
-            stroke: new ol.style.Stroke({
-                color: '#ffffff',
-                width: 3,
-            }),
-        }),
-        zIndex: 10
-      });
-    },
-    'Boundary': new ol.style.Style({
-      stroke: new ol.style.Stroke({
-        color: 'rgba(58,86,117,0.75)',
-        width: 1
-      }),
-      fill: new ol.style.Fill({
-        color: 'rgba(0,0,0,0)'
-      }),
-      zIndex: 1
-    }),
-    'Draw': new ol.style.Style({
-      fill: new ol.style.Fill({
-        color: [103,184,198,0.4]
-      }),
-      stroke: new ol.style.Stroke({
-        color: [103,184,198,0.8],
-        width: 2
-      }),
-      image: new ol.style.Circle({
-        radius: 8,
-        stroke: new ol.style.Stroke({
-          color: 'rgba(0, 0, 0, 0.7)'
-        }),
-        fill: new ol.style.Fill({
-          color: [92,115,82,0.5]
-        })
-      }),
-      zIndex: 2
-    })
 };
 
 /**
@@ -247,6 +180,14 @@ app.mapbox.layers = {
     name: 'HUC 12',
     report_methods: ['filter'],
     map_layer_id: 'huc12'
+  },
+  'county': {
+    id: 'fishpasssupport.2dc9ezel',
+    id_field: 'CNTYIDFP',
+    name_field: 'NAME',
+    name: 'County',
+    report_methods: ['filter'],
+    map_layer_id: 'county'
   }
 };
 
@@ -503,49 +444,7 @@ function createMeasureTooltip() {
 }
 
 app.map.layer = {
-    draw: {
-      layer: new ol.layer.Vector({
-        source: app.map.draw.source,
-        style: app.map.styles.Draw,
-      })
-    },
-    // boundary: {
-    //   // layer: new ol.layer.VectorTile({
-    //   layer: new ol.layer.Vector({
-    //     name: 'Upper Columbia Boundary',
-    //     title: 'Upper Columbia Boundary',
-    //     id: 'boundary', // set id equal to x in app.map.layer.x
-    //     // source: new ol.source.VectorTile({
-    //     source: new ol.source.Vector({
-    //       attributions: 'Ecotrust',
-    //       // format: new ol.format.MVT(),
-    //       // url: 'https://api.mapbox.com/v4/' + app.mapbox.layers['western_uc_bnd-3eremu'].id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
-    //       format: new ol.format.GeoJSON({
-    //         dataProjection: 'EPSG:4326',
-    //         featureProjection: 'EPSG:4326'
-    //       }),
-    //       url: '/static/ucsrb/data/ucsrb_bounds.geojson',
-    //     }),
-    //     style: app.map.styles.Boundary,
-    //   })
-    // },
-    // pourpoints: {
-    //   layer: new ol.layer.VectorTile({
-    //     name: 'Gauging Station',
-    //     title: 'Gauging Station',
-    //     id: 'pourpoints', // set id equal to x in app.map.layer.x
-    //     source: new ol.source.VectorTile({
-    //       attributions: 'Ecotrust',
-    //       format: new ol.format.GeoJSON(),
-    //     }),
-    //     style: app.map.styles.PourPoint,
-    //     visible: false,
-    //     renderBuffer: 20,
-    //     minResolution: 2,
-    //     maxResolution: 200,
-    //   }),
-    //   selectAction: pourPointSelectAction
-    // },
+    // TODO: add to mapbox
     huc10: {
       layer: new ol.layer.VectorTile({
         name: 'HUC 10',
@@ -564,6 +463,7 @@ app.map.layer = {
       }),
       selectAction: focusAreaSelectAction
     },
+    // TODO: add to mapbox
     huc12: {
       layer: new ol.layer.VectorTile({
         name: 'HUC 12',
@@ -582,6 +482,19 @@ app.map.layer = {
       }),
       selectAction: focusAreaSelectAction
     },
+
+    county: {
+      layer: new ol.layer.VectorTile({
+        name: 'County',
+        title: 'County',
+        id: 'county',
+        source: new ol.format.MVT({
+          featureClass: ol.Feature
+        }),
+        url: `https://api.mapbox.com/v4/${app.mapbox.layers.county.id}/{z}/{x}/{y}.mvt?access_token=${app.mapbox.key}`
+      })
+    }
+
     // openlayers layer for barriers
     barriers: {
       layer: new ol.layer.Vector({
@@ -615,24 +528,38 @@ app.map.layer = {
             });
         },
     },
+
+    focusArea: {
+      layer: new ol.layer.Vector({
+        style: app.map.styles.FocusArea,
+      })
+    },
+
+    spatialOrganization: {
+      layer: new ol.layer.Vector({
+        style: app.map.styles.FocusArea,
+      }),
+      addFeatures: function(geojsonObject) {
+        var vectorSource = new ol.source.Vector({
+          features: (new ol.format.GeoJSON()).readFeatures(geojsonObject)
+        });
+        app.map.layer.spatialOrganization.layer.setSource(vectorSource);
+      },
+    },
+
+    scenarios: {
+        layer: mapSettings.getInitFilterResultsLayer('scenarios', false),
+        source: function() {
+            return app.map.layer.scenarios.layer.getSource();
+        }
+    },
+
     selectedFeature: {
       layer: new ol.layer.Vector({
         source: new ol.source.Vector(),
         style: app.map.styles.LineStringSelected
       })
     },
-    // roads: {
-    //   layer: new ol.layer.Tile({
-    //     name: 'Roads',
-    //     title: 'Roads',
-    //     id: 'roads', // set id equal to x in app.map.layer.x
-    //     source: new ol.source.XYZ({
-    //       attributions: 'Ecotrust',
-    //       url: 'https://api.mapbox.com/styles/v1/ucsrbsupport/cjiyswskt99pv2rmdzjii99et/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoidWNzcmJzdXBwb3J0IiwiYSI6ImNqY3Fzanl6cDAxaGgzM3F6ZXVqeHI0eTYifQ.7T_7fsmV6QIuh_9EEo0wMw'
-    //     }),
-    //     visible: false,
-    //   }),
-    // },
     satellite: {
       layer: new ol.layer.Tile({
         name: 'Satellite',
@@ -650,6 +577,7 @@ app.map.layer = {
     }
 };
 
+app.map.layer.scenarios.layer.set('id','focusArea');
 app.map.layer.project.layer.set('id','project');
 app.map.layer.barriers.layer.set('id', 'planningUnits');
 
@@ -661,7 +589,6 @@ for (var i=0; i < app.map.getLayers().getArray().length; i++) {
 }
 
 if (app.map.overlays) {
-  app.map.overlays.getLayers().push(app.map.layer.draw.layer);
   app.map.overlays.getLayers().push(app.map.layer.huc12.layer);
   app.map.overlays.getLayers().push(app.map.layer.huc10.layer);
   // app.map.overlays.getLayers().push(app.map.layer.huc8.layer);

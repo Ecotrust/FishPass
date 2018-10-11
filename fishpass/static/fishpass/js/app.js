@@ -19,8 +19,59 @@ var app = {
     },
     promptToSave: function() {
         console.log('Save before starting over?');
+    },
+    // Promise wrapper to load scripts
+    loadScript: function loadScript(src) {
+      return new Promise(function(resolve, reject) {
+        let script = document.createElement('script');
+        script.src = src;
+        script.onload = () => resolve(script);
+        script.onerror = () => reject(new Error("Script load error: " + src));
+        document.head.append(script);
+      })
     }
 }
+
+function selectSpatialOrganization(event) {
+    // You can use “this” to refer to the selected element.
+    app.request.get_spatial_organization_layer(event.target.value, function(geojsonObject) {
+      app.map.layer.spatialOrganization.addFeatures(geojsonObject);
+      // app.map.interaction.focusAreaSelection.clearSelected();
+      app.map.interaction.focusAreaSelected = new ol.interaction.Select({source: app.map.layer.spatialOrganization.layer.getSource()});
+      app.map.interaction.focusAreaSelected.on('select', function(event) {
+        // TODO make sure only passing param that API is expecting
+        app.map.interaction.focusAreaSelection.addSelected(event.target.getFeatures());
+      })
+    })
+};
+
+function spatialOrgLoad() {
+  // TODO: add  defualt value
+  document.getElementById('id_spatial_organization').onchange = selectSpatialOrganization;
+
+  app.map.interaction = {};
+
+  // check if this can go away and just use ol.selected features (if available for multiselect)
+  app.map.interaction.focusAreaSelection = '';
+
+  app.map.interaction.focusAreaSelection.clearSelected = function() {
+    app.map.interaction.focusAreaSelection = '';
+    app.clearTargetAreaInput()
+  }
+
+  app.map.interaction.focusAreaSelection.addSelected = function(selected) {
+    app.map.interaction.focusAreaSelection += selected;
+    app.addIdToTargetAreaInput();
+  }
+
+  app.clearTargetAreaInput = function() {
+    document.getElementById('id_target_area_input').value = '';
+  }
+
+  app.addIdToTargetAreaInput = function() {
+    document.getElementById('id_target_area_input').value = app.map.interaction.focusAreaSelection;
+  }
+};
 
 scenario_type_selection_made = function(selectionType) {
     var animateObj = {
@@ -785,6 +836,28 @@ $.ajaxSetup({
 *
 */
 app.request = {
+    /**
+     * [Get spatial organization layer]
+     * @method
+     * @param  {[type]} layer [data param value to send]
+     * @return {[type]}       [GeoJSON]
+     */
+    get_spatial_organization_layer: function(unitType, callback) {
+        // TODO write view to get spatial organiation layer
+        return $.ajax({
+            url: `/fishpass/get_focus_area_geojson_by_type`,
+            data: {
+                unitType: unitType
+            },
+            dataType: 'json',
+            success: function(response) {
+                callback(response);
+            },
+            error: function(response) {
+                console.log(`%cfail @ get planning units response: %o`, 'color: red', response);
+            }
+        })
+    },
     /**
     * get results for treatment scenario
     * @param  {[number]} id treatment scenario id [on scenario this is created]
