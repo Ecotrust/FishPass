@@ -112,8 +112,8 @@ var madrona = {
                 dataType: 'json',
                 success: function(result) {
                     // app.loadingAnimation.hide();
-                    Redirect window to /report/SCENARIO_ID/
-                    // document.location.href = '/fishpass/get_report/' + result['X-Madrona-Select'] + '/';
+                    // Redirect window to /report/SCENARIO_ID/
+                    document.location.href = '/fishpass/get_report/' + result['X-Madrona-Select'] + '/';
                     // window.alert('DEBUG: All Done! This would send you to `/fishpass/get_report/' + result['X-Madrona-Select'] + '/`')
                 },
                 error: function(result) {
@@ -157,6 +157,8 @@ function scenarioFormModel(options) {
     // self.landform_type_checkboxes_include_2 = ko.observable(true); //ridgetop
     // self.landform_type_checkboxes_include_3 = ko.observable(true); //floors
     // self.landform_type_checkboxes_include_4 = ko.observable(true); //east/west
+    self.target_area = ko.observable(true);
+    self.treat_downstream = ko.observable('consider');
     self.ownership_input = ko.observable(false);
 
     self.lastChange = (new Date()).getTime();
@@ -407,6 +409,15 @@ function scenarioFormModel(options) {
             param_element_max = $('#id_' + param + '_max')[0],
             param_element_input = $('#id_' + param + '_input')[0],
             param_element_checkboxes = $('#id_' + param + '_checkboxes_0')[0];
+
+        if (
+          param_element_min == null &&
+          param_element_max == null &&
+          param_element_input == null &&
+          param_element_checkboxes == null
+        ) {
+          param_element_input = $('#id_' + param)[0]
+        }
 
         if (param_element_min) {
             min = param_element_min.value;

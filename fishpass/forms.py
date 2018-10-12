@@ -44,10 +44,10 @@ class ProjectForm(ScenarioForm):
     #     label="Filter By Boundary",
     #     help_text="This should be true: ALWAYS",
     #     initial=True,
-    #     required=False,
+    #     required=True,
     # )
 
-    target_area_input = forms.CharField(
+    target_area = forms.CharField(
         widget=forms.Textarea,
         label="Target Area",
         help_text="This should be invisible. Stringified GeoJSON Multiselection of FocusAreas",
@@ -60,7 +60,7 @@ class ProjectForm(ScenarioForm):
         help_text="Should downstream mitigation be an option ('adjustable'), should downstream passability be considered in optimization ('non-adjustable'), or completely ignored ('excluded')?",
         # required=True,
         required=False,
-        initial='consider'
+        initial='consider',
     )
 
     # TODO: pre-pass/post-pass/cost-estimates:
@@ -159,7 +159,7 @@ class ProjectForm(ScenarioForm):
             # (bool_field, min, max, field, [checkboxes])
             # ('target_area', None, None, 'target_area_input'),
             (None, None, None, 'spatial_organization'),
-            (None, None, None, 'target_area_input'),
+            (None, None, None, 'target_area'),
             (None, None, None, 'treat_downstream'),
 
         ]

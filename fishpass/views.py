@@ -76,29 +76,20 @@ def get_geojson_from_queryset(query, project=None):
     for feature in query:
         # derive geojson
         if hasattr(feature, 'geometry') and (type(feature.geometry) == Polygon or type(feature.geometry) == MultiPolygon):
-            try:
-                feat_json = {
-                    "type": "Feature",
-                    "geometry": json.loads(feature.geometry.geojson),
-                    "properties": {}
-                }
-            except:
-                import ipdb
-                ipdb.set_trace()
+            feat_json = {
+                "type": "Feature",
+                "geometry": json.loads(feature.geometry.geojson),
+                "properties": {}
+            }
         else:
-            try:
-                feat_json = {
-                    "type": "Feature",
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [feature.geometry.x, feature.geometry.y]
-                    },
-                    "properties": {}
-                }
-            except:
-                import ipdb
-                ipdb.set_trace()
-                print('barriererror')
+            feat_json = {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [feature.geometry.x, feature.geometry.y]
+                },
+                "properties": {}
+            }
 
         # convert attributes to json notation
         if project:
@@ -114,19 +105,41 @@ def get_geojson_from_queryset(query, project=None):
 
 def run_filter_query(filters):
     from collections import OrderedDict
-    from fishpass.models import Barrier
+    from fishpass.models import Barrier, OwnershipType, FocusArea
+    # import ipdb; ipdb.set_trace()
     # TODO: This would be nicer if it generically knew how to filter fields
     # by name, and what kinds of filters they were. For now, hard code.
     notes = []
     query = Barrier.objects.all()
 
-    if 'area' in filters.keys() and filters['area']:
-        # RDH 1/8/18: filter(geometry__area_range(...)) does not seem available.
-        # query = query.filter(geometry__area__range=(filters['area_min'], filters['area_max']))
+    if 'ownership_input' in filters.keys() and filters['ownership_input'] == 'true':
+        if 'ownership_input_checkboxes' in filters.keys() and filters['ownership_input_checkboxes'] == 'true':
+            ownership_keys = []
+            for ot_id in [x.pk for x in OwnershipType.objects.all()]:
+                ot_label = 'ownership_input_checkboxes_%d' % ot_id
+                if ot_label in filters.keys() and filters[ot_label] == 'true':
+                    ownership_keys.append(ot_id)
+            query = query.filter(ownership_type__in=ownership_keys)
 
-        # RDH 1/9/18: Why can't we use the model's 'Run Filters' function?
-        pu_ids = [pu.pk for pu in query if pu.geometry.area <= float(filters['area_max']) and pu.geometry.area>= float(filters['area_min'])]
-        query = (query.filter(pk__in=pu_ids))
+    if 'target_area' in filters.keys() and filters['target_area'] == 'true':
+        if 'target_area_input' in filters.keys() and len(filters['target_area_input']) > 0:
+            focus_ids = []
+            for fa_id_raw in filters['target_area_input'].split(','):
+                fa_id = int(fa_id_raw.strip())
+                target = FocusArea.objects.get(pk=fa_id)
+                focus_ids = focus_ids + [x.pad_id for x in query.filter(geometry__intersects=target.geometry)]
+            # remove dupes
+            focus_ids = list(set(focus_ids))
+            query = query.filter(pad_id__in=focus_ids)
+
+    if 'treat_downstream' in filters.keys() and filters['treat_downstream'] == 'true':
+        if 'treat_downstream_input' in filters.keys() and filters['treat_downstream_input'] == 'adjust':
+            focus_ids = [x.pad_id for x in query]
+            ds_ids = []
+            for barrier in query:
+                ds_ids = get_ds_ids(barrier, focus_ids, ds_ids)
+            query_ids = focus_ids + ds_ids
+            query = Barrier.objects.filter(pad_id__in=query_ids)
 
     return (query, notes)
 
@@ -215,14 +228,13 @@ def update_scenario_barrier(request):
     # Update with form values
     return JsonResponse({})
 
-def get_ds_ids(barrier, barrier_pad_ids, ds_ids):
-    if barrier.downstream_id not in barrier_pad_ids and barrier.downstream_id not in ds_ids:
-        ds_ids.append(barrier.downstream_id)
-    try:
-        ds_barrier = Barrier.objects.get(pad_id=downstream_id)
-        ds_ids = get_ds_ids(ds_barrier, barrier_pad_ids, ds_ids)
-    except:
-        pass
+def get_ds_ids(barrier, focus_ids, ds_ids):
+    from fishpass.models import Barrier
+    if barrier.downstream_id != 0 and barrier.downstream_barrier_count > 0:
+        if barrier.downstream_id not in focus_ids and barrier.downstream_id not in ds_ids:
+            ds_ids.append(barrier.downstream_id)
+        ds_barrier = Barrier.objects.get(pad_id=barrier.downstream_id)
+        ds_ids = get_ds_ids(ds_barrier, focus_ids, ds_ids)
     return ds_ids
 
 def createOptiPassInputFile(project, file_location):
@@ -244,8 +256,8 @@ def createOptiPassInputFile(project, file_location):
             ds_barriers.append(Barrier.objects.get(pad_id=int(ds_id)))
 
     barrier_dicts = []
-    if len(project.target_area_input) > 1:
-        fa_ids = FocusArea.objects.filter(id__in=eval(project.target_area_input))
+    if len(project.target_area) > 1:
+        fa_ids = FocusArea.objects.filter(id__in=eval(project.target_area))
     else:
         fa_ids = FocusArea.objects.filter(unit_type='County')
 
@@ -332,13 +344,14 @@ def createOptiPassInputFile(project, file_location):
     # write csv to file_location
     import csv
     fieldnames = ['BARID','REGION','FOCUS','DSID','USHAB','PREPASS','NPROJ','ACTION']
-    if len(barrier_dict.keys()) == len(fieldnames) + 2:
-        fieldnames = fieldnames + ['COST','POSTPASS']
-    else:
-        num_runs = (len(barrier_dict.keys()) - len(fieldnames))/2
-        for count in [x for x in range(1,num_rows+1)]:
-            fieldnames.append('COST%d' % count)
-            fieldnames.append('POSTPASS%d' % count)
+    if len(barrier_dicts) > 0 :
+        if len(barrier_dicts[0].keys()) == len(fieldnames) + 2:
+            fieldnames = fieldnames + ['COST','POSTPASS']
+        else:
+            num_runs = (len(barrier_dict.keys()) - len(fieldnames))/2
+            for count in [x for x in range(1,num_rows+1)]:
+                fieldnames.append('COST%d' % count)
+                fieldnames.append('POSTPASS%d' % count)
     with open(file_location, 'w') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()

@@ -44,11 +44,11 @@ function spatialOrgLoad() {
   document.getElementById('id_spatial_organization').onchange = selectSpatialOrganization;
 
   app.clearTargetAreaInput = function() {
-    document.getElementById('id_target_area_input').value = '';
+    document.getElementById('id_target_area').value = '';
   }
 
   app.addIdToTargetAreaInput = function() {
-    document.getElementById('id_target_area_input').value = app.map.interaction.focusAreaSelection;
+    document.getElementById('id_target_area').value = app.map.interaction.focusAreaSelection;
   }
 };
 
