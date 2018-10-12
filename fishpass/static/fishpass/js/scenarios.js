@@ -97,10 +97,11 @@ var madrona = {
             }
 
             app.viewModel.scenarios.scenarioForm(false);
-            app.viewModel.scenarios.loadingMessage("Creating Design");
+            app.viewModel.scenarios.loadingMessage("Creating Project");
             app.loadingAnimation.show();
 
             $.ajax({
+                // TODO: can we pass a scenario ID for updating existing Projects?
                 url: url,
                 data: data,
                 cache: false,
@@ -110,18 +111,10 @@ var madrona = {
                 traditional: true,
                 dataType: 'json',
                 success: function(result) {
-                    app.loadingAnimation.hide();
-                    // window.alert('TODO: redirect to report now!');
-                    // Get scenario ID from result
-                    // Redirect window to /report/SCENARIO_ID/
-                    document.location.href = '/get_report/' + result['X-Madrona-Select'] + '/';
-                    // app.state.setStep = 'result'; // go to results
-                    // app.resultsInit(result['X-Madrona-Show']);
-                    // app.viewModel.scenarios.addScenarioToMap(null, {uid: result['X-Madrona-Show']});
-                    // app.viewModel.scenarios.loadingMessage(false);
-                    // // clearInterval(barTimer);
-                    // // app.viewModel.scenarios.loadCollectionsFromServer();
-                    // console.log(`%c form submitted: %o`, 'color: green;', result);
+                    // app.loadingAnimation.hide();
+                    Redirect window to /report/SCENARIO_ID/
+                    // document.location.href = '/fishpass/get_report/' + result['X-Madrona-Select'] + '/';
+                    // window.alert('DEBUG: All Done! This would send you to `/fishpass/get_report/' + result['X-Madrona-Select'] + '/`')
                 },
                 error: function(result) {
                     app.loadingAnimation.hide();

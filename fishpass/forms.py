@@ -92,6 +92,7 @@ class ProjectForm(ScenarioForm):
     assign_cost = forms.BooleanField(
         label="Use Estimated Costs",
         help_text="Uncheck to treat the effort of mitigating each barrier as equal",
+        required = False,
         initial=True
     )
 
@@ -202,7 +203,6 @@ class ProjectForm(ScenarioForm):
         return return_list
 
     def clean_focus_area_input(self):
-        import ipdb; ipdb.set_trace()
         return FocusArea.objects.get(pk=self.cleaned_data['focus_area_input'])
 
     def is_valid(self, *args, **kwargs):
