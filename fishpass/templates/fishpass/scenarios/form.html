@@ -19,7 +19,9 @@
         </a>
       </div>
 
-      <p>Action: {{ action }}</p>
+      {% block debug_action %}
+      <!-- <p>Action: {{ action }}</p> -->
+      {% endblock debug_action %}
 
         <form id="scenarios-form" action="{{ action }}" method="post" name="scenarios-form">
           {% block hidden_fields %}

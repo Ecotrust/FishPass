@@ -206,7 +206,7 @@ function scenarioFormModel(options) {
         var param_element = $('#id_' + param);
         var param_widget = $('#' + param + '_widget');
 
-        if (param_bool()) {
+        if (param_bool != null && param_bool()) {
             param_bool(false);
             param_element.removeAttr('checked');
             param_widget.css('display', 'none');
@@ -382,10 +382,16 @@ function scenarioFormModel(options) {
                         self.updatedFilterResultsLayer.setVisibility(true);
                         self.gridCellsRemaining(featureCount);
 
-                        if ($('#scenarios-form .alert').length > 0) {
+                        if (featureCount == 0) {
+                          if ($('#scenarios-form .alert').length > 0) {
                             $('#scenarios-form .alert').removeClass('d-none');
-                        } else {
+                          } else {
                             $('#scenarios-form').append(`<div class="alert alert-warning" role="alert" data-bind="text: self.filterNotesMessage()"></div>`);
+                          }
+                        } else {
+                          if ($('#scenarios-form .alert').length > 0) {
+                            $('#scenarios-form .alert').addClass('d-none');
+                          }
                         }
 
                         self.showButtonSpinner(false);
