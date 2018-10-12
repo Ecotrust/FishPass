@@ -309,18 +309,31 @@ app.scenarioInProgressCheck = function() {
   }
 }
 
+// get barrier layer ajax
+// app.request.get_barrier_layer()
+//   .then(function(response) {
+//     if (response) {
+//       var geojsonObject = response.geojson;
+//       app.map.layer.barriers.addFeatures(geojsonObject);
+//       app.map.addLayer(app.map.layer.barriers.layer);
+//     }
+//   })
+
 focusAreaSelectAction = function(feat) {
-  app.scenarioInProgressCheck();
-  if (app.state.step < 1) {
-    app.state.setStep = 1; // step forward in state
-  }
-  app.request.get_focus_area(feat, function(feat, vector) {
-    if (feat) {
-      confirmSelection(feat, vector);
+  var unitType = app.map.selection.select.getLayer(feat).get('id');
+  var idField = app.mapbox.layers[unitType].id_field;
+  var unitId = feat.getProperties()[idField];
+  app.request.get_focus_area_geojson_by_type(unitType, unitId, function(response) {
+
+    // app.scenarioInProgressCheck();
+    if (app.state.step < 1) {
+      // app.state.setStep = 1; // step forward in state
     }
-    if (app.state.step < 2) {
-      app.state.setStep = 2; // step forward in state
-    }
+    // if (feat) {
+      // confirmSelection(feat, vector);
+    // }
+    // if (app.state.step < 2) {
+      // app.state.setStep = 2; // step forward in state
   });
 };
 

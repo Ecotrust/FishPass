@@ -14,7 +14,7 @@ urlpatterns = [
     url(r'get_scenarios/', get_scenarios, {'scenario_module_name':'fishpass', 'scenario_model_name':'Project'}),
 
     ### Mapping/Optimization
-    url(r'^get_barrier_layer/$', views.get_barrier_layer),
+    url(r'^get_barrier_layer/?', views.get_barrier_layer),
     url(r'^get_focus_area_geojson_by_type/?', views.get_focus_area_geojson_by_type),
 
     url(r'^get_user_scenario_list/$', views.get_user_scenario_list),
