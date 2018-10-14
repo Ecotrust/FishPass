@@ -19,6 +19,7 @@ app.map.interaction = {
     layers: []
   }),
   selectFilter: new ol.interaction.Select({
+    addCondition: ol.events.condition.singleClick,
     layers: [
       app.map.layer.huc10.layer,
       app.map.layer.huc12.layer,

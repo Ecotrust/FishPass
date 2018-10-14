@@ -320,11 +320,14 @@ app.scenarioInProgressCheck = function() {
 //   })
 
 focusAreaSelectAction = function(feat) {
-  var unitType = app.map.selection.select.getLayer(feat).get('id');
-  var idField = app.mapbox.layers[unitType].id_field;
+  // unit type used for request params
+  var unitType = app.map.selection.select.getLayer(feat).get('unitType');
+  // id used for front end code
+  var id = app.map.selection.select.getLayer(feat).get('id');
+  var idField = app.mapbox.layers[id].id_field;
   var unitId = feat.getProperties()[idField];
   app.request.get_focus_area_geojson_by_type(unitType, unitId, function(response) {
-
+    console.log(response);
     // app.scenarioInProgressCheck();
     if (app.state.step < 1) {
       // app.state.setStep = 1; // step forward in state
@@ -500,6 +503,7 @@ app.map.layer = {
       layer: new ol.layer.VectorTile({
         name: 'County',
         title: 'County',
+        unitType: 'County',
         id: 'county',
         source: new ol.source.VectorTile({
           format: new ol.format.MVT({
