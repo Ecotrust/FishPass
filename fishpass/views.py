@@ -106,7 +106,6 @@ def get_geojson_from_queryset(query, project=None):
 def run_filter_query(filters):
     from collections import OrderedDict
     from fishpass.models import Barrier, OwnershipType, FocusArea
-    # import ipdb; ipdb.set_trace()
     # TODO: This would be nicer if it generically knew how to filter fields
     # by name, and what kinds of filters they were. For now, hard code.
     notes = []
@@ -378,6 +377,7 @@ def createOptiPassInputFile(project, file_location):
         if not type(barrier_dict['COST']) == float and not str(barrier_dict['COST']).isnumeric():
             barrier_dict['NPROJ'] = 0
             barrier_dict['COST'] = 0
+            barrier_dict['POSTPASS'] = barrier_dict['PREPASS']
         else:
             barrier_dict['NPROJ'] = 1
             if not project.assign_cost:
@@ -491,10 +491,10 @@ def optipass(project):
         addOutfileToReport(outfile, project)
 
         # remove output file
-        # os.remove(outfile)
+        os.remove(outfile)
 
     # Delete input file
-    # os.remove(input_file)
+    os.remove(input_file)
     return project
 
 def get_report(request, projid, template=loader.get_template('fishpass/report.html'), context={'title': 'FishPASS - Report'}):

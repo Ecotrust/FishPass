@@ -528,8 +528,6 @@ class ScenarioBarrierType(models.Model):
     barrier_type = models.ForeignKey(BarrierType)
     default_cost = models.FloatField(null=True,blank=True,default=None,verbose_name="Default Cost of Mitigation")
     default_post_passability = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name='Post-passability')
-    # fixable = models.BooleanField(default=True)
-    # barrier_specific = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'Project-Specific Barrier Type Setting'
