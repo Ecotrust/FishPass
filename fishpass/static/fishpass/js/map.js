@@ -144,6 +144,14 @@ app.map.styles = {
         }),
         zIndex: 4
     }),
+    transparent: new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: 'transparent',
+      }),
+      fill: new ol.style.Fill({
+        color: 'transparent'
+      })
+    })
 };
 
 /**
@@ -326,12 +334,13 @@ focusAreaSelectAction = function(feat) {
   var id = app.map.selection.select.getLayer(feat).get('id');
   var idField = app.mapbox.layers[id].id_field;
   var unitId = feat.getProperties()[idField];
+  // TODO: smarter selction so that we only query for newly selected features
   app.request.get_focus_area_geojson_by_type(unitType, unitId, function(response) {
-    console.log(response);
+    app.map.selection.focusArea.push(response);
     // app.scenarioInProgressCheck();
-    if (app.state.step < 1) {
+    // if (app.state.step < 1) {
       // app.state.setStep = 1; // step forward in state
-    }
+    // }
     // if (feat) {
       // confirmSelection(feat, vector);
     // }
@@ -554,8 +563,14 @@ app.map.layer = {
 
     focusArea: {
       layer: new ol.layer.Vector({
-        style: app.map.styles.FocusArea,
-      })
+        style: app.map.styles.PolygonSelected
+      }),
+      addFeatures: function(geojsonObject) {
+        var vectorSource = new ol.source.Vector({
+          features: (new ol.format.GeoJSON()).readFeatures(geojsonObject)
+        });
+        app.map.layer.focusArea.layer.setSource(vectorSource);
+      },
     },
 
     spatialOrganization: {
