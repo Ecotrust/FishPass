@@ -246,9 +246,19 @@ def create_init_barrier_dict(barrier, focus_barriers, fa_type, barrier_type, bar
         dsid = "NA"
     else:
         dsid = barrier.downstream_id
+    # TODO: The problem the code below works around should NEVER happen!
+    try:
+        region = FocusArea.objects.get(geometry__covers=barrier.geometry, unit_type=fa_type).description
+    except:
+        regions = FocusArea.objects.filter(geometry__covers=barrier.geometry, unit_type=fa_type)
+        if regions.count() > 0:
+            region = regions[0].description
+        else:
+            region = None
+
     barrier_dict = {
         'BARID': barrier.pad_id,
-        'REGION': FocusArea.objects.get(geometry__covers=barrier.geometry, unit_type=fa_type).description,    # I wonder if this should be a stringified ID
+        'REGION': region,
         'FOCUS': focus,
         'DSID': dsid,
         'USHAB': barrier.upstream_miles,
