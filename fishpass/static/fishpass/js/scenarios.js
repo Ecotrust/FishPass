@@ -113,8 +113,8 @@ var madrona = {
                 success: function(result) {
                     // app.loadingAnimation.hide();
                     // Redirect window to /report/SCENARIO_ID/
-                    document.location.href = '/fishpass/get_report/' + result['X-Madrona-Select'] + '/';
-                    // window.alert('DEBUG: All Done! This would send you to `/fishpass/get_report/' + result['X-Madrona-Select'] + '/`')
+                    // document.location.href = '/fishpass/get_report/' + result['X-Madrona-Select'] + '/';
+                    window.alert('DEBUG: All Done! This would send you to `/fishpass/get_report/' + result['X-Madrona-Select'] + '/`')
                 },
                 error: function(result) {
                     app.loadingAnimation.hide();
