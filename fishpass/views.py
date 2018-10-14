@@ -304,9 +304,9 @@ def createOptiPassInputFile(project, file_location):
     ds_barriers = []
     ds_ids = []
     barrier_pad_ids = [x.pad_id for x in barriers]
-    # for barrier in barriers:
-    #     # TODO: Store pre-made downstream ID list for each barrier, either in DB or cache
-    #     ds_ids = get_ds_ids(barrier, barrier_pad_ids, ds_ids)
+    for barrier in barriers:
+        # TODO: Store pre-made downstream ID list for each barrier, either in DB or cache
+        ds_ids = get_ds_ids(barrier, barrier_pad_ids, ds_ids)
     if 0 in ds_ids:
         ds_ids.remove(0)
     for ds_id in ds_ids:
