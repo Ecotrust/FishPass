@@ -32,7 +32,7 @@ class BarrierAdmin(OSMGeoAdmin):
     form = BarrierForm
 
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('name', 'user', 'description', 'budget', 'min_budget', 'max_budget',)
+    list_display = ('name', 'user', 'description', 'budget', 'budget_min', 'budget_max',)
     search_fields = ['name', 'user', 'description']
 
 class FocusAreaAdmin(OSMGeoAdmin):

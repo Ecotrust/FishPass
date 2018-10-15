@@ -464,11 +464,11 @@ def optipass(project):
     # Sort out batch or budget soln
     budget_list = []
     if project.budget_type == 'batch':
-        itr_budget = project.min_budget
-        while itr_budget < project.max_budget:
+        itr_budget = project.budget_min
+        while itr_budget < project.budget_max:
             budget_list.append(itr_budget)
             itr_budget += project.batch_increment
-        budget_list.append(project.max_budget)
+        budget_list.append(project.budget_max)
     else:
         budget_list.append(project.budget)
 
@@ -523,19 +523,24 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
         except:
             pass
     if action_only:
-        report = ProjectReport.objects.get(project=project, action=1)
+        reports = ProjectReport.objects.filter(project=project, action=1)
     else:
-        report = ProjectReport.objects.get(project=project)
+        reports = ProjectReport.objects.filter(project=project)
 
     #TODO: generate geojson of solution
     #   Do this in a separate view
     #   Should come from scenarios.views.get_filter_results
     # TODO: sort out filter vs. all results
     #   this can be managed on front end
+    reports_dict = {}
+    for report in reports.order_by('budget'):
+        reports_dict[str(report.budget)] = report.to_dict()
+    reports_list = [{'report': x.to_dict, 'barriers':x.barriers_dict(action_only)} for x in reports.order_by('budget')]
+
     context['title'] = str(project)
     context['project'] = project.to_dict()
-    context['report'] = report.to_dict()
-    context['barriers'] = report.barriers_dict(action_only)
+    context['reports'] = reports_list
+    # context['barriers'] = report.barriers_dict(action_only)
     return HttpResponse(template.render(context, request))
 
 def export_report(request, projid):
