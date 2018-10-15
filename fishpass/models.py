@@ -279,7 +279,7 @@ class BarrierCost(models.Model):
             barrier = Barrier.objects.get(pad_id=self.pad_id)
             barrier_name = str(barrier)
         except:
-            barrier_name = str(pad_id)
+            barrier_name = str(self.pad_id)
             pass
         return "%s Costs" % barrier_name
 
