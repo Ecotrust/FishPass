@@ -19,7 +19,9 @@
         </a>
       </div>
 
-      <p>Action: {{ action }}</p>
+      {% block debug_action %}
+      <!-- <p>Action: {{ action }}</p> -->
+      {% endblock debug_action %}
 
         <form id="scenarios-form" action="{{ action }}" method="post" name="scenarios-form">
           {% block hidden_fields %}
@@ -124,56 +126,65 @@
 
             <script type="text/javascript">
               {% if field_min and not field_max %}
-              $('#slider-{{ field_input.html_name }}').bind( "slidestop", function(event, ui) {
-                $(this).slider('value', ui.value); // this line prevents the slider value from being 1 tick off (value update is normally lagging this event trigger)
-                if (app.viewModel.scenarios.scenarioFormModel) {
-                  app.viewModel.scenarios.scenarioFormModel.updateFiltersAndCount('{{ field.html_name }}');
-                }
-              });
-              $('#slider-{{ field_min.html_name }}').bind( "slide slidechange", function(event, ui) {
-                if (app.viewModel.scenarios.scenarioFormModel) {
-                  app.viewModel.scenarios.scenarioFormModel.gridCellsRemaining('...');
-                }
-              });
-              {% elif field_max and not field_min %}
-              $('#slider-{{ field_input.html_name }}').bind( "slidestop", function(event, ui) {
-                $(this).slider('value', ui.value); // this line prevents the slider value from being 1 tick off (value update is normally lagging this event trigger)
-                if (app.viewModel.scenarios.scenarioFormModel) {
-                  app.viewModel.scenarios.scenarioFormModel.updateFiltersAndCount('{{ field.html_name }}');
-                }
-              });
-              $('#slider-{{ field_max.html_name }}').bind( "slide slidechange", function(event, ui) {
-                if (app.viewModel.scenarios.scenarioFormModel) {
-                  app.viewModel.scenarios.scenarioFormModel.gridCellsRemaining('...');
-                }
-              });
-              {% elif field_min and field_max %}
-              $('#slider-{{ field_input.html_name }}').bind( "slidestop", function(event, ui) {
-                $(this).slider('value', ui.value); // this line prevents the slider value from being 1 tick off (value update is normally lagging this event trigger)
-                if (app.viewModel.scenarios.scenarioFormModel) {
-                  app.viewModel.scenarios.scenarioFormModel.updateFiltersAndCount('{{ field.html_name }}');
-                }
-              });
-              $('#slider-{{ field_min.html_name }}').bind( "slide slidechange", function(event, ui) {
-                if (app.viewModel.scenarios.scenarioFormModel) {
-                  app.viewModel.scenarios.scenarioFormModel.gridCellsRemaining('...');
-                }
-              });
-              {% elif field_checkbox %}
-              $('[name="{{ field_checkbox.html_name }}"').change( function(change_event) {
-                if (app.viewModel.scenarios.scenarioFormModel) {
-                  if (!change_event.target.checked) {
-                    app.viewModel.scenarios.scenarioFormModel.removeFilter('{{ field_checkbox.html_name }}_' + change_event.target.value.toString());
+                $('#slider-{{ field_input.html_name }}').bind( "slidestop", function(event, ui) {
+                  $(this).slider('value', ui.value); // this line prevents the slider value from being 1 tick off (value update is normally lagging this event trigger)
+                  if (app.viewModel.scenarios.scenarioFormModel) {
+                    app.viewModel.scenarios.scenarioFormModel.updateFiltersAndCount('{{ field.html_name }}');
                   }
-                  app.viewModel.scenarios.scenarioFormModel.updateFiltersAndCount('{{ field.html_name }}');
-                }
-              });
+                });
+                $('#slider-{{ field_min.html_name }}').bind( "slide slidechange", function(event, ui) {
+                  if (app.viewModel.scenarios.scenarioFormModel) {
+                    app.viewModel.scenarios.scenarioFormModel.gridCellsRemaining('...');
+                  }
+                });
+              {% elif field_max and not field_min %}
+                $('#slider-{{ field_input.html_name }}').bind( "slidestop", function(event, ui) {
+                  $(this).slider('value', ui.value); // this line prevents the slider value from being 1 tick off (value update is normally lagging this event trigger)
+                  if (app.viewModel.scenarios.scenarioFormModel) {
+                    app.viewModel.scenarios.scenarioFormModel.updateFiltersAndCount('{{ field.html_name }}');
+                  }
+                });
+                $('#slider-{{ field_max.html_name }}').bind( "slide slidechange", function(event, ui) {
+                  if (app.viewModel.scenarios.scenarioFormModel) {
+                    app.viewModel.scenarios.scenarioFormModel.gridCellsRemaining('...');
+                  }
+                });
+              {% elif field_min and field_max %}
+                $('#slider-{{ field_input.html_name }}').bind( "slidestop", function(event, ui) {
+                  $(this).slider('value', ui.value); // this line prevents the slider value from being 1 tick off (value update is normally lagging this event trigger)
+                  if (app.viewModel.scenarios.scenarioFormModel) {
+                    app.viewModel.scenarios.scenarioFormModel.updateFiltersAndCount('{{ field.html_name }}');
+                  }
+                });
+                $('#slider-{{ field_min.html_name }}').bind( "slide slidechange", function(event, ui) {
+                  if (app.viewModel.scenarios.scenarioFormModel) {
+                    app.viewModel.scenarios.scenarioFormModel.gridCellsRemaining('...');
+                  }
+                });
+              {% elif field_checkbox %}
+                $('[name="{{ field_checkbox.html_name }}"').change( function(change_event) {
+                  if (app.viewModel.scenarios.scenarioFormModel) {
+                    if (!change_event.target.checked) {
+                      app.viewModel.scenarios.scenarioFormModel.removeFilter('{{ field_checkbox.html_name }}_' + change_event.target.value.toString());
+                    }
+                    app.viewModel.scenarios.scenarioFormModel.updateFiltersAndCount('{{ field.html_name }}');
+                  }
+                });
               {% else %}
-              $('#id_{{ field_input.html_name }}').change( function() {
-                if (app.viewModel.scenarios.scenarioFormModel) {
-                  app.viewModel.scenarios.scenarioFormModel.updateFiltersAndCount('{{ field.html_name }}');
-                }
-              });
+                {% if field.html_name == None %}
+                  // Input is not enclosed in a checkbox-controlled collapsible panel, always used in filtering
+                  $('#id_{{ field_input.html_name }}').change( function() {
+                    if (app.viewModel.scenarios.scenarioFormModel) {
+                      app.viewModel.scenarios.scenarioFormModel.updateFiltersAndCount('{{ field_input.html_name }}');
+                    }
+                  });
+                {% else %}
+                  $('#id_{{ field_input.html_name }}').change( function() {
+                    if (app.viewModel.scenarios.scenarioFormModel) {
+                      app.viewModel.scenarios.scenarioFormModel.updateFiltersAndCount('{{ field.html_name }}');
+                    }
+                  });
+                {% endif %} <!-- field.html_name -->
               {% endif %}
             </script>
           </div>

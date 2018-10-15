@@ -179,5 +179,18 @@ class Command(BaseCommand):
         #     if Barrier.objects.filter(pad_id=barrierCost.pad_id).count() == 0:
         #         barrierCost.delete()
 
+        # Check for mismatch DS Barriers
+        for barrier in Barrier.objects.all():
+            if barrier.downstream_id == 0:
+                if not barrier.downstream_barrier_count == 0:
+                    warnings.append('Barrier %d: "%s" has no downstream barrier id, but claims to have %d downstream barriers. Assuming 0.' % (barrier.pad_id, str(barrier), barrier.downstream_barrier_count))
+                    barrier.downstream_barrier_count = 0
+                    barrier.save()
+            elif Barrier.objects.filter(pad_id=barrier.downstream_id).count() < 1:
+                warnings.append('Barrier %d: "%s" has unknown downstream barrier id "%d". Setting it to NA and 0 downstream barrier count (from %d).' % (barrier.pad_id, str(barrier), barrier.downstream_id, barrier.downstream_barrier_count))
+                barrier.downstream_id = 0
+                barrier.downstream_barrier_count = 0
+                barrier.save()
+
         print("%d barriers added." % import_count)
         return(format_return(True, errors, warnings, import_count))

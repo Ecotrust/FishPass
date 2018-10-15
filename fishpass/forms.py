@@ -44,10 +44,10 @@ class ProjectForm(ScenarioForm):
     #     label="Filter By Boundary",
     #     help_text="This should be true: ALWAYS",
     #     initial=True,
-    #     required=False,
+    #     required=True,
     # )
 
-    target_area_input = forms.CharField(
+    target_area = forms.CharField(
         widget=forms.Textarea,
         label="Target Area",
         help_text="This should be invisible. Stringified GeoJSON Multiselection of FocusAreas",
@@ -60,7 +60,7 @@ class ProjectForm(ScenarioForm):
         help_text="Should downstream mitigation be an option ('adjustable'), should downstream passability be considered in optimization ('non-adjustable'), or completely ignored ('excluded')?",
         # required=True,
         required=False,
-        initial='consider'
+        initial='consider',
     )
 
     # TODO: pre-pass/post-pass/cost-estimates:
@@ -92,6 +92,7 @@ class ProjectForm(ScenarioForm):
     assign_cost = forms.BooleanField(
         label="Use Estimated Costs",
         help_text="Uncheck to treat the effort of mitigating each barrier as equal",
+        required = False,
         initial=True
     )
 
@@ -158,7 +159,7 @@ class ProjectForm(ScenarioForm):
             # (bool_field, min, max, field, [checkboxes])
             # ('target_area', None, None, 'target_area_input'),
             (None, None, None, 'spatial_organization'),
-            (None, None, None, 'target_area_input'),
+            (None, None, None, 'target_area'),
             (None, None, None, 'treat_downstream'),
 
         ]
@@ -202,7 +203,6 @@ class ProjectForm(ScenarioForm):
         return return_list
 
     def clean_focus_area_input(self):
-        import ipdb; ipdb.set_trace()
         return FocusArea.objects.get(pk=self.cleaned_data['focus_area_input'])
 
     def is_valid(self, *args, **kwargs):

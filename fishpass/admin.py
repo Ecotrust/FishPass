@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django import forms
+from django.db import models
 
 from .models import *
 
@@ -7,11 +9,27 @@ from django.contrib.gis.admin import GeoModelAdmin, OSMGeoAdmin
 
 admin.site.index_template = "admin/fishpass/index.html"
 
+class BarrierForm(forms.ModelForm):
+    def get_barrier_choices(self):
+        BARRIER_CHOICES = [
+            (0, 'NA: No downstream barriers')
+        ]
+        BARRIER_CHOICES = BARRIER_CHOICES + [(x.pad_id, str(x)) for x in Barrier.objects.all().order_by('pad_id')]
+        return BARRIER_CHOICES
+
+    downstream_id = forms.TypedChoiceField(coerce=int,choices=(),empty_value=0)
+
+    def __init__(self, choices=(), *args, **kwargs):
+        super(BarrierForm, self).__init__(*args, **kwargs)
+        self.fields['downstream_id'].choices = self.get_barrier_choices()
+
 class BarrierAdmin(OSMGeoAdmin):
     list_display = ('pad_id', 'site_name', 'site_type', 'barrier_status', 'stream_name', 'tributary_to', 'county', 'huc12_name', 'huc10_name')
     search_fields = ['pad_id', 'site_name', 'site_type__name', 'barrier_status__name', 'stream_name', 'tributary_to', 'county', 'huc12_name', 'huc10_name']
 
     change_list_template = 'admin/fishpass/barrier_change_list.html'
+
+    form = BarrierForm
 
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('name', 'user', 'description', 'budget', 'min_budget', 'max_budget',)

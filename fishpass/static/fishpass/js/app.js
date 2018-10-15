@@ -44,11 +44,11 @@ function spatialOrgLoad() {
   document.getElementById('id_spatial_organization').onchange = selectSpatialOrganization;
 
   app.clearTargetAreaInput = function() {
-    document.getElementById('id_target_area_input').value = '';
+    document.getElementById('id_target_area').value = '';
   }
 
   app.addIdToTargetAreaInput = function() {
-    document.getElementById('id_target_area_input').value = app.map.interaction.focusAreaSelection;
+    document.getElementById('id_target_area').value = app.map.interaction.focusAreaSelection;
   }
 };
 
@@ -170,11 +170,8 @@ app.resultsInit = function(id) {
 
 initFiltering = function() {
     setTimeout(function() {
-        if ($('#focus_area_accordion').length > 0) {
-            $('#id_focus_area').prop('checked', true);
-            $('#id_focus_area_input').val(app.state.focusAreaState.id);
-            $('#focus_area_accordion').hide();
-            app.viewModel.scenarios.scenarioFormModel.toggleParameter('focus_area');
+        if ($('#step1').length > 0) {
+            app.viewModel.scenarios.scenarioFormModel.updateFilterResults();
         } else {
             initFiltering();
         }
@@ -864,7 +861,7 @@ app.request = {
     },
     get_barrier_layer: function() {
       return $.ajax({
-          url: `/get_barrier_layer/`,
+          url: `/fishpass/get_barrier_layer/`,
           dataType: 'json',
           success: function(response) {
               return response;

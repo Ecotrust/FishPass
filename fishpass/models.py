@@ -342,7 +342,7 @@ class Project(Scenario):
 
     spatial_organization = models.CharField(max_length=50, null=True, blank=True, default=None, choices=UNIT_TYPE_CHOICES)
 
-    target_area_input = models.TextField(blank=True,null=True,default=None,help_text="list of FocusArea IDs that make up the target area geometry")
+    target_area = models.TextField(blank=True,null=True,default=None,help_text="list of FocusArea IDs that make up the target area geometry")
 
     treat_downstream = models.CharField(max_length=30, default='consider', choices=settings.DS_TREATMENT_CHOICES)
 
@@ -370,32 +370,26 @@ class Project(Scenario):
         return self.name
 
     def run_filters(self, query):
-        from fishpass.views import get_ds_ids
-        # from scenarios.views import run_filter_query
-        # Who calls this? Where does it go? When is the new layer created?
+        from fishpass.views import run_filter_query
 
         filters = {}
-        # TODO: If form.target_area?
-        # if self.target_area_input:
-        #     # TODO: This should come in as a list of focus area ids:
-        #     #   Convert to a Multipolygon
-        #     # filters['target_area'] = self.target_area
-        #     query = query.filter(geometry__intersects={Multipolygon})
 
         if self.ownership_input:
             ownership_keys = []
+            filters['ownership_input'] = 'true'
+            filters['ownership_input_checkboxes'] = 'true'
             for key in eval(self.ownership_input_checkboxes):
-                ownership_keys.append(int(key))
-            query = query.filter(ownership_type__in=ownership_keys)
+                filters['ownership_input_checkboxes_%d' % int(key)] = 'true'
 
-        # filters['treat_downstream'] = self.treat_downstream
-        if self.treat_downstream == 'adjust':
-            barrier_pad_ids = [x.pad_id for x in query]
-            ds_ids = []
-            for barrier in query:
-                ds_ids = get_ds_ids(barrier, barrier_pad_ids, ds_ids)
-            query_ids = barrier_pad_ids + ds_ids
-            query = Barrier.objects.filter(pad_id__in=query_ids)
+        focus_ids = []
+        if self.target_area and len(self.target_area) > 0:
+            filters['target_area'] = 'true'
+            filters['target_area_input'] = self.target_area
+
+        filters['treat_downstream'] = 'true'
+        filters['treat_downstream_input'] = self.treat_downstream
+
+        (query, notes) = run_filter_query(filters)
         return query
 
     def run(self, result=None):
@@ -411,7 +405,6 @@ class Project(Scenario):
                 self.satisfied = True
             else:
                 self.satisfied = False
-
         return result
 
     def to_dict(self):
@@ -423,10 +416,7 @@ class Project(Scenario):
             # TODO: pick relevent budget fields based on budget_type
             # TODO: get project-specific barrier type/status settings
             # TODO: get barrier-specific settings (?)
-            'report': {
-                'foo': 'foo',
-                'bar': 'bar'
-            }
+            'report': {}
         }
 
     class Options:
@@ -536,10 +526,8 @@ class ScenarioBarrier(models.Model):
 class ScenarioBarrierType(models.Model):
     project = models.ForeignKey(Project)
     barrier_type = models.ForeignKey(BarrierType)
-    default_cost = models.FloatField(null=True,blank=True,verbose_name="Default Cost of Mitigation")
-    default_post_passability = models.FloatField(null=True,blank=True,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],default=1.0,verbose_name='Post-passability')
-    fixable = models.BooleanField(default=True)
-    barrier_specific = models.BooleanField(default=False)
+    default_cost = models.FloatField(null=True,blank=True,default=None,verbose_name="Default Cost of Mitigation")
+    default_post_passability = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name='Post-passability')
 
     class Meta:
         verbose_name = 'Project-Specific Barrier Type Setting'

@@ -97,10 +97,11 @@ var madrona = {
             }
 
             app.viewModel.scenarios.scenarioForm(false);
-            app.viewModel.scenarios.loadingMessage("Creating Design");
+            app.viewModel.scenarios.loadingMessage("Creating Project");
             app.loadingAnimation.show();
 
             $.ajax({
+                // TODO: can we pass a scenario ID for updating existing Projects?
                 url: url,
                 data: data,
                 cache: false,
@@ -110,18 +111,10 @@ var madrona = {
                 traditional: true,
                 dataType: 'json',
                 success: function(result) {
-                    app.loadingAnimation.hide();
-                    // window.alert('TODO: redirect to report now!');
-                    // Get scenario ID from result
+                    // app.loadingAnimation.hide();
                     // Redirect window to /report/SCENARIO_ID/
-                    document.location.href = '/get_report/' + result['X-Madrona-Select'] + '/';
-                    // app.state.setStep = 'result'; // go to results
-                    // app.resultsInit(result['X-Madrona-Show']);
-                    // app.viewModel.scenarios.addScenarioToMap(null, {uid: result['X-Madrona-Show']});
-                    // app.viewModel.scenarios.loadingMessage(false);
-                    // // clearInterval(barTimer);
-                    // // app.viewModel.scenarios.loadCollectionsFromServer();
-                    // console.log(`%c form submitted: %o`, 'color: green;', result);
+                    document.location.href = '/fishpass/get_report/' + result['X-Madrona-Select'] + '/';
+                    // window.alert('DEBUG: All Done! This would send you to `/fishpass/get_report/' + result['X-Madrona-Select'] + '/`')
                 },
                 error: function(result) {
                     app.loadingAnimation.hide();
@@ -164,6 +157,8 @@ function scenarioFormModel(options) {
     // self.landform_type_checkboxes_include_2 = ko.observable(true); //ridgetop
     // self.landform_type_checkboxes_include_3 = ko.observable(true); //floors
     // self.landform_type_checkboxes_include_4 = ko.observable(true); //east/west
+    self.target_area = ko.observable(true);
+    self.treat_downstream = ko.observable('consider');
     self.ownership_input = ko.observable(false);
 
     self.lastChange = (new Date()).getTime();
@@ -206,7 +201,7 @@ function scenarioFormModel(options) {
         var param_element = $('#id_' + param);
         var param_widget = $('#' + param + '_widget');
 
-        if (param_bool()) {
+        if (param_bool != null && param_bool()) {
             param_bool(false);
             param_element.removeAttr('checked');
             param_widget.css('display', 'none');
@@ -382,10 +377,16 @@ function scenarioFormModel(options) {
                         self.updatedFilterResultsLayer.setVisibility(true);
                         self.gridCellsRemaining(featureCount);
 
-                        if ($('#scenarios-form .alert').length > 0) {
+                        if (featureCount == 0) {
+                          if ($('#scenarios-form .alert').length > 0) {
                             $('#scenarios-form .alert').removeClass('d-none');
-                        } else {
+                          } else {
                             $('#scenarios-form').append(`<div class="alert alert-warning" role="alert" data-bind="text: self.filterNotesMessage()"></div>`);
+                          }
+                        } else {
+                          if ($('#scenarios-form .alert').length > 0) {
+                            $('#scenarios-form .alert').addClass('d-none');
+                          }
                         }
 
                         self.showButtonSpinner(false);
@@ -408,6 +409,15 @@ function scenarioFormModel(options) {
             param_element_max = $('#id_' + param + '_max')[0],
             param_element_input = $('#id_' + param + '_input')[0],
             param_element_checkboxes = $('#id_' + param + '_checkboxes_0')[0];
+
+        if (
+          param_element_min == null &&
+          param_element_max == null &&
+          param_element_input == null &&
+          param_element_checkboxes == null
+        ) {
+          param_element_input = $('#id_' + param)[0]
+        }
 
         if (param_element_min) {
             min = param_element_min.value;

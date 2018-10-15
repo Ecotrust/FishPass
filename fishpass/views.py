@@ -78,29 +78,20 @@ def get_geojson_from_queryset(query, project=None):
     for feature in query:
         # derive geojson
         if hasattr(feature, 'geometry') and (type(feature.geometry) == Polygon or type(feature.geometry) == MultiPolygon):
-            try:
-                feat_json = {
-                    "type": "Feature",
-                    "geometry": json.loads(feature.geometry.geojson),
-                    "properties": {}
-                }
-            except:
-                import ipdb
-                ipdb.set_trace()
+            feat_json = {
+                "type": "Feature",
+                "geometry": json.loads(feature.geometry.geojson),
+                "properties": {}
+            }
         else:
-            try:
-                feat_json = {
-                    "type": "Feature",
-                    "geometry": {
-                        "type": "Point",
-                        "coordinates": [feature.geometry.x, feature.geometry.y]
-                    },
-                    "properties": {}
-                }
-            except:
-                import ipdb
-                ipdb.set_trace()
-                print('barriererror')
+            feat_json = {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [feature.geometry.x, feature.geometry.y]
+                },
+                "properties": {}
+            }
 
         # convert attributes to json notation
         if project:
@@ -116,19 +107,40 @@ def get_geojson_from_queryset(query, project=None):
 
 def run_filter_query(filters):
     from collections import OrderedDict
-    from fishpass.models import Barrier
+    from fishpass.models import Barrier, OwnershipType, FocusArea
     # TODO: This would be nicer if it generically knew how to filter fields
     # by name, and what kinds of filters they were. For now, hard code.
     notes = []
     query = Barrier.objects.all()
 
-    if 'area' in filters.keys() and filters['area']:
-        # RDH 1/8/18: filter(geometry__area_range(...)) does not seem available.
-        # query = query.filter(geometry__area__range=(filters['area_min'], filters['area_max']))
+    if 'ownership_input' in filters.keys() and filters['ownership_input'] == 'true':
+        if 'ownership_input_checkboxes' in filters.keys() and filters['ownership_input_checkboxes'] == 'true':
+            ownership_keys = []
+            for ot_id in [x.pk for x in OwnershipType.objects.all()]:
+                ot_label = 'ownership_input_checkboxes_%d' % ot_id
+                if ot_label in filters.keys() and filters[ot_label] == 'true':
+                    ownership_keys.append(ot_id)
+            query = query.filter(ownership_type__in=ownership_keys)
 
-        # RDH 1/9/18: Why can't we use the model's 'Run Filters' function?
-        pu_ids = [pu.pk for pu in query if pu.geometry.area <= float(filters['area_max']) and pu.geometry.area>= float(filters['area_min'])]
-        query = (query.filter(pk__in=pu_ids))
+    if 'target_area' in filters.keys() and filters['target_area'] == 'true':
+        if 'target_area_input' in filters.keys() and len(filters['target_area_input']) > 0:
+            focus_ids = []
+            for fa_id_raw in filters['target_area_input'].split(','):
+                fa_id = int(fa_id_raw.strip())
+                target = FocusArea.objects.get(pk=fa_id)
+                focus_ids = focus_ids + [x.pad_id for x in query.filter(geometry__intersects=target.geometry)]
+            # remove dupes
+            focus_ids = list(set(focus_ids))
+            query = query.filter(pad_id__in=focus_ids)
+
+    if 'treat_downstream' in filters.keys() and filters['treat_downstream'] == 'true':
+        if 'treat_downstream_input' in filters.keys() and filters['treat_downstream_input'] == 'adjust':
+            focus_ids = [x.pad_id for x in query]
+            ds_ids = []
+            for barrier in query:
+                ds_ids = get_ds_ids(barrier, focus_ids, ds_ids)
+            query_ids = focus_ids + ds_ids
+            query = Barrier.objects.filter(pad_id__in=query_ids)
 
     return (query, notes)
 
@@ -217,130 +229,200 @@ def update_scenario_barrier(request):
     # Update with form values
     return JsonResponse({})
 
-def get_ds_ids(barrier, barrier_pad_ids, ds_ids):
-    if barrier.downstream_id not in barrier_pad_ids and barrier.downstream_id not in ds_ids:
-        ds_ids.append(barrier.downstream_id)
-    try:
-        ds_barrier = Barrier.objects.get(pad_id=downstream_id)
-        ds_ids = get_ds_ids(ds_barrier, barrier_pad_ids, ds_ids)
-    except:
-        pass
+def get_ds_ids(barrier, focus_ids, ds_ids):
+    from fishpass.models import Barrier
+    if barrier.downstream_id != 0 and barrier.downstream_barrier_count > 0:
+        if barrier.downstream_id not in focus_ids and barrier.downstream_id not in ds_ids:
+            ds_ids.append(barrier.downstream_id)
+        ds_barrier = Barrier.objects.get(pad_id=barrier.downstream_id)
+        ds_ids = get_ds_ids(ds_barrier, focus_ids, ds_ids)
     return ds_ids
 
+def create_init_barrier_dict(barrier, focus_barriers, fa_type, barrier_type, barrier_status):
+    from fishpass.models import FocusArea
+    if barrier in focus_barriers:
+        focus = 1
+    else:
+        focus = 0
+    if not barrier.downstream_id or barrier.downstream_id == 0:
+        dsid = "NA"
+    else:
+        dsid = barrier.downstream_id
+    # TODO: The problem the code below works around should NEVER happen!
+    try:
+        region = FocusArea.objects.get(geometry__covers=barrier.geometry, unit_type=fa_type).description
+    except:
+        regions = FocusArea.objects.filter(geometry__covers=barrier.geometry, unit_type=fa_type)
+        if regions.count() > 0:
+            region = regions[0].description
+        else:
+            region = None
+
+    barrier_dict = {
+        'BARID': barrier.pad_id,
+        'REGION': region,
+        'FOCUS': focus,
+        'DSID': dsid,
+        'USHAB': barrier.upstream_miles,
+        'PREPASS': barrier_status.default_pre_passability,
+        'POSTPASS': barrier_type.default_post_passability,
+        'COST': barrier_type.default_cost,
+        'NPROJ': 0,
+        'ACTION': 0,
+    }
+    if not barrier_dict['COST'] == None:
+        barrier_dict['NPROJ'] = 1
+    return barrier_dict
+
+def apply_project_specific_type_defaults(barrier_dict, barrier_type):
+    if not barrier_type.default_cost == None:
+        barrier_dict['COST'] = barrier_type.default_cost
+    if not barrier_type.default_post_passability == None:
+        barrier_dict['POSTPASS'] = barrier_type.default_post_passability
+    return barrier_dict
+
+def apply_project_specific_status_defaults(barrier_dict, barrier_status):
+    if not barrier_status.default_pre_passability == None:
+        barrier_dict['PREPASS'] = barrier_status.default_pre_passability
+    return barrier_dict
+
+def apply_project_specific_barrier_details(barrier_dict, barrier_record):
+    if not barrier_record.pre_pass == None:
+        barrier_dict['PREPASS'] = barrier_record.pre_pass
+    if not barrier_record.post_pass == None:
+        barrier_dict['POSTPASS'] = barrier_record.post_pass
+    if not barrier_record.cost == None:
+        barrier_dict['COST'] = barrier_record.cost
+    if barrier_record.action == 'exclude':
+        barrier_dict['ACTION'] = -1
+    elif barrier_record.action == 'include':
+        barrier_dict['ACTION'] = 1
+    else:               # barrier_record.action == 'consider'
+        barrier_dict['ACTION'] = 0
+    return barrier_dict
+
 def createOptiPassInputFile(project, file_location):
-    from fishpass.models import FocusArea, Barrier, ScenarioBarrier, ScenarioBarrierType, ScenarioBarrierStatus, BarrierType, BarrierStatus
+    from fishpass.models import FocusArea, Barrier, BarrierCost, ScenarioBarrier, ScenarioBarrierType, ScenarioBarrierStatus, BarrierType, BarrierStatus
     from datetime import datetime
+    startFuncTime = datetime.now()
+    print('Beginning createOptiPassInputFile...')
     # get list of barriers
     barriers = [x for x in project.run()]
+    barCrunchTime = (datetime.now()-startFuncTime).total_seconds()
+    print("Filtering Done: %s seconds" % str(barCrunchTime))
+
     # get downstream barriers
     # if treat_downstream is 'adjust', ds_ids are already in barriers. If 'ignore' we don't want them.
     ds_barriers = []
-    if project.treat_downstream == 'consider':
-        ds_ids = []
-        barrier_pad_ids = [x.pad_id for x in barriers]
-        for barrier in barriers:
-            ds_ids = get_ds_ids(barrier, barrier_pad_ids, ds_ids)
-        if 0 in ds_ids:
-            ds_ids.remove(0)
-        for ds_id in ds_ids:
-            ds_barriers.append(Barrier.objects.get(pad_id=int(ds_id)))
+    ds_ids = []
+    barrier_pad_ids = [x.pad_id for x in barriers]
+    for barrier in barriers:
+        # TODO: Store pre-made downstream ID list for each barrier, either in DB or cache
+        ds_ids = get_ds_ids(barrier, barrier_pad_ids, ds_ids)
+    if 0 in ds_ids:
+        ds_ids.remove(0)
+    for ds_id in ds_ids:
+        ds_barriers.append(Barrier.objects.get(pad_id=int(ds_id)))
+    dsBarTime = (datetime.now()-startFuncTime).total_seconds()-barCrunchTime
+    print("DownStream ID Discovery Done: %s seconds" % str(dsBarTime))
 
     barrier_dicts = []
-    if len(project.target_area_input) > 1:
-        fa_ids = FocusArea.objects.filter(id__in=eval(project.target_area_input))
+    if len(project.target_area) > 1:
+        fa_ids = FocusArea.objects.filter(id__in=eval(project.target_area))
     else:
         fa_ids = FocusArea.objects.filter(unit_type='County')
 
     if fa_ids.count() < 1:
         raise Exception('ERROR: fishpass.views.createOptiPassInputFile -- fa_ids MUST be at least 1!!!')
 
+    fa_type = fa_ids[0].unit_type
+
+    all_barriers = barriers + ds_barriers
+
+    project_barrier_types = ScenarioBarrierType.objects.filter(project=project)
+    project_barrier_statuses = ScenarioBarrierStatus.objects.filter(project=project)
+    barrier_overrides = BarrierCost.objects.filter(pad_id__in=[x.pad_id for x in all_barriers])
+    project_barriers_records = ScenarioBarrier.objects.filter(project=project)
     startLoopTime = datetime.now()
-    for barrier in barriers + ds_barriers:
-        prepass = False
-        postpass = False
-        cost = False
-        # NPROJ: The number of actions that can be taken on a barrier. This is not able to be greater than 1
-        #   for the purposes of this tool
-        nproj = 0
-        # ACTION: Force project to be in the mitigation solution, 0<=consider, -1<=never, nproj<=force
-        action = 0
-        # FOCUS: Is the barrier in the focus area or not?
-        if barrier in barriers:
-            focus=1
+    print('Initial queries complete: %s seconds' % str((startLoopTime-startFuncTime).total_seconds()-barCrunchTime-dsBarTime))
+    longest_loop_time = 0.0
+    for barrier in all_barriers:
+        midLoopTime = datetime.now()
+
+        barrier_type = barrier.site_type
+        barrier_status = barrier.barrier_status
+        barrier_override = False
+
+        if barrier_overrides.count() > 0:
+            try:
+                barrier_override = barrier_overrides.get(pad_id=barrier.pad_id)
+                if not barrier_override.site_type == None:
+                    barrier_type = barrier_override.site_type
+                if not barrier_override.barrier_status == None:
+                    barrier_status = barrier_override.barrier_status
+            except:
+                barrier_override = False
+                pass
+
+        barrier_dict = create_init_barrier_dict(barrier, barriers, fa_type, barrier_type, barrier_status)
+        if project_barrier_types.count() > 0:
+            try:
+                project_barrier_type = project_barrier_types.get(barrier_type=barrier_type)
+                barrier_dict = apply_project_specific_type_defaults(barrier_dict, project_barrier_type)
+            except:
+                pass
+        if project_barrier_statuses.count() > 0:
+            try:
+                project_barrier_status = project_barrier_statuses.get(barrier_type=barrier_status)
+                barrier_dict = apply_project_specific_status_defaults(barrier_dict, project_barrier_status)
+            except:
+                pass
+        if barrier_override and not barrier_override.cost == None:
+            barrier_dict['COST'] = barrier_override.cost
+        if project_barriers_records.count() > 0:
+            try:
+                project_barrier_record = project_barriers_records.get(barrier=barrier)
+                barrier_dict = apply_project_specific_barrier_details(barrier_dict, project_barrier_record)
+            except:
+                pass
+
+        if not type(barrier_dict['COST']) == float and not str(barrier_dict['COST']).isnumeric():
+            barrier_dict['NPROJ'] = 0
+            barrier_dict['COST'] = 0
+            barrier_dict['POSTPASS'] = barrier_dict['PREPASS']
         else:
-            focus=0
-        proj_barrier_records = ScenarioBarrier.objects.filter(project=project,barrier=barrier)
-        # TODO: get SUPER clear on how barrierType, Status, 'fixable' and action impact focus, nproj, and action
-        # You def need a decision matrix to be sure to test all cases against current tool.
-        if proj_barrier_records.count() == 1:
-            project_barrier = proj_barrier_records[0]
-            prepass = project_barrier.pre_pass
-            postpass = project_barrier.post_pass
-            if project_barrier.cost:
-                cost = project_barrier.cost
-            if project_barrier.action == 'include':
-                action = 1
-            elif project_barrier.action == 'consider':
-                action = 0
-            elif project_barrier.action == 'exclude':
-                action = -1
-        if not prepass:
-            proj_status_records = ScenarioBarrierStatus.objects.filter(project=project,barrier_status=barrier.barrier_status)
-            if proj_status_records.count() == 1:
-                proj_status = proj_status_records[0]
-                prepass = proj_status.default_pre_passability
-            else:
-                prepass = barrier.barrier_status.default_pre_passability
-        if not postpass or not cost:
-            proj_type_records = ScenarioBarrierType.objects.filter(project=project,barrier_type=barrier.site_type)
-            if proj_type_records.count() == 1:
-                if not postpass and proj_type_records[0].default_post_passability:
-                    postpass = proj_type_records[0].default_post_passability
-                if not cost and proj_type_records[0].default_cost:
-                    cost = proj_type_records[0].default_cost
-            if not postpass:
-                postpass = barrier.site_type.default_post_passability
-            if not cost:
-                cost = barrier.site_type.default_cost
-        if not cost or not str(cost).isnumeric():
-            nproj = 0
-            cost = "NA"
-        elif not project.assign_cost:
-            cost = 1
+            barrier_dict['NPROJ'] = 1
+            if not project.assign_cost:
+                barrier_dict['COST'] = 1
+        if barrier_dict['POSTPASS'] == None:
+            barrier_dict['POSTPASS'] = barrier_dict['PREPASS']
 
         if not barrier.downstream_id or barrier.downstream_id == 0:
-            dsid = "NA"
-        else:
-            dsid = barrier.downstream_id
-
-        barrier_dict = {
-            'BARID': barrier.pad_id,
-            'REGION': FocusArea.objects.get(geometry__covers=barrier.geometry, unit_type=fa_ids[0].unit_type).description,    # I wonder if this should be a stringified ID
-            'FOCUS': focus,
-            'DSID': dsid,
-            'USHAB': barrier.upstream_miles,
-            'PREPASS': prepass,
-            'NPROJ': nproj,
-            'ACTION': action,
-            'COST': cost,
-            'POSTPASS': postpass,
-        }
+            barrier_dict['DSID'] = "NA"
 
         barrier_dicts.append(barrier_dict)
 
+        loopTime = (midLoopTime-datetime.now()).total_seconds()
+        if loopTime > longest_loop_time:
+            longest_loop_time = loopTime
+
     endLoopTime = datetime.now()
-    if (endLoopTime-startLoopTime).total_seconds() > 10:
-        print("Time to gather barrier data: %s" % str((endLoopTime - startLoopTime).total_seconds()))
+    totalTime = (endLoopTime-startFuncTime).total_seconds()
+    if totalTime > 10:
+        print("Time to gather barrier data: %s" % str(totalTime))
+        avgLoopTime = (endLoopTime-startLoopTime).total_seconds()/len(all_barriers)
+        print("%d loops averaging %s sec per loop, the longest taking %s" % (len(all_barriers), str(avgLoopTime), str(longest_loop_time)))
     # write csv to file_location
     import csv
     fieldnames = ['BARID','REGION','FOCUS','DSID','USHAB','PREPASS','NPROJ','ACTION']
-    if len(barrier_dict.keys()) == len(fieldnames) + 2:
-        fieldnames = fieldnames + ['COST','POSTPASS']
-    else:
-        num_runs = (len(barrier_dict.keys()) - len(fieldnames))/2
-        for count in [x for x in range(1,num_rows+1)]:
-            fieldnames.append('COST%d' % count)
-            fieldnames.append('POSTPASS%d' % count)
+    if len(barrier_dicts) > 0 :
+        if len(barrier_dicts[0].keys()) == len(fieldnames) + 2:
+            fieldnames = fieldnames + ['COST','POSTPASS']
+        else:
+            num_runs = (len(barrier_dict.keys()) - len(fieldnames))/2
+            for count in [x for x in range(1,num_rows+1)]:
+                fieldnames.append('COST%d' % count)
+                fieldnames.append('POSTPASS%d' % count)
     with open(file_location, 'w') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
