@@ -347,7 +347,9 @@ focusAreaSelectAction = function(feat) {
     // if (app.state.step < 2) {
       // app.state.setStep = 2; // step forward in state
   }).done(function() {
+    app.map.layer.focusArea.clearFeatures();
     app.map.selection.focusArea.forEach(function(fc) {
+      console.log(fc);
       app.map.layer.focusArea.addFeatures(fc);
     });
   })
@@ -574,6 +576,9 @@ app.map.layer = {
         visible: true,
         source: new ol.source.Vector(),
       }),
+      clearFeatures: function() {
+        app.map.layer.focusArea.layer.getSource().clear();
+      },
       addFeatures: function(geojsonObject) {
         app.map.layer.focusArea.layer.getSource().addFeatures((new ol.format.GeoJSON()).readFeatures(geojsonObject));
       },
