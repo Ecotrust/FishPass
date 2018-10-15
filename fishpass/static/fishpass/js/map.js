@@ -346,7 +346,11 @@ focusAreaSelectAction = function(feat) {
     // }
     // if (app.state.step < 2) {
       // app.state.setStep = 2; // step forward in state
-  });
+  }).done(function() {
+    app.map.selection.focusArea.forEach(function(fc) {
+      app.map.layer.focusArea.addFeatures(fc);
+    });
+  })
 };
 
 var drawSource = new ol.source.Vector();
@@ -563,13 +567,15 @@ app.map.layer = {
 
     focusArea: {
       layer: new ol.layer.Vector({
-        style: app.map.styles.PolygonSelected
+        name: 'focus area',
+        title: 'focus area',
+        id: 'focusArea',
+        style: app.map.styles.PolygonSelected,
+        visible: true,
+        source: new ol.source.Vector(),
       }),
       addFeatures: function(geojsonObject) {
-        var vectorSource = new ol.source.Vector({
-          features: (new ol.format.GeoJSON()).readFeatures(geojsonObject)
-        });
-        app.map.layer.focusArea.layer.setSource(vectorSource);
+        app.map.layer.focusArea.layer.getSource().addFeatures((new ol.format.GeoJSON()).readFeatures(geojsonObject));
       },
     },
 
@@ -645,6 +651,7 @@ app.map.layerSwitcher = new ol.control.LayerSwitcher({
 
 app.map.addControl(app.map.layerSwitcher);
 app.map.addLayer(app.map.layer.selectedFeature.layer);
+app.map.addLayer(app.map.layer.focusArea.layer);
 
 app.map.toggleMapControls = function(show) {
     if (show) {

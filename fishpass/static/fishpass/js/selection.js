@@ -7,17 +7,11 @@ app.map.selection = {
     app.map.addInteraction(app.map.selection.select);
     app.map.selection.select.on('select', function(event) {
       console.log('selection event at ' + ol.coordinate.toStringHDMS(ol.proj.transform(event.mapBrowserEvent.coordinate, 'EPSG:3857', 'EPSG:4326')));
-      // clear previous focus area selection
-      app.map.selection.focusArea = [];
-      app.map.selection.select.getFeatures().forEach(function(feat) {
-          var layer = app.map.selection.select.getLayer(feat).get('id');
-          app.map.layer[layer].selectAction(feat);
-      });
-      for (var i = 0; i < app.map.selection.focusArea.length; i++) {
-        console.log('yo');
-      };
-      console.log('yo2');
-      // app.map.layer.focusArea.addFeatures(app.map.selection.focusArea);
+      // get number of select features
+      var selectLength = app.map.selection.select.getFeatures().getLength();
+      var lastSelected = app.map.selection.select.getFeatures().getArray()[selectLength - 1];
+      var layer = app.map.selection.select.getLayer(lastSelected).get('id');
+      app.map.layer[layer].selectAction(lastSelected);
     });
   }
 };
