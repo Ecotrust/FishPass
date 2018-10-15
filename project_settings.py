@@ -273,6 +273,8 @@ MEDIA_ROOT = os.path.realpath(os.path.join(BASE_DIR, '..', 'apps', 'FishPass', '
 # CSV_BASE_DIR = '/tmp'
 CSV_BASE_DIR = MEDIA_ROOT
 
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
+
 try:
     ### START MODULE SETTINGS IMPORT ###
     from features.settings import *

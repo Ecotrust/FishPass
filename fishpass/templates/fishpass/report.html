@@ -8,6 +8,7 @@
 {% block content %}
   <h1>{{ title }}</h1>
   <div id="map" class="map"></div>
+  {% for report_dict in reports %}
   <section id="agg-report">
     <h1>Agg Report</h1>
     <table>
@@ -19,17 +20,17 @@
         <th>Net Gain</th>
       </tr>
       <tr>
-        <td>{{ report.budget }}</td>
-        <td>{{ report.status }}</td>
-        <td>{{ report.optgap }}</td>
-        <td>{{ report.ptnl_habitat }}</td>
-        <td>{{ report.netgain}}</td>
+        <td>{{ report_dict.report.budget }}</td>
+        <td>{{ report_dict.report.status }}</td>
+        <td>{{ report_dict.report.optgap }}</td>
+        <td>{{ report_dict.report.ptnl_habitat }}</td>
+        <td>{{ report_dict.report.netgain}}</td>
       </tr>
     </table>
   </section>
   <section id="barrier-report">
     <h1>Barrier Report</h1>
-    {% for barrier_id,barrier_data in barriers.items %}
+    {% for barrier_id,barrier_data in report_dict.barriers.items %}
       {% if forloop.counter < 5 %}
         <h2>{{ barrier_id }}</h2>
         <table>
@@ -49,5 +50,6 @@
     <!-- <p>{/{ barriers }}</p> -->
 
   </section>
+  {% endfor %} <!-- report -->
   <button>Download</button>
 {% endblock content %}

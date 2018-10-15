@@ -279,7 +279,7 @@ class BarrierCost(models.Model):
             barrier = Barrier.objects.get(pad_id=self.pad_id)
             barrier_name = str(barrier)
         except:
-            barrier_name = str(pad_id)
+            barrier_name = str(self.pad_id)
             pass
         return "%s Costs" % barrier_name
 
@@ -357,8 +357,8 @@ class Project(Scenario):
     assign_cost = models.BooleanField(default=True,verbose_name="Assign Barrier Costs",help_text="Consider the unique cost of mitigating each barrier by $")
     budget_type = models.CharField(max_length=40, default='budget', choices=BUDGET_CHOICES, verbose_name="Fixed Budget or Range")
     budget = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])
-    min_budget = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])
-    max_budget = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])
+    budget_min = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])
+    budget_max = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])
     batch_increment = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(1)])
 
     objects = ShareableGeoManager()
