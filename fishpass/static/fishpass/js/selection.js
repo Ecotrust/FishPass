@@ -15,6 +15,7 @@ app.map.selection = {
         app.map.layer[layer].selectAction(lastSelected);
       } else {
         app.map.layer.focusArea.clearFeatures();
+        app.map.selection.focusArea = [];
       }
       console.log(selectLength);
       console.log(app.map.selection.select);
