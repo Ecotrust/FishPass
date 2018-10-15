@@ -334,24 +334,18 @@ focusAreaSelectAction = function(feat) {
   var id = app.map.selection.select.getLayer(feat).get('id');
   var idField = app.mapbox.layers[id].id_field;
   var unitId = feat.getProperties()[idField];
-  // TODO: smarter selction so that we only query for newly selected features
   app.request.get_focus_area_geojson_by_type(unitType, unitId, function(response) {
-    app.map.selection.focusArea.push(response);
-    // app.scenarioInProgressCheck();
-    // if (app.state.step < 1) {
-      // app.state.setStep = 1; // step forward in state
-    // }
-    // if (feat) {
-      // confirmSelection(feat, vector);
-    // }
-    // if (app.state.step < 2) {
-      // app.state.setStep = 2; // step forward in state
-  }).done(function() {
-    app.map.layer.focusArea.clearFeatures();
-    app.map.selection.focusArea.forEach(function(fc) {
-      console.log(fc);
-      app.map.layer.focusArea.addFeatures(fc);
-    });
+    // response contain GeoJSON object
+    var featId = response.features[0].properties.id;
+    if (app.map.selection.focusArea.includes(featId)) {
+      var indexOfId = app.map.selection.focusArea.indexOf(featId);
+      app.map.selection.focusArea.splice(indexOfId,1);
+      app.map.layer.focusArea.removeFeatureById(featId);
+    } else {
+      app.map.selection.focusArea.push(featId);
+      app.map.layer.focusArea.addFeatures(response);
+    };
+    $('#id_target_area').val(app.map.selection.focusArea);
   })
 };
 
@@ -581,6 +575,18 @@ app.map.layer = {
       },
       addFeatures: function(geojsonObject) {
         app.map.layer.focusArea.layer.getSource().addFeatures((new ol.format.GeoJSON()).readFeatures(geojsonObject));
+      },
+      removeFeatureById: function(id) {
+        var features = app.map.layer.focusArea.layer.getSource().getFeatures();
+        var featureToRemove;
+        // loop through features for property id
+        for (var feat of features) {
+          var props = feat.getProperties();
+          if (id == props.id) {
+            featureToRemove = feat;
+          }
+        }
+        app.map.layer.focusArea.layer.getSource().removeFeature(featureToRemove);
       },
     },
 
