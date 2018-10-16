@@ -3,5 +3,8 @@ $( document ).ready(function() {
   // creates new scenario
   // then runs initFiltering
     // initFiltering sets up the filter form
-  app.panel.form.init();
+
+  $("#launch-modal").modal('show');
+
+  // app.panel.form.init();
 });

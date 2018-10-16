@@ -51,8 +51,7 @@ var madrona = {
               url: "/fishpass/run_optipass/" + project_uid + '/',
               type: 'POST',
               success: function(result) {
-                document.location.href = '/fishpass/get_report/' + result['X-Madrona-Select'] + '/';
-                // document.location.href = '/fishpass/get_report/' + project_uid + '/';
+                document.location.href = '/fishpass/get_report/' + project_uid + '/';
               },
               error: function(result) {
                   app.loadingAnimation.hide();
