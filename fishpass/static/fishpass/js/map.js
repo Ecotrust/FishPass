@@ -144,6 +144,14 @@ app.map.styles = {
         }),
         zIndex: 4
     }),
+    transparent: new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: 'transparent',
+      }),
+      fill: new ol.style.Fill({
+        color: 'transparent'
+      })
+    })
 };
 
 /**
@@ -309,19 +317,36 @@ app.scenarioInProgressCheck = function() {
   }
 }
 
+// get barrier layer ajax
+// app.request.get_barrier_layer()
+//   .then(function(response) {
+//     if (response) {
+//       var geojsonObject = response.geojson;
+//       app.map.layer.barriers.addFeatures(geojsonObject);
+//       app.map.addLayer(app.map.layer.barriers.layer);
+//     }
+//   })
+
 focusAreaSelectAction = function(feat) {
-  app.scenarioInProgressCheck();
-  if (app.state.step < 1) {
-    app.state.setStep = 1; // step forward in state
-  }
-  app.request.get_focus_area(feat, function(feat, vector) {
-    if (feat) {
-      confirmSelection(feat, vector);
-    }
-    if (app.state.step < 2) {
-      app.state.setStep = 2; // step forward in state
-    }
-  });
+  // unit type used for request params
+  var unitType = app.map.selection.select.getLayer(feat).get('unitType');
+  // id used for front end code
+  var id = app.map.selection.select.getLayer(feat).get('id');
+  var idField = app.mapbox.layers[id].id_field;
+  var unitId = feat.getProperties()[idField];
+  app.request.get_focus_area_geojson_by_type(unitType, unitId, function(response) {
+    // response contain GeoJSON object
+    var featId = response.features[0].properties.id;
+    if (app.map.selection.focusArea.includes(featId)) {
+      var indexOfId = app.map.selection.focusArea.indexOf(featId);
+      app.map.selection.focusArea.splice(indexOfId,1);
+      app.map.layer.focusArea.removeFeatureById(featId);
+    } else {
+      app.map.selection.focusArea.push(featId);
+      app.map.layer.focusArea.addFeatures(response);
+    };
+    $('#id_target_area').val(app.map.selection.focusArea).trigger('change');
+  })
 };
 
 var drawSource = new ol.source.Vector();
@@ -487,6 +512,7 @@ app.map.layer = {
       layer: new ol.layer.VectorTile({
         name: 'County',
         title: 'County',
+        unitType: 'County',
         id: 'county',
         source: new ol.source.VectorTile({
           format: new ol.format.MVT({
@@ -537,8 +563,31 @@ app.map.layer = {
 
     focusArea: {
       layer: new ol.layer.Vector({
-        style: app.map.styles.FocusArea,
-      })
+        name: 'focus area',
+        title: 'focus area',
+        id: 'focusArea',
+        style: app.map.styles.PolygonSelected,
+        visible: true,
+        source: new ol.source.Vector(),
+      }),
+      clearFeatures: function() {
+        app.map.layer.focusArea.layer.getSource().clear();
+      },
+      addFeatures: function(geojsonObject) {
+        app.map.layer.focusArea.layer.getSource().addFeatures((new ol.format.GeoJSON()).readFeatures(geojsonObject));
+      },
+      removeFeatureById: function(id) {
+        var features = app.map.layer.focusArea.layer.getSource().getFeatures();
+        var featureToRemove;
+        // loop through features for property id
+        for (var feat of features) {
+          var props = feat.getProperties();
+          if (id == props.id) {
+            featureToRemove = feat;
+          }
+        }
+        app.map.layer.focusArea.layer.getSource().removeFeature(featureToRemove);
+      },
     },
 
     spatialOrganization: {
@@ -613,6 +662,7 @@ app.map.layerSwitcher = new ol.control.LayerSwitcher({
 
 app.map.addControl(app.map.layerSwitcher);
 app.map.addLayer(app.map.layer.selectedFeature.layer);
+app.map.addLayer(app.map.layer.focusArea.layer);
 
 app.map.toggleMapControls = function(show) {
     if (show) {

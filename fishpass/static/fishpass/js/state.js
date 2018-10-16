@@ -1,5 +1,5 @@
 app.state = {
-    method: '',
+    method: 'initial',
     scenarioId: null,
     panel: {
         content: '',

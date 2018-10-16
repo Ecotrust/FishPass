@@ -48,9 +48,11 @@ def get_focus_area_geojson_by_type(request):
     if request.method == 'GET':
         try:
             unit_type = request.GET['unitType']
+            unit_id = request.GET['unitId']
         except:
             pass
     focus_area_qs = FocusArea.objects.filter(unit_type=unit_type)
+    focus_area_qs = focus_area_qs.filter(unit_id=unit_id)
     geojson = get_geojson_from_queryset(focus_area_qs)
     return JsonResponse(geojson)
 

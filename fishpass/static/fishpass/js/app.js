@@ -818,12 +818,13 @@ app.request = {
      * @param  {[type]} layer [data param value to send]
      * @return {[type]}       [GeoJSON]
      */
-    get_spatial_organization_layer: function(unitType, callback) {
+    get_focus_area_geojson_by_type: function(unitType, unitId, callback) {
         // TODO write view to get spatial organiation layer
         return $.ajax({
             url: `/fishpass/get_focus_area_geojson_by_type`,
             data: {
-                unitType: unitType
+                unitType: unitType,
+                unitId: unitId
             },
             dataType: 'json',
             success: function(response) {
