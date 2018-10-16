@@ -227,14 +227,14 @@ class ProjectForm(ScenarioForm):
             pass
         return self.cleaned_data
 
-    def save(self, commit=True):
-        # remove fields that are not on current model (FocusArea.unit_type)
-        inst = super(ProjectForm, self).save(commit=True)
-        # Run OptiPass
-        from fishpass.views import optipass
-        inst = optipass(inst)
-        inst.save()
-        return inst
+    # def save(self, commit=True):
+    #     # remove fields that are not on current model (FocusArea.unit_type)
+    #     inst = super(ProjectForm, self).save(commit=True)
+    #     # Run OptiPass
+    #     from fishpass.views import optipass
+    #     inst = optipass(inst)
+    #     inst.save()
+    #     return inst
 
 
     class Meta(ScenarioForm.Meta):
@@ -244,6 +244,17 @@ class ProjectForm(ScenarioForm):
             exclude.append(f.attname)
         widgets = {}
 
+# class ProjectBarrierForm(forms.Form):
+#     project = forms.ChoiceField(choices=)
+#     barrier = models.ForeignKey(Barrier)
+#     pre_pass = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name="Pre-Passability")
+#     post_pass = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name="Post-Passability")
+#     cost = models.FloatField(null=True,blank=True,default=None,verbose_name="Estimated cost to mitigate")
+#     action
+#
+#
+#     class Meta(FeatureForm.Meta):
+#         model = ScenarioBarrier
 
 class UploadPADForm(forms.Form):
     file = forms.FileField()

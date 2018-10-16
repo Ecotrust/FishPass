@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^about/$', flat_views.flatpage, {'url': '/about/'}, name='about'),
     url(r'demo/$', views.demo, name='demo'),
     url(r'get_scenarios/', get_scenarios, {'scenario_module_name':'fishpass', 'scenario_model_name':'Project'}),
+    url(r'run_optipass/(?P<scenario_id>[\w_]+)/$', views.run_optipass),
 
     ### Mapping/Optimization
     url(r'^get_barrier_layer/$', views.get_barrier_layer),

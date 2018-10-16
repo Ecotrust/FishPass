@@ -457,6 +457,14 @@ def addOutfileToReport(outfile, project):
                 elif row == '\n':
                     report_obj, created = ProjectReport.objects.get_or_create(**report_dict)
 
+def run_optipass(request, project):
+    try:
+        optipass(project)
+        return HttpResponse(request)
+    except:
+        return HttpResponse(status=500)
+
+
 def optipass(project):
     import os, subprocess, stat, shutil
     input_file = os.path.join(settings.CSV_BASE_DIR, '%s_input.csv' % project.uid)

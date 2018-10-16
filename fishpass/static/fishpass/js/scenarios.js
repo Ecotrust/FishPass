@@ -45,6 +45,31 @@ var madrona = {
             }
         });
         */
+
+        runOptipass = function(project_uid) {
+          $.ajax({
+              url: "/fishpass/run_optipass/" + project_uid + '/',
+              type: 'POST',
+              success: function(result) {
+                document.location.href = '/fishpass/get_report/' + result['X-Madrona-Select'] + '/';
+                // document.location.href = '/fishpass/get_report/' + project_uid + '/';
+              },
+              error: function(result) {
+                  app.loadingAnimation.hide();
+                  app.viewModel.scenarios.loadingMessage(null);
+                  // clearInterval(barTimer);
+                  if (result.status === 400) {
+                      $('#'+app.viewModel.currentTocId()+'-scenario-form > div').append(result.responseText);
+                      app.viewModel.scenarios.scenarioForm(true);
+                  } else {
+                      app.viewModel.scenarios.errorMessage(result.responseText.split('\n\n')[0]);
+                  }
+                  console.log(`%c Report could not be generated for this project; %o`, 'color: salmon;', result);
+              }
+            }
+          );
+        };
+
         submitForm = function($form) {
             // var $form = $(this).closest('.panel').find('form'),
             var url = $form.attr('action'),
@@ -113,8 +138,9 @@ var madrona = {
                 success: function(result) {
                     // app.loadingAnimation.hide();
                     // Redirect window to /report/SCENARIO_ID/
-                    document.location.href = '/fishpass/get_report/' + result['X-Madrona-Select'] + '/';
+                    // document.location.href = '/fishpass/get_report/' + result['X-Madrona-Select'] + '/';
                     // window.alert('DEBUG: All Done! This would send you to `/fishpass/get_report/' + result['X-Madrona-Select'] + '/`')
+                    runOptipass(result['X-Madrona-Select']);
                 },
                 error: function(result) {
                     app.loadingAnimation.hide();
@@ -537,7 +563,6 @@ function scenarioModel(options) {
     self.uid = options.uid || null;
     self.name = options.name;
     self.display_name = options.display_name?options.display_name:self.name;
-    self.collection = options.collection;
     self.featureAttributionName = self.name;
     self.description = options.description;
     self.shared = ko.observable();
@@ -763,7 +788,6 @@ function scenarioModel(options) {
             type: 'POST',
             success: function(result){
               app.viewModel.scenarios.loadScenariosFromServer();
-              app.viewModel.scenarios.loadCollectionsFromServer();
             },
             error: function(result) {
                 console.log('error in scenarios.js: deleteScenario');
@@ -833,28 +857,15 @@ function scenarioModel(options) {
 /*
 --Scenarios Model
 -- This model manages a vast majority of the 'designs' tab.
--- These functions are for manipulating scenarios, drawings, and collections.
+-- These functions are for manipulating scenarios.
 -- This is where a good share of the business logic for related modals is
 -- contained as well.
-
--- This may have also been a bad design decision trying to treat collections
--- with the name 'sceanarios' even though there's a viewModel for collections
--- already in drawings.js.
 */
 function scenariosModel(options) {
     var self = this;
 
     self.scenarioList = ko.observableArray();
     self.scenarioForm = ko.observable(false);
-
-    self.drawingCollections = [];
-    self.drawingListCollections = ko.observableArray([]);
-    self.drawingList = ko.observableArray();
-    self.drawingForm = ko.observable(false);
-    self.drawingsExist = ko.observable();
-
-    self.collectionList = ko.observableArray();
-    self.collectionForm = ko.observable(false);
 
     self.reportsVisible = ko.observable(false);
 
@@ -881,63 +892,10 @@ function scenariosModel(options) {
         $('#share-modal').modal('show');
     };
 
-    self.groupMembers = function(groupName) {
-        var memberList = "";
-        for (var i=0; i<self.sharingGroups().length; i++) {
-            var group = self.sharingGroups()[i];
-            if (group.group_name === groupName) {
-                for (var m=0; m<group.members.length; m++) {
-                    var member = group.members[m];
-                    memberList += member + '<br>';
-                }
-            }
-        }
-        return memberList;
-    };
-
-    self.toggleGroup = function(obj) {
-        var groupName = obj.group_name,
-            indexOf = self.sharingLayer().temporarilySelectedGroups.indexOf(groupName);
-        if ( indexOf === -1 ) {  //add group to list
-            self.sharingLayer().temporarilySelectedGroups.push(groupName);
-        } else { //remove group from list
-            self.sharingLayer().temporarilySelectedGroups.splice(indexOf, 1);
-        }
-    };
-
     self.initSharingModal = function() {
         for (var i=0; i<self.sharingGroups().length; i++) {
             var groupID = '#' + self.sharingGroups()[i].group_slug;
             $(groupID).collapse( { toggle: false } );
-        }
-    };
-
-    //TODO:  Fix the problem in which the first group toggled open will not toggle open again, once it's closed
-    self.lastMembersClickTime = 0;
-    self.toggleGroupMembers = function(obj, e) {
-        var groupName = obj.group_name,
-            groupID = '#' + obj.group_slug,
-            clickTime = new Date().getTime();
-        if (clickTime - self.lastMembersClickTime > 800) {
-            self.lastMembersClickTime = clickTime;
-            if ( ! $(groupID).hasClass('in') ) {  //toggle on and add group to list
-                $(groupID).css("display", "none"); //allows the fade effect to display as expected
-                if ( $.browser.msie ) {
-                    $(groupID).fadeIn(0, function() {});
-                } else {
-                    $(groupID).fadeIn('slow', function() {});
-                }
-                $(groupID).collapse('show');
-            } else { //toggle off and remove group from list
-                if ( $.browser.msie ) {
-                    $(groupID).fadeOut(0, function() {});
-                } else {
-                    $(groupID).fadeOut('slow', function() {});
-                }
-                $(groupID).collapse('hide');
-                //set .modal-body background to eliminate residue that appears when the last Group is opened and then closed?
-            }
-            setTimeout(function() { self.updateSharingScrollBar(groupID); }, 300);
         }
     };
 
@@ -948,8 +906,6 @@ function scenariosModel(options) {
         }
         return false;
     };
-
-
 
     self.hasAssociatedScenarios = ko.observable(false);
 
@@ -986,128 +942,10 @@ function scenariosModel(options) {
       $('#import-guidelines-modal').modal('show');
     };
 
-    self.comparisonCollection = ko.observable();
-    self.showComparisonModal = function(collection){
-        self.comparisonCollection(collection);
-        self.comparisonCollection().temporarilySelectedScenarios(self.comparisonCollection().selectedScenarios().slice(0));
-        $('#collection-compare-modal').modal('show');
-    };
-
-    self.toggleCompareScenario = function(obj) {
-      var scenarioId = obj.uid;
-      if (self.comparisonCollection()) {
-          var indexOf = self.comparisonCollection().temporarilySelectedScenarios.indexOf(scenarioId);
-      } else {
-          var indexOf = -1;
-      }
-      if ( indexOf === -1 ) {  //add group to list
-          self.comparisonCollection().temporarilySelectedScenarios.push(scenarioId);
-      } else { //remove group from list
-          self.comparisonCollection().temporarilySelectedScenarios.splice(indexOf, 1);
-      }
-    }
-
     self.obsArrayValue = function(obsarray) {
       return JSON.parse(ko.toJSON(obsarray));
     }
 
-    self.compareScenarioIsSelected = function(scenarioId) {
-        if(self.comparisonCollection()) {
-            var indexOf = self.comparisonCollection().temporarilySelectedScenarios.indexOf(scenarioId);
-            return indexOf !== -1;
-        }
-        return false;
-    }
-
-    /*
-        Populate Scenario Comparison Report Modal
-    */
-    self.originalComparisonReport = ko.observableArray();
-    self.comparisonReport = ko.observableArray();
-    self.comparisonReportCollections = ko.observableArray();
-    self.comparisonReportValues = ko.observableArray();
-    self.comparisonDownloadLink = ko.observable();
-    self.showComparisonReportModal = function(array,data,download_link) {
-      self.comparisonReportCollections(Object.getOwnPropertyNames(data));
-      self.comparisonReportValues(array);
-      self.comparisonDownloadLink(download_link);
-      var data_array = [];
-      for (var i=0; i < self.comparisonReportValues().length; i++) {
-        var key = self.comparisonReportValues()[i];
-        var row = [key];
-        for (var j=0; j < self.comparisonReportCollections().length; j++) {
-          collection_name = self.comparisonReportCollections()[j];
-          collection_object = data[collection_name]
-          row.push(collection_object[key]);
-        }
-        data_array.push(row);
-      }
-      self.originalComparisonReport(data_array);
-      self.comparisonReport(self.obsArrayValue(self.originalComparisonReport));
-      $('#compare-report-modal').modal('show');
-    };
-
-    self.setComparisonReportBaseline = function(baselineIndex) {
-      if (baselineIndex == 0) {
-        self.comparisonReport([]);
-        self.comparisonReport(self.obsArrayValue(self.originalComparisonReport));
-      } else {
-        reportValues = self.obsArrayValue(self.originalComparisonReport);
-        //Loop through fields
-        for(var i=0; i < reportValues.length; i++) {
-          if (
-            typeof(reportValues[i][1]) == 'object' &&
-            reportValues[i][1] != null &&
-            reportValues[i][1].hasOwnProperty('values') &&
-            reportValues[i][1].hasOwnProperty('text') &&
-            typeof(reportValues[i][1]['text']) == 'object'
-          ){
-            //for values in each field (discluding field name at 0)
-            for (var j=1; j<reportValues[i].length; j++) {
-              blValues = reportValues[i][baselineIndex]['values'];
-              //change non-baseline displayed values
-              if (j!=baselineIndex){
-                for (k=0; k < reportValues[i][j]['values'].length; k++){
-                  old_val = reportValues[i][j]['values'][k];
-                  //Determine type of values: int or float
-                  if (old_val%1 == 0) {
-                    //calculate difference (absolute for now, maybe % later)
-                    diff_val = parseInt(old_val) - parseInt(blValues[k]);
-                  } else{
-                    diff_val = parseFloat(old_val) - parseFloat(blValues[k])
-                    // reportValues[i][j]['values'][k] = ().toString();
-                  }
-                  if (diff_val > 0) {
-                    diff_val = "+" + diff_val.toString();
-                  } else {
-                    diff_val = diff_val.toString();
-                  }
-                  reportValues[i][j]['values'][k] = diff_val;
-                  //assemble new label - assumes text & values will alternate
-                  if (reportValues[i][j]['values'].length >= reportValues[i][j]['text'].length) {
-                    big_list = reportValues[i][j]['values'];
-                    small_list = reportValues[i][j]['text'];
-                  } else {
-                    big_list = reportValues[i][j]['text'];
-                    small_list = reportValues[i][j]['values'];
-                  }
-                  label_list = []
-                  for (l = 0; l < big_list.length; l++){
-                    label_list.push(big_list[l]);
-                    if (l < small_list.length){
-                      label_list.push(small_list[l]);
-                    }
-                  }
-                  reportValues[i][j]['label'] = label_list.join(' ');
-                }
-              }
-            }
-          }
-        }
-        self.comparisonReport([]);
-        self.comparisonReport(reportValues);
-      }
-    };
 
     self.zoomToScenario = function(scenario) {
         if (scenario.layer) {
@@ -1150,145 +988,6 @@ function scenariosModel(options) {
     self.scenariosLoaded = false;
 
     self.isScenariosOpen = ko.observable(false);
-    self.toggleScenariosOpen = function(force) {
-        // ensure designs tab is activated
-
-        if (force.hasOwnProperty('tocid')){
-            $('#'+force.tocid+'-designsTab').tab('show');
-        }
-
-        if (force === 'open') {
-            self.isScenariosOpen(true);
-        } else if (force === 'close') {
-            self.isScenariosOpen(false);
-        } else {
-            if ( self.isScenariosOpen() ) {
-                self.isScenariosOpen(false);
-            } else {
-                self.isScenariosOpen(true);
-            }
-        }
-        self.updateDesignsScrollBar();
-    };
-    self.isCollectionsOpen = ko.observable(false);
-    self.toggleCollectionsOpen = function(force) {
-        // ensure designs tab is activated
-        if (force.hasOwnProperty('tocid')){
-            $('#'+force.tocid+'-designsTab').tab('show');
-        }
-
-        if (force === 'open') {
-            self.isCollectionsOpen(true);
-        } else if (force === 'close') {
-            self.isCollectionsOpen(false);
-        } else {
-            if ( self.isCollectionsOpen() ) {
-                self.isCollectionsOpen(false);
-            } else {
-                self.isCollectionsOpen(true);
-            }
-        }
-        self.updateDesignsScrollBar();
-    };
-    self.isDrawingsOpen = ko.observable(false);
-    self.toggleDrawingsOpen = function(force) {
-        // ensure designs tab is activated
-        if (force.hasOwnProperty('tocid')){
-            $('#'+force.tocid+'-designsTab').tab('show');
-        }
-
-        if (force === 'open') {
-            self.isDrawingsOpen(true);
-        } else if (force === 'close') {
-            self.isDrawingsOpen(false);
-        } else {
-            if ( self.isDrawingsOpen() ) {
-                self.isDrawingsOpen(false);
-            } else {
-                self.isDrawingsOpen(true);
-            }
-        }
-        self.updateDesignsScrollBar();
-    };
-
-    self.updateDesignsScrollBar = function() {
-        var designsScrollpane = $('#'+app.viewModel.currentTocId()+'-designs-accordion').data('jsp');
-        // if (designsScrollpane === undefined) {
-        //     $('#'+app.viewModel.currentTocId()+'-designs-accordion').jScrollPane();
-        // } else {
-        //     designsScrollpane.reinitialise();
-        // }
-    };
-
-    //restores state of Designs tab to the initial list of designs
-    self.reset = function (obj) {
-        self.loadingMessage(false);
-        self.errorMessage(false);
-
-        //clean up scenario form
-        if (self.scenarioForm() || self.scenarioFormModel) {
-            app.map.removeLayer(self.scenarioFormModel.updatedFilterResultsLayer);
-            self.removeScenarioForm();
-        }
-
-        //clean up drawing form
-        if (self.drawingForm() || self.drawingFormModel) {
-            self.removeDrawingForm(obj);
-        }
-
-        //clear up collection form
-        if (self.collectionForm() || self.collectionFormModel) {
-            self.removeCollectionForm();
-        }
-
-        //remove the key/value pair from aggregatedAttributes
-        app.viewModel.removeFromAggregatedAttributes(self.filterLayer().name);
-        app.viewModel.updateAttributeLayers();
-
-        self.updateDesignsScrollBar();
-    };
-
-    self.removeDrawingForm = function(obj) {
-        self.drawingFormModel.cleanUp();
-        self.drawingForm(false);
-        var drawingForm = document.getElementById(app.viewModel.currentTocId()+'-drawing-form').children[0];
-        $(drawingForm).empty();
-        ko.cleanNode(drawingForm);
-        //in case of canceled edit
-        if ( obj && obj.cancel && self.drawingFormModel.originalDrawing ) {
-            self.drawingFormModel.originalDrawing.deactivateLayer();
-            self.drawingFormModel.originalDrawing.activateLayer();
-        }
-        delete self.drawingFormModel;
-    };
-
-    self.removeScenarioForm = function() {
-        self.scenarioForm(false);
-        try {
-          var scenarioForm = document.getElementById(app.viewModel.currentTocId()+'-scenario-form').children[0];
-        } catch (err) {
-          //RDH 1/10/2018 - this may work for demo. What to do to repopulate the form?
-          // var scenarioForm = document.getElementById('scenario_form').children[0];
-          // DLP 3.16.18 - removing all children
-          var scenarioForm = document.getElementById('scenario_form');
-        }
-        $(scenarioForm).empty();
-        ko.cleanNode(scenarioForm);
-        delete self.scenarioFormModel;
-        delete app.viewModel.scenarios.scenarioFormModel;
-        //hide remaining leaseblocks
-        if ( self.filterLayer() && app.map.getLayersByName(self.filterLayer().name).length ) {
-            app.map.removeLayer(self.filterLayer());
-        }
-    };
-
-    self.removeCollectionForm = function() {
-        self.collectionForm(false);
-        var collectionForm = document.getElementById(app.viewModel.currentTocId()+'-scenario-collection-form').children[0];
-        $(collectionForm).empty();
-        ko.cleanNode(collectionForm);
-        delete self.collectionFormModel;
-    };
 
     self.createNewScenario = function(form_url) {
         //hide designs tab by sliding left
@@ -1327,42 +1026,6 @@ function scenariosModel(options) {
             }
         });
     };
-
-    self.createPolygonDesign = function() {
-        return $.ajax({
-            url: '/features/aoi/form/',
-            success: function(data) {
-                app.viewModel.scenarios.drawingForm(true);
-                $('#'+app.viewModel.currentTocId()+'-drawing-form > .drawing-form').html(data);
-                app.viewModel.scenarios.drawingFormModel = new polygonFormModel();
-                ko.applyBindings(app.viewModel.scenarios.drawingFormModel, document.getElementById(app.viewModel.currentTocId()+'-drawing-form').children[0]);
-                window.dispatchEvent(new Event('resize'));
-            },
-            error: function (result) {
-                console.log('error in scenarios.js: createPolygonDesign');
-            }
-        });
-    };
-
-    self.createCollectionScenario = function() {
-      return $.ajax({
-        url: '/features/collection/form/',
-        success: function(data) {
-          app.viewModel.scenarios.collectionForm(true);
-          $('#'+app.viewModel.currentTocId()+'-scenario-collection-form > .scenario-collection-form').html(data);
-          app.viewModel.scenarios.collectionFormModel = new collectionFormModel();
-          ko.applyBindings(app.viewModel.scenarios.collectionFormModel, document.getElementById(app.viewModel.currentTocId()+'-scenario-collection-form').children[0]);
-          window.dispatchEvent(new Event('resize'));
-        },
-        error: function (result) {
-          console.log('error in scenarios.js: createCollectionScenario');
-        }
-      });
-    };
-
-    self.createLineDesign = function() {};
-
-    self.createPointDesign = function() {};
 
     //
     self.addScenarioToMap = function(scenario, options) {
@@ -1508,15 +1171,6 @@ function scenariosModel(options) {
 
                 }
                 var layer = mapSettings.getInitFilterResultsLayer(scenarioId, false);
-                // var layer = new OpenLayers.Layer.Vector(
-                //     scenarioId,
-                //     {
-                //         projection: new OpenLayers.Projection('EPSG:3857'),
-                //         displayInLayerSwitcher: false,
-                //         styleMap: new OpenLayers.StyleMap(style),
-                //         scenarioModel: scenario
-                //     }
-                // );
 
                 layer.addGeoJSONFeatures(retFeatures);
                 // layer.addFeatures(new OpenLayers.Format.GeoJSON().read(retFeatures));
@@ -1557,17 +1211,6 @@ function scenariosModel(options) {
                           });
                           self.toggleScenariosOpen('open');
                           self.zoomToScenario(scenario);
-                      } else if (isCollectionModel) {
-                        scenario = new collectionModel({
-                          id: properties.uid,
-                          uid: properties.uid,
-                          name: properties.name,
-                          display_name: properties.display_name?properties.display_name:properties.name,
-                          description: properties.description,
-                          features: layer.features
-                        });
-                        self.toggleCollectionsOpen('open');
-                        self.zoomToScenario(scenario);
                       }
                       scenario.layer = layer;
                       scenario.layer.scenarioModel = scenario;
@@ -1581,8 +1224,6 @@ function scenariosModel(options) {
                         dataType: 'json',
                         success: function(result) {
                             if (scenario) {
-                              //TODO: figure out when and why this wouldn't have a scenario (on creating empty collection)
-                              //    and adjust if necessary
                               scenario.scenarioAttributes(result.attributes);
                             }
                         },
@@ -1675,34 +1316,6 @@ function scenariosModel(options) {
         return 0;
     };
 
-    // activate any lingering designs not shown during loadCompressedState
-    self.showUnloadedDesigns = function() {
-        var designs = app.viewModel.unloadedDesigns;
-
-        if (designs && designs.length) {
-            //the following delay might help solve what appears to be a race condition
-            //that prevents the design in the layer list from displaying the checked box icon after loadin
-            setTimeout( function() {
-                for (var x=0; x < designs.length; x=x+1) {
-                    var id = designs[x].id,
-                        opacity = designs[x].opacity,
-                        isVisible = designs[x].isVisible;
-
-                    if (app.viewModel.layerIndex[id]) {
-                        app.viewModel.layerIndex[id].opacity(opacity);
-                        app.viewModel.layerIndex[id].activateLayer();
-                        for (var i=0; i < app.viewModel.unloadedDesigns.length; i=i+1) {
-                            if(app.viewModel.unloadedDesigns[i].id === id) {
-                                app.viewModel.unloadedDesigns.splice(i,1);
-                                i = i-1;
-                            }
-                        }
-                    }
-                }
-            }, 400);
-        }
-    };
-
     self.loadScenariosFromServer = function() {
         $.ajax({
             url: '/scenario/get_scenarios',
@@ -1740,162 +1353,6 @@ function scenariosModel(options) {
             // self.getAttributes(scenario.uid);
         });
         self.scenarioList.sort(self.alphabetizeByName);
-    };
-
-    self.loadDrawingsFromServer = function() {
-        $.ajax({
-            url: '/drawing/get_drawings',
-            type: 'GET',
-            dataType: 'json',
-            success: function (drawings) {
-                self.loadDrawings(drawings);
-                self.drawingsLoaded = true;
-                self.showUnloadedDesigns();
-                app.viewModel.scenarios.updateDesignsScrollBar();
-            },
-            error: function (result) {
-                console.log('error in scenarios.js: loadDrawingsFromServer');
-            }
-        });
-    };
-    //populates drawingList
-    self.loadDrawings = function (drawings) {
-        self.drawingList.removeAll();
-        self.drawingListCollections.removeAll();
-        self.drawingCollections = [];
-        $.each(drawings, function (i, drawing) {
-            var drawingCollection = self.drawingInCollection(drawing);
-            var drawingViewModel = new drawingModel({
-                id: drawing.uid,
-                uid: drawing.uid,
-                name: drawing.name,
-                display_name: drawing.display_name?drawing.display_name:drawing.name,
-                collection: drawingCollection,
-                description: drawing.description,
-                attributes: drawing.attributes,
-                shared: drawing.shared,
-                sharedByUsername: drawing.shared_by_username,
-                sharedByName: drawing.shared_by_name,
-                sharingGroups: drawing.sharing_groups,
-            });
-            self.findDrawingCollections(i, drawingViewModel, drawingCollection);
-            app.viewModel.layerIndex[drawing.uid] = drawingViewModel;
-            // self.getAttributes(drawing.uid);
-        });
-        self.loadDrawingsCollections();
-        self.drawingList.sort(self.alphabetizeByName);
-    };
-
-    self.drawingInCollection = function(drawing) {
-        var displayName = drawing.display_name;
-        if (displayName.indexOf('[') > -1) {
-            var firstIndex = displayName.indexOf('[') + 1;
-            return displayName.substring( firstIndex, displayName.indexOf(']') );
-        } else {
-            return false;
-        }
-    }
-
-    // accordian for collections in drawings menu
-    self.findDrawingCollections = function(i, drawing, collect) {
-        // If drawing is not associated with a collection, add it to general list
-        if (!collect) {
-            self.drawingList.push(drawing);
-        } else {
-            var newCollection = true;
-            if (i === 0) {
-                self.pushNewCollection(collect);
-            }
-            self.drawingCollections.forEach(function(e) {
-                if (e.collection.name === collect) {
-                    newCollection = false;
-                    e.collection.drawings.push(drawing);
-                }
-            });
-            if (newCollection) {
-                self.pushNewCollection(collect);
-                self.drawingCollections.forEach(function(e) {
-                    if (e.collection.name === collect) {
-                        e.collection.drawings.push(drawing);
-                    }
-                });
-            }
-        }
-
-    }
-
-    self.pushNewCollection = function(collection) {
-        self.drawingCollections.push({
-            collection: {
-                name: collection,
-                isActive: ko.observable(false), // set to toggle
-                drawings: []
-            }
-        });
-    }
-
-    self.collectionToggleActive = function(data, event) {
-        data.collection.isActive(!data.collection.isActive()); //toggle the isActive value between true/false
-        self.updateDesignsScrollBar();
-    }
-
-    self.loadDrawingsCollections = function() {
-        self.drawingCollections.forEach(function(e) {
-            self.drawingListCollections.push(e);
-        });
-    }
-
-    self.loadCollectionsFromServer = function() {
-      $.ajax({
-        url: '/drawing/get_collections',
-        type: 'GET',
-        dataType: 'json',
-        success: function (collections) {
-          self.loadCollections(collections);
-          self.collectionsLoaded = true;
-          self.showUnloadedDesigns();
-          app.viewModel.scenarios.updateDesignsScrollBar();
-        },
-        error: function (result) {
-          console.log('error in scenarios.js: loadCollectionsFromServer');
-        }
-      });
-    };
-
-    self.loadCollections = function(collections) {
-      self.collectionList.removeAll();
-      $.each(collections, function (i, collection) {
-        var collectionViewModel = new collectionModel({
-          id: collection.uid,
-          uid: collection.uid,
-          name: collection.name,
-          display_name: collection.display_name?collection.display_name:collection.name,
-          description: collection.description,
-          attributes:  collection.attributes,
-          shared: collection.shared,
-          sharedByUsername: collection.shared_by_username,
-          sharedByName: collection.shared_by_name,
-          sharingGroups: collection.sharing_groups
-        });
-        self.collectionList.push(collectionViewModel);
-        app.viewModel.layerIndex[collection.uid] = collectionViewModel;
-        // self.getAttributes(collection.uid);
-      });
-      self.collectionList.sort(self.alphabetizeByName);
-      app.viewModel.scenarios.loadDrawingsFromServer();
-      app.viewModel.scenarios.updateDesignsScrollBar();
-    };
-
-    self.aggregateTranslate = function(inObjList) {
-      var outObjList = [];
-      for (var i=0; i < inObjList.length; i++) {
-        var inObj = inObjList[i];
-        var outObj = {};
-        outObj['data'] = inObj['data'];
-        outObj['display'] = inObj['title'];
-        outObjList.push(outObj);
-      }
-      return outObjList;
     };
 
     self.getAttributes = function(uid) {
@@ -1957,108 +1414,6 @@ function scenariosModel(options) {
             }
         });
     };
-
-    self.cancelAssociate = function() {
-      self.associatedDrawing().temporarilySelectedScenarios.removeAll();
-    };
-
-    self.submitAssociate = function() {
-      self.associatedDrawing().selectedScenarios(self.associatedDrawing().temporarilySelectedScenarios().slice(0));
-      var data = {
-        'scenario': self.associatedDrawing().uid,
-        'collections': self.associatedDrawing().selectedScenarios()
-      };
-      $.ajax( {
-        url: '/scenario/associate_scenario',
-        data: data,
-        type: 'POST',
-        dataType: 'json',
-        success: function(data) {
-            for (var data_index = 0; data_index < data.length; data_index++) {
-                app.viewModel.scenarios.addScenarioToMap(null, {uid: data[data_index].uid});
-            }
-            self.associatedDrawing().temporarilySelectedScenarios.removeAll();
-            app.viewModel.scenarios.loadCollectionsFromServer();
-        },
-        error: function(result) {
-          console.log('error in scenarios.js: submitAssociate');
-          window.alert(result.responseText);
-          self.associatedDrawing().temporarilySelectedScenarios.removeAll();
-        }
-      });
-      self.associatedDrawing().temporarilySelectedScenarios.removeAll();
-    };
-
-    self.cancelCompare = function() {
-      self.comparisonCollection().temporarilySelectedScenarios.removeAll();
-    };
-
-    self.submitCompare = function() {
-      console.log('submit compare!');
-      self.comparisonCollection().selectedScenarios(self.comparisonCollection().temporarilySelectedScenarios().slice(0));
-      var data = {
-        'scenario': self.comparisonCollection().uid,
-        'collections': self.comparisonCollection().selectedScenarios()
-      };
-      // app.loadingAnimation.show();
-      $.ajax( {
-        url: '/scenario/compare_scenario',
-        data: data,
-        type: 'POST',
-        dataType: 'json',
-        success: function(data) {
-          // app.loadingAnimation.hide();
-          attr_list = data[0];
-          report_data = data[1];
-          download_link = data[2];
-          app.viewModel.scenarios.showComparisonReportModal(attr_list,report_data,download_link);
-        },
-        error: function(result) {
-          // app.loadingAnimation.hide();
-          console.log('error in scenarios.js: submitCompare');
-          window.alert(result.responseText);
-        }
-      });
-    };
-
-    self.setBaseLine = function(col_id, data) {
-      // Update observable value array with relative comparison values
-      app.viewModel.scenarios.setComparisonReportBaseline(col_id);
-      $('td.collection-report-cell').removeClass('active');
-      if (col_id !== 0) {
-        column = col_id + 1;
-        $('td:nth-of-type('+ column + ').collection-report-cell').addClass('active');
-      }
-    };
-
-    self.loadDesigns = function() {
-
-        if ( !self.drawingsLoaded ) {
-            // load the scenarios
-            // self.loadScenariosFromServer();
-
-            // load the drawing
-            self.loadDrawingsFromServer();
-
-            // load the collections
-            self.loadCollectionsFromServer();
-
-            $.ajax({
-                url: '/scenario/get_sharing_groups',
-                type: 'GET',
-                dataType: 'json',
-                success: function (groups) {
-                    app.viewModel.scenarios.sharingGroups(groups);
-                    if (groups.length) {
-                        app.viewModel.scenarios.hasSharingGroups(true);
-                    }
-                },
-                error: function (result) {
-                    console.log('error in scenarios.js: loadDesigns');
-                }
-            });
-        }
-    }
 
     return self;
 } // end scenariosModel
