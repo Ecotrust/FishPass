@@ -71,22 +71,12 @@ var madrona = {
 
         submitForm = function($form) {
             // var $form = $(this).closest('.panel').find('form'),
-            var url = $form.attr('action'),
-                // $bar = $form.closest('.tab-pane').find('.bar'),
-                data = new FormData();
-                // barTimer;
-
-            //progress bar
-            // barTimer = setInterval(function () {
-            //     var width = parseInt($bar.css('width').replace('px', ''), 10) + 5,
-            //         barWidth = parseInt($bar.parent().css('width').replace('px',''), 10);
-            //
-            //     if (width < barWidth) {
-            //         $bar.css('width', width + "px");
-            //     } else {
-            //         clearInterval(barTimer);
-            //     }
-            // }, 500);
+            if (app.panel.form.hasOwnProperty('project_id')) {
+              var url = '/features/project/' + app.panel.form.project_id + '/';
+            } else {
+              var url = $form.attr('action');
+            }
+            var data = new FormData();
 
             app.checkboxes = {};
             $form.find('input,select,textarea').each( function(index, input) {
@@ -132,6 +122,7 @@ var madrona = {
                 contentType: false,
                 processData: false,
                 type: 'POST',
+                // method: 'POST',
                 traditional: true,
                 dataType: 'json',
                 success: function(result) {
@@ -146,7 +137,7 @@ var madrona = {
                     app.viewModel.scenarios.loadingMessage(null);
                     // clearInterval(barTimer);
                     if (result.status === 400) {
-                        $('#'+app.viewModel.currentTocId()+'-scenario-form > div').append(result.responseText);
+                        $('#error_bar').append(result.responseText);
                         app.viewModel.scenarios.scenarioForm(true);
                     } else {
                         app.viewModel.scenarios.errorMessage(result.responseText.split('\n\n')[0]);

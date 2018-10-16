@@ -1,0 +1,43 @@
+<div id="launch-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Your Fishpass Projects</h5>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-sm-6">
+                  <h3>Start <b>New</b> Project:</h3>
+                  <form id="create-new-project-form" action='/fishpass/new_project/' method="post" name="scenarios-form">
+                    {% csrf_token %}
+                    <input type="text" name="name" maxlength="255" required="True" id="id_name" value="{{ initialProjectName }}">
+                    <a href="#" id="createProjectSubmit" class="submit_button button btn" onclick="this.blur(); return false;" style="">
+                      <span>Save</span>
+                    </a>
+                  </form>
+                </div>
+                <div class="col-sm-6">
+                  <p>List of User's Projects Goes Here</p>
+                </div>
+              </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="loading-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="animation-container">
+                    <div class="animation">
+                        <div class="cssload-dot"></div>
+                        <div class="cssload-dot"></div>
+                        <div class="cssload-dot"></div>
+                    </div>
+               </div>
+            </div>
+        </div>
+    </div>
+</div>

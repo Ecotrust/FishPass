@@ -35,6 +35,14 @@ def app(request, template=loader.get_template('fishpass/app.html'), context=acco
     context['initialProjectName'] = default_project_name
     return HttpResponse(template.render(context, request))
 
+def new_project(request):
+    from fishpass.models import Project
+    if request.method == 'POST':
+        project = Project.objects.create(name=request.POST['name'], user=request.user)
+        return JsonResponse({'project_uid': project.uid})
+    else:
+        return HttpResponse('Request type must be "POST"', status=405)
+
 def home(request, template=loader.get_template('fishpass/home.html'), context={'title': 'FishPASS - Home'}):
     context['SEARCH_DISABLED'] = settings.SEARCH_DISABLED
     return HttpResponse(template.render(context, request))

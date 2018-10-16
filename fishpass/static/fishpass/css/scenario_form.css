@@ -2,3 +2,8 @@
   visibility: hidden;
   display: none;
 }
+
+#error_bar {
+  color: red;
+  font-weight: bold;
+}
