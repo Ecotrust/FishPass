@@ -8,9 +8,6 @@
 <div id="launch-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Your Fishpass Projects</h5>
-            </div>
             <div class="modal-body">
               <div class="row">
                 {% if projects.count > 0 %}
@@ -18,20 +15,21 @@
                 {% else %}
                 <div class="col-sm-12">
                 {% endif %}
-                  <h3>Start <b>New</b> Project:</h3>
+                  <h2>Create new</h2>
                   <form id="create-new-project-form" action='/fishpass/new_project/' method="post" name="scenarios-form">
                     {% csrf_token %}
-                    <label>Name:</label>
-                    <input type="text" name="name" maxlength="255" required="True" id="id_name" value="{{ initialProjectName }}">
-                    <hr/>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" name="name" maxlength="255" required="True" id="id_name" class="form-control" value="{{ initialProjectName }}">
+                    </div>
                     <a href="#" id="createProjectSubmit" type="button" class="submit_button btn btn-success" onclick="this.blur(); return false;">
-                      Begin Project
+                      Begin
                     </a>
                   </form>
                 </div>
                 {% if projects.count > 0 %}
                 <div class="col-sm-6">
-                  <h3>Your projects:</h3>
+                  <h3>Load saved</h3>
                   <div class='project-list'>
                     <table>
                     {% for project in projects %}
