@@ -1,0 +1,44 @@
+#launch-modal .modal-dialog {
+  max-width: 90vw;
+}
+
+#launch-modal h3 {
+  color: white;
+}
+
+.modal-content input, .modal-content input[type='text'] {
+  padding: 0.5em;
+}
+
+.project-list {
+  overflow-y: auto;
+  max-height: 45vh;
+}
+
+.project-list td {
+    padding: 0.5em;
+}
+
+.project-list td a:hover {
+    color: white;
+    font-weight: bold;
+}
+
+.project-list .btn-trash {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.5);
+    color: #ffa0a0;
+    font-size: .75em;
+    margin: 0 -2px;
+    text-align: center;
+    min-width: 10%;
+    /* max-width: 25%; */
+}
+
+.project-list .btn-trash:hover {
+    background: rgba(255,0,0,0.15);
+}
+
+.project-list .btn-trash img {
+    max-height: 1em;
+}

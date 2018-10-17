@@ -1,3 +1,10 @@
+
+<!--
+
+==== LAUNCH MODAL ====
+
+-->
+
 <div id="launch-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -6,25 +13,58 @@
             </div>
             <div class="modal-body">
               <div class="row">
+                {% if projects.count > 0 %}
                 <div class="col-sm-6">
+                {% else %}
+                <div class="col-sm-12">
+                {% endif %}
                   <h3>Start <b>New</b> Project:</h3>
                   <form id="create-new-project-form" action='/fishpass/new_project/' method="post" name="scenarios-form">
                     {% csrf_token %}
+                    <label>Name:</label>
                     <input type="text" name="name" maxlength="255" required="True" id="id_name" value="{{ initialProjectName }}">
-                    <a href="#" id="createProjectSubmit" class="submit_button button btn" onclick="this.blur(); return false;" style="">
-                      <span>Save</span>
+                    <hr/>
+                    <a href="#" id="createProjectSubmit" type="button" class="submit_button btn btn-success" onclick="this.blur(); return false;">
+                      Begin Project
                     </a>
                   </form>
                 </div>
+                {% if projects.count > 0 %}
                 <div class="col-sm-6">
-                  <p>List of User's Projects Goes Here</p>
+                  <h3>Your projects:</h3>
+                  <div class='project-list'>
+                    <table>
+                    {% for project in projects %}
+                      <tr id="row-{{ project.uid }}">
+                        <td>{{ project.name }}</td>
+                        <td><a class='view-project-link' href="/fishpass/get_report/{{ project.uid }}/">view</a></td>
+                        <td><a href="#" class="edit-form-link" uid="{{ project.uid }}">edit</a></td>
+                        <td>
+                          <button id="delete-{{ project.uid }}" data-id="{{ project.uid }}" class="btn btn-trash init-delete"><img  src="/static/fishpass/img/icon/i_trash.png" alt="delete scenario" /></button>
+                          <button id="confirm-delete-{{ project.uid }}" data-id="{{ project.uid }}" class="confirm-delete  d-none btn-trash">Confirm Delete</button>
+                          <button id="delete-status-{{ project.uid }}" data-id="{{ project.uid }}" class="confirm-delete  d-none btn-trash">Deleting...</button>
+
+                          <!-- <button data-id="249" class="scenario-name btn btn-trash"><img src="/static/ucsrb/img/icon/i_trash.png" alt="delete scenario"></button> -->
+                          <!-- <button data-confirm="confirm-249" data-id="249" class="confirm-delete  d-none btn-trash">Confirm Delete</button> -->
+                          <!-- http://s2fdemo.ecotrust.org/scenario/delete_design/ucsrb_treatmentscenario_243/ -->
+                        </td>
+                      </tr>
+                    {% endfor %}
+                    </table>
+                  </div>
                 </div>
+                {% endif %}
               </div>
           </div>
         </div>
     </div>
 </div>
 
+<!--
+
+==== LOAD MODAL ====
+
+-->
 
 <div id="loading-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">

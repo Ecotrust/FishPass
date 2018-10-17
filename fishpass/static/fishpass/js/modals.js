@@ -5,7 +5,6 @@ $('#create-new-project-form').on('click', '#createProjectSubmit' , function(e) {
         $('#invalid-name-message').show();
         return false;
     }
-    //submitted = true;
     submitCreateProjectForm($("#create-new-project-form"));
 });
 
@@ -28,11 +27,7 @@ submitCreateProjectForm = function($form) {
         traditional: true,
         dataType: 'json',
         success: function(result) {
-            // app.loadingAnimation.hide();
-            // Redirect window to /report/SCENARIO_ID/
             app.panel.form.init(result['project_uid']);
-            // document.location.href = '/fishpass/get_report/' + result['X-Madrona-Select'] + '/';
-            // window.alert('DEBUG: All Done! This would send you to `/fishpass/get_report/' + result['X-Madrona-Select'] + '/`')
             $('#launch-modal').modal('hide');
         },
         error: function(result) {
@@ -48,3 +43,45 @@ submitCreateProjectForm = function($form) {
         }
     });
 };
+
+$('.view-project-link').on('click', function(e) {
+  app.loadingAnimation.show();
+});
+
+$('.edit-form-link').on('click', function(e) {
+    e.preventDefault();
+    var uid = this.getAttribute('uid');
+    app.panel.form.init(uid);
+    $("#launch-modal").modal('hide');
+});
+
+$('.init-delete').on('click', function(e) {
+  // Reset all button statuses
+  $('.confirm-delete').addClass('d-none');
+  $('.init-delete').removeClass('d-none');
+  dataId = this.getAttribute('data-id');
+  confirmButton = $('#confirm-delete-' + dataId)
+  $(this).addClass('d-none');
+  confirmButton.removeClass('d-none');
+});
+
+$('.confirm-delete').on('click', function(e) {
+  dataId = this.getAttribute('data-id');
+  $(this).addClass('d-none');
+  $('#delete-status-' + dataId).removeClass('d-none');
+  $.ajax({
+      url: `/scenarios/delete_design/${dataId}/`,
+      type: 'POST',
+      data: {
+          uid: dataId
+      },
+      success: function(response, status) {
+          $("#row-" + dataId).remove();
+      },
+      error: function(response, status) {
+          alert(`failed to delete: %o`, response);
+          $('#delete-status-' + dataId).addClass('d-none');
+          $('#delete-'+dataId).removeClass('d-none');
+      }
+  });
+});

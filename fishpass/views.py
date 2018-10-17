@@ -24,14 +24,23 @@ def accounts_context():
 
 # Create your views here.
 def app(request, template=loader.get_template('fishpass/app.html'), context=accounts_context()):
+    from fishpass.models import Project
     from datetime import datetime
+
+
+    user_projects = Project.objects.filter(user=request.user).order_by('name')
+
     default_project_name = "%s - %s" % (str(request.user), datetime.now().strftime("%H:%M %d/%m/%Y"))
+
+
+
     context['title'] = 'FishPASS'
     context['MAPBOX_TOKEN'] = settings.MAPBOX_ACCESS_TOKEN
     context['HERE_TOKEN'] = settings.HERE_API_TOKEN
     context['HERE_APP_CODE'] = settings.HERE_APP_CODE
     context['MAP_TECH'] = settings.MAP_TECH
     context['SEARCH_DISABLED'] = settings.SEARCH_DISABLED
+    context['projects'] = user_projects
     context['initialProjectName'] = default_project_name
     return HttpResponse(template.render(context, request))
 
