@@ -231,9 +231,10 @@ app.panel = {
         }
     },
     form: {
-        init: function() {
+        init: function(project_id) {
             app.panel.moveLeft();
-            app.panel.form.scenario = app.viewModel.scenarios.createNewScenario('/features/project/form/');
+            app.panel.form.scenario = app.viewModel.scenarios.createNewScenario('/features/project/'+ project_id + "/form/");
+            app.panel.form.project_id= project_id;
             // app.nav.showSave();
             initFiltering();
         },

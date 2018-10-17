@@ -356,10 +356,10 @@ class Project(Scenario):
     ownership_input_checkboxes = models.TextField(blank=True, null=True, default=None)
     assign_cost = models.BooleanField(default=True,verbose_name="Assign Barrier Costs",help_text="Consider the unique cost of mitigating each barrier by $")
     budget_type = models.CharField(max_length=40, default='budget', choices=BUDGET_CHOICES, verbose_name="Fixed Budget or Range")
-    budget = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])
-    budget_min = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])
-    budget_max = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(0)])
-    batch_increment = models.IntegerField(null=True,blank=True,default=None,validators=[MinValueValidator(1)])
+    budget = models.IntegerField(null=True,blank=True,default=0,validators=[MinValueValidator(0)])
+    budget_min = models.IntegerField(null=True,blank=True,default=0,validators=[MinValueValidator(0)])
+    budget_max = models.IntegerField(null=True,blank=True,default=100000,validators=[MinValueValidator(0)])
+    batch_increment = models.IntegerField(null=True,blank=True,default=10000,validators=[MinValueValidator(1)])
 
     objects = ShareableGeoManager()
 

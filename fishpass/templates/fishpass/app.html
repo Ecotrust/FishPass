@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="{% static 'fishpass/css/_90-app.css' %}"/>
 
     <link rel="stylesheet" href="{% static 'fishpass/css/scenario_form.css' %}"/>
+    <link rel="stylesheet" href="{% static 'fishpass/css/modals.css' %}"/>
 
 {% endblock site_style %}
 
@@ -93,22 +94,7 @@
         </div>
     </section>
 
-    <div id="loading-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="animation-container">
-                        <div class="animation">
-                            <div class="cssload-dot"></div>
-                            <div class="cssload-dot"></div>
-                            <div class="cssload-dot"></div>
-                        </div>
-                   </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    {% include 'fishpass/modals.html' %}
 
 {% endblock %}
 
@@ -139,6 +125,7 @@
     <script src="{% static 'scenarios/js/' %}{{ MAP_TECH }}_settings.js"></script>
 
     <script src="{% static 'fishpass/js/state.js' %}"></script>
+    <script src="{% static 'fishpass/js/modals.js' %}"></script>
 
     <script>
       app.mapbox = {

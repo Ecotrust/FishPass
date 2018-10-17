@@ -24,13 +24,33 @@ def accounts_context():
 
 # Create your views here.
 def app(request, template=loader.get_template('fishpass/app.html'), context=accounts_context()):
+    from fishpass.models import Project
+    from datetime import datetime
+
+
+    user_projects = Project.objects.filter(user=request.user).order_by('name')
+
+    default_project_name = "%s - %s" % (str(request.user), datetime.now().strftime("%H:%M %d/%m/%Y"))
+
+
+
     context['title'] = 'FishPASS'
     context['MAPBOX_TOKEN'] = settings.MAPBOX_ACCESS_TOKEN
     context['HERE_TOKEN'] = settings.HERE_API_TOKEN
     context['HERE_APP_CODE'] = settings.HERE_APP_CODE
     context['MAP_TECH'] = settings.MAP_TECH
     context['SEARCH_DISABLED'] = settings.SEARCH_DISABLED
+    context['projects'] = user_projects
+    context['initialProjectName'] = default_project_name
     return HttpResponse(template.render(context, request))
+
+def new_project(request):
+    from fishpass.models import Project
+    if request.method == 'POST':
+        project = Project.objects.create(name=request.POST['name'], user=request.user)
+        return JsonResponse({'project_uid': project.uid})
+    else:
+        return HttpResponse('Request type must be "POST"', status=405)
 
 def home(request, template=loader.get_template('fishpass/home.html'), context={'title': 'FishPASS - Home'}):
     context['SEARCH_DISABLED'] = settings.SEARCH_DISABLED
@@ -458,6 +478,15 @@ def addOutfileToReport(outfile, project):
                     report_dict['netgain'] = float(row.split('\t')[1])
                 elif row == '\n':
                     report_obj, created = ProjectReport.objects.get_or_create(**report_dict)
+
+def run_optipass(request, scenario_id):
+    from features.registry import get_feature_by_uid
+    project = get_feature_by_uid(scenario_id)
+    try:
+        optipass(project)
+        return HttpResponse(request)
+    except:
+        return HttpResponse(status=500)
 
 def optipass(project):
     import os, subprocess, stat, shutil
