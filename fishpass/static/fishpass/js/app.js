@@ -232,7 +232,7 @@ app.panel = {
     },
     form: {
         init: function() {
-            app.panel.moveRight();
+            app.panel.moveLeft();
             app.panel.form.scenario = app.viewModel.scenarios.createNewScenario('/features/project/form/');
             // app.nav.showSave();
             initFiltering();
