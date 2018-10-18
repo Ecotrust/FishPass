@@ -412,12 +412,14 @@ Map controls
 }
 
 #map .ol-rotate {
-    top: 4em;
+    top: 11vh;
+    right: 2vh;
 }
 
 #map .layer-switcher {
     background-color: transparent;
-    left: 1rem;
+    right: 2vh;
+    top: 6.5vh;
 }
 
 #map .layer-switcher.shown {
@@ -798,25 +800,21 @@ Panel
 */
 
 #panel {
-    background: rgba(255,255,255,0.9);
-    border-radius: .5em;
-    top: 10vh;
-    bottom: 10vh;
-    /* max-height: 64vh; */
-    right: 2vh;
+    background: rgba(255,255,255,0.95);
+    left: 0;
+    top: 0;
+    bottom: 0;
     overflow: auto;
     position: absolute;
     z-index: 3;
 }
 #panel.left {
-    background: rgba(255,255,255,1);
-    left: .5rem;
+    left: 0;
     right: auto;
 }
 #panel.right {
-    background: rgba(255,255,255,0.9);
     left: auto;
-    right: .5rem;
+    right: 0;
 }
 
 #panel #scenario_form,
