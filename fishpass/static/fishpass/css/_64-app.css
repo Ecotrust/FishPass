@@ -7,14 +7,13 @@
         font-size: 1.25em;
     }
 
+    #panel,
     #panel #scenario_form:not(:empty),
     #panel #draw_form:not(:empty),
     #panel #scenarios:not(:empty),
     #panel #results:not(:empty),
     #panel .result-section:not(:empty)  {
-        width: 35vw;
-        min-width: 350px;
-        max-width: 550px;
+        width: 30vw;
     }
 
     #panel.expanded #scenario_form:not(:empty),
@@ -24,6 +23,11 @@
     #panel.expanded .result-section:not(:empty) {
         width: 85vw;
         max-width: 85vw;
+    }
+
+    #map {
+      left: 30%;
+      width: 70%;
     }
 
     .map-wrap .short-overlay .instructions #instruction {

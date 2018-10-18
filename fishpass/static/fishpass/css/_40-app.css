@@ -1,10 +1,11 @@
 @media all and (min-width: 40em) {
+    #panel,
     #panel #scenario_form:not(:empty),
     #panel #draw_form:not(:empty),
     #panel #scenarios:not(:empty),
     #panel #results:not(:empty),
     #panel .result-section:not(:empty)   {
-        width: 40vw;
+        width: 35vw;
     }
 
     #panel.expanded #scenario_form:not(:empty),
@@ -13,5 +14,10 @@
     #panel.expanded #results:not(:empty),
     #panel.expanded .result-section:not(:empty) {
         width: 90vw;
+    }
+
+    #map {
+        left: 35%;
+        width: 65%;
     }
 }
