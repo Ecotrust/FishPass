@@ -30,9 +30,9 @@
     color: #ffa0a0;
     font-size: .75em;
     margin: 0 -2px;
+    padding: .25rem;
     text-align: center;
-    min-width: 10%;
-    /* max-width: 25%; */
+    min-width: 2rem;
 }
 
 .project-list .btn-trash:hover {
