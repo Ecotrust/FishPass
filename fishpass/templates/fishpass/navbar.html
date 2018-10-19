@@ -1,9 +1,9 @@
 <!-- override visualize nav.html -->
 {% load static %}
-<nav class="navbar navbar-light">
+<nav class="navbar navbar-light justify-content-center nav">
     <button class="navbar-toggler dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
 
-    <a href="/home"><h1>Optimal Fish Passage</h1></a>
+    <a class="navbar-brand" href="/home"><img src="{% static 'fishpass/img/logo/FISHPass@2x.png' %}" /></a>
 
     {% include 'fishpass/toggle-nav.html' %}
 

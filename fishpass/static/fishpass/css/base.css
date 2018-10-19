@@ -4,13 +4,13 @@
      * no support for css vars in IE  (╯°□°)╯
      */
     :root {
-        --primary: #3a5675;
-            --hover: #3a5675;
-        --secondary: #67b8c6;
-            --link: #67b8c6;
-        --accent: #e2e05e;
-        --bg: #EAF2F4;
-        --text: #58595b;
+        --primary: #217867;
+        --secondary: #CCECAC;
+            --secondary-alt: ##E6F1DB;
+        --link: #9C7B54;
+        --accent: #2C5AA0;
+        --bg: rgba(27, 44, 70, 0.5497);
+        --text: #1B2C46;
 
         --margin-bottom: 1.5rem;
 
@@ -30,8 +30,8 @@ html {
 }
 
 body {
-    color: #58595b;
-    font-family: 'Libre Franklin', sans-serif;
+    color: #1B2C46;
+    font-family: 'Bitter', serif;
     font-weight: normal;
 }
 
@@ -88,8 +88,10 @@ a.btn-outline-light {
 }
 
 h1 {
+    line-height: 2;
     font-size: 2.5em;
     font-weight: 700;
+    margin: 2em 0;
 }
 
 h2 {
@@ -132,12 +134,24 @@ h5 {
  */
 
 .top-nav-wrap {
-    display: block;
-    height: 9vh;
+  background: rgba(255, 255, 255, 0.8993);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5)
+  display: block;
+  height: 9vh;
 }
 
 .top-nav-wrap .navbar {
     padding: 0 2rem;
+}
+
+.navbar-brand {
+    flex: 1;
+    text-align: center;
+}
+
+.navbar-brand img {
+    height: auto;
+    width: 155px;
 }
 
 nav .navbar-toggler {
