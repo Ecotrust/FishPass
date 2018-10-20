@@ -60,26 +60,35 @@ hr {
 }
 
 p {
+    font-family: 'Lato', sans-serif;
     font-size: 1em;
     margin: 0 0 1.5rem;
 }
 
 a,
+button,
 .button-modal {
-    color: #67b8c6;
+    color: #9C7B54;
     opacity: 1;
-    transition: 0.1s all ease-in;
+    transition: 0.15s opacity ease-in-out;
 }
 
 a:hover,
-.button-modal:hover {
-    color: #3a5675;
+.button-modal:hover,
+button:hover,
+.btn:hover {
+    opacity: .5;
     cursor: pointer;
     text-decoration: none;
 }
 
-button:hover {
-    cursor: pointer;
+button,
+.button-modal,
+.btn-main {
+    background: #E6F1DB;
+    font-size: 1.25em;
+    font-weight: bold;
+    padding: .75em 1.5em;
 }
 
 a.btn-outline-light {
