@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^get_report/(?P<projid>[\w_]+)/$', views.get_report),
     url(r'^export_report/(?P<projid>[\w_]+)/$', views.export_report),
 
-    url(r'/?$', views.home, name='home'),
+    url(r'$', views.home, name='home'),
 ]
 
 from django.contrib import admin
