@@ -1,3 +1,17 @@
+/**
+ * =========================================================================
+   Flatpage
+ ===========================================================================
+ */
+
+.flatpage header {
+    background: #58595B;
+}
+
+.flatpage .page-content {
+    padding: 4em 0;
+}
+
 .flatpage_content {
     border: 1px solid gray;
     margin: 5vw;

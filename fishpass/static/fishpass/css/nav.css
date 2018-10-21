@@ -1,0 +1,91 @@
+/**
+ * =========================================================================
+   Navbar
+ ===========================================================================
+ */
+
+.top-nav-wrap {
+  background: rgba(255, 255, 255, 0.8993);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5)
+  display: block;
+  left: 0;
+  height: 9vh;
+  position: fixed;
+  overflow: hidden;
+  right: 0;
+  top: 0;
+}
+
+.top-nav-wrap .navbar {
+    padding: 0 2rem;
+}
+
+.navbar-brand {
+    flex: 1;
+    text-align: center;
+}
+
+.navbar-brand img {
+    height: auto;
+    width: 155px;
+}
+
+nav .navbar-toggler {
+    background: #67b8c6;
+    border-radius: 50%;
+    border: none;
+    color: #58595b;
+    height: 5.25vh;
+    outline: none;
+    text-align: center;
+    position: relative;
+    padding: 0;
+    width: 5.25vh;
+}
+
+nav .navbar-toggler:after {
+    display: none;
+}
+
+nav .navbar-toggler .navbar-toggler-icon {
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 2.25vh;
+    line-height: 9vh;
+    display: block;
+    margin: 0 auto;
+    width: 100%;
+}
+
+nav .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
+    background-image: url('/static/fishpass/img/icon/i_close.svg');
+}
+nav .navbar-toggler[aria-expanded="false"] .navbar-toggler-icon {
+    background-image: url('/static/fishpass/img/icon/i_navicon.svg');
+}
+
+.top-nav-wrap .navbar h1 {
+    font-size: 2em;
+    line-height: 9vh;
+    margin: 0 2rem;
+}
+
+#menu {
+    left: 2rem;
+    padding: 0;
+    z-index: 3;
+}
+
+.username-wrap .account-action {
+    color: #67b8c6;
+    font-size: .875em;
+    font-weight: 700;
+    opacity: 1;
+    transition: 0.2s opacity ease-in-out;
+    text-transform: lowercase;
+}
+    .username-wrap .account-action:hover {
+        opacity: 0.8;
+        text-decoration: none;
+    }

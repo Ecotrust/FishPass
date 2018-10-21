@@ -1,0 +1,12 @@
+/**
+ * =========================================================================
+   Home
+ ===========================================================================
+ */
+
+#home-wrap {
+    background-image: url('/static/fishpass/img/hero-bg.png');
+    background-size: cover;
+    color: #fff;
+    min-height: 89vh;
+}
