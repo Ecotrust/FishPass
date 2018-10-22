@@ -1,13 +1,28 @@
 {% extends "fishpass/base.html" %}
 {% load static %}
 
+{% block site_style %}
+    {{ block.super }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/openlayers/4.6.5/ol.css" media="screen,projection"/>
+    <link rel="stylesheet" href="{% static 'fishpass/lib/ol-layerswitcher/src/ol-layerswitcher.css' %}"/>
+
+    <link rel="stylesheet" href="{% static 'fishpass/lib/ol-ext/dist/ol-ext.min.css' %}" type="text/css">
+
+    <link rel="stylesheet" href="{% static 'visualize/css/ol4_settings.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'visualize/css/map_popup.css' %}" type="text/css">
+{% endblock site_style %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'fishpass/css/report.css' %}">
 {% endblock extra_css %}
 
+{% block header %}{% endblock header %}
+
 {% block content %}
   <h1>{{ title }}</h1>
-  <div id="map" class="map"></div>
+  <section class="map-wrap">
+    <div id="map" class="map"></div>
+  </section>
   {% for report_dict in reports %}
   <section id="agg-report">
     <h1>Agg Report</h1>
@@ -52,4 +67,39 @@
   </section>
   {% endfor %} <!-- report -->
   <button>Download</button>
+
+  {% include 'fishpass/modals.html' %}
+
 {% endblock content %}
+
+{% block footer %}{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="https://openlayers.org/en/v4.6.4/examples/resources/mapbox-streets-v6-style.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/2.1.0/knockout-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.3.2/knockout.mapping.js"></script>
+    <script src="{% static 'js/knockout-bindings.js' %}"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/openlayers/4.6.5/ol.js"></script>
+
+    <script src="{% static 'fishpass/lib/ol-layerswitcher/dist/ol-layerswitcher.js' %}"></script>
+    <script src="{% static 'fishpass/js/app.js' %}"></script>
+    <script src="{% static 'fishpass/js/report.js' %}"></script>
+
+    <script src="{% static 'visualize/js/' %}{{ MAP_TECH }}_settings.js"></script>
+    <script src="{% static 'scenarios/js/' %}{{ MAP_TECH }}_settings.js"></script>
+
+    <script>
+      app.mapbox = {
+          key: '{{ MAPBOX_TOKEN }}'
+      };
+      app.here = {
+        key: '{{ HERE_TOKEN }}',
+        appCode: '{{ HERE_APP_CODE }}',
+      }
+    </script>
+    <script src="{% static 'fishpass/js/map.js' %}"></script>
+{% endblock extra_js %}

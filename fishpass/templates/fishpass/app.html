@@ -68,7 +68,7 @@
                 <div id="instruction" class="d-flex align-self-center justify-content-center"></div>
             </div>
         </div> -->
-        <div id="map"></div>
+        <div id="map" class="map"></div>
         <div id="popup" class="ol-popup">
           <a href="#" id="popup-closer" class="ol-popup-closer" title="close popup"></a>
           <div id="popup-content"></div>
@@ -110,8 +110,7 @@
 
 {% endblock %}
 
-{% block footer %}
-{% endblock %}
+{% block footer %}{% endblock %}
 
 {% block extra_js %}
     {{ block.super }}

@@ -569,6 +569,11 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
     reports_list = [{'report': x.to_dict, 'barriers':x.barriers_dict(action_only)} for x in reports.order_by('budget')]
 
     context['title'] = str(project)
+    context['MAPBOX_TOKEN'] = settings.MAPBOX_ACCESS_TOKEN
+    context['HERE_TOKEN'] = settings.HERE_API_TOKEN
+    context['HERE_APP_CODE'] = settings.HERE_APP_CODE
+    context['MAP_TECH'] = settings.MAP_TECH
+    context['SEARCH_DISABLED'] = settings.SEARCH_DISABLED
     context['project'] = project.to_dict()
     context['reports'] = reports_list
     # context['barriers'] = report.barriers_dict(action_only)
