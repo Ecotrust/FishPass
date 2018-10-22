@@ -8,5 +8,19 @@
     background-image: url('/static/fishpass/img/hero-bg.png');
     background-size: cover;
     color: #fff;
-    min-height: 89vh;
+    min-height: 98vh;
+    padding: 16vh 0 4vh;
+}
+
+#home-wrap > .container > .row {
+    margin-bottom: 3rem;
+}
+
+#home-wrap .btn-main {
+    padding: .75em 1.25em .8125em;
+}
+
+#home-wrap .btn-main img {
+    height: 14px;
+    margin: 0 12px 3px 0;
 }

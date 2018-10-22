@@ -5,15 +5,15 @@
  */
 
 .top-nav-wrap {
-  background: rgba(255, 255, 255, 0.8993);
+  background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5)
   display: block;
+  height: 7vh;
   left: 0;
-  height: 9vh;
   position: fixed;
-  overflow: hidden;
   right: 0;
   top: 0;
+  z-index: 1;
 }
 
 .top-nav-wrap .navbar {
@@ -22,25 +22,31 @@
 
 .navbar-brand {
     flex: 1;
+    margin: 0 5%;
+    padding: 1vh 0;
     text-align: center;
 }
+  .navbar-brand:hover {
+    background: transparent;
+    opacity: 1;
+  }
 
 .navbar-brand img {
-    height: auto;
-    width: 155px;
+    height: 5vh;
+    width: auto;
 }
 
 nav .navbar-toggler {
-    background: #67b8c6;
+    background: transparent;
     border-radius: 50%;
     border: none;
-    color: #58595b;
-    height: 5.25vh;
+    color: #9C7B54;
+    height: 5vh;
     outline: none;
     text-align: center;
     position: relative;
     padding: 0;
-    width: 5.25vh;
+    width: 5vh;
 }
 
 nav .navbar-toggler:after {
@@ -51,11 +57,10 @@ nav .navbar-toggler .navbar-toggler-icon {
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
-    height: 2.25vh;
-    line-height: 9vh;
+    height: 60%;
     display: block;
     margin: 0 auto;
-    width: 100%;
+    width: auto;
 }
 
 nav .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {

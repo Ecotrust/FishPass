@@ -67,8 +67,8 @@ p {
 }
 
 a,
-button,
-.button-modal {
+.button-modal,
+.btn {
     color: #9C7B54;
     opacity: 1;
     transition: 0.15s opacity ease-in-out;
@@ -76,14 +76,14 @@ button,
 
 a:hover,
 .button-modal:hover,
-button:hover,
 .btn:hover {
-    opacity: .5;
+    background: #CCECAC;
+    color: #9C7B54;
+    opacity: .9;
     cursor: pointer;
     text-decoration: none;
 }
 
-button,
 .button-modal,
 .btn-main {
     background: #E6F1DB;
@@ -92,16 +92,21 @@ button,
     padding: .75em 1.5em;
 }
 
+.btn,
+.btn-main {
+    border-radius: 0;
+}
+
 a.btn-outline-light {
     border-width: 2px;
     border-radius: 0;
 }
 
 h1 {
-    line-height: 2;
+    font-family: 'Georgia', serif;
     font-size: 2.5em;
     font-weight: 700;
-    margin: 2em 0;
+    margin: 0 0 1rem;
 }
 
 h2 {
@@ -139,7 +144,9 @@ h5 {
 
 /* calling bl because twitter bootstrap uses .border-left with !important */
 .bl {
-    border-left: 1px dashed #fff;
+    border-left: 2px dashed #fff;
+    margin: 0;
+    padding: 0 0 0 1.5rem;
 }
 
 
@@ -281,8 +288,10 @@ h5 {
  */
 
 footer {
+    background: #217867;
     height: 9vh;
-    padding: 3rem 0;
+    margin: 0;
+    padding: 2vh 0;
 }
 
 footer p {
