@@ -24,7 +24,7 @@
     <div id="map" class="map"></div>
   </section>
   {% for report_dict in reports %}
-  <section id="agg-report">
+  <section id="agg-report" class="report-section">
     <h1>Agg Report</h1>
     <table>
       <tr>
@@ -43,7 +43,7 @@
       </tr>
     </table>
   </section>
-  <section id="barrier-report">
+  <section id="barrier-report" class="report-section">
     <h1>Barrier Report</h1>
     {% for barrier_id,barrier_data in report_dict.barriers.items %}
       {% if forloop.counter < 5 %}
