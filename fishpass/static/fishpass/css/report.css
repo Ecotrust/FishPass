@@ -2,14 +2,6 @@ body {
   overflow: auto;
 }
 
-,report-section {
-  font-family: 'Lato', sans-serif;
-}
-
-h2 {
-  margin: 1.5em;
-}
-
 table {
   margin: 2em;
 }
@@ -31,4 +23,36 @@ table, th, td {
 .report-map-wrap .navbar {
   position: fixed;
   z-index: 5;
+}
+
+.card {
+  border: none;
+  color: #000000;
+  font-size: .875em;
+}
+
+.card-body {
+  padding: .5rem;
+}
+
+.card .card-title {
+  font-size: 1.125em;
+  margin-bottom: .125rem;
+}
+
+.card .muted {
+  color: #9B9B9B;
+  font-size: .9375em;
+  font-style: italic;
+}
+
+,report-section {
+  font-family: 'Lato', sans-serif;
+  font-size: 1em;
+}
+
+@media (min-width: 576px) {
+  .card-columns {
+    column-gap: 0;
+  }
 }

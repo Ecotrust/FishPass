@@ -55,49 +55,55 @@
   </section>
   <div class="container">
     <div class="row">
-      <h2>{{ title }}</h2>
+      <div class="col">
+        <h2>{{ title }}</h2>
+      </div>
     </div>
     {% for report_dict in reports %}
       <div class="row">
+        <h1>Agg Report</h1>
         <section id="agg-report" class="report-section">
-          <h1>Agg Report</h1>
-          <div class="card-columns">
+          <div class="card-columns p2">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{ report_dict.barriers.items|length }} Barriers</h5>
+              </div>
+            </div>
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Total Cost</h5>
-                <p class="card-text">{{ report_dict.report.budget }}</p>
+                <p class="card-text muted">{{ report_dict.report.budget }}</p>
               </div>
             </div>
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Status</h5>
-                <p class="card-text">{{ report_dict.report.status }}</p>
+                <p class="card-text muted">{{ report_dict.report.status }}</p>
               </div>
             </div>
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">% Optimality Gap</h5>
-                <p class="card-text">{{ report_dict.report.optgap }}</p>
+                <p class="card-text muted">{{ report_dict.report.optgap }}</p>
               </div>
             </div>
             <div class="card">
               <div class="card-body">
-                <h5 class="card-title">Potential Habitat</h5>
-                <p class="card-text">{{ report_dict.report.ptnl_habitat }}</p>
+                <h5 class="card-title">Estimated Habitat Improved</h5>
+                <p class="card-text muted">{{ report_dict.report.ptnl_habitat }}</p>
               </div>
             </div>
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Net Gain</h5>
-                <p class="card-text">{{ report_dict.report.netgain }}</p>
+                <p class="card-text muted">{{ report_dict.report.netgain }}</p>
               </div>
             </div>
           </div>
         </section>
       </div>
       <div class="row">
-        <section id="barrier-report" class="report-section">
-          <h1>Barrier Report</h1>
+        <section id="barrier-report" class="report-section col">
           {% for barrier_id,barrier_data in report_dict.barriers.items %}
             {% if forloop.counter < 5 %}
               <h2>{{ barrier_id }}</h2>
