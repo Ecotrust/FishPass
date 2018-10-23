@@ -13,3 +13,13 @@ table {
 table, th, td {
   border: 1px solid black;
 }
+
+.report-map-wrap {
+  height: 60vh;
+  position: relative;
+  width: 100%;
+}
+
+.report-map-wrap #map {
+  left: 0;
+}

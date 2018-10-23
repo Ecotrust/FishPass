@@ -10,6 +10,14 @@
 
     <link rel="stylesheet" href="{% static 'visualize/css/ol4_settings.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'visualize/css/map_popup.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'scenarios/css/scenarios_form.css' %}" type="text/css">
+
+    <link rel="stylesheet" href="{% static 'fishpass/css/app.css' %}"/>
+      <link rel="stylesheet" href="{% static 'fishpass/css/_40-app.css' %}"/>
+      <link rel="stylesheet" href="{% static 'fishpass/css/_64-app.css' %}"/>
+      <link rel="stylesheet" href="{% static 'fishpass/css/_90-app.css' %}"/>
+
+      <link rel="stylesheet" href="{% static 'fishpass/css/scenario_form.css' %}"/>
 {% endblock site_style %}
 
 {% block extra_css %}
@@ -20,7 +28,7 @@
 
 {% block content %}
   <h1>{{ title }}</h1>
-  <section class="map-wrap">
+  <section class="report-map-wrap">
     <div id="map" class="map"></div>
   </section>
   {% for report_dict in reports %}

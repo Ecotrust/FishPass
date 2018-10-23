@@ -351,7 +351,7 @@ main {
     left: 40%;
     height: 100%;
     position: absolute;
-    width: 60%;
+    right: 0;
 }
 
 /**
