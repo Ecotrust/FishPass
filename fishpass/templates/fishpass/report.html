@@ -61,22 +61,38 @@
       <div class="row">
         <section id="agg-report" class="report-section">
           <h1>Agg Report</h1>
-          <table>
-            <tr>
-              <th>Total Cost</th>
-              <th>Status</th>
-              <th>% Optimality Gap</th>
-              <th>Potential Habitat</th>
-              <th>Net Gain</th>
-            </tr>
-            <tr>
-              <td>{{ report_dict.report.budget }}</td>
-              <td>{{ report_dict.report.status }}</td>
-              <td>{{ report_dict.report.optgap }}</td>
-              <td>{{ report_dict.report.ptnl_habitat }}</td>
-              <td>{{ report_dict.report.netgain}}</td>
-            </tr>
-          </table>
+          <div class="card-columns">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Total Cost</h5>
+                <p class="card-text">{{ report_dict.report.budget }}</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Status</h5>
+                <p class="card-text">{{ report_dict.report.status }}</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">% Optimality Gap</h5>
+                <p class="card-text">{{ report_dict.report.optgap }}</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Potential Habitat</h5>
+                <p class="card-text">{{ report_dict.report.ptnl_habitat }}</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Net Gain</h5>
+                <p class="card-text">{{ report_dict.report.netgain }}</p>
+              </div>
+            </div>
+          </div>
         </section>
       </div>
       <div class="row">
