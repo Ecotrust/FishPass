@@ -27,3 +27,8 @@ table, th, td {
 .report-map-wrap #map {
   left: 0;
 }
+
+.report-map-wrap .navbar {
+  position: fixed;
+  z-index: 5;
+}
