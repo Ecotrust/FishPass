@@ -27,54 +27,63 @@
 {% block header %}{% endblock header %}
 
 {% block content %}
-  <h1>{{ title }}</h1>
   <section class="report-map-wrap">
     <div id="map" class="map"></div>
   </section>
-  {% for report_dict in reports %}
-  <section id="agg-report" class="report-section">
-    <h1>Agg Report</h1>
-    <table>
-      <tr>
-        <th>Total Cost</th>
-        <th>Status</th>
-        <th>% Optimality Gap</th>
-        <th>Potential Habitat</th>
-        <th>Net Gain</th>
-      </tr>
-      <tr>
-        <td>{{ report_dict.report.budget }}</td>
-        <td>{{ report_dict.report.status }}</td>
-        <td>{{ report_dict.report.optgap }}</td>
-        <td>{{ report_dict.report.ptnl_habitat }}</td>
-        <td>{{ report_dict.report.netgain}}</td>
-      </tr>
-    </table>
-  </section>
-  <section id="barrier-report" class="report-section">
-    <h1>Barrier Report</h1>
-    {% for barrier_id,barrier_data in report_dict.barriers.items %}
-      {% if forloop.counter < 5 %}
-        <h2>{{ barrier_id }}</h2>
-        <table>
-          {% for key,value in barrier_data.items %}
-            {% if key != 'pad_id' %}
-              <tr>
-                <th>{{ key }}</th>
-                <td>{{ value }}</td>
-              </tr>
+  <div class="container">
+    <div class="row">
+      <h2>{{ title }}</h2>
+    </div>
+    {% for report_dict in reports %}
+      <div class="row">
+        <section id="agg-report" class="report-section">
+          <h1>Agg Report</h1>
+          <table>
+            <tr>
+              <th>Total Cost</th>
+              <th>Status</th>
+              <th>% Optimality Gap</th>
+              <th>Potential Habitat</th>
+              <th>Net Gain</th>
+            </tr>
+            <tr>
+              <td>{{ report_dict.report.budget }}</td>
+              <td>{{ report_dict.report.status }}</td>
+              <td>{{ report_dict.report.optgap }}</td>
+              <td>{{ report_dict.report.ptnl_habitat }}</td>
+              <td>{{ report_dict.report.netgain}}</td>
+            </tr>
+          </table>
+        </section>
+      </div>
+      <div class="row">
+        <section id="barrier-report" class="report-section">
+          <h1>Barrier Report</h1>
+          {% for barrier_id,barrier_data in report_dict.barriers.items %}
+            {% if forloop.counter < 5 %}
+              <h2>{{ barrier_id }}</h2>
+              <table>
+                {% for key,value in barrier_data.items %}
+                  {% if key != 'pad_id' %}
+                    <tr>
+                      <th>{{ key }}</th>
+                      <td>{{ value }}</td>
+                    </tr>
+                  {% endif %}
+                {% endfor %}
+              </table>
+            {% else %}
+              {{ barrier_id }}
             {% endif %}
           {% endfor %}
-        </table>
-      {% else %}
-        {{ barrier_id }}
-      {% endif %}
-    {% endfor %}
-    <!-- <p>{/{ barriers }}</p> -->
+          <!-- <p>{/{ barriers }}</p> -->
 
-  </section>
-  {% endfor %} <!-- report -->
-  <button>Download</button>
+        </section>
+      </div>
+    {% endfor %} <!-- report -->
+
+    <button>Download</button>
+  </div>
 
   {% include 'fishpass/modals.html' %}
 

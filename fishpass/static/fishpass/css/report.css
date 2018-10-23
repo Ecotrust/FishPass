@@ -1,3 +1,7 @@
+body {
+  overflow: auto;
+}
+
 ,report-section {
   font-family: 'Lato', sans-serif;
 }
