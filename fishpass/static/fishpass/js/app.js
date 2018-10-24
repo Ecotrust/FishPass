@@ -36,7 +36,8 @@ function selectSpatialOrganization(event) {
   var unitType = event.target.value.toLowerCase();
   if (app.map.layer.hasOwnProperty(unitType)) {
     app.map.layer[unitType].layer.setVisible(true);
-    app.map.selection.setSelect(app.map.interaction.selectFilter);
+    var createInteractionForLayer = newInteractionForLayer(app.map.layer[unitType].layer);
+    app.map.selection.setSelect(createInteractionForLayer);
   }
 };
 

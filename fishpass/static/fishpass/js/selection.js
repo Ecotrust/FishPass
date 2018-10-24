@@ -17,13 +17,14 @@ app.map.selection = {
 app.map.interaction = {
   selectNone: new ol.interaction.Select({
     layers: []
-  }),
-  selectFilter: new ol.interaction.Select({
+  })
+}
+
+function newInteractionForLayer(layer) {
+  return new ol.interaction.Select({
     layers: [
-      app.map.layer.huc10.layer,
-      app.map.layer.huc12.layer,
-      app.map.layer.county.layer,
+      layer
     ],
     style: app.map.styles.transparent
-  }),
+  })
 }

@@ -521,7 +521,7 @@ app.map.layer = {
           url: `https://api.mapbox.com/v4/${app.mapbox.layers.county.id}/{z}/{x}/{y}.mvt?access_token=${app.mapbox.key}`
         }),
         style: app.map.styles.FocusArea,
-        visible: true,
+        visible: false,
         renderBuffer: 500
       }),
       selectAction: focusAreaSelectAction

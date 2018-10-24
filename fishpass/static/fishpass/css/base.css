@@ -66,6 +66,10 @@ p {
     margin: 0 0 1.5rem;
 }
 
+a, button {
+    cursor: pointer;
+}
+
 a,
 .button-modal,
 .btn {
@@ -80,7 +84,6 @@ a:hover,
     background: #CCECAC;
     color: #9C7B54;
     opacity: .9;
-    cursor: pointer;
     text-decoration: none;
 }
 
