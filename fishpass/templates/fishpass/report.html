@@ -61,7 +61,7 @@
     </div>
     {% for report_dict in reports %}
       <div class="row">
-        <h1>Agg Report</h1>
+        <h1>Aggregate Report</h1>
         <section id="agg-report" class="report-section">
           <div class="card-columns p2">
             <div class="card">
@@ -103,25 +103,42 @@
         </section>
       </div>
       <div class="row">
+        <h1>Individual Barriers</h1>
         <section id="barrier-report" class="report-section col">
-          {% for barrier_id,barrier_data in report_dict.barriers.items %}
-            {% if forloop.counter < 5 %}
-              <h2>{{ barrier_id }}</h2>
-              <table>
-                {% for key,value in barrier_data.items %}
-                  {% if key != 'pad_id' %}
-                    <tr>
-                      <th>{{ key }}</th>
-                      <td>{{ value }}</td>
-                    </tr>
+          <div class="row">
+            <div class="col-3">
+              <div class="nav flex-column nav-pills" id="barrier-tab" role="tablist" aria-orientation="vertical">
+                {% for barrier_id,barrier_data in report_dict.barriers.items %}
+                  {% if forloop.counter < 5 %}
+                    <a class="nav-link" id="barrier-{{ barrier_id }}-tab" data-toggle="pill" href="#barrier-{{ barrier_id }}" role="tab" aria-controls="barrier-{{ barrier_id }}" aria-selected="true">{{ barrier_id }}</a>
                   {% endif %}
                 {% endfor %}
-              </table>
-            {% else %}
-              {{ barrier_id }}
-            {% endif %}
-          {% endfor %}
-          <!-- <p>{/{ barriers }}</p> -->
+              </div>
+            </div>
+            <div class="col-9">
+              <div class="tab-content" id="barrier-content">
+                {% for barrier_id,barrier_data in report_dict.barriers.items %}
+                  {% if forloop.counter < 5 %}
+                    <div class="tab-pane fade show active" id="barrier-{{ barrier_id }}" role="tabpanel" aria-labelledby="barrier-{{ barrier_id }}">
+                      <table>
+                        {% for key,value in barrier_data.items %}
+                          {% if key != 'pad_id' %}
+                            <tr>
+                              <th>{{ key }}</th>
+                              <td>{{ value }}</td>
+                            </tr>
+                          {% endif %}
+                        {% endfor %}
+                      </table>
+                    </div>
+                  {% else %}
+                    {{ barrier_id }}
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+            <!-- <p>{/{ barriers }}</p> -->
 
         </section>
       </div>
