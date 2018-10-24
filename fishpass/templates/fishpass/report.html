@@ -110,7 +110,7 @@
               <div class="nav flex-column nav-pills" id="barrier-tab" role="tablist" aria-orientation="vertical">
                 {% for barrier_id,barrier_data in report_dict.barriers.items %}
                   {% if forloop.counter < 5 %}
-                    <a class="nav-link" id="barrier-{{ barrier_id }}-tab" data-toggle="pill" href="#barrier-{{ barrier_id }}" role="tab" aria-controls="barrier-{{ barrier_id }}" aria-selected="true">{{ barrier_id }}</a>
+                    <a class="nav-link {% if forloop.counter < 2 %}active{% endif %}" id="barrier-{{ barrier_id }}-tab" data-toggle="pill" href="#barrier-{{ barrier_id }}" role="tab" aria-controls="barrier-{{ barrier_id }}" aria-selected="true">{{ barrier_id }}</a>
                   {% endif %}
                 {% endfor %}
               </div>
@@ -119,7 +119,7 @@
               <div class="tab-content" id="barrier-content">
                 {% for barrier_id,barrier_data in report_dict.barriers.items %}
                   {% if forloop.counter < 5 %}
-                    <div class="tab-pane fade show active" id="barrier-{{ barrier_id }}" role="tabpanel" aria-labelledby="barrier-{{ barrier_id }}">
+                    <div class="tab-pane fade {% if forloop.counter < 2 %}show active{% endif %}" id="barrier-{{ barrier_id }}" role="tabpanel" aria-labelledby="barrier-{{ barrier_id }}">
                       <table>
                         {% for key,value in barrier_data.items %}
                           {% if key != 'pad_id' %}
