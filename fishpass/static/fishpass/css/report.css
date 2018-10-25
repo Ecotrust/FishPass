@@ -12,8 +12,9 @@ table, th, td {
 
 .report-map-wrap {
   height: 60vh;
+  margin: 0 auto 2rem;
   position: relative;
-  width: 100%;
+  width: 90%;
 }
 
 .report-map-wrap #map {
