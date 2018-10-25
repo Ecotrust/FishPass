@@ -6,7 +6,7 @@
     :root {
         --primary: #217867;
         --secondary: #CCECAC;
-            --secondary-alt: ##E6F1DB;
+            --secondary-alt: #E6F1DB;
         --link: #9C7B54;
         --accent: #2C5AA0;
         --bg: rgba(27, 44, 70, 0.5497);
@@ -53,7 +53,7 @@ i.svg_icon {
     }
 
 hr {
-    background: #e2e05e;
+    background: #217867;
     border: none;
     height: 10px;
     margin: 1.5rem 0;
@@ -117,13 +117,13 @@ h2 {
 }
 
 h3 {
-    color: #3a5675;
+    color: #217867;
     font-size: 1.125em;
     font-weight: 700;
 }
 
 h4 {
-    color: #5d7452;
+    color: #217867;
     font-size: 1.5em;
     font-weight: 500;
 }
@@ -151,6 +151,10 @@ h5 {
     padding: 0 0 0 1.5rem;
 }
 
+.badge-value {
+    background: #217867;
+    color: #fff;
+}
 
 /**
  * =========================================================================

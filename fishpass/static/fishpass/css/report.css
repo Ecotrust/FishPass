@@ -51,6 +51,11 @@ table, th, td {
   font-size: 1em;
 }
 
+#barrier-report .nav-link.active {
+  background: #217867;
+  color: #fff;
+}
+
 @media (min-width: 576px) {
   .card-columns {
     column-gap: 0;
