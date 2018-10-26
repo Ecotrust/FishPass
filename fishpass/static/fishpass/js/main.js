@@ -31,14 +31,15 @@ window.addEventListener("load", function () {
     });
 
     // Sign out
-    document.getElementById('menu').addEventListener('click', function(event) {
-        if (event.target.nodeName == 'BUTTON') {
+    document.querySelector('nav').addEventListener('click', function(event) {
+        console.log(event.target.dataset.action);
+        if (event.target.nodeName === 'BUTTON') {
             event.preventDefault();
             if (event.target.dataset.action === 'sign-out') {
                 main.auth.logOut();
-            } else if (event.target.dataset.action == 'sign-in-modal') {
+            } else if (event.target.dataset.action === 'sign-in-modal') {
                 $('#login-modal').modal('show');
-            } else if (event.target.dataset.action == 'sign-in-modal-2') {
+            } else if (event.target.dataset.action === 'sign-in-modal-2') {
                 $('#login-modal').modal('show');
             }
         }
@@ -49,7 +50,7 @@ var main = {
     auth: {
         signIn: function(event, form) {
             var formData = $(form).serialize();
-            var url = '/account/login_async/'; // default form action url
+            var url = '/accounts/login_async/'; // default form action url
             $.ajax({
                 url: url,
                 type: 'POST',
@@ -66,7 +67,7 @@ var main = {
                                 $('#login-collapse .login-form').prepend(`<div class="alert alert-warning fade show" role="alert" style="position: relative; display: block; font-size: .875em;"></div>`);
                             }
                             var $alert = $('.alert');
-                            $alert.html(`Password does not match username. Please try again.<br />You may also <a href="/account/forgot/">reset your password</a>. Reseting your password will cause your current progress to be lost.`);
+                            $alert.html(`Password does not match username. Please try again.<br />You may also <a href="/accounts/forgot/">reset your password</a>. Reseting your password will cause your current progress to be lost.`);
                         }
                         console.log('%cerror with sign in credentials: %o', 'color: red;', response);
                     }
@@ -78,7 +79,7 @@ var main = {
         },
         logOut: function(event) {
             $.ajax({
-                url: '/account/logout/',
+                url: '/accounts/logout/',
                 success: function (data) {
                     document.location.href = '/';
                 }
@@ -86,7 +87,7 @@ var main = {
         },
         register: function(event, form) {
             var formData = $(form).serialize();
-            var url = '/account/register_login_async/';
+            var url = '/accounts/register_login_async/';
             $.ajax({
                 url: url,
                 type: 'POST',
@@ -120,10 +121,10 @@ var main = {
             }, 1500);
             // menu navicon hide login  &
             // add account link + sign out link
-            $('#menu #sign-in-modal').before(`<a href="/account/" class="list-group-item list-group-item-action">${data.username}</a><button id="sign-out" data-action="sign-out" class="list-group-item list-group-item-action">Sign out</button>`);
+            $('#menu #sign-in-modal').before(`<a href="/accounts/" class="list-group-item list-group-item-action">${data.username}</a><button id="sign-out" data-action="sign-out" class="list-group-item list-group-item-action">Sign out</button>`);
             $('#menu #sign-in-modal').css('display', 'none');
             // Hide top nav login and create account button
-            $('.username-wrap #sign-in-modal-2').before(`<a id="topnav-account-link" href="/account/" class="btn btn-link account-action">
+            $('.username-wrap #sign-in-modal-2').before(`<a id="topnav-account-link" href="/accounts/" class="btn btn-link account-action">
                 <i class="svg_icon"><img src="/static/ucsrb/img/icon/i_user_blue.svg" /></i>${data.username}</a>`);
             $('.username-wrap #sign-in-modal-2').css('display', 'none');
             // hide submenu login

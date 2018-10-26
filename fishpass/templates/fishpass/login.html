@@ -1,0 +1,45 @@
+<div class="collapse multi-collapse show" id="login-collapse">
+    {% include 'accounts/login_form.html' %}
+    <script>
+        (function() {
+            var email_input = document.getElementById('id_username');
+            if (email_input) {
+                email_input.setAttribute('id', 'id_login_email');
+            }
+            var password_input = document.getElementById('id_password');
+            if (password_input) {
+                password_input.setAttribute('id', 'id_login_password');
+            }
+        })();
+    </script>
+    <hr />
+    <div class="row justify-content-between">
+        <div class="col-8">
+            <p><strong>Don't have an account?</strong></p>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-outline-light" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-controls="login-collapse register-collapse" aria-expanded="false">Sign Up</button>
+        </div>
+    </div>
+</div>
+
+<div class="collapse multi-collapse" id="register-collapse">
+    <div class="row justify-content-between">
+        <div class="col-8">
+            <p><strong>Already have an account?</strong></p>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-outline-light" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-controls="login-collapse register-collapse" aria-expanded="false">Login</button>
+        </div>
+    </div>
+    <hr />
+    <div class="card">
+        <div class="card-header">
+            <span>Create Your Account</span>
+        </div>
+        <div class="card-body">
+            {% include 'accounts/registration_form.html' %}
+            <div id="registration-error"></div>
+        </div>
+    </div>
+</div>

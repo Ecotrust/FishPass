@@ -27,8 +27,11 @@ def app(request, template=loader.get_template('fishpass/app.html'), context=acco
     from fishpass.models import Project
     from datetime import datetime
 
-
-    user_projects = Project.objects.filter(user=request.user).order_by('name')
+    # TODO: instead of redirecting user to accounts login, add login form to project creation model
+    if request.user.is_authenticated:
+        user_projects = Project.objects.filter(user=request.user).order_by('name')
+    else:
+        return render(request, 'accounts/login.html')
 
     default_project_name = "%s - %s" % (str(request.user), datetime.now().strftime("%H:%M %d/%m/%Y"))
 
@@ -76,6 +79,50 @@ def get_focus_area_geojson_by_type(request):
     geojson = get_geojson_from_queryset(focus_area_qs)
     return JsonResponse(geojson)
 
+def scenario_barrier(request, project_id, barrier_id, context={}):
+    retjson = {
+        'status': 200,
+        'success': True,
+        'message': "Successfully updated Project Barrier"
+    }
+    return JsonResponse(retjson)
+
+def scenario_barrier_type(request, project_id, context={}):
+    retjson = {
+        'status': 200,
+        'success': True,
+        'message': "Successfully updated Project Barrier Type"
+    }
+    return JsonResponse(retjson)
+
+
+def get_scenario_barrier_status(request, project_id, context={}):
+    # Get project from uid
+    from features.registry import get_feature_by_uid
+    project = get_feature_by_uid(project_id)
+    # Query for all BarrierStatuses
+    statuses = BarrierStatus.objects.all()
+    # Query for any ScenarioBarrierStatuses
+    scenario_barrier_statuses = ScenarioBarrierStatuses.objects.filter(project=project)
+    # TODO: Make status_values an ordered dict
+    status_values = {}
+    # TODO: for status_type in statuses.order_by('order'):
+    #   check if scenario_barrier_status override exists
+    #   if so:
+    #       status_values[BARRIER_STATUS] = scenario_barrier_status.get(type=TYPE).pre-pass
+    #   else:
+    #       status_values[BARRIER_STATUS] = status.pre-passing
+    # TODO: return json response of dict
+
+
+def scenario_barrier_status(request, project_id, context={}):
+
+    retjson = {
+        'status': 200,
+        'success': True,
+        'message': "Successfully updated Project Barrier Status"
+    }
+    return JsonResponse(retjson)
 
 def get_user_scenario_list(request):
     #TODO: use "scenarios.views.get_scenarios" if possible.

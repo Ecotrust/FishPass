@@ -28,7 +28,7 @@
 {% block extra_css %}{% endblock extra_css %}
 
 {% block jquery %}
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="{% static 'fishpass/lib/jquery-3.2.1.min.js' %}"></script>
 {% endblock jquery %}
 
 {% block js_head %}{% endblock js_head %}
@@ -45,6 +45,11 @@
       {% block content %}{% endblock content %}
     <!-- </main> -->
   <!-- {/% endblock main %} -->
+  {% block login_modal %}
+      <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="login-modal" aria-hidden="true">
+          {% include 'fishpass/login_modal.html' %}
+      </div>
+  {% endblock login_modal %}
 {% endblock outer_content %}
 
 {% block footer %}
@@ -54,14 +59,18 @@
   </div> -->
 {% endblock %}
 
-{% block extra_js %}{% endblock %}
+{% block extra_js %}
+  <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.js"></script>
+  <script src="{% static 'fishpass/js/main.js' %}"></script>
+{% endblock %}
 
 {% block bootstrap_js %}
-<!-- <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script> -->
-<script src="{% static '/fishpass/lib/popper.min.js' %}"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-<!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script> -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script> -->
+  <!-- <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script> -->
+  <script src="{% static '/fishpass/lib/popper.min.js' %}"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script> -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script> -->
 {% endblock %}
 
 {% block top-level %}{% endblock %}

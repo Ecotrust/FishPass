@@ -48,6 +48,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'marineplanner.urls'
 
+LOGIN_REDIRECT_URL = '/'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
