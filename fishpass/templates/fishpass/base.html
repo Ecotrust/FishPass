@@ -14,6 +14,7 @@
 
   <!-- polyfill based on user agent -->
   <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+  <script src="{% static 'fishpass/lib/jquery-3.2.1.min.js' %}"></script>
 {% endblock %}
 
 {% block site_style %}
@@ -28,7 +29,7 @@
 {% block extra_css %}{% endblock extra_css %}
 
 {% block jquery %}
-<script src="{% static 'fishpass/lib/jquery-3.2.1.min.js' %}"></script>
+  <script src="{% static 'fishpass/lib/jquery-3.2.1.min.js' %}"></script>
 {% endblock jquery %}
 
 {% block js_head %}{% endblock js_head %}
