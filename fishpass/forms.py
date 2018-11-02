@@ -256,6 +256,24 @@ class ProjectForm(ScenarioForm):
 #     class Meta(FeatureForm.Meta):
 #         model = ScenarioBarrier
 
+class ProjectBarrierStatusForm(forms.Form):
+    from fishpass.models import BarrierStatus
+    barrier_statuses = BarrierStatus.objects.all()
+    # project id is sent along with ajax request
+    for status in barrier_statuses.order_by('order'):
+
+        # reference https://www.caktusgroup.com/blog/2018/05/07/creating-dynamic-forms-django/
+        # 1. create field name for each status using id
+        # 2. create field
+        # 3. populate field
+        # (status.barrier_status, default prepassability)
+        # barrier status as field that is disabled=true. prepopulated with
+
+        # create input field name
+        # create input field
+        # populate value with current default for barrier.default_pre_passability
+
+
 class UploadPADForm(forms.Form):
     file = forms.FileField()
 

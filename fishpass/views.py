@@ -95,6 +95,10 @@ def scenario_barrier_type(request, project_id, context={}):
     }
     return JsonResponse(retjson)
 
+def get_scenario_barrier_status_defaults(request, project_id, context={}):
+    if request.method == 'GET':
+        statuses = BarrierStatus.objects.all()
+        return JsonResponse(statuses.to_dict())
 
 def get_scenario_barrier_status(request, project_id, context={}):
     # Get project from uid
@@ -103,7 +107,7 @@ def get_scenario_barrier_status(request, project_id, context={}):
     # Query for all BarrierStatuses
     statuses = BarrierStatus.objects.all()
     # Query for any ScenarioBarrierStatuses
-    scenario_barrier_statuses = ScenarioBarrierStatuses.objects.filter(project=project)
+    scenario_barrier_statuses = ScenarioBarrierStatus.objects.filter(project=project)
     # TODO: Make status_values an ordered dict
     status_values = {}
     # TODO: for status_type in statuses.order_by('order'):
@@ -116,13 +120,17 @@ def get_scenario_barrier_status(request, project_id, context={}):
 
 
 def scenario_barrier_status(request, project_id, context={}):
-
     retjson = {
         'status': 200,
         'success': True,
         'message': "Successfully updated Project Barrier Status"
     }
     return JsonResponse(retjson)
+
+def project_barrier_status(request, context={}):
+    from features.registry import get_feature_by_uid
+    project = get_feature_by_uid(project_id)
+    scenario_barrier_statuses = ScenarioBarrierStatus.objects.filter(project=project)
 
 def get_user_scenario_list(request):
     #TODO: use "scenarios.views.get_scenarios" if possible.

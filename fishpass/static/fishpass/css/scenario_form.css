@@ -7,3 +7,25 @@
   color: red;
   font-weight: bold;
 }
+
+.barrier-default-btn-wrap {
+  align-content: stretch;
+  bottom: 0;
+  display: flex;
+  height: 6vh;
+  left: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.barrier-default-btn-wrap .btn-group {
+  width: 100%;
+}
+
+.barrier-default-btn-wrap .btn-group .btn {
+  background: #9C7B54;
+  border-color: #E6F1DB;
+  color: #fff;
+  font-size: .9375em;
+  flex: 1;
+}

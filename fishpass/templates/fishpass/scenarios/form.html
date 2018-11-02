@@ -9,7 +9,7 @@
     {% block form_filters %}
       <h4>{{title}}</h4>
 
-      <div class="show-blocks-btn">
+      <div class="show-blocks-btn" style="display: none;">
         <a class="button btn enabled-grid-button" style="padding: 4px 9px; margin-right: 10px;" data-bind="click: showFilteringResults">
           <span>Show Filter Results</span>
           <span class="badge" style="margin-right: 5px; margin-left: -5px;" data-bind="text: gridCellsRemaining()"></span>
@@ -229,18 +229,24 @@
           <p><button type="submit" value="submit" class="btn-submit btn">submit</button></p>
     </form>
 
-    <div class="wizard_nav" style="width:100%">
-      <div class="btn-group pull-right" style="margin-right: 14px">
+    <div class="wizard_nav">
+      <div class="btn-group pull-right">
         <a href="#" class="button btn" onclick="this.blur(); return false;" id="button_prev"><span>&lt; Previous</span></a>
         <a href="#" class="button btn"  onclick="this.blur(); return false;" id="button_next"><span>Next &gt;</span></a>
         <a href="#" class="submit_button button btn" onclick="this.blur(); return false;"><span>Save</span></a>
       </div>
     </div>
 
-    <div>
+    <div class="cancel-nav">
       <div class="btn-group pull-left">
         <a href="#" class="cancel_button btn btn-default"><span>Cancel</span></a>
+      </div>
+    </div>
 
+    <div class="barrier-default-btn-wrap">
+      <div class="btn-group" role="group" aria-label="Barrier Defaults">
+        <button type="button" class="btn btn-secondary" data-action="project-barrier-status-modal">Set Barrier Status</button>
+        <button type="button" class="btn btn-secondary">Set Barrier Types</button>
       </div>
     </div>
 

@@ -21,6 +21,8 @@ urlpatterns = [
     url(r'scenario_barrier/(?P<project_id>[\w_]+)/$', views.scenario_barrier),
     url(r'scenario_barrier_type/(?P<project_id>[\w_]+)/(?P<barrier_type_id>[\w_]+)/$', views.scenario_barrier_type),
     url(r'scenario_barrier_status/(?P<project_id>[\w_]+)/(?P<barrier_status_id>[\w_]+)/$', views.scenario_barrier_status),
+
+    url(r'get_scenario_barrier_status_defaults/(?P<project_id>[\w_]+)/$', views.get_scenario_barrier_status_defaults),
     url(r'get_scenario_barrier_status/(?P<project_id>[\w_]+)/$', views.get_scenario_barrier_status),
 
     url(r'^get_user_scenario_list/$', views.get_user_scenario_list),
