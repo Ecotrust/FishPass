@@ -9,6 +9,13 @@
     {% block form_filters %}
       <h4>{{title}}</h4>
 
+      <div class="barrier-default-btn-wrap">
+        <div class="btn-group" role="group" aria-label="Barrier Defaults">
+          <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#project-barrier-status-modal">Set Barrier Status</button>
+          <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#project-barrier-types-modal">Set Barrier Types</button>
+        </div>
+      </div>
+
       <div class="show-blocks-btn" style="display: none;">
         <a class="button btn enabled-grid-button" style="padding: 4px 9px; margin-right: 10px;" data-bind="click: showFilteringResults">
           <span>Show Filter Results</span>
@@ -240,13 +247,6 @@
     <div class="cancel-nav">
       <div class="btn-group pull-left">
         <a href="#" class="cancel_button btn btn-default"><span>Cancel</span></a>
-      </div>
-    </div>
-
-    <div class="barrier-default-btn-wrap">
-      <div class="btn-group" role="group" aria-label="Barrier Defaults">
-        <button type="button" class="btn btn-secondary" data-action="project-barrier-status-modal">Set Barrier Status</button>
-        <button type="button" class="btn btn-secondary">Set Barrier Types</button>
       </div>
     </div>
 

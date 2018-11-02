@@ -257,22 +257,51 @@ class ProjectForm(ScenarioForm):
 #         model = ScenarioBarrier
 
 class ProjectBarrierStatusForm(forms.Form):
-    from fishpass.models import BarrierStatus
-    barrier_statuses = BarrierStatus.objects.all()
-    # project id is sent along with ajax request
-    for status in barrier_statuses.order_by('order'):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from fishpass.models import BarrierStatus
+        barrier_statuses = BarrierStatus.objects.all()
+        # project id is sent along with ajax request
+        for status in barrier_statuses.order_by('order'):
+            barrier_status_field_name = status.id
+            # project_barrier_status_field_name = status.id
+            try:
+                self[barrier_status_field_name] = barrier_status_field_name
+            except IndexError:
+                self[barrier_status_field_name] = ''
+            self.fields[barrier_status_field_name] = forms.CharField(required=False, disabled=True, verbose_name="Barrier Status", value=status.default_pre_passability)
+
+            self.fields['project_barrier_status'] = forms.CharField(required=False, verbose_name="Project Barrier Status", value=status.default_pre_passability)
 
         # reference https://www.caktusgroup.com/blog/2018/05/07/creating-dynamic-forms-django/
         # 1. create field name for each status using id
         # 2. create field
         # 3. populate field
-        # (status.barrier_status, default prepassability)
         # barrier status as field that is disabled=true. prepopulated with
 
-        # create input field name
+        # create input field name with name = status id
         # create input field
         # populate value with current default for barrier.default_pre_passability
+    def clean():
+        project_barrier_statuses = set()
+        for status in self:
+            barrier_status_field_name = self.cleaned_data[status.barrier_status_field_name]
+            if barrier_status_field_name in project_barrier_statuses:
+               self.add_error(barrier_status_field_name, 'Duplicate')
+            else:
+               project_barrier_statuses.add(barrier_status_field_name)
+        self.cleaned_data["project_barrier_statuses"] = project_barrier_statuses
 
+    def save(self):
+        from fishpass.models import ScenarioBarrierStatus
+        status_form = self.instance
+        status_form.project_barrier_statuses.all().delete()
+        for status in self.cleaned_data["project_barrier_statuses"]:
+           ScenarioBarrierStatus.objects.create(
+               project=project,
+               barrier_status=status,
+               default_pre_passability=status.project_barrier_status,
+           )
 
 class UploadPADForm(forms.Form):
     file = forms.FileField()

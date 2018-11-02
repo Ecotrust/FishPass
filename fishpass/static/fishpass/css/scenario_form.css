@@ -9,23 +9,18 @@
 }
 
 .barrier-default-btn-wrap {
-  align-content: stretch;
-  bottom: 0;
+  align-content: center;
   display: flex;
-  height: 6vh;
-  left: 0;
-  position: absolute;
-  width: 100%;
+  margin: 0 0 1rem;
 }
 
 .barrier-default-btn-wrap .btn-group {
-  width: 100%;
 }
 
 .barrier-default-btn-wrap .btn-group .btn {
-  background: #9C7B54;
-  border-color: #E6F1DB;
-  color: #fff;
+  background: transparent;
+  border-color: transparent;
+  color: #9C7B54;
   font-size: .9375em;
   flex: 1;
 }

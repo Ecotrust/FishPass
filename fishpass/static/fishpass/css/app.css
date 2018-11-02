@@ -855,14 +855,15 @@ Panel
 }
 
 #panel .cancel-nav {
-  bottom: 6vh;
+  bottom: 0;
+  font-size: 1.25em;
   height: 6vh;
   left: 0;
   position: absolute;
 }
 
 #panel .featurepanel .wizard_nav {
-  bottom: 6vh;
+  bottom: 0;
   height: 6vh;
   position: absolute;
   right: 0;
