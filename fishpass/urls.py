@@ -25,6 +25,9 @@ urlpatterns = [
     url(r'get_scenario_barrier_status_defaults/(?P<project_id>[\w_]+)/$', views.get_scenario_barrier_status_defaults),
     url(r'get_scenario_barrier_status/(?P<project_id>[\w_]+)/$', views.get_scenario_barrier_status),
 
+    url(r'update_scenario_barrier/$', views.update_scenario_barrier),
+    url(r'get_project_barrier_form/$', views.get_project_barrier_form),
+
     url(r'^get_user_scenario_list/$', views.get_user_scenario_list),
     url(r'^get_report/(?P<projid>[\w_]+)/$', views.get_report),
     url(r'^export_report/(?P<projid>[\w_]+)/$', views.export_report),

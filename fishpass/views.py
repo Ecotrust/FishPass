@@ -103,6 +103,8 @@ def get_scenario_barrier_status_defaults(request, project_id, context={}):
 def get_scenario_barrier_status(request, project_id, context={}):
     # Get project from uid
     from features.registry import get_feature_by_uid
+    from fishpass.models import BarrierStatus, ScenarioBarrierStatus
+
     project = get_feature_by_uid(project_id)
     # Query for all BarrierStatuses
     statuses = BarrierStatus.objects.all()
@@ -110,14 +112,18 @@ def get_scenario_barrier_status(request, project_id, context={}):
     scenario_barrier_statuses = ScenarioBarrierStatus.objects.filter(project=project)
     # TODO: Make status_values an ordered dict
     status_values = {}
-    # TODO: for status_type in statuses.order_by('order'):
+    for status_type in statuses.order_by('order'):
     #   check if scenario_barrier_status override exists
+        if not status_type:
     #   if so:
     #       status_values[BARRIER_STATUS] = scenario_barrier_status.get(type=TYPE).pre-pass
+            status_values[status_type.name] = status_type.pre_passability
     #   else:
+        else:
     #       status_values[BARRIER_STATUS] = status.pre-passing
+            status_values[status_type.name] = status_type.default_pre_passability
     # TODO: return json response of dict
-
+    return JsonResponse(status_values)
 
 def scenario_barrier_status(request, project_id, context={}):
     retjson = {
@@ -131,6 +137,13 @@ def project_barrier_status(request, context={}):
     from features.registry import get_feature_by_uid
     project = get_feature_by_uid(project_id)
     scenario_barrier_statuses = ScenarioBarrierStatus.objects.filter(project=project)
+    return JsonResponse(scenario_barrier_statuses.to_dict())
+
+def get_project_barrier_form(request, template=loader.get_template('fishpass/project_barrier_modal.html'), context={}):
+    from fishpass.forms import ProjectBarrierStatusForm
+    form = ProjectBarrierStatusForm()
+    context['form'] = form
+    return HttpResponse(template.render(context, request))
 
 def get_user_scenario_list(request):
     #TODO: use "scenarios.views.get_scenarios" if possible.
@@ -299,7 +312,8 @@ def get_barrier_layer(request, project=None, query=False, notes=[],extra_context
     return JsonResponse(return_dict)
 
 def update_scenario_barrier(request):
-    #Get form values
+    # if form.is_valid():
+    # Get form values
     # get/create ScenarioBarrier record
     # Update with form values
     return JsonResponse({})

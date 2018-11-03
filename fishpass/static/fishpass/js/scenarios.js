@@ -1009,6 +1009,9 @@ function scenariosModel(options) {
 
                 // set up selection
                 spatialOrgLoad();
+
+                // load project barrier forms
+                app.loadProjectBarrierForms();
             },
             error: function (result) {
                 console.log('failure at scenarios.js "createNewScenario".');

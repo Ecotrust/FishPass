@@ -29,6 +29,32 @@ var app = {
         script.onerror = () => reject(new Error("Script load error: " + src));
         document.head.append(script);
       })
+    },
+    loadProjectBarrierForms: function loadProjectBarrierForms() {
+      $.ajax( {
+          url: 'fishpass/get_project_barrier_form/',
+          // data: {
+          //   project_id: app.panel.form.project_id
+          // },
+          success: function(result) {
+            $('body').append(result);
+            $('#open-barrier-status-form').click(function() {
+              $('#project-barrier-status-modal').modal('show');
+            })
+            $('#open-barrier-types-form').on('click', function() {
+              $('#project-barrier-types-modal').modal('show');
+            });
+          }
+      });
+      $.ajax( {
+          url: 'fishpass/get_scenario_barrier_status/' + app.panel.form.project_id + '/',
+          // data: {
+          //   project_id: app.panel.form.project_id
+          // },
+          success: function(result) {
+            console.log(result);
+          }
+      });
     }
 }
 
