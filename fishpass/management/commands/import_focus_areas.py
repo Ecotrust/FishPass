@@ -89,6 +89,9 @@ class Command(BaseCommand):
             # TODO: Define id_fields for all supported in_types!
             id_field = None
             desc_field = None
+            if in_type == 'HUC08':
+                id_field = 'HUC_8'
+                desc_field = 'SUBBASIN'
             if in_type == 'HUC10':
                 id_field = 'HUC_10'
                 desc_field = 'HU_10_Name'
