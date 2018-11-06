@@ -24,7 +24,7 @@ urlpatterns = [
 
     url(r'get_scenario_barrier_status_defaults/(?P<project_id>[\w_]+)/$', views.get_scenario_barrier_status_defaults),
     url(r'get_scenario_barrier_status/(?P<project_id>[\w_]+)/$', views.get_scenario_barrier_status),
-
+    
     url(r'update_scenario_barrier/$', views.update_scenario_barrier),
     url(r'get_project_barrier_form/$', views.get_project_barrier_form),
 

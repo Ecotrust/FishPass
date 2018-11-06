@@ -257,49 +257,25 @@ class ProjectForm(ScenarioForm):
 #         model = ScenarioBarrier
 
 class ProjectBarrierStatusForm(forms.Form):
-    # reference https://www.caktusgroup.com/blog/2018/05/07/creating-dynamic-forms-django/
-    # 1. create field name for each status using id
-    # 2. create field
-    # 3. populate field
-    # barrier status as field that is disabled=true
-    # create input field name with name = status id
-    # create input field
-    # populate value with current default for barrier.default_pre_passability
-    # project id is sent along with ajax request
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         from fishpass.models import BarrierStatus, ScenarioBarrierStatus
         barrier_statuses = BarrierStatus.objects.all()
         for status in barrier_statuses.order_by('order'):
             barrier_status_field_name = status.name
-            self.fields[barrier_status_field_name] = forms.CharField(required=False, disabled=True, label=status.name)
+            self.fields[barrier_status_field_name] = forms.CharField(required=False, disabled=True, label='')
             try:
                 self.initial[barrier_status_field_name] = status.name
             except IndexError:
                 self.initial[barrier_status_field_name] = ''
-            barrier_status_prepass = 'prepass_%s_%s' % (status.name,status.default_pre_passability,)
-            self.fields[barrier_status_prepass] = forms.CharField(required=False)
+
+            barrier_status_prepass_field_name = status.name + '_%s' % (status.default_pre_passability,)
+            barrier_status_prepass = status.default_pre_passability
+            self.fields[barrier_status_prepass_field_name] = forms.CharField(required=False, label='')
             try:
-                self.initial[barrier_status_field_name] = status.default_pre_passability
+                self.initial[barrier_status_prepass_field_name] = status.default_pre_passability
             except IndexError:
-                self.initial[barrier_status_field_name] = ''
-
-        # scenario_barrier_status = ScenarioBarrierStatus.objects.all()
-        # for scenario_status in scenario_barrier_status:
-        #     project_barrier_status_field_name = scenario_status.id
-        #     self.fields[project_barrier_status_field_name] = forms.CharField(required=False)
-        #     try:
-        #         self.initial[project_barrier_status_field_name] = scenario_status.default_pre_passability
-        #     except IndexError:
-        #         # use previously set defualt
-        #         self.initial[project_barrier_status_field_name] = self.fields[project_barrier_status_field_name]
-
-
-    def get_barrier_status_fields(self):
-        for field_name in self.fields:
-            if field_name.startswith('get_barrier_status_fields'):
-                yield self[field_name]
+                self.initial[barrier_status_prepass_field_name] = ''
 
     def clean(self):
         project_barrier_statuses = set()
