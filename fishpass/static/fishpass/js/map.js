@@ -173,15 +173,23 @@ app.mapbox.layers = {
   //   report_methods: ['select'],
   //   map_layer_id: 'streams'
   // },
-  'huc10_3857': {
-    id: 'ucsrbsupport.HUC10_3857',
+  'huc08': {
+    id: 'fishpasssupport.1hsy8b3k',
+    id_field: 'HUC_8',
+    name_field: 'SUBREGION',
+    name: 'HUC 08',
+    report_methods: ['filter'],
+    map_layer_id: 'huc08'
+  },
+  'huc10': {
+    id: 'fishpasssupport.6xqs1esz',
     id_field: 'HUC_10',
     name_field: 'HU_10_Name',
     name: 'HUC 10',
     report_methods: ['filter'],
     map_layer_id: 'huc10'
   },
-  'huc12_3857': {
+  'huc12': {
     id: 'ucsrbsupport.HUC12_3857',
     id_field: 'HUC_12',
     name_field: 'HU_12_NAME',
@@ -470,17 +478,38 @@ function createMeasureTooltip() {
 
 app.map.layer = {
     // TODO: add to mapbox
+    huc08: {
+      layer: new ol.layer.VectorTile({
+        name: 'HUC 08',
+        title: 'HUC 08',
+        unitType: 'HUC08',
+        id: 'huc08', // set id equal to x in app.map.layer.x
+        source: new ol.source.VectorTile({
+          attributions: 'NRCS',
+          format: new ol.format.MVT({
+            featureClass: ol.Feature
+          }),
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.huc08.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        }),
+        style: app.map.styles.FocusArea,
+        visible: false,
+        renderBuffer: 500
+      }),
+      selectAction: focusAreaSelectAction
+    },
+    // TODO: add to mapbox
     huc10: {
       layer: new ol.layer.VectorTile({
         name: 'HUC 10',
         title: 'HUC 10',
+        unitType: 'HUC10',
         id: 'huc10', // set id equal to x in app.map.layer.x
         source: new ol.source.VectorTile({
           attributions: 'NRCS',
           format: new ol.format.MVT({
             featureClass: ol.Feature
           }),
-          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.huc10_3857.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.huc10.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
         }),
         style: app.map.styles.FocusArea,
         visible: false,
@@ -493,13 +522,14 @@ app.map.layer = {
       layer: new ol.layer.VectorTile({
         name: 'HUC 12',
         title: 'HUC 12',
+        unitType: 'HUC12',
         id: 'huc12', // set id equal to x in app.map.layer.x
         source: new ol.source.VectorTile({
           attributions: 'NRCS',
           format: new ol.format.MVT({
             featureClass: ol.Feature
           }),
-          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.huc12_3857.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.huc12.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
         }),
         style: app.map.styles.FocusArea,
         visible: false,
@@ -644,10 +674,10 @@ for (var i=0; i < app.map.getLayers().getArray().length; i++) {
 }
 
 if (app.map.overlays) {
+  app.map.overlays.getLayers().push(app.map.layer.huc08.layer);
   app.map.overlays.getLayers().push(app.map.layer.huc12.layer);
   app.map.overlays.getLayers().push(app.map.layer.huc10.layer);
   app.map.overlays.getLayers().push(app.map.layer.county.layer);
-  // app.map.overlays.getLayers().push(app.map.layer.huc8.layer);
   // app.map.overlays.getLayers().push(app.map.layer.county.layer);
   // app.map.overlays.getLayers().push(app.map.layer.roads.layer);
 }
