@@ -125,7 +125,16 @@ def get_scenario_barrier_status(request, project_id, context={}):
     # TODO: return json response of dict
     return JsonResponse(status_values)
 
+def update_scenario_barrier(request):
+    # if form.is_valid():
+        # Get form values
+        # get/create ScenarioBarrier record
+        # Update with form values
+    return JsonResponse({})
+
 def scenario_barrier_status(request, project_id, context={}):
+    # if request.method == 'POST':
+        # get_or_create
     retjson = {
         'status': 200,
         'success': True,
@@ -133,11 +142,17 @@ def scenario_barrier_status(request, project_id, context={}):
     }
     return JsonResponse(retjson)
 
-def project_barrier_status(request, context={}):
-    from features.registry import get_feature_by_uid
-    project = get_feature_by_uid(project_id)
-    scenario_barrier_statuses = ScenarioBarrierStatus.objects.filter(project=project)
-    return JsonResponse(scenario_barrier_statuses.to_dict())
+def project_barrier_status(request, project_id, context={}):
+    if request.method == 'GET':
+        # from features.registry import get_feature_by_uid
+        # project = get_feature_by_uid(project_id)
+        scenario_barrier_statuses = ScenarioBarrierStatus.objects.filter(project=project)
+        # get_project_barrier_form()
+    elif request.method == 'POST':
+        from features.registry import get_feature_by_uid
+        project = get_feature_by_uid(project_id)
+        scenario_barrier_statuses = ScenarioBarrierStatus.objects.filter(project=project)
+        return JsonResponse(scenario_barrier_statuses.to_dict())
 
 def get_project_barrier_form(request, template=loader.get_template('fishpass/project_barrier_modal.html'), context={}):
     from fishpass.forms import ProjectBarrierStatusForm
@@ -310,13 +325,6 @@ def get_barrier_layer(request, project=None, query=False, notes=[],extra_context
 
     return_json = [return_dict]
     return JsonResponse(return_dict)
-
-def update_scenario_barrier(request):
-    # if form.is_valid():
-    # Get form values
-    # get/create ScenarioBarrier record
-    # Update with form values
-    return JsonResponse({})
 
 def get_ds_ids(barrier, focus_ids, ds_ids):
     from fishpass.models import Barrier
