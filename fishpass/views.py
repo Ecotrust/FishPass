@@ -174,12 +174,18 @@ def scenario_barrier_status(request, project_id, context={}):
     }
     return JsonResponse(retjson)
 
-def get_project_barrier_form(request, template=loader.get_template('fishpass/project_barrier_modal.html'), context={}):
-    from fishpass.forms import ProjectBarrierStatusForm, ProjectBarrierTypeForm
+def get_project_barrier_status_form(request, template=loader.get_template('fishpass/modals/project_barrier_modal_form.html'), context={}):
+    from fishpass.forms import ProjectBarrierStatusForm
     project_barrier_status_form = ProjectBarrierStatusForm()
+    context['project_barrier_form'] = project_barrier_status_form
+    context['project_barrier_form_id'] = 'project-barrier-status-form'
+    return HttpResponse(template.render(context, request))
+
+def get_project_barrier_type_form(request, template=loader.get_template('fishpass/modals/project_barrier_modal_form.html'), context={}):
+    from fishpass.forms import ProjectBarrierTypeForm
     project_barrier_type_form = ProjectBarrierTypeForm()
-    context['project_barrier_status_form'] = project_barrier_status_form
-    context['project_barrier_type_form'] = project_barrier_type_form
+    context['project_barrier_form'] = project_barrier_type_form
+    context['project_barrier_form_id'] = 'project-barrier-type-form'
     return HttpResponse(template.render(context, request))
 
 def get_user_scenario_list(request):

@@ -29,7 +29,10 @@ urlpatterns = [
     url(r'get_scenario_barrier_type/(?P<project_id>[\w_]+)/$', views.get_scenario_barrier_type),
 
     url(r'update_scenario_barrier/$', views.update_scenario_barrier),
-    url(r'get_project_barrier_form/$', views.get_project_barrier_form),
+
+    # project specific API
+    url(r'get_project_barrier_status_form/$', views.get_project_barrier_status_form),
+    url(r'get_project_barrier_type_form/$', views.get_project_barrier_type_form),
 
     url(r'^get_user_scenario_list/$', views.get_user_scenario_list),
     url(r'^get_report/(?P<projid>[\w_]+)/$', views.get_report),

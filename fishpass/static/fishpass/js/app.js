@@ -30,19 +30,27 @@ var app = {
         document.head.append(script);
       })
     },
-    loadProjectBarrierForms: function loadProjectBarrierForms() {
+    loadProjectBarrierStatusForm: function loadProjectBarrierStatusForm() {
       $.ajax( {
-          url: 'fishpass/get_project_barrier_form/',
+          url: 'fishpass/get_project_barrier_status_form/',
           success: function(result) {
-            $('body').append(result);
-            $('#open-barrier-status-form').click(function() {
-              $('#project-barrier-status-modal').modal('show');
-            })
-            $('#open-barrier-types-form').on('click', function() {
-              $('#project-barrier-types-modal').modal('show');
-            });
+            $('#project-barrier-status-form-wrap').empty();
+            $('#project-barrier-status-form-wrap').html(result);
+            $('#project-barrier-status-modal').modal('show');
           }
       });
+    },
+    loadProjectBarrierTypeForm: function loadProjectBarrierTypeForm() {
+      $.ajax( {
+          url: 'fishpass/get_project_barrier_type_form/',
+          success: function(result) {
+            $('#project-barrier-type-form-wrap').empty();
+            $('#project-barrier-type-form-wrap').html(result);
+            $('#project-barrier-type-modal').modal('show');
+          }
+      });
+    },
+    getBarrierTests: function() {
       $.ajax( {
           url: 'fishpass/get_scenario_barrier_status/' + app.panel.form.project_id + '/',
           // data: {

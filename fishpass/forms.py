@@ -300,27 +300,27 @@ class ProjectBarrierStatusForm(forms.Form):
             except IndexError:
                 self.initial[barrier_status_prepass_field_name] = ''
 
-    def clean(self):
-        project_barrier_statuses = set()
-        for status in self:
-            barrier_status_prepass_field_name = 'prepass_%s' % (status.default_pre_passability,)
-            while self.cleaned_data.get(barrier_status_prepass_field_name):
-                prepass_field_name_cleaned = self.cleaned_data[barrier_status_prepass_field_name]
-                if prepass_field_name_cleaned in project_barrier_statuses:
-                    self.add_error(prepass_field_name_cleaned, 'Duplicate')
-                else:
-                    project_barrier_statuses.add(prepass_field_name_cleaned)
-        self.cleaned_data["project_barrier_statuses"] = project_barrier_statuses
-        return self.cleaned_data
+    # def clean(self):
+    #     project_barrier_statuses = set()
+    #     for status in self:
+    #         barrier_status_prepass_field_name = 'prepass_%s' % (status.default_pre_passability,)
+    #         while self.cleaned_data.get(barrier_status_prepass_field_name):
+    #             prepass_field_name_cleaned = self.cleaned_data[barrier_status_prepass_field_name]
+    #             if prepass_field_name_cleaned in project_barrier_statuses:
+    #                 self.add_error(prepass_field_name_cleaned, 'Duplicate')
+    #             else:
+    #                 project_barrier_statuses.add(prepass_field_name_cleaned)
+    #     self.cleaned_data["project_barrier_statuses"] = project_barrier_statuses
+    #     return self.cleaned_data
 
     # def save(self):
     #     from fishpass.models import ScenarioBarrierStatus
     #     barrier_form = self.instance
     #     barrier_form.project_barrier_statuses.all().delete()
-        # for status in self.cleaned_data["project_barrier_statuses"]:
-        #     ScenarioBarrierStatus.get_or_create(
-        #
-        #     )
+    #     for status in self.cleaned_data["project_barrier_statuses"]:
+    #         ScenarioBarrierStatus.get_or_create(
+    # 
+    #         )
 
 class UploadPADForm(forms.Form):
     file = forms.FileField()
