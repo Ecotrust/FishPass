@@ -214,9 +214,9 @@ HERE_APP_CODE=None
 ########################################
 FOCUS_AREA_TYPES = ['HUC08', 'HUC10', 'HUC12', 'County', 'Region', 'State']
 FOCUS_AREA_FIELD_ID_LOOKUP = {
-    'HUC08': 'huc_08_id',
-    'HUC10': 'huc_10_id',
-    'HUC12': 'huc_12_id',
+    'HUC08': 'HUC_8',
+    'HUC10': 'HUC_10',
+    'HUC12': 'HUC_12',
     'County': 'county_id',
     'Region': 'region_id',
     'State': 'state_id'
