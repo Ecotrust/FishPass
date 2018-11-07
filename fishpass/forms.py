@@ -255,6 +255,30 @@ class ProjectForm(ScenarioForm):
     # class Meta(FeatureForm.Meta):
     #     model = ScenarioBarrier
 
+class ProjectBarrierTypeForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from fishpass.models import BarrierType, ScenarioBarrierType
+        barrier_types = BarrierType.objects.all()
+        for type in barrier_types.order_by('order'):
+
+            # type name field (noneditable)
+            # import ipdb; ipdb.set_trace()
+            type_name = '%s_%s' % (id,type,)
+            self.fields[type_name] = forms.CharField(required=False, disabled=True, label='')
+            try:
+                self.initial[type_name] = type
+            except IndexError:
+                self.initial[type_name] = ''
+            # barrier = models.ForeignKey(BarrierType)
+            # type default cost field name and field (editable)
+            cost = models.FloatField(null=True,blank=True,default=None,verbose_name="Estimated cost to mitigate")
+            # type default post passability field name and field (editable)
+            post_pass = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name="Post-Passability")
+
+    class Meta(FeatureForm.Meta):
+        model = ScenarioBarrierType
+
 class ProjectBarrierStatusForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

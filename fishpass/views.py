@@ -100,6 +100,7 @@ def scenario_barrier_type(request, project_id, context={}):
     return JsonResponse(retjson)
 
 def get_scenario_barrier_status_defaults(request, project_id, context={}):
+    from fishpass.models import BarrierStatus
     if request.method == 'GET':
         statuses = BarrierStatus.objects.all()
         return JsonResponse(statuses.to_dict())
@@ -116,18 +117,45 @@ def get_scenario_barrier_status(request, project_id, context={}):
     scenario_barrier_statuses = ScenarioBarrierStatus.objects.filter(project=project)
     # TODO: Make status_values an ordered dict
     status_values = {}
-    for status_type in statuses.order_by('order'):
+    for status in statuses.order_by('order'):
     #   check if scenario_barrier_status override exists
-        if not status_type:
-    #   if so:
-    #       status_values[BARRIER_STATUS] = scenario_barrier_status.get(type=TYPE).pre-pass
-            status_values[status_type.name] = status_type.pre_passability
-    #   else:
+        if status in scenario_barrier_statuses:
+    #       status_values[BARRIER_STATUS] = scenario_barrier_status.get(status=status).pre-pass
+            status_values[status.name] = scenario_barrier_statuses.get(barrier_status=status).default_pre_passability
         else:
     #       status_values[BARRIER_STATUS] = status.pre-passing
-            status_values[status_type.name] = status_type.default_pre_passability
+            status_values[status.name] = status.default_pre_passability
     # TODO: return json response of dict
     return JsonResponse(status_values)
+
+def get_scenario_barrier_type_defaults(request, project_id, context={}):
+    from fishpass.models import BarrierType
+    if request.method == 'GET':
+        types = BarrierType.objects.all()
+        return JsonResponse(types.to_dict())
+
+def get_scenario_barrier_type(request, project_id, context={}):
+    # Get project from uid
+    from features.registry import get_feature_by_uid
+    from fishpass.models import BarrierType, ScenarioBarrierType
+
+    project = get_feature_by_uid(project_id)
+    # Query for all BarrierStatuses
+    types = BarrierType.objects.all()
+    # Query for any ScenarioBarrierStatuses
+    scenario_barrier_types = ScenarioBarrierType.objects.filter(project=project)
+    # TODO: Make status_values an ordered dict
+    type_values = {}
+    for type in types.order_by('order'):
+    #   check if scenario_barrier_status override exists
+        if type in scenario_barrier_types:
+    #       type_values[BARRIER_TYPE] = scenario_barrier_types.get(barrier_type=TYPE)
+            type_values['%s' % (type,)] = scenario_barrier_types.get(barrier_type='%s' % (type,))
+        else:
+    #       type_values[BARRIER_TYPE] = status.pre-passing
+            type_values['%s' % (type,)] = '%s' % (type,)
+    # TODO: return json response of dict
+    return JsonResponse(type_values)
 
 def update_scenario_barrier(request):
     # if form.is_valid():
@@ -146,22 +174,12 @@ def scenario_barrier_status(request, project_id, context={}):
     }
     return JsonResponse(retjson)
 
-def project_barrier_status(request, project_id, context={}):
-    if request.method == 'GET':
-        # from features.registry import get_feature_by_uid
-        # project = get_feature_by_uid(project_id)
-        scenario_barrier_statuses = ScenarioBarrierStatus.objects.filter(project=project)
-        # get_project_barrier_form()
-    elif request.method == 'POST':
-        from features.registry import get_feature_by_uid
-        project = get_feature_by_uid(project_id)
-        scenario_barrier_statuses = ScenarioBarrierStatus.objects.filter(project=project)
-        return JsonResponse(scenario_barrier_statuses.to_dict())
-
 def get_project_barrier_form(request, template=loader.get_template('fishpass/project_barrier_modal.html'), context={}):
-    from fishpass.forms import ProjectBarrierStatusForm
-    form = ProjectBarrierStatusForm()
-    context['form'] = form
+    from fishpass.forms import ProjectBarrierStatusForm, ProjectBarrierTypeForm
+    project_barrier_status_form = ProjectBarrierStatusForm()
+    project_barrier_type_form = ProjectBarrierTypeForm()
+    context['project_barrier_status_form'] = project_barrier_status_form
+    context['project_barrier_type_form'] = project_barrier_type_form
     return HttpResponse(template.render(context, request))
 
 def get_user_scenario_list(request):
