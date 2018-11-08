@@ -281,6 +281,8 @@ class ProjectBarrierTypeForm(forms.Form):
 
 class ProjectBarrierStatusForm(forms.Form):
     def __init__(self, *args, **kwargs):
+        import ipdb; ipdb.set_trace()
+        project_id = kwargs.pop('project_id')
         super().__init__(*args, **kwargs)
         from fishpass.models import BarrierStatus, ScenarioBarrierStatus
         barrier_statuses = BarrierStatus.objects.all()
@@ -319,7 +321,7 @@ class ProjectBarrierStatusForm(forms.Form):
     #     barrier_form.project_barrier_statuses.all().delete()
     #     for status in self.cleaned_data["project_barrier_statuses"]:
     #         ScenarioBarrierStatus.get_or_create(
-    # 
+    #
     #         )
 
 class UploadPADForm(forms.Form):

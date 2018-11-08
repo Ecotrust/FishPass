@@ -91,19 +91,19 @@ def scenario_barrier(request, project_id, barrier_id, context={}):
     }
     return JsonResponse(retjson)
 
-def scenario_barrier_type(request, project_id, context={}):
-    retjson = {
-        'status': 200,
-        'success': True,
-        'message': "Successfully updated Project Barrier Type"
-    }
-    return JsonResponse(retjson)
+# def scenario_barrier_type(request, project_id, context={}):
+#     retjson = {
+#         'status': 200,
+#         'success': True,
+#         'message': "Successfully updated Project Barrier Type"
+#     }
+#     return JsonResponse(retjson)
 
-def get_scenario_barrier_status_defaults(request, project_id, context={}):
-    from fishpass.models import BarrierStatus
-    if request.method == 'GET':
-        statuses = BarrierStatus.objects.all()
-        return JsonResponse(statuses.to_dict())
+# def get_scenario_barrier_status_defaults(request, project_id, context={}):
+#     from fishpass.models import BarrierStatus
+#     if request.method == 'GET':
+#         statuses = BarrierStatus.objects.all()
+#         return JsonResponse(statuses.to_dict())
 
 def get_scenario_barrier_status(request, project_id, context={}):
     # Get project from uid
@@ -128,11 +128,11 @@ def get_scenario_barrier_status(request, project_id, context={}):
     # TODO: return json response of dict
     return JsonResponse(status_values)
 
-def get_scenario_barrier_type_defaults(request, project_id, context={}):
-    from fishpass.models import BarrierType
-    if request.method == 'GET':
-        types = BarrierType.objects.all()
-        return JsonResponse(types.to_dict())
+# def get_scenario_barrier_type_defaults(request, project_id, context={}):
+#     from fishpass.models import BarrierType
+#     if request.method == 'GET':
+#         types = BarrierType.objects.all()
+#         return JsonResponse(types.to_dict())
 
 def get_scenario_barrier_type(request, project_id, context={}):
     # Get project from uid
@@ -156,32 +156,47 @@ def get_scenario_barrier_type(request, project_id, context={}):
             type_values['%s' % (type,)] = '%s' % (type,)
     # TODO: return json response of dict
     return JsonResponse(type_values)
+#
+# def update_scenario_barrier(request):
+#     # if form.is_valid():
+#         # Get form values
+#         # get/create ScenarioBarrier record
+#         # Update with form values
+#     return JsonResponse({})
+#
+# def scenario_barrier_status(request, project_id, context={}):
+#     # if request.method == 'POST':
+#         # get_or_create
+#     retjson = {
+#         'status': 200,
+#         'success': True,
+#         'message': "Successfully updated Project Barrier Status"
+#     }
+#     return JsonResponse(retjson)
 
-def update_scenario_barrier(request):
-    # if form.is_valid():
-        # Get form values
-        # get/create ScenarioBarrier record
-        # Update with form values
-    return JsonResponse({})
+def get_project_barrier_status_form(request, project_uid, template=loader.get_template('fishpass/modals/project_barrier_modal_form.html'), context={}):
+    if request.user.is_authenticated():
+        from fishpass.forms import ProjectBarrierStatusForm
+        from fishpass.models import Project
+        project_id = int(project_uid.split('_')[-1])
+        project = Project.objects.get(pk=project_id)
+        if request.method == 'POST':
+            form = ProjectBarrierStatusForm(request.POST,project_id=project_id)
+            form.save()
+            retjson = {
+                'status': 200,
+                'success': True,
+                'message': "Successfully updated Project Barrier Status"
+            }
+            return JsonResponse(retjson)
+        else:
+            project_barrier_status_form = ProjectBarrierStatusForm({},project_id=project_id)
+            context['project_barrier_form'] = project_barrier_status_form
+            context['project_barrier_form_id'] = 'project-barrier-status-form'
+            return HttpResponse(template.render(context, request))
+    return None
 
-def scenario_barrier_status(request, project_id, context={}):
-    # if request.method == 'POST':
-        # get_or_create
-    retjson = {
-        'status': 200,
-        'success': True,
-        'message': "Successfully updated Project Barrier Status"
-    }
-    return JsonResponse(retjson)
-
-def get_project_barrier_status_form(request, template=loader.get_template('fishpass/modals/project_barrier_modal_form.html'), context={}):
-    from fishpass.forms import ProjectBarrierStatusForm
-    project_barrier_status_form = ProjectBarrierStatusForm()
-    context['project_barrier_form'] = project_barrier_status_form
-    context['project_barrier_form_id'] = 'project-barrier-status-form'
-    return HttpResponse(template.render(context, request))
-
-def get_project_barrier_type_form(request, template=loader.get_template('fishpass/modals/project_barrier_modal_form.html'), context={}):
+def get_project_barrier_type_form(request, project_uid, template=loader.get_template('fishpass/modals/project_barrier_modal_form.html'), context={}):
     from fishpass.forms import ProjectBarrierTypeForm
     project_barrier_type_form = ProjectBarrierTypeForm()
     context['project_barrier_form'] = project_barrier_type_form

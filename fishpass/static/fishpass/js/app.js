@@ -32,7 +32,7 @@ var app = {
     },
     loadProjectBarrierStatusForm: function loadProjectBarrierStatusForm() {
       $.ajax( {
-          url: 'fishpass/get_project_barrier_status_form/',
+          url: `fishpass/get_project_barrier_status_form/${app.panel.form.project_id}/`,
           success: function(result) {
             $('#project-barrier-status-form-wrap').empty();
             $('#project-barrier-status-form-wrap').html(result);
@@ -42,7 +42,7 @@ var app = {
     },
     loadProjectBarrierTypeForm: function loadProjectBarrierTypeForm() {
       $.ajax( {
-          url: 'fishpass/get_project_barrier_type_form/',
+          url: `fishpass/get_project_barrier_type_form/${app.panel.form.project_id}/`,
           success: function(result) {
             $('#project-barrier-type-form-wrap').empty();
             $('#project-barrier-type-form-wrap').html(result);
