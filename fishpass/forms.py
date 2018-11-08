@@ -255,6 +255,8 @@ class ProjectForm(ScenarioForm):
     # class Meta(FeatureForm.Meta):
     #     model = ScenarioBarrier
 
+
+
 class ProjectBarrierTypeForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -279,50 +281,84 @@ class ProjectBarrierTypeForm(forms.Form):
     class Meta(FeatureForm.Meta):
         model = ScenarioBarrierType
 
+class PrePassField(forms.FloatField):
+    def validate(self, value):
+        # For some reason this validates on 'GET' and does not recognize initial values.
+        from fishpass.models import Project, BarrierStatus, ScenarioBarrierStatus
+        if not value:
+            project = Project.objects.get(pk=self.widget.attrs['project'])
+            status = BarrierStatus.objects.get(pk=self.widget.attrs['status'])
+            try:
+                default_value = ScenarioBarrierStatus.objects.get(project=project, barrier_status=status).default_pre_passability
+            except:
+                default_value = BarrierStatus.objects.get(pk=status).default_pre_passability
+            self.initial = default_value
+            value = default_value
+        # Use the parent's handling of required fields, etc.
+        super(PrePassField, self).validate(value)
+
 class ProjectBarrierStatusForm(forms.Form):
     def __init__(self, *args, **kwargs):
-        import ipdb; ipdb.set_trace()
-        project_id = kwargs.pop('project_id')
-        super().__init__(*args, **kwargs)
         from fishpass.models import BarrierStatus, ScenarioBarrierStatus
+        # Get the project
+        project = kwargs.pop('project')
+        # Call the default init process
+        super().__init__(*args, **kwargs)
+
+        # Get the default BarrierStatus objects
         barrier_statuses = BarrierStatus.objects.all()
+
+        # Step through all barrier status instances
         for status in barrier_statuses.order_by('order'):
-            barrier_status_field_name = 'status_%s' % (status.name,)
-            self.fields[barrier_status_field_name] = forms.CharField(required=False, disabled=True, label='')
-            try:
-                self.initial[barrier_status_field_name] = status.name
-            except IndexError:
-                self.initial[barrier_status_field_name] = ''
+            # # Create name field for each instance
+            # barrier_status_field_name = 'status_%s' % (status.name,)
+            # # self.fields[barrier_status_field_name] = forms.CharField(required=False, disabled=True, label='')
+            # self.fields[barrier_status_field_name] = forms.CharField(disabled=True, label='')
+            # self.initial[barrier_status_field_name] = status.name
 
-            barrier_status_prepass_field_name = status.name + '_%s' % (status.default_pre_passability,)
-            barrier_status_prepass = status.default_pre_passability
-            self.fields[barrier_status_prepass_field_name] = forms.CharField(required=False, label='')
-            try:
-                self.initial[barrier_status_prepass_field_name] = barrier_status_prepass
-            except IndexError:
-                self.initial[barrier_status_prepass_field_name] = ''
+            # create pre-pass field for each instance
+            barrier_status_prepass_field_name = "status_type_%s" % status.name
+            self.fields[barrier_status_prepass_field_name] = PrePassField(
+                label=status.name,
+                widget=NumberInput(
+                    attrs={
+                        'id': 'id_%s' % barrier_status_prepass_field_name,
+                        'step': "0.1",  # should this be 0.05?
+                        'max': "1.0",
+                        'min': "0.0",
+                        "status": status.pk,
+                        "project": project.pk,
+                    }
+                )
+            )
+            if project:
+                proj_status, created = ScenarioBarrierStatus.objects.get_or_create(project=project, barrier_status=status)
+                if created:
+                    proj_status.default_pre_passability = status.default_pre_passability
+                    proj_status.save()
+                self.initial[barrier_status_prepass_field_name] = proj_status.default_pre_passability
+                self.fields[barrier_status_prepass_field_name].initial = proj_status.default_pre_passability
+            else:
+                self.initial[barrier_status_prepass_field_name] = status.default_pre_passability
+                self.fields[barrier_status_prepass_field_name].initial = status.default_pre_passability
 
-    # def clean(self):
-    #     project_barrier_statuses = set()
-    #     for status in self:
-    #         barrier_status_prepass_field_name = 'prepass_%s' % (status.default_pre_passability,)
-    #         while self.cleaned_data.get(barrier_status_prepass_field_name):
-    #             prepass_field_name_cleaned = self.cleaned_data[barrier_status_prepass_field_name]
-    #             if prepass_field_name_cleaned in project_barrier_statuses:
-    #                 self.add_error(prepass_field_name_cleaned, 'Duplicate')
-    #             else:
-    #                 project_barrier_statuses.add(prepass_field_name_cleaned)
-    #     self.cleaned_data["project_barrier_statuses"] = project_barrier_statuses
-    #     return self.cleaned_data
+    def clean(self):
+        cleaned_data = super(ProjectBarrierStatusForm, self).clean()
+        for key, value in cleaned_data.items():
+            if not value and key in self.initial:
+                cleaned_data[key] = self.initial[key]
+        self.cleaned_data = cleaned_data
+        self.data = cleaned_data
+        return cleaned_data
 
-    # def save(self):
-    #     from fishpass.models import ScenarioBarrierStatus
-    #     barrier_form = self.instance
-    #     barrier_form.project_barrier_statuses.all().delete()
-    #     for status in self.cleaned_data["project_barrier_statuses"]:
-    #         ScenarioBarrierStatus.get_or_create(
-    #
-    #         )
+    def save(self, project):
+        from fishpass.models import ScenarioBarrierStatus, BarrierStatus
+        for field_name in self.fields:
+            field = self.fields[field_name]
+            status = BarrierStatus.objects.get(pk=field.widget.attrs['status'])
+            proj_status, created = ScenarioBarrierStatus.objects.get_or_create(project=project, barrier_status=status)
+            proj_status.default_pre_passability = self.cleaned_data[field_name]
+            proj_status.save()
 
 class UploadPADForm(forms.Form):
     file = forms.FileField()

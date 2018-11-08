@@ -32,17 +32,41 @@ var app = {
     },
     loadProjectBarrierStatusForm: function loadProjectBarrierStatusForm() {
       $.ajax( {
-          url: `fishpass/get_project_barrier_status_form/${app.panel.form.project_id}/`,
+          url: `fishpass/project_barrier_status_form/${app.panel.form.project_id}/`,
+          method: 'GET',
           success: function(result) {
             $('#project-barrier-status-form-wrap').empty();
             $('#project-barrier-status-form-wrap').html(result);
+            $('#project-barrier-status-form').children('.form-error').hide();
             $('#project-barrier-status-modal').modal('show');
+          },
+          error: function(result) {
+            window.alert('Unable to retrieve Project Barrier Status form.');
           }
       });
     },
+    saveProjectBarrierStatusForm: function(data) {
+      $.ajax( {
+        url: `fishpass/project_barrier_status_form/${app.panel.form.project_id}/`,
+        cache: false,
+        contentType: false,
+        processData: false,
+        type: 'POST',
+        traditional: true,
+        dataType: 'json',
+        success: function(result) {
+          $('#project-barrier-status-modal').modal('hide');
+        },
+        error: function(result) {
+          $('#project-barrier-status-form').children('.form-error').html(result.responseText);
+          $('#project-barrier-status-form').children('.form-error').show();
+        }
+      })
+    },
     loadProjectBarrierTypeForm: function loadProjectBarrierTypeForm() {
       $.ajax( {
-          url: `fishpass/get_project_barrier_type_form/${app.panel.form.project_id}/`,
+          url: `fishpass/project_barrier_type_form/${app.panel.form.project_id}/`,
+          method: 'GET',
           success: function(result) {
             $('#project-barrier-type-form-wrap').empty();
             $('#project-barrier-type-form-wrap').html(result);

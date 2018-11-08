@@ -174,34 +174,56 @@ def get_scenario_barrier_type(request, project_id, context={}):
 #     }
 #     return JsonResponse(retjson)
 
-def get_project_barrier_status_form(request, project_uid, template=loader.get_template('fishpass/modals/project_barrier_modal_form.html'), context={}):
+def project_barrier_status_form(request, project_uid, template=loader.get_template('fishpass/modals/project_barrier_modal_form.html'), context={}):
     if request.user.is_authenticated():
         from fishpass.forms import ProjectBarrierStatusForm
         from fishpass.models import Project
         project_id = int(project_uid.split('_')[-1])
         project = Project.objects.get(pk=project_id)
         if request.method == 'POST':
-            form = ProjectBarrierStatusForm(request.POST,project_id=project_id)
-            form.save()
-            retjson = {
-                'status': 200,
-                'success': True,
-                'message': "Successfully updated Project Barrier Status"
-            }
+            form = ProjectBarrierStatusForm(request.POST,project=project)
+            if form.is_valid():
+                try:
+                    form.save(project)
+                    retjson = {
+                        'status': 200,
+                        'success': True,
+                        'message': "Successfully updated Project Barrier Status"
+                    }
+                except Exception as e:
+                    retjson = {
+                        'status': 500,
+                        'success': False,
+                        'message': e
+                    }
+            else:
+                retjson = {
+                    'status': 406,  # 406: Not Acceptable
+                    'success': False,
+                    'message': "Form is not valid"
+                }
             return JsonResponse(retjson)
         else:
-            project_barrier_status_form = ProjectBarrierStatusForm({},project_id=project_id)
+            project_barrier_status_form = ProjectBarrierStatusForm({},project=project)
             context['project_barrier_form'] = project_barrier_status_form
             context['project_barrier_form_id'] = 'project-barrier-status-form'
             return HttpResponse(template.render(context, request))
     return None
 
-def get_project_barrier_type_form(request, project_uid, template=loader.get_template('fishpass/modals/project_barrier_modal_form.html'), context={}):
+def project_barrier_type_form(request, project_uid, template=loader.get_template('fishpass/modals/project_barrier_modal_form.html'), context={}):
     from fishpass.forms import ProjectBarrierTypeForm
     project_barrier_type_form = ProjectBarrierTypeForm()
     context['project_barrier_form'] = project_barrier_type_form
     context['project_barrier_form_id'] = 'project-barrier-type-form'
     return HttpResponse(template.render(context, request))
+
+def project_barrier_form(request, project_uid, barrier_id, template=loader.get_template('fishpass/modals/project_barrier_modal_form.html'), context={}):
+    retjson = {
+        'status': 200,
+        'success': True,
+        'message': "Successfully updated Project Barrier %s" % barrier_id
+    }
+    return JsonResponse(retjson)
 
 def get_user_scenario_list(request):
     #TODO: use "scenarios.views.get_scenarios" if possible.

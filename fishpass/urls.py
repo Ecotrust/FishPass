@@ -19,20 +19,11 @@ urlpatterns = [
     url(r'^get_barrier_layer/?', views.get_barrier_layer),
     url(r'^get_focus_area_geojson_by_type/?', views.get_focus_area_geojson_by_type),
     url(r'scenario_barrier/(?P<project_id>[\w_]+)/$', views.scenario_barrier),
-    # url(r'scenario_barrier_type/(?P<project_id>[\w_]+)/(?P<barrier_type_id>[\w_]+)/$', views.scenario_barrier_type),
-    # url(r'scenario_barrier_status/(?P<project_id>[\w_]+)/(?P<barrier_status_id>[\w_]+)/$', views.scenario_barrier_status),
-    #
-    # url(r'get_scenario_barrier_status_defaults/(?P<project_id>[\w_]+)/$', views.get_scenario_barrier_status_defaults),
-    # url(r'get_scenario_barrier_status/(?P<project_id>[\w_]+)/$', views.get_scenario_barrier_status),
-    #
-    # url(r'get_scenario_barrier_type_defaults/(?P<project_id>[\w_]+)/$', views.get_scenario_barrier_type_defaults),
-    # url(r'get_scenario_barrier_type/(?P<project_id>[\w_]+)/$', views.get_scenario_barrier_type),
-
-    # url(r'update_scenario_barrier/$', views.update_scenario_barrier),
 
     # project specific API
-    url(r'get_project_barrier_status_form/(?P<project_uid>[\w_]+)/$', views.get_project_barrier_status_form),
-    url(r'get_project_barrier_type_form/(?P<project_uid>[\w_]+)/$', views.get_project_barrier_type_form),
+    url(r'project_barrier_status_form/(?P<project_uid>[\w_]+)/$', views.project_barrier_status_form),
+    url(r'project_barrier_type_form/(?P<project_uid>[\w_]+)/$', views.project_barrier_type_form),
+    url(r'project_barrier_form/(?P<project_uid>[\w_]+)/(?P<barrier_uid>[\w_]+)/$', views.project_barrier_form),
 
     url(r'^get_user_scenario_list/$', views.get_user_scenario_list),
     url(r'^get_report/(?P<projid>[\w_]+)/$', views.get_report),

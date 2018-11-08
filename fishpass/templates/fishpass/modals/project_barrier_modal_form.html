@@ -1,5 +1,27 @@
-<form action="#" method="post" id="{{ project_barrier_form_id }}">
+<form action="#" method="post" id="{{ project_barrier_form_id }}" enctype="multipart/form-data">
   {% csrf_token %}
-  {{ project_barrier_form }}
-  <input type="submit" value="Submit" />
+
+  <table>
+    {% for field in project_barrier_form.visible_fields %}
+      <tr>
+        <th>{{ field.label_tag }}</th>
+        <td>
+          {{ field.errors }}
+          {{ field }}
+          {{ field.help_text }}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+
+  {{ project_barrier_form.non_field_errors }}
+
+  {% for hidden_field in project_barrier_form.hidden_fields %}
+    {{ hidden_field.errors }}
+    {{ hidden_field }}
+  {% endfor %}
+
+  <div class="well form-error" style="display:none"></div>
+
 </form>
+<input type="submit" value="Submit" onclick="app.saveProjectBarrierStatusForm()"/>
