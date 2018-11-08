@@ -38,22 +38,39 @@ var app = {
             $('#project-barrier-status-form-wrap').empty();
             $('#project-barrier-status-form-wrap').html(result);
             $('#project-barrier-status-form').children('.form-error').hide();
+            $('#project-barrier-status-form-submit').on('click', app.saveProjectBarrierStatusForm);
+            $('#project-barrier-status-form-reset').on('click', app.resetProjectBarrierStatusForm);
             $('#project-barrier-status-modal').modal('show');
           },
           error: function(result) {
-            window.alert('Unable to retrieve Project Barrier Status form.');
+            $('#project-barrier-status-form').children('.form-error').html(result.responseText);
+            $('#project-barrier-status-form').children('.form-error').show();
           }
       });
     },
-    saveProjectBarrierStatusForm: function(data) {
+    resetProjectBarrierStatusForm: function() {
+      $.ajax( {
+          url: `fishpass/project_barrier_status_form_reset/${app.panel.form.project_id}/`,
+          method: 'GET',
+          success: function(result) {
+            $('#project-barrier-status-form-wrap').empty();
+            $('#project-barrier-status-form-wrap').html(result);
+            $('#project-barrier-status-form').children('.form-error').hide();
+            $('#project-barrier-status-form-submit').on('click', app.saveProjectBarrierStatusForm);
+            $('#project-barrier-status-form-reset').on('click', app.resetProjectBarrierStatusForm);
+          },
+          error: function(result) {
+            $('#project-barrier-status-form').children('.form-error').html(result.responseText);
+            $('#project-barrier-status-form').children('.form-error').show();
+          }
+      });
+    },
+    saveProjectBarrierStatusForm: function() {
+      $form = $('#project-barrier-status-form');
       $.ajax( {
         url: `fishpass/project_barrier_status_form/${app.panel.form.project_id}/`,
-        cache: false,
-        contentType: false,
-        processData: false,
+        data: $form.serialize(),
         type: 'POST',
-        traditional: true,
-        dataType: 'json',
         success: function(result) {
           $('#project-barrier-status-modal').modal('hide');
         },

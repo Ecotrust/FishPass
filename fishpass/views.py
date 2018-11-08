@@ -174,6 +174,16 @@ def get_scenario_barrier_type(request, project_id, context={}):
 #     }
 #     return JsonResponse(retjson)
 
+def project_barrier_status_form_reset(request, project_uid, context={}):
+    if request.user.is_authenticated():
+        from fishpass.models import Project, ScenarioBarrierStatus
+        project_id = int(project_uid.split('_')[-1])
+        project = Project.objects.get(pk=project_id)
+        for status in ScenarioBarrierStatus.objects.filter(project=project):
+            status.delete()
+        request.method = 'GET'
+    return project_barrier_status_form(request, project_uid, context=context)
+
 def project_barrier_status_form(request, project_uid, template=loader.get_template('fishpass/modals/project_barrier_modal_form.html'), context={}):
     if request.user.is_authenticated():
         from fishpass.forms import ProjectBarrierStatusForm

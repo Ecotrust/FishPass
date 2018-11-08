@@ -285,7 +285,7 @@ class PrePassField(forms.FloatField):
     def validate(self, value):
         # For some reason this validates on 'GET' and does not recognize initial values.
         from fishpass.models import Project, BarrierStatus, ScenarioBarrierStatus
-        if not value:
+        if value is None:
             project = Project.objects.get(pk=self.widget.attrs['project'])
             status = BarrierStatus.objects.get(pk=self.widget.attrs['status'])
             try:
@@ -345,7 +345,7 @@ class ProjectBarrierStatusForm(forms.Form):
     def clean(self):
         cleaned_data = super(ProjectBarrierStatusForm, self).clean()
         for key, value in cleaned_data.items():
-            if not value and key in self.initial:
+            if value is None and key in self.initial:
                 cleaned_data[key] = self.initial[key]
         self.cleaned_data = cleaned_data
         self.data = cleaned_data
