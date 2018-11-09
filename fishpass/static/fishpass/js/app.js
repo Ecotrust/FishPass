@@ -30,7 +30,7 @@ var app = {
         document.head.append(script);
       })
     },
-    loadProjectBarrierStatusForm: function loadProjectBarrierStatusForm() {
+    loadProjectBarrierStatusForm: function() {
       $.ajax( {
           url: `fishpass/project_barrier_status_form/${app.panel.form.project_id}/`,
           method: 'GET',
@@ -72,7 +72,12 @@ var app = {
         data: $form.serialize(),
         type: 'POST',
         success: function(result) {
-          $('#project-barrier-status-modal').modal('hide');
+          if (result.success) {
+            $('#project-barrier-status-modal').modal('hide');
+          } else {
+            $('#project-barrier-status-form').children('.form-error').html('Error ' + result.status + ": " + result.message);
+            $('#project-barrier-status-form').children('.form-error').show();
+          }
         },
         error: function(result) {
           $('#project-barrier-status-form').children('.form-error').html(result.responseText);
@@ -80,16 +85,60 @@ var app = {
         }
       })
     },
-    loadProjectBarrierTypeForm: function loadProjectBarrierTypeForm() {
+    loadProjectBarrierTypeForm: function() {
       $.ajax( {
           url: `fishpass/project_barrier_type_form/${app.panel.form.project_id}/`,
           method: 'GET',
           success: function(result) {
             $('#project-barrier-type-form-wrap').empty();
             $('#project-barrier-type-form-wrap').html(result);
+            $('#project-barrier-type-form').children('.form-error').hide();
+            $('#project-barrier-type-form-submit').on('click', app.saveProjectBarrierTypeForm);
+            $('#project-barrier-type-form-reset').on('click', app.resetProjectBarrierTypeForm);
             $('#project-barrier-type-modal').modal('show');
+          },
+          error: function(result) {
+            $('#project-barrier-type-form').children('.form-error').html(result.responseText);
+            $('#project-barrier-type-form').children('.form-error').show();
           }
       });
+    },
+    resetProjectBarrierTypeForm: function() {
+      $.ajax( {
+          url: `fishpass/project_barrier_type_form_reset/${app.panel.form.project_id}/`,
+          method: 'GET',
+          success: function(result) {
+            $('#project-barrier-type-form-wrap').empty();
+            $('#project-barrier-type-form-wrap').html(result);
+            $('#project-barrier-type-form').children('.form-error').hide();
+            $('#project-barrier-type-form-submit').on('click', app.saveProjectBarrierTypeForm);
+            $('#project-barrier-type-form-reset').on('click', app.resetProjectBarrierTypeForm);
+          },
+          error: function(result) {
+            $('#project-barrier-type-form').children('.form-error').html(result.responseText);
+            $('#project-barrier-type-form').children('.form-error').show();
+          }
+      });
+    },
+    saveProjectBarrierTypeForm: function() {
+      $form = $('#project-barrier-type-form');
+      $.ajax( {
+        url: `fishpass/project_barrier_type_form/${app.panel.form.project_id}/`,
+        data: $form.serialize(),
+        type: 'POST',
+        success: function(result) {
+          if (result.success) {
+            $('#project-barrier-type-modal').modal('hide');
+          } else {
+            $('#project-barrier-type-form').children('.form-error').html('Error ' + result.status + ": " + result.message);
+            $('#project-barrier-type-form').children('.form-error').show();
+          }
+        },
+        error: function(result) {
+          $('#project-barrier-type-form').children('.form-error').html(result.responseText);
+          $('#project-barrier-type-form').children('.form-error').show();
+        }
+      })
     },
     getBarrierTests: function() {
       $.ajax( {

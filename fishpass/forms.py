@@ -256,46 +256,81 @@ class ProjectForm(ScenarioForm):
     #     model = ScenarioBarrier
 
 
-
 class ProjectBarrierTypeForm(forms.Form):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
         from fishpass.models import BarrierType, ScenarioBarrierType
-        barrier_types = BarrierType.objects.all()
-        for type in barrier_types.order_by('order'):
+        # Get the project
+        project = kwargs.pop('project')
+        # Call the default init process
+        super().__init__(*args, **kwargs)
+        # Step through all barrier type instances
+        for bartype in BarrierType.objects.all().order_by('order'):
+            barrier_type_cost_field_name = "cost_type_%s" % bartype.name
+            self.fields[barrier_type_cost_field_name] = forms.DecimalField(
+                label=bartype.name,
+                decimal_places = 2,
+                required=False,
+                widget=NumberInput(
+                    attrs={
+                        'id': 'id_%s' % barrier_type_cost_field_name,
+                        'bartype': bartype.pk,
+                        'project': project.pk,
+                        'step': "1.0", # should this be 1000?
+                        'min': "0.00",
+                        'field': 'default_cost'
+                    }
+                )
+            )
+            barrier_type_postpass_field_name = "postpass_type_%s" % bartype.name
+            self.fields[barrier_type_postpass_field_name] = forms.DecimalField(
+                label=bartype.name,
+                decimal_places = 2,
+                required=False,
+                widget=NumberInput(
+                    attrs={
+                        'id': 'id_%s' % barrier_type_postpass_field_name,
+                        'step': "0.1",  # should this be 0.05?
+                        'max': "1.0",
+                        'min': "0.0",
+                        "bartype": bartype.pk,
+                        "project": project.pk,
+                        "field": "default_post_passability"
+                    }
+                )
+            )
+            if project:
+                proj_type, created = ScenarioBarrierType.objects.get_or_create(project=project, barrier_type=bartype)
+                if created:
+                    proj_type.default_cost = bartype.default_cost
+                    proj_type.default_post_passability = bartype.default_post_passability
+                    proj_type.save()
+                self.initial[barrier_type_cost_field_name] = proj_type.default_cost
+                # self.fields[barrier_type_cost_field_name].initial = proj_type.default_cost
+                self.initial[barrier_type_postpass_field_name] = proj_type.default_post_passability
+            else:
+                self.initial[barrier_type_cost_field_name] = bartype.default_cost
+                # self.fields[barrier_type_cost_field_name].initial = bartype.default_cost
+                self.initial[barrier_type_postpass_field_name] = bartype.default_post_passability
 
-            # type name field (noneditable)
-            # import ipdb; ipdb.set_trace()
-            type_name = '%s_%s' % (id,type,)
-            self.fields[type_name] = forms.CharField(required=False, disabled=True, label='')
-            try:
-                self.initial[type_name] = type
-            except IndexError:
-                self.initial[type_name] = ''
-            # barrier = models.ForeignKey(BarrierType)
-            # type default cost field name and field (editable)
-            cost = models.FloatField(null=True,blank=True,default=None,verbose_name="Estimated cost to mitigate")
-            # type default post passability field name and field (editable)
-            post_pass = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name="Post-Passability")
+    def save(self, project):
+        from fishpass.models import ScenarioBarrierType, BarrierType
+        for field_name in self.fields:
+            field = self.fields[field_name]
+            bartype = BarrierType.objects.get(pk=field.widget.attrs['bartype'])
+            proj_type, created = ScenarioBarrierType.objects.get_or_create(project=project, barrier_type=bartype)
+            setattr(proj_type, field.widget.attrs['field'], self.cleaned_data[field_name])
+            proj_type.save()
+            
 
-    class Meta(FeatureForm.Meta):
-        model = ScenarioBarrierType
-
-class PrePassField(forms.FloatField):
-    def validate(self, value):
-        # For some reason this validates on 'GET' and does not recognize initial values.
-        from fishpass.models import Project, BarrierStatus, ScenarioBarrierStatus
-        if value is None:
-            project = Project.objects.get(pk=self.widget.attrs['project'])
-            status = BarrierStatus.objects.get(pk=self.widget.attrs['status'])
-            try:
-                default_value = ScenarioBarrierStatus.objects.get(project=project, barrier_status=status).default_pre_passability
-            except:
-                default_value = BarrierStatus.objects.get(pk=status).default_pre_passability
-            self.initial = default_value
-            value = default_value
-        # Use the parent's handling of required fields, etc.
-        super(PrePassField, self).validate(value)
+    def as_table(self):
+        import ipdb; ipdb.set_trace()
+        return self._html_output(
+            ProjectBarrierTypeForm.NormalRowFormatter(),
+            u'<tr><td colspan="2">%s</td></tr>', # unused
+            u'</td></tr>',
+            u'<br />%s',
+            False
+        )
 
 class ProjectBarrierStatusForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -318,7 +353,8 @@ class ProjectBarrierStatusForm(forms.Form):
 
             # create pre-pass field for each instance
             barrier_status_prepass_field_name = "status_type_%s" % status.name
-            self.fields[barrier_status_prepass_field_name] = PrePassField(
+            # self.fields[barrier_status_prepass_field_name] = PrePassField(
+            self.fields[barrier_status_prepass_field_name] = forms.FloatField(
                 label=status.name,
                 widget=NumberInput(
                     attrs={
@@ -337,19 +373,8 @@ class ProjectBarrierStatusForm(forms.Form):
                     proj_status.default_pre_passability = status.default_pre_passability
                     proj_status.save()
                 self.initial[barrier_status_prepass_field_name] = proj_status.default_pre_passability
-                self.fields[barrier_status_prepass_field_name].initial = proj_status.default_pre_passability
             else:
                 self.initial[barrier_status_prepass_field_name] = status.default_pre_passability
-                self.fields[barrier_status_prepass_field_name].initial = status.default_pre_passability
-
-    def clean(self):
-        cleaned_data = super(ProjectBarrierStatusForm, self).clean()
-        for key, value in cleaned_data.items():
-            if value is None and key in self.initial:
-                cleaned_data[key] = self.initial[key]
-        self.cleaned_data = cleaned_data
-        self.data = cleaned_data
-        return cleaned_data
 
     def save(self, project):
         from fishpass.models import ScenarioBarrierStatus, BarrierStatus

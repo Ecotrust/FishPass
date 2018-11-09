@@ -1,6 +1,7 @@
 <form action="#" method="post" id="{{ project_barrier_form_id }}" enctype="multipart/form-data">
   {% csrf_token %}
 
+  {% block form_content %}
   <table>
     {% for field in project_barrier_form.visible_fields %}
       <tr>
@@ -13,6 +14,7 @@
       </tr>
     {% endfor %}
   </table>
+  {% endblock form_content %}
 
   {{ project_barrier_form.non_field_errors }}
 

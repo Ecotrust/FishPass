@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'project_barrier_status_form/(?P<project_uid>[\w_]+)/$', views.project_barrier_status_form),
     url(r'project_barrier_status_form_reset/(?P<project_uid>[\w_]+)/$', views.project_barrier_status_form_reset),
     url(r'project_barrier_type_form/(?P<project_uid>[\w_]+)/$', views.project_barrier_type_form),
+    url(r'project_barrier_type_form_reset/(?P<project_uid>[\w_]+)/$', views.project_barrier_type_form_reset),
     url(r'project_barrier_form/(?P<project_uid>[\w_]+)/(?P<barrier_uid>[\w_]+)/$', views.project_barrier_form),
 
     url(r'^get_user_scenario_list/$', views.get_user_scenario_list),
