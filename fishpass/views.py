@@ -311,7 +311,7 @@ def get_geojson_from_queryset(query, project=None):
             }
 
         # convert attributes to json notation
-        if project:
+        if hasattr(feature, 'to_dict'):
             feat_dict = feature.to_dict(project)
             for field in feat_dict.keys():
                 feat_json['properties'][field] = feat_dict[field]
@@ -384,8 +384,8 @@ def get_filter_results(request, query=False, notes=[], extra_context={}):
         filter_dict = dict(request.GET.items())
         (query, notes) = run_filter_query(filter_dict)
     count = query.count()
-    #TODO: get geojson. Update Barrier layer on return if ('show filter results' = True)
-    geojson = None
+    #get geojson. Update Barrier layer on return if ('show filter results' = True)
+    geojson = get_geojson_from_queryset(query, None)
 
     results_dict = {
         'count': count,

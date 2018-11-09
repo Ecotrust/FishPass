@@ -165,9 +165,16 @@ var app = {
 function selectSpatialOrganization(event) {
   var unitType = event.target.value.toLowerCase();
   if (app.map.layer.hasOwnProperty(unitType)) {
-    app.map.layer[unitType].layer.setVisible(true);
-    var createInteractionForLayer = newInteractionForLayer(app.map.layer[unitType].layer);
-    app.map.selection.setSelect(createInteractionForLayer);
+    // Clear all features from selection layer
+    layernames = Object.keys(app.mapbox.layers);
+    for (var i = 0; i < layernames.length; i++) {
+      app.map.disableLayer(layernames[i]);
+    }
+    // Clear "Target Area" field and re-trigger filtering.
+    app.clearTargetAreaInput();
+    app.map.enableLayer(unitType);
+    app.map.selection.spatialOrganizationSelection = newInteractionForLayer(app.map.layer[unitType].layer);
+    app.map.selection.setSelect(app.map.selection.spatialOrganizationSelection);
   }
 };
 
@@ -176,6 +183,14 @@ function spatialOrgLoad() {
 
   app.clearTargetAreaInput = function() {
     document.getElementById('id_target_area').value = '';
+    app.viewModel.scenarios.scenarioFormModel.filters.target_area_input = null;
+    app.map.selection.focusArea = [];
+    app.map.layer.focusArea.clearFeatures();
+    if (app.map.selection.hasOwnProperty('spatialOrganizationSelection')) {
+      app.map.selection.spatialOrganizationSelection.getFeatures().clear();
+      app.map.removeInteraction(app.map.selection.spatialOrganizationSelection);
+    }
+    app.viewModel.scenarios.scenarioFormModel.getUpdatedFilterResults();
   }
 
   app.addIdToTargetAreaInput = function() {
@@ -302,7 +317,7 @@ app.resultsInit = function(id) {
 initFiltering = function() {
     setTimeout(function() {
         if ($('#step1').length > 0) {
-            app.viewModel.scenarios.scenarioFormModel.updateFilterResults();
+            $('#id_spatial_organization').trigger('change');
         } else {
             initFiltering();
         }

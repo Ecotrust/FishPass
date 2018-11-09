@@ -185,8 +185,41 @@ function scenarioFormModel(options) {
       mapSettings = {};
     }
 
+    var barrierStyle = function(feature, resolution) {
+        consideration = feature.get('action');
+        if (!consideration) {
+          radius = 3
+          stroke_color = 'black',
+          fill_color = 'rgba(0,0,0,1)'
+        } else if (consideration == 'include') {
+          radius = 5
+          stroke_color = 'green',
+          fill_color = 'rgba(0,255,0,0.5)'
+        } else if (consideration == 'consider') {
+          radius = 5
+          stroke_color = 'yellow',
+          fill_color = 'rgba(255,255,0,0.5)'
+        } else {
+          radius = 3
+          stroke_color = 'black',
+          fill_color = 'rgba(0,0,0,0.5)'
+        }
+        return new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 5,
+                fill: new ol.style.Fill({
+                  color: fill_color,
+                }),
+                stroke: new ol.style.Stroke({
+                  color: stroke_color,
+                  width: 1
+                })
+            })
+        });
+    }
+
     if (mapSettings.getInitFilterResultsLayer) {
-      self.updatedFilterResultsLayer = mapSettings.getInitFilterResultsLayer();
+      self.updatedFilterResultsLayer = mapSettings.getInitFilterResultsLayer('barriers', barrierStyle);
     } else {
       //old OL2 code - will break and let us know when we haven't overridden it.
       mapSettings.defaultStyle = new OpenLayers.Style({
@@ -387,8 +420,7 @@ function scenarioFormModel(options) {
                         }
                         self.updatedFilterResultsLayer.removeAllFeatures();
                         if (featureCount && geojson) {
-                            // self.updatedFilterResultsLayer.addWKTFeatures(wkt);
-                            console.log('TODO: need to update Barriers layer with new GeoJSON now!')
+                            self.updatedFilterResultsLayer.addGeoJSONFeatures(geojson);
                         }
                         self.updatedFilterResultsLayer.setVisibility(true);
                         self.gridCellsRemaining(featureCount);

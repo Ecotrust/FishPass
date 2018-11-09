@@ -181,7 +181,7 @@
                 {% if field.html_name == None %}
                   // Input is not enclosed in a checkbox-controlled collapsible panel, always used in filtering
                   $('#id_{{ field_input.html_name }}').change( function() {
-                    if (app.viewModel.scenarios.scenarioFormModel) {
+                    if (app.viewModel.scenarios.scenarioFormModel && "{{ field_input.html_name }}" != "spatial_organization") {
                       app.viewModel.scenarios.scenarioFormModel.updateFiltersAndCount('{{ field_input.html_name }}');
                     }
                   });
