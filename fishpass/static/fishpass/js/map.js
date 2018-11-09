@@ -353,7 +353,9 @@ focusAreaSelectAction = function(feat) {
       app.map.selection.focusArea.push(featId);
       app.map.layer.focusArea.addFeatures(response);
     };
-    $('#id_target_area').val(app.map.selection.focusArea).trigger('change');
+    $('#id_target_area').val(app.map.selection.focusArea);
+    app.viewModel.scenarios.scenarioFormModel.filters.target_area_input = app.map.selection.focusArea;
+    $('#id_target_area').trigger('change');
   })
 };
 
