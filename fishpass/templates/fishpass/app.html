@@ -34,7 +34,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
 {% endblock js_head %}
 
-{% block header %}{% endblock header %}
+{% block header %}
+  {% csrf_token %}
+{% endblock header %}
 
 
 {% block content %}

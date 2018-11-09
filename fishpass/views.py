@@ -55,7 +55,8 @@ def new_project(request):
     else:
         return HttpResponse('Request type must be "POST"', status=405)
 
-def home(request, template=loader.get_template('fishpass/home.html'), context={'title': 'FishPASS - Home'}):
+def home(request, template=loader.get_template('fishpass/home.html'), context=accounts_context()):
+    context['title'] = 'FishPASS - Home'
     context['SEARCH_DISABLED'] = settings.SEARCH_DISABLED
     return HttpResponse(template.render(context, request))
 

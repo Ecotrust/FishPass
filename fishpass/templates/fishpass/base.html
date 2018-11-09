@@ -35,6 +35,7 @@
 {% block js_head %}{% endblock js_head %}
 
 {% block header %}
+  {% csrf_token %}
   <div class="nav-wrap top-nav-wrap">
     {% include 'fishpass/navbar.html' %}
   </div>

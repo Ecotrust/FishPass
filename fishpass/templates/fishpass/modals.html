@@ -17,7 +17,6 @@
                 {% endif %}
                   <h2>Create new</h2>
                   <form id="create-new-project-form" action='/fishpass/new_project/' method="post" name="scenarios-form">
-                    {% csrf_token %}
                     <div class="form-group">
                         <label>Name</label>
                         <input type="text" name="name" maxlength="255" required="True" id="id_name" class="form-control" value="{{ initialProjectName }}">

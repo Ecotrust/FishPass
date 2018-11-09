@@ -107,15 +107,28 @@ var main = {
             })
         },
         success: function(data) {
+          // using jQuery to get CSRF Token
+              function getCookie(name) {
+                  var cookieValue = null;
+                  if (document.cookie && document.cookie !== '') {
+                      var cookies = document.cookie.split(';');
+                      for (var i = 0; i < cookies.length; i++) {
+                          var cookie = jQuery.trim(cookies[i]);
+                          // Does this cookie string begin with the name we want?
+                          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                              break;
+                          }
+                      }
+                  }
+                  return cookieValue;
+              }
             // set new csrf token
-            csrftoken = getCookie('csrftoken');
+            var csrftoken = getCookie('csrftoken');
             $('#login-modal').modal('hide');
-            if (app) {
-              $('#nav-load-save').removeClass('hide');
-              $('#subnav-sign-in-modal').addClass('hide');
-            }
+
             // show alert
-            $('body').prepend(`<div class="alert alert-success fade show" role="alert" style="position: fixed; top: 10px; left: 50%; transform: translate(-50%,0); min-width: 200px; z-index: 3; text-align: center; font-size: .875em;">SUCCESS</div>`);
+            $('body').prepend(`<div class="alert alert-success fade show" role="alert" style="position: fixed; top: 100px; left: 50%; transform: translate(-50%,0); min-width: 250px; line-height: 2; z-index: 3; text-align: center; font-size: 1em;">SUCCESS</div>`);
             window.setTimeout(function() {
                 $('.alert').alert('close');
             }, 1500);
@@ -125,7 +138,7 @@ var main = {
             $('#menu #sign-in-modal').css('display', 'none');
             // Hide top nav login and create account button
             $('.username-wrap #sign-in-modal-2').before(`<a id="topnav-account-link" href="/accounts/" class="btn btn-link account-action">
-                <i class="svg_icon"><img src="/static/ucsrb/img/icon/i_user_blue.svg" /></i>${data.username}</a>`);
+                <i class="svg_icon"><img src="/static/fishpass/img/icon/i_user_blue.svg" /></i>${data.username}</a>`);
             $('.username-wrap #sign-in-modal-2').css('display', 'none');
             // hide submenu login
             $('#subnav-sign-in-modal').addClass('d-none');
