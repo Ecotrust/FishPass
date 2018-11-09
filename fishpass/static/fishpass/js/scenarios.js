@@ -197,8 +197,8 @@ function scenarioFormModel(options) {
           fill_color = 'rgba(0,255,0,0.5)'
         } else if (consideration == 'consider') {
           radius = 5
-          stroke_color = 'yellow',
-          fill_color = 'rgba(255,255,0,0.5)'
+          stroke_color = 'orange',
+          fill_color = 'rgba(255,127,0,0.5)'
         } else {
           radius = 3
           stroke_color = 'black',
