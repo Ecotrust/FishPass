@@ -197,14 +197,18 @@ function spatialOrgLoad() {
     var focus_area_input = document.getElementById('id_target_area').value;
     var focus_area_string_list = focus_area_input.split(',');
     app.viewModel.scenarios.scenarioFormModel.filters.target_area_input = focus_area_input;
-    app.map.selection.focusArea = []
+    app.map.selection.focusArea = [];
     for (var i = 0; i < focus_area_string_list.length; i++) {
       app.map.selection.focusArea.push(parseInt(focus_area_string_list[i]));
     }
-    app.request.get_focus_area_geojson_by_ids(app.map.selection.focusArea, function(result){
+    if (app.map.selection.focusArea.length > 0 && !isNaN(app.map.selection.focusArea[0])) {
+      app.request.get_focus_area_geojson_by_ids(app.map.selection.focusArea, function(result){
         // response contains GeoJSON object
         app.map.layer.focusArea.addFeatures(result);
-    });
+      });
+    } else {
+      app.map.selection.focusArea = [];
+    }
     unitType = document.getElementById('id_spatial_organization').value.toLowerCase();
     app.map.enableLayer(unitType);
     app.map.selection.spatialOrganizationSelection = newInteractionForLayer(app.map.layer[unitType].layer);
