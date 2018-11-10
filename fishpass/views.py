@@ -83,6 +83,20 @@ def get_focus_area_geojson_by_type(request):
     geojson = get_geojson_from_queryset(focus_area_qs)
     return JsonResponse(geojson)
 
+# get geo queryset from list of FocusArea IDs
+# return geojson
+def get_focus_area_geojson_by_ids(request):
+    from fishpass.models import FocusArea
+    if request.method == 'GET':
+        try:
+            fa_ids = request.GET.getlist('fa_ids[]')
+        except:
+            fa_ids = []
+            pass
+    focus_area_qs = FocusArea.objects.filter(pk__in=fa_ids)
+    geojson = get_geojson_from_queryset(focus_area_qs)
+    return JsonResponse(geojson)
+
 def scenario_barrier(request, project_id, barrier_id, context={}):
     retjson = {
         'status': 200,
@@ -339,16 +353,15 @@ def run_filter_query(filters):
                     ownership_keys.append(ot_id)
             query = query.filter(ownership_type__in=ownership_keys)
 
-    if 'target_area' in filters.keys() and filters['target_area'] == 'true':
-        if 'target_area_input' in filters.keys() and len(filters['target_area_input']) > 0:
-            focus_ids = []
-            for fa_id_raw in filters['target_area_input'].split(','):
-                fa_id = int(fa_id_raw.strip())
-                target = FocusArea.objects.get(pk=fa_id)
-                focus_ids = focus_ids + [x.pad_id for x in query.filter(geometry__intersects=target.geometry)]
-            # remove dupes
-            focus_ids = list(set(focus_ids))
-            query = query.filter(pad_id__in=focus_ids)
+    if 'target_area_input' in filters.keys() and len(filters['target_area_input']) > 0:
+        focus_ids = []
+        for fa_id_raw in filters['target_area_input'].split(','):
+            fa_id = int(fa_id_raw.strip())
+            target = FocusArea.objects.get(pk=fa_id)
+            focus_ids = focus_ids + [x.pad_id for x in query.filter(geometry__intersects=target.geometry)]
+        # remove dupes
+        focus_ids = list(set(focus_ids))
+        query = query.filter(pad_id__in=focus_ids)
 
     if 'treat_downstream' in filters.keys() and filters['treat_downstream'] == 'true':
         if 'treat_downstream_input' in filters.keys() and filters['treat_downstream_input'] == 'adjust':
@@ -539,7 +552,11 @@ def createOptiPassInputFile(project, file_location):
 
     barrier_dicts = []
     if len(project.target_area) > 1:
-        fa_ids = FocusArea.objects.filter(id__in=eval(project.target_area))
+        target_ids = eval(project.target_area)
+        if hasattr(target_ids, '__iter__'):
+            fa_ids = FocusArea.objects.filter(id__in=target_ids)
+        else:
+            fa_ids = FocusArea.objects.filter(id__in=[target_ids])
     else:
         fa_ids = FocusArea.objects.filter(unit_type='County')
 

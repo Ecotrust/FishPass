@@ -379,11 +379,11 @@ function scenarioFormModel(options) {
     };
 
     self.updateFilterResults = function() {
-        if (self.showingFilteringResults()) {
-            self.getUpdatedFilterResults();
-        } else {
-            self.getUpdatedFilterCount();
-        }
+        // if (self.showingFilteringResults()) {
+        self.getUpdatedFilterResults();
+        // } else {
+        //     self.getUpdatedFilterCount();
+        // }
     };
 
     self.getUpdatedFilterCount = function() {

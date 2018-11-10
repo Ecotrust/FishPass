@@ -18,6 +18,7 @@ urlpatterns = [
     ### Mapping/Optimization
     url(r'^get_barrier_layer/?', views.get_barrier_layer),
     url(r'^get_focus_area_geojson_by_type/?', views.get_focus_area_geojson_by_type),
+    url(r'^get_focus_area_geojson_by_ids/?', views.get_focus_area_geojson_by_ids),
     url(r'scenario_barrier/(?P<project_id>[\w_]+)/$', views.scenario_barrier),
 
     # project specific API
