@@ -7,6 +7,8 @@ from django.forms.widgets import *
 from analysistools.widgets import SliderWidget, DualSliderWidget
 from django.forms import ModelMultipleChoiceField, CheckboxSelectMultiple
 # from scenarios.widgets import AdminFileWidget, SliderWidgetWithTooltip, DualSliderWidgetWithTooltip, CheckboxSelectMultipleWithTooltip, CheckboxSelectMultipleWithObjTooltip
+from itertools import chain
+from django.utils.encoding import force_text
 
 
 class HiddenScenarioBooleanField(forms.BooleanField):
@@ -16,6 +18,80 @@ class HiddenScenarioBooleanField(forms.BooleanField):
             'class': 'parameters hidden_checkbox'
         }
     )
+
+class BackwardCompatibleChoiceWidget(forms.widgets.ChoiceWidget):
+    def optgroups(self, name, value, attrs=None):
+        """Return a list of optgroups for this widget."""
+        groups = []
+        has_selected = False
+
+        ######
+        # It's time for some Ryan magic
+        ######
+        try:
+            if len(value) == 1 and isinstance(eval(value[0]), (list, tuple)):
+                value = eval(value[0])
+        except Exception as e:
+            pass
+        ######
+        # End Magic
+        ######
+
+        for index, (option_value, option_label) in enumerate(chain(self.choices)):
+            if option_value is None:
+                option_value = ''
+
+            subgroup = []
+            if isinstance(option_label, (list, tuple)):
+                group_name = option_value
+                subindex = 0
+                choices = option_label
+            else:
+                group_name = None
+                subindex = None
+                choices = [(option_value, option_label)]
+            groups.append((group_name, subgroup, index))
+
+            for subvalue, sublabel in choices:
+                selected = (
+                    force_text(subvalue) in value and
+                    (has_selected is False or self.allow_multiple_selected)
+                )
+                if selected is True and has_selected is False:
+                    has_selected = True
+                subgroup.append(self.create_option(
+                    name, subvalue, sublabel, selected, index,
+                    subindex=subindex, attrs=attrs,
+                ))
+                if subindex is not None:
+                    subindex += 1
+        return groups
+
+class BackwardCompatibleCheckboxSelectMultiple(BackwardCompatibleChoiceWidget):
+    allow_multiple_selected = True
+    input_type = 'checkbox'
+    template_name = 'django/forms/widgets/checkbox_select.html'
+    option_template_name = 'django/forms/widgets/checkbox_option.html'
+
+    def use_required_attribute(self, initial):
+        # Don't use the 'required' attribute because browser validation would
+        # require all checkboxes to be checked instead of at least one.
+        return False
+
+    def value_omitted_from_data(self, data, files, name):
+        # HTML checkboxes don't appear in POST data if not checked, so it's
+        # never known if the value is actually omitted.
+        return False
+
+    def id_for_label(self, id_, index=None):
+        """"
+        Don't include for="field_0" in <label> because clicking such a label
+        would toggle the first checkbox.
+        """
+        if index is None:
+            return ''
+        return super(BackwardCompatibleCheckboxSelectMultiple, self).id_for_label(id_, index)
+
 
 class ProjectForm(ScenarioForm):
     from fishpass.models import FocusArea, OwnershipType
@@ -69,12 +145,15 @@ class ProjectForm(ScenarioForm):
     #     scenarioBarrier
     # This is likely best handled inside of a custom forms.html
 
-    ownership_input = HiddenScenarioBooleanField(
+    # ownership_input = HiddenScenarioBooleanField(
+    ownership_input = forms.BooleanField(
         label="Filter By Ownership",
         # help_text="This should be true: ALWAYS",
         initial=False,
         required=False,
     )
+
+
 
     ownership_input_options = ((x, settings.OWNERSHIP_LOOKUP[x]) for x in settings.OWNERSHIP_LOOKUP.keys())
     initial_ownership = list(set([str(x.id) for x in OwnershipType.objects.all()] + [x for x in settings.OWNERSHIP_LOOKUP.keys()]))
@@ -83,9 +162,10 @@ class ProjectForm(ScenarioForm):
         # required=True,
         required=False,
         choices=ownership_input_options,
-        widget=forms.CheckboxSelectMultiple(),
+        # widget=forms.CheckboxSelectMultiple(),
+        widget=BackwardCompatibleCheckboxSelectMultiple(),
         initial=initial_ownership,
-        label="OwnershipT Type",
+        label="OwnershipType",
         help_text="Uncheck any ownership type that you don't wish to consider for mitigation",
     )
 
@@ -320,10 +400,9 @@ class ProjectBarrierTypeForm(forms.Form):
             proj_type, created = ScenarioBarrierType.objects.get_or_create(project=project, barrier_type=bartype)
             setattr(proj_type, field.widget.attrs['field'], self.cleaned_data[field_name])
             proj_type.save()
-            
+
 
     def as_table(self):
-        import ipdb; ipdb.set_trace()
         return self._html_output(
             ProjectBarrierTypeForm.NormalRowFormatter(),
             u'<tr><td colspan="2">%s</td></tr>', # unused
