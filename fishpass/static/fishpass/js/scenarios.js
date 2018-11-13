@@ -197,8 +197,10 @@ function scenarioFormModel(options) {
           fill_color = 'rgba(0,255,0,0.5)'
         } else if (consideration == 'consider') {
           radius = 5
-          stroke_color = 'orange',
-          fill_color = 'rgba(255,127,0,0.5)'
+          // stroke_color = 'orange',
+          stroke_color = '#FA8072', //Salmon
+          // fill_color = 'rgba(255,127,0,0.5)' //Orange
+          fill_color = 'rgba(250,128,114,0.5)' //Salmon
         } else {
           radius = 3
           stroke_color = 'black',
@@ -206,13 +208,13 @@ function scenarioFormModel(options) {
         }
         return new ol.style.Style({
             image: new ol.style.Circle({
-                radius: 5,
+                radius: 6,
                 fill: new ol.style.Fill({
                   color: fill_color,
                 }),
                 stroke: new ol.style.Stroke({
                   color: stroke_color,
-                  width: 1
+                  width: 2
                 })
             })
         });
@@ -583,6 +585,9 @@ function scenarioModel(options) {
 
     self.id = options.uid || null;
     self.uid = options.uid || null;
+    if (options.hasOwnProperty('ownership_type')) {
+      app.viewModel.scenarios.ScenarioFormModel.ownership_type(options.ownership_type);
+    }
     self.name = options.name;
     self.display_name = options.display_name?options.display_name:self.name;
     self.featureAttributionName = self.name;
@@ -1026,21 +1031,26 @@ function scenariosModel(options) {
                 app.viewModel.scenarios.scenarioFormModel = self.scenarioFormModel;
                 var model = app.viewModel.scenarios.scenarioFormModel;
                 app.state.formModel = model;
-                try {
-                  var form_id = app.viewModel.currentTocId()+'-scenario-form';
-                  ko.applyBindings(self.scenarioFormModel, document.getElementById(form_id).children[0]);
-                } catch (err) {
-                  var form_id = 'scenario_form';
-                  ko.applyBindings(app.viewModel.scenarios.scenarioFormModel, document.getElementById(form_id).children[0]);
-                }
-                if ( ! self.filterLayer() && app.viewModel.modernBrowser() ) {
-                    self.loadLeaseblockLayer();
-                }
+                ko.applyBindings(self.scenarioFormModel, $('#scenario_form').children()[0]);
                 // app.loadingAnimation.hide();
-                // window.dispatchEvent(new Event('resize'));
 
                 // set up selection
                 spatialOrgLoad();
+
+                setTimeout(
+                  function() {
+                    var parameters = [
+                      'ownership_input'
+                    ];
+                    for (var i = 0; i < parameters.length; i++) {
+                      var id = '#id_' + parameters[i];
+                      if ($(id).is(':checked')) {
+                        model.toggleParameter(parameters[i]);
+                      }
+                    }
+                  },
+                  50
+                );
             },
             error: function (result) {
                 console.log('failure at scenarios.js "createNewScenario".');

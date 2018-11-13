@@ -145,8 +145,7 @@ class ProjectForm(ScenarioForm):
     #     scenarioBarrier
     # This is likely best handled inside of a custom forms.html
 
-    # ownership_input = HiddenScenarioBooleanField(
-    ownership_input = forms.BooleanField(
+    ownership_input = HiddenScenarioBooleanField(
         label="Filter By Ownership",
         # help_text="This should be true: ALWAYS",
         initial=False,
