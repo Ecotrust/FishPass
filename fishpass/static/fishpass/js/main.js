@@ -8,14 +8,12 @@ window.addEventListener("load", function () {
         if (signInBtn) {
             signInBtn.addEventListener('submit', function(event) {
                 event.preventDefault();
-                console.log('clicked');
                 main.auth.signIn(event, this);
             });
         }
         if (registerBtn) {
             registerBtn.addEventListener('submit', function(event) {
                 event.preventDefault();
-                console.log('clicked');
                 main.auth.register(event, this);
             });
         }

@@ -1036,6 +1036,7 @@ function scenariosModel(options) {
 
                 // set up selection
                 spatialOrgLoad();
+                barrierLayerLoad();
 
                 setTimeout(
                   function() {

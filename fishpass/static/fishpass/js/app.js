@@ -221,6 +221,62 @@ function spatialOrgLoad() {
   }
 };
 
+barrierHoverSelectAction = function(feat) {
+  if (feat) {
+    // prevent user clicks on barrier from triggering focus area selection
+    app.map.selection.select.setActive(false);
+  } else {
+    // re-enable focus-area selection (if on step 1)
+    if ($('#step1').is(":visible")) {
+      app.map.selection.select.setActive(true);
+    }
+  }
+};
+
+barrierClickSelectAction = function(feat) {
+  // unselect any selected features
+  app.map.barrierClickInteraction.getFeatures().clear();
+  if(feat) {
+    // prevent hover from unselecting the clicked barrier
+    app.map.barrierHoverInteraction.setActive(false);
+  } else {
+    // re-enable barrier-hover
+    app.map.barrierHoverInteraction.setActive(true);
+    if ($('#step1').is(":visible")) {
+      app.map.selection.select.setActive(true);
+    }
+  }
+};
+
+function barrierLayerLoad() {
+  app.map.barrierHoverInteraction = new ol.interaction.Select({
+    condition: ol.events.condition.pointerMove,
+    layers: [
+      app.viewModel.scenarios.scenarioFormModel.updatedFilterResultsLayer
+    ],
+    style: app.map.styles.PointSelected
+  });
+
+  app.map.barrierClickInteraction = new ol.interaction.Select({
+    layers: [
+      app.viewModel.scenarios.scenarioFormModel.updatedFilterResultsLayer
+    ],
+    style: app.map.styles.PointSelected
+  });
+
+  app.map.addInteraction(app.map.barrierHoverInteraction);
+  app.map.addInteraction(app.map.barrierClickInteraction);
+  app.map.barrierClickInteraction.on('select', function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    barrierClickSelectAction(event.selected[0]);
+  });
+  app.map.barrierHoverInteraction.on('select', function(event) {
+    barrierHoverSelectAction(event.selected[0]);
+  });
+}
+
+
 scenario_type_selection_made = function(selectionType) {
     var animateObj = {
         zoom: 8,
@@ -428,9 +484,9 @@ app.panel = {
     stepControl: function() {
       selectFocusAreaStepId = 'step1';
       if ($('#' + selectFocusAreaStepId).is(":visible")) {
-        app.map.addInteraction(app.map.selection.select);
+        app.map.selection.select.setActive(true);
       } else {
-        app.map.removeInteraction(app.map.selection.select);
+        app.map.selection.select.setActive(false);
       }
     },
     element: function() { // returns a function. to edit dom element don't forget to invoke: element()

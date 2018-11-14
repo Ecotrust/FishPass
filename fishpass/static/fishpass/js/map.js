@@ -31,27 +31,19 @@ app.map.styles = {
         zIndex: 9
       });
     },
-    PointSelected: function(feature, resolution) {
-      var radius = 8;
-      if (resolution < 5) {
-          radius = 16;
-      } else if (resolution < 40) {
-          radius = 10;
-      }
-      return new ol.style.Style({
+    PointSelected: new ol.style.Style({
         image: new ol.style.Circle({
-            radius: radius,
+            radius: 8,
             fill:  new ol.style.Fill({
-                color: '#4D4D4D',
+                color: 'rgba(0,255,0,0.5)',
             }),
             stroke: new ol.style.Stroke({
-                color: '#ffffff',
+                color: 'green',
                 width: 3,
             }),
         }),
         zIndex: 10
-      });
-    },
+    }),
     LineString: new ol.style.Style({
         stroke: new ol.style.Stroke({
             color: '#67b8c6',
@@ -325,16 +317,6 @@ app.scenarioInProgressCheck = function() {
   }
 }
 
-// get barrier layer ajax
-// app.request.get_barrier_layer()
-//   .then(function(response) {
-//     if (response) {
-//       var geojsonObject = response.geojson;
-//       app.map.layer.barriers.addFeatures(geojsonObject);
-//       app.map.addLayer(app.map.layer.barriers.layer);
-//     }
-//   })
-
 focusAreaSelectAction = function(feat) {
   // unit type used for request params
   var unitType = app.map.selection.select.getLayer(feat).get('unitType');
@@ -356,7 +338,9 @@ focusAreaSelectAction = function(feat) {
     $('#id_target_area').val(app.map.selection.focusArea);
     app.viewModel.scenarios.scenarioFormModel.filters.target_area_input = app.map.selection.focusArea;
     $('#id_target_area').trigger('change');
-  })
+  });
+  // Allow user to re-click same feature
+  app.map.selection.select.getFeatures().clear();
 };
 
 var drawSource = new ol.source.Vector();
