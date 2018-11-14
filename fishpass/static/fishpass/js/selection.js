@@ -33,11 +33,20 @@ barrierHoverSelectAction = function(feat) {
   if (feat) {
     // prevent user clicks on barrier from triggering focus area selection
     app.map.selection.select.setActive(false);
+    var pixel = map.getPixelFromCoordinate(feat.getGeometry().getCoordinates());
+    app.map.barrierInfo.tooltip('hide')
+            .css({
+              left: pixel[0] + 'px',
+              top: (pixel[1]-15) + 'px'
+            })
+            .attr('data-original-title', feat.get('site_name'))
+            .tooltip('show');
   } else {
     // re-enable focus-area selection (if on step 1)
     if ($('#step1').is(":visible")) {
       app.map.selection.select.setActive(true);
     }
+    app.map.barrierInfo.tooltip('hide');
   }
 };
 
@@ -48,9 +57,11 @@ barrierClickSelectAction = function(feat) {
   // We're using map clicks to watch for unselect
   app.map.selection.select.setActive(false);
   app.map.barrierSelected = true;
+  app.map.barrierInfo.tooltip('hide');
 };
 
 barrierClearSelectAction = function() {
+  app.map.barrierInfo.tooltip('hide');
   // if click selection exists
   if (app.map.barrierSelected) {
     //clear it out
@@ -91,6 +102,13 @@ function barrierLayerLoad() {
 
   app.map.barrierSelected = false;
 
+  $('#map').prepend('<div id="barrier-info"></div>');
+  app.map.barrierInfo = $('#barrier-info');
+  app.map.barrierInfo.tooltip({
+    animation: false,
+    trigger: 'manual'
+  });
+
   app.map.addInteraction(app.map.barrierHoverInteraction);
   app.map.addInteraction(app.map.barrierClickInteraction);
   app.map.barrierClickInteraction.on('select', function(event) {
@@ -104,25 +122,4 @@ function barrierLayerLoad() {
     event.stopPropagation();
     barrierClearSelectAction();
   });
-}
-
-
-scenario_type_selection_made = function(selectionType) {
-    var animateObj = {
-        zoom: 8,
-        center: [-13363592.377434019, 6154762.569701998],
-        duration: 800
-    }
-    // var extent = new ol.extent.boundingExtent([[-121.1, 47], [-119, 49]]);
-    // extent = ol.proj.transformExtent(extent, ol.proj.get('EPSG:4326'), ol.proj.get('EPSG:3857'));
-    if (selectionType === 'draw') {
-        app.map.layer.draw.layer.setVisible(true);
-        // app.map.removeInteraction(app.map.Pointer);
-        // app.map.getView().animate(animateObj);
-    } else {
-        app.map.removeInteraction(app.map.draw.draw);
-        app.map.layer.draw.layer.setVisible(false);
-        // app.map.addInteraction(app.map.Pointer);
-        // app.map.getView().animate(animateObj);
-    }
 }
