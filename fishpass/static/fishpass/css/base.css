@@ -198,6 +198,25 @@ h5 {
     border: none;
 }
 
+#login-modal button {
+    background: transparent;
+    border: 2px solid #E6F1DB;
+    color: #CCECAC;
+}
+
+#login-modal a {
+    color: #CCECAC;
+}
+
+#login-modal hr {
+    background: #fff;
+}
+
+#login-modal .close {
+    border: none;
+    padding: .675rem 1rem 1rem;
+}
+
 /**
  * =========================================================================
     Modal
@@ -205,14 +224,14 @@ h5 {
  */
 
 .modal-content {
-    background: #3a5675;
+    background: #217867;
     border: none;
     border-radius: 0;
     color: #fff;
 }
 
 .modal-content .card {
-    background: #3a5675;
+    background: #217867;
 }
 
 .modal .close {

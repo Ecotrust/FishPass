@@ -26,10 +26,17 @@
     padding: 1vh 0;
     text-align: center;
 }
-  .navbar-brand:hover {
-    background: transparent;
-    opacity: 1;
-  }
+
+.navbar-brand a {
+  display: inline-block;
+}
+
+.navbar-brand a:hover {
+  background: transparent;
+  opacity: 1;
+}
+
+
 
 .navbar-brand img {
     height: 5vh;
