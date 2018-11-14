@@ -318,29 +318,34 @@ app.scenarioInProgressCheck = function() {
 }
 
 focusAreaSelectAction = function(feat) {
-  // unit type used for request params
-  var unitType = app.map.selection.select.getLayer(feat).get('unitType');
-  // id used for front end code
-  var id = app.map.selection.select.getLayer(feat).get('id');
-  var idField = app.mapbox.layers[id].id_field;
-  var unitId = feat.getProperties()[idField];
-  app.request.get_focus_area_geojson_by_type(unitType, unitId, function(response) {
-    // response contain GeoJSON object
-    var featId = response.features[0].properties.id;
-    if (app.map.selection.focusArea.includes(featId)) {
-      var indexOfId = app.map.selection.focusArea.indexOf(featId);
-      app.map.selection.focusArea.splice(indexOfId,1);
-      app.map.layer.focusArea.removeFeatureById(featId);
-    } else {
-      app.map.selection.focusArea.push(featId);
-      app.map.layer.focusArea.addFeatures(response);
-    };
-    $('#id_target_area').val(app.map.selection.focusArea);
-    app.viewModel.scenarios.scenarioFormModel.filters.target_area_input = app.map.selection.focusArea;
-    $('#id_target_area').trigger('change');
-  });
-  // Allow user to re-click same feature
-  app.map.selection.select.getFeatures().clear();
+  if (app.map.barrierClickInteraction.getFeatures().getArray().length == 0) {
+    // unit type used for request params
+    var unitType = app.map.selection.select.getLayer(feat).get('unitType');
+    // id used for front end code
+    var id = app.map.selection.select.getLayer(feat).get('id');
+    var idField = app.mapbox.layers[id].id_field;
+    var unitId = feat.getProperties()[idField];
+    app.request.get_focus_area_geojson_by_type(unitType, unitId, function(response) {
+      // response contain GeoJSON object
+      var featId = response.features[0].properties.id;
+      if (app.map.selection.focusArea.includes(featId)) {
+        var indexOfId = app.map.selection.focusArea.indexOf(featId);
+        app.map.selection.focusArea.splice(indexOfId,1);
+        app.map.layer.focusArea.removeFeatureById(featId);
+      } else {
+        app.map.selection.focusArea.push(featId);
+        app.map.layer.focusArea.addFeatures(response);
+      };
+      $('#id_target_area').val(app.map.selection.focusArea);
+      app.viewModel.scenarios.scenarioFormModel.filters.target_area_input = app.map.selection.focusArea;
+      $('#id_target_area').trigger('change');
+    });
+    // Allow user to re-click same feature
+    app.map.selection.select.getFeatures().clear();
+  } else {
+    app.map.barrierClickInteraction.getFeatures().clear();
+    app.map.barrierHoverInteraction.getFeatures().clear();
+  }
 };
 
 var drawSource = new ol.source.Vector();

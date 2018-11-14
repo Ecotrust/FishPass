@@ -234,19 +234,36 @@ barrierHoverSelectAction = function(feat) {
 };
 
 barrierClickSelectAction = function(feat) {
-  // unselect any selected features
-  app.map.barrierClickInteraction.getFeatures().clear();
-  if(feat) {
-    // prevent hover from unselecting the clicked barrier
-    app.map.barrierHoverInteraction.setActive(false);
-  } else {
-    // re-enable barrier-hover
-    app.map.barrierHoverInteraction.setActive(true);
-    if ($('#step1').is(":visible")) {
-      app.map.selection.select.setActive(true);
-    }
-  }
+  // prevent hover from unselecting the clicked barrier
+  app.map.barrierHoverInteraction.setActive(false);
+  app.map.barrierHoverInteraction.getFeatures().clear();
+  // We're using map clicks to watch for unselect
+  app.map.selection.select.setActive(false);
+  app.map.barrierSelected = true;
 };
+
+barrierClearSelectAction = function() {
+  // if click selection exists
+  if (app.map.barrierSelected) {
+    //clear it out
+    app.map.barrierClickInteraction.getFeatures().clear();
+    app.map.barrierHoverInteraction.getFeatures().clear();
+    app.map.barrierSelected = false;
+
+    // re-enable hover
+    app.map.barrierHoverInteraction.setActive(true);
+    // app.map.barrierClickInteraction.setActive(true);
+    setTimeout(function() {
+      // double-check that new click didn't just select a new point
+      if (!app.map.barrierSelected) {
+        // re-enable focus-area selection (if on step 1)
+        if ($('#step1').is(":visible")) {
+          app.map.selection.select.setActive(true);
+        }
+      }
+    }, 500);
+  }
+}
 
 function barrierLayerLoad() {
   app.map.barrierHoverInteraction = new ol.interaction.Select({
@@ -264,15 +281,20 @@ function barrierLayerLoad() {
     style: app.map.styles.PointSelected
   });
 
+  app.map.barrierSelected = false;
+
   app.map.addInteraction(app.map.barrierHoverInteraction);
   app.map.addInteraction(app.map.barrierClickInteraction);
   app.map.barrierClickInteraction.on('select', function(event) {
-    event.preventDefault();
-    event.stopPropagation();
     barrierClickSelectAction(event.selected[0]);
   });
   app.map.barrierHoverInteraction.on('select', function(event) {
     barrierHoverSelectAction(event.selected[0]);
+  });
+  app.map.on('click', function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    barrierClearSelectAction();
   });
 }
 
