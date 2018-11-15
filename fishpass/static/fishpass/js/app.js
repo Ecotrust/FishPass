@@ -32,10 +32,14 @@ var app = {
     },
     loadProjectBarrierForm: function() {
       $.ajax( {
-          url: `fishpass/project_barrier_form/${app.panel.form.project_id}/${app.map.selectedBarrier}/`,
+          url: `fishpass/project_barrier_form/${app.panel.form.project_id}/${app.map.selectedBarrier.pad_id}/`,
           method: 'GET',
           success: function(result) {
             $('#project-barrier-form-wrap').empty();
+            title_html = app.map.selectedBarrier.site_name + " (" + app.map.selectedBarrier.stream_name +
+            ') - <a href="https://map.dfg.ca.gov/bios/?al=ds69&col=pad_id&val=' +
+            app.map.selectedBarrier.pad_id + '" target="_blank">View in BIOS</a>';
+            $('#project-barrier-modal').find('.modal-title').html(title_html);
             $('#project-barrier-form-wrap').html(result);
             $('#project-barrier-form').children('.form-error').hide();
             $('#project-barrier-form-submit').on('click', app.saveProjectBarrierForm);
@@ -50,7 +54,7 @@ var app = {
     },
     resetProjectBarrierForm: function() {
       $.ajax( {
-          url: `fishpass/project_barrier_form_reset/${app.panel.form.project_id}/${app.map.selectedBarrier}/`,
+          url: `fishpass/project_barrier_form_reset/${app.panel.form.project_id}/${app.map.selectedBarrier.pad_id}/`,
           method: 'GET',
           success: function(result) {
             $('#project-barrier-form-wrap').empty();
@@ -68,7 +72,7 @@ var app = {
     saveProjectBarrierForm: function() {
       $form = $('#project-barrier-form');
       $.ajax( {
-        url: `fishpass/project_barrier_form/${app.panel.form.project_id}/${app.map.selectedBarrier}/`,
+        url: `fishpass/project_barrier_form/${app.panel.form.project_id}/${app.map.selectedBarrier.pad_id}/`,
         data: $form.serialize(),
         type: 'POST',
         success: function(result) {

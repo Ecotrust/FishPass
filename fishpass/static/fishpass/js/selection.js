@@ -39,7 +39,7 @@ barrierHoverSelectAction = function(feat) {
               left: pixel[0] + 'px',
               top: (pixel[1]-15) + 'px'
             })
-            .attr('data-original-title', feat.get('site_name'))
+            .attr('data-original-title', feat.get('site_name') + " (" + feat.get('stream_name') +")")
             .tooltip('show');
   } else {
     // re-enable focus-area selection (if on step 1)
@@ -60,12 +60,12 @@ barrierClickSelectAction = function(feat) {
   app.map.barrierInfo.tooltip('hide');
 
   app.map.getView().setCenter(feat.getGeometry().getCoordinates());
-  app.map.selectedBarrier = feat.get('pad_id');
+  app.map.selectedBarrier = feat.getProperties();
   app.initProjectSpecificBarrier();
 
 };
 
-barrierClearSelectAction = function() {
+app.map.barrierClearSelectAction = function() {
   app.map.barrierInfo.tooltip('hide');
   // if click selection exists
   if (app.map.barrierSelected) {
@@ -125,6 +125,7 @@ function barrierLayerLoad() {
   app.map.on('click', function(event) {
     event.preventDefault();
     event.stopPropagation();
-    barrierClearSelectAction();
+    app.map.barrierClearSelectAction();
   });
+  $('#project-barrier-modal').on('hidden.bs.modal', app.map.barrierClearSelectAction);
 }
