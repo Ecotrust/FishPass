@@ -11,7 +11,7 @@
             <div class="modal-body">
               <div class="row">
                 {% if projects.count > 0 %}
-                <div class="col-sm-6">
+                <div class="col-sm-6 col-md-5">
                 {% else %}
                 <div class="col-sm-12">
                 {% endif %}
@@ -27,27 +27,25 @@
                   </form>
                 </div>
                 {% if projects.count > 0 %}
-                <div class="col-sm-6">
+                <div class="col-sm-6 col-md-7">
                   <h3>Load saved</h3>
-                  <div class='project-list'>
-                    <table>
+                  <div class='project-list col-12'>
                     {% for project in projects %}
-                      <tr id="row-{{ project.uid }}">
-                        <td>{{ project.name }}</td>
-                        <td><a class='view-project-link' href="/fishpass/get_report/{{ project.uid }}/">view</a></td>
-                        <td><a href="#" class="edit-form-link" uid="{{ project.uid }}">edit</a></td>
-                        <td>
-                          <button id="delete-{{ project.uid }}" data-id="{{ project.uid }}" class="btn btn-trash init-delete"><img  src="/static/fishpass/img/icon/i_trash.svg" alt="delete scenario" /></button>
+                      <div id="row-{{ project.uid }}" class="row align-items-center">
+                        <div class="col-8">
+                          <a class='view-project-link' href="/fishpass/get_report/{{ project.uid }}/">{{ project.name }}</a>
+                        </div>
+                        <!-- <td><a class='view-project-link' href="/fishpass/get_report/{{ project.uid }}/">view</a></td> -->
+                        <div class="col-2">
+                          <a href="#" class="edit-form-link" uid="{{ project.uid }}"><img src="/static/fishpass/img/icon/i_pencil.svg" alt="edit scenario" /></a>
+                        </div>
+                        <div class="col-2 text-center">
+                          <button id="delete-{{ project.uid }}" data-id="{{ project.uid }}" class="btn btn-trash init-delete"><img  src="/static/fishpass/img/icon/i_trash_white.svg" alt="delete scenario" /></button>
                           <button id="confirm-delete-{{ project.uid }}" data-id="{{ project.uid }}" class="confirm-delete  d-none btn-trash">Confirm Delete</button>
                           <button id="delete-status-{{ project.uid }}" data-id="{{ project.uid }}" class="confirm-delete  d-none btn-trash">Deleting...</button>
-
-                          <!-- <button data-id="249" class="scenario-name btn btn-trash"><img src="/static/ucsrb/img/icon/i_trash.png" alt="delete scenario"></button> -->
-                          <!-- <button data-confirm="confirm-249" data-id="249" class="confirm-delete  d-none btn-trash">Confirm Delete</button> -->
-                          <!-- http://s2fdemo.ecotrust.org/scenario/delete_design/ucsrb_treatmentscenario_243/ -->
-                        </td>
-                      </tr>
+                        </div>
+                      </div>
                     {% endfor %}
-                    </table>
                   </div>
                 </div>
                 {% endif %}

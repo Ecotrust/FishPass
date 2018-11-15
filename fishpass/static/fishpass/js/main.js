@@ -140,6 +140,9 @@ var main = {
             $('.username-wrap #sign-in-modal-2').before(`<a id="topnav-account-link" href="/accounts/" class="btn btn-link account-action">
                 <i class="svg_icon"><img src="/static/fishpass/img/icon/i_user_blue.svg" /></i>${data.username}</a>`);
             $('.username-wrap #sign-in-modal-2').css('display', 'none');
+            // Hide main nav login and create account button
+            $('#home-login-btn').before(`<a href="/app" class="btn btn-main">Launch App</a>`);
+            $('#home-login-btn').css('display', 'none');
             // hide submenu login
             $('#subnav-sign-in-modal').addClass('d-none');
         }

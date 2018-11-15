@@ -31,7 +31,7 @@
           {% if user.is_authenticated %}
             <a href="/app" class="btn btn-main"><img src="{% static 'fishpass/img/icon/i_arrow_right.svg' %}" /> Launch App</a>
           {% else %}
-            <button id="sign-in-modal-body" data-toggle="model" data-target="#login-modal" class="btn btn-main">Login</button>
+            <button id="home-login-btn" onclick="$('#login-modal').modal('show')" class="btn btn-main">Login</button>
           {% endif %}
         </div>
       </div>

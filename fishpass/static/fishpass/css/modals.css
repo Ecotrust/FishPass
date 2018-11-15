@@ -1,5 +1,6 @@
 #launch-modal .modal-dialog {
-  max-width: 90vw;
+  width: 90vw;
+  max-width: 800px;
 }
 
 #launch-modal h3 {
@@ -19,26 +20,31 @@
     padding: 0.5em;
 }
 
-.project-list td a:hover {
-    color: white;
-    font-weight: bold;
+.project-list a {
+  color: #E6F1DB;
 }
 
-.project-list .btn-trash {
+.project-list a:hover {
+  background: transparent;
+  color: #E6F1DB;
+}
+
+.project-list .btn-trash,
+.project-list .edit-form-link {
     background: transparent;
-    border: 1px solid rgba(255,255,255,0.5);
-    color: #ffa0a0;
-    font-size: .75em;
+    color: #ffdd00;
+    font-size: .6125em;
     margin: 0 -2px;
-    padding: .25rem;
+    padding: .375rem .06125rem;
     text-align: center;
-    min-width: 2rem;
 }
 
-.project-list .btn-trash:hover {
+.project-list .btn-trash:hover,
+.project-list .edit-form-link:hover {
     background: rgba(255,0,0,0.15);
 }
 
-.project-list .btn-trash img {
-    max-height: 1em;
+.project-list .btn-trash img,
+.project-list .edit-form-link img {
+    max-height: 1.75em;
 }
