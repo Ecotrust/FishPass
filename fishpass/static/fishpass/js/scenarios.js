@@ -185,8 +185,43 @@ function scenarioFormModel(options) {
       mapSettings = {};
     }
 
+    var barrierStyle = function(feature, resolution) {
+        consideration = feature.get('action');
+        if (!consideration) {
+          radius = 3
+          stroke_color = 'black',
+          fill_color = 'rgba(0,0,0,1)'
+        } else if (consideration == 'include') {
+          radius = 5
+          stroke_color = 'green',
+          fill_color = 'rgba(0,255,0,0.5)'
+        } else if (consideration == 'consider') {
+          radius = 5
+          // stroke_color = 'orange',
+          stroke_color = '#FA8072', //Salmon
+          // fill_color = 'rgba(255,127,0,0.5)' //Orange
+          fill_color = 'rgba(250,128,114,0.5)' //Salmon
+        } else {
+          radius = 3
+          stroke_color = 'black',
+          fill_color = 'rgba(0,0,0,0.5)'
+        }
+        return new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 6,
+                fill: new ol.style.Fill({
+                  color: fill_color,
+                }),
+                stroke: new ol.style.Stroke({
+                  color: stroke_color,
+                  width: 2
+                })
+            })
+        });
+    }
+
     if (mapSettings.getInitFilterResultsLayer) {
-      self.updatedFilterResultsLayer = mapSettings.getInitFilterResultsLayer();
+      self.updatedFilterResultsLayer = mapSettings.getInitFilterResultsLayer('barriers', barrierStyle);
     } else {
       //old OL2 code - will break and let us know when we haven't overridden it.
       mapSettings.defaultStyle = new OpenLayers.Style({
@@ -346,11 +381,11 @@ function scenarioFormModel(options) {
     };
 
     self.updateFilterResults = function() {
-        if (self.showingFilteringResults()) {
-            self.getUpdatedFilterResults();
-        } else {
-            self.getUpdatedFilterCount();
-        }
+        // if (self.showingFilteringResults()) {
+        self.getUpdatedFilterResults();
+        // } else {
+        //     self.getUpdatedFilterCount();
+        // }
     };
 
     self.getUpdatedFilterCount = function() {
@@ -387,8 +422,7 @@ function scenarioFormModel(options) {
                         }
                         self.updatedFilterResultsLayer.removeAllFeatures();
                         if (featureCount && geojson) {
-                            // self.updatedFilterResultsLayer.addWKTFeatures(wkt);
-                            console.log('TODO: need to update Barriers layer with new GeoJSON now!')
+                            self.updatedFilterResultsLayer.addGeoJSONFeatures(geojson);
                         }
                         self.updatedFilterResultsLayer.setVisibility(true);
                         self.gridCellsRemaining(featureCount);
@@ -551,6 +585,9 @@ function scenarioModel(options) {
 
     self.id = options.uid || null;
     self.uid = options.uid || null;
+    if (options.hasOwnProperty('ownership_type')) {
+      app.viewModel.scenarios.ScenarioFormModel.ownership_type(options.ownership_type);
+    }
     self.name = options.name;
     self.display_name = options.display_name?options.display_name:self.name;
     self.featureAttributionName = self.name;
@@ -994,21 +1031,27 @@ function scenariosModel(options) {
                 app.viewModel.scenarios.scenarioFormModel = self.scenarioFormModel;
                 var model = app.viewModel.scenarios.scenarioFormModel;
                 app.state.formModel = model;
-                try {
-                  var form_id = app.viewModel.currentTocId()+'-scenario-form';
-                  ko.applyBindings(self.scenarioFormModel, document.getElementById(form_id).children[0]);
-                } catch (err) {
-                  var form_id = 'scenario_form';
-                  ko.applyBindings(app.viewModel.scenarios.scenarioFormModel, document.getElementById(form_id).children[0]);
-                }
-                if ( ! self.filterLayer() && app.viewModel.modernBrowser() ) {
-                    self.loadLeaseblockLayer();
-                }
+                ko.applyBindings(self.scenarioFormModel, $('#scenario_form').children()[0]);
                 // app.loadingAnimation.hide();
-                // window.dispatchEvent(new Event('resize'));
 
                 // set up selection
                 spatialOrgLoad();
+                barrierLayerLoad();
+
+                setTimeout(
+                  function() {
+                    var parameters = [
+                      'ownership_input'
+                    ];
+                    for (var i = 0; i < parameters.length; i++) {
+                      var id = '#id_' + parameters[i];
+                      if ($(id).is(':checked')) {
+                        model.toggleParameter(parameters[i]);
+                      }
+                    }
+                  },
+                  50
+                );
             },
             error: function (result) {
                 console.log('failure at scenarios.js "createNewScenario".');

@@ -7,6 +7,8 @@ from django.forms.widgets import *
 from analysistools.widgets import SliderWidget, DualSliderWidget
 from django.forms import ModelMultipleChoiceField, CheckboxSelectMultiple
 # from scenarios.widgets import AdminFileWidget, SliderWidgetWithTooltip, DualSliderWidgetWithTooltip, CheckboxSelectMultipleWithTooltip, CheckboxSelectMultipleWithObjTooltip
+from itertools import chain
+from django.utils.encoding import force_text
 
 
 class HiddenScenarioBooleanField(forms.BooleanField):
@@ -16,6 +18,80 @@ class HiddenScenarioBooleanField(forms.BooleanField):
             'class': 'parameters hidden_checkbox'
         }
     )
+
+class BackwardCompatibleChoiceWidget(forms.widgets.ChoiceWidget):
+    def optgroups(self, name, value, attrs=None):
+        """Return a list of optgroups for this widget."""
+        groups = []
+        has_selected = False
+
+        ######
+        # It's time for some Ryan magic
+        ######
+        try:
+            if len(value) == 1 and isinstance(eval(value[0]), (list, tuple)):
+                value = eval(value[0])
+        except Exception as e:
+            pass
+        ######
+        # End Magic
+        ######
+
+        for index, (option_value, option_label) in enumerate(chain(self.choices)):
+            if option_value is None:
+                option_value = ''
+
+            subgroup = []
+            if isinstance(option_label, (list, tuple)):
+                group_name = option_value
+                subindex = 0
+                choices = option_label
+            else:
+                group_name = None
+                subindex = None
+                choices = [(option_value, option_label)]
+            groups.append((group_name, subgroup, index))
+
+            for subvalue, sublabel in choices:
+                selected = (
+                    force_text(subvalue) in value and
+                    (has_selected is False or self.allow_multiple_selected)
+                )
+                if selected is True and has_selected is False:
+                    has_selected = True
+                subgroup.append(self.create_option(
+                    name, subvalue, sublabel, selected, index,
+                    subindex=subindex, attrs=attrs,
+                ))
+                if subindex is not None:
+                    subindex += 1
+        return groups
+
+class BackwardCompatibleCheckboxSelectMultiple(BackwardCompatibleChoiceWidget):
+    allow_multiple_selected = True
+    input_type = 'checkbox'
+    template_name = 'django/forms/widgets/checkbox_select.html'
+    option_template_name = 'django/forms/widgets/checkbox_option.html'
+
+    def use_required_attribute(self, initial):
+        # Don't use the 'required' attribute because browser validation would
+        # require all checkboxes to be checked instead of at least one.
+        return False
+
+    def value_omitted_from_data(self, data, files, name):
+        # HTML checkboxes don't appear in POST data if not checked, so it's
+        # never known if the value is actually omitted.
+        return False
+
+    def id_for_label(self, id_, index=None):
+        """"
+        Don't include for="field_0" in <label> because clicking such a label
+        would toggle the first checkbox.
+        """
+        if index is None:
+            return ''
+        return super(BackwardCompatibleCheckboxSelectMultiple, self).id_for_label(id_, index)
+
 
 class ProjectForm(ScenarioForm):
     from fishpass.models import FocusArea, OwnershipType
@@ -76,6 +152,8 @@ class ProjectForm(ScenarioForm):
         required=False,
     )
 
+
+
     ownership_input_options = ((x, settings.OWNERSHIP_LOOKUP[x]) for x in settings.OWNERSHIP_LOOKUP.keys())
     initial_ownership = list(set([str(x.id) for x in OwnershipType.objects.all()] + [x for x in settings.OWNERSHIP_LOOKUP.keys()]))
 
@@ -83,9 +161,10 @@ class ProjectForm(ScenarioForm):
         # required=True,
         required=False,
         choices=ownership_input_options,
-        widget=forms.CheckboxSelectMultiple(),
+        # widget=forms.CheckboxSelectMultiple(),
+        widget=BackwardCompatibleCheckboxSelectMultiple(),
         initial=initial_ownership,
-        label="OwnershipT Type",
+        label="OwnershipType",
         help_text="Uncheck any ownership type that you don't wish to consider for mitigation",
     )
 
@@ -244,17 +323,139 @@ class ProjectForm(ScenarioForm):
             exclude.append(f.attname)
         widgets = {}
 
-# class ProjectBarrierForm(forms.Form):
-#     project = forms.ChoiceField(choices=)
-#     barrier = models.ForeignKey(Barrier)
-#     pre_pass = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name="Pre-Passability")
-#     post_pass = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name="Post-Passability")
-#     cost = models.FloatField(null=True,blank=True,default=None,verbose_name="Estimated cost to mitigate")
-#     action
-#
-#
-#     class Meta(FeatureForm.Meta):
-#         model = ScenarioBarrier
+
+class ProjectBarrierTypeForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        from fishpass.models import BarrierType, ScenarioBarrierType
+        # Get the project
+        project = kwargs.pop('project')
+        # Call the default init process
+        super().__init__(*args, **kwargs)
+        # Step through all barrier type instances
+        for bartype in BarrierType.objects.all().order_by('order'):
+            barrier_type_cost_field_name = "cost_type_%s" % bartype.name
+            self.fields[barrier_type_cost_field_name] = forms.DecimalField(
+                label=bartype.name,
+                decimal_places = 2,
+                required=False,
+                widget=NumberInput(
+                    attrs={
+                        'id': 'id_%s' % barrier_type_cost_field_name,
+                        'bartype': bartype.pk,
+                        'project': project.pk,
+                        'step': "1.0", # should this be 1000?
+                        'min': "0.00",
+                        'field': 'default_cost'
+                    }
+                )
+            )
+            barrier_type_postpass_field_name = "postpass_type_%s" % bartype.name
+            self.fields[barrier_type_postpass_field_name] = forms.DecimalField(
+                label=bartype.name,
+                decimal_places = 2,
+                required=False,
+                widget=NumberInput(
+                    attrs={
+                        'id': 'id_%s' % barrier_type_postpass_field_name,
+                        'step': "0.1",  # should this be 0.05?
+                        'max': "1.0",
+                        'min': "0.0",
+                        "bartype": bartype.pk,
+                        "project": project.pk,
+                        "field": "default_post_passability"
+                    }
+                )
+            )
+            if project:
+                proj_type, created = ScenarioBarrierType.objects.get_or_create(project=project, barrier_type=bartype)
+                if created:
+                    proj_type.default_cost = bartype.default_cost
+                    proj_type.default_post_passability = bartype.default_post_passability
+                    proj_type.save()
+                self.initial[barrier_type_cost_field_name] = proj_type.default_cost
+                # self.fields[barrier_type_cost_field_name].initial = proj_type.default_cost
+                self.initial[barrier_type_postpass_field_name] = proj_type.default_post_passability
+            else:
+                self.initial[barrier_type_cost_field_name] = bartype.default_cost
+                # self.fields[barrier_type_cost_field_name].initial = bartype.default_cost
+                self.initial[barrier_type_postpass_field_name] = bartype.default_post_passability
+
+    def save(self, project):
+        from fishpass.models import ScenarioBarrierType, BarrierType
+        for field_name in self.fields:
+            field = self.fields[field_name]
+            bartype = BarrierType.objects.get(pk=field.widget.attrs['bartype'])
+            proj_type, created = ScenarioBarrierType.objects.get_or_create(project=project, barrier_type=bartype)
+            setattr(proj_type, field.widget.attrs['field'], self.cleaned_data[field_name])
+            proj_type.save()
+
+
+    def as_table(self):
+        return self._html_output(
+            ProjectBarrierTypeForm.NormalRowFormatter(),
+            u'<tr><td colspan="2">%s</td></tr>', # unused
+            u'</td></tr>',
+            u'<br />%s',
+            False
+        )
+
+class ProjectBarrierStatusForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        from fishpass.models import BarrierStatus, ScenarioBarrierStatus
+        # Get the project
+        project = kwargs.pop('project')
+        # Call the default init process
+        super().__init__(*args, **kwargs)
+
+        # Get the default BarrierStatus objects
+        barrier_statuses = BarrierStatus.objects.all()
+
+        # Step through all barrier status instances
+        for status in barrier_statuses.order_by('order'):
+            # create pre-pass field for each instance
+            barrier_status_prepass_field_name = "status_type_%s" % status.name
+            # self.fields[barrier_status_prepass_field_name] = PrePassField(
+            self.fields[barrier_status_prepass_field_name] = forms.FloatField(
+                label=status.name,
+                widget=NumberInput(
+                    attrs={
+                        'id': 'id_%s' % barrier_status_prepass_field_name,
+                        'step': "0.1",  # should this be 0.05?
+                        'max': "1.0",
+                        'min': "0.0",
+                        "status": status.pk,
+                        "project": project.pk,
+                    }
+                )
+            )
+            if project:
+                proj_status, created = ScenarioBarrierStatus.objects.get_or_create(project=project, barrier_status=status)
+                if created:
+                    proj_status.default_pre_passability = status.default_pre_passability
+                    proj_status.save()
+                self.initial[barrier_status_prepass_field_name] = proj_status.default_pre_passability
+            else:
+                self.initial[barrier_status_prepass_field_name] = status.default_pre_passability
+
+    def save(self, project):
+        from fishpass.models import ScenarioBarrierStatus, BarrierStatus
+        for field_name in self.fields:
+            field = self.fields[field_name]
+            status = BarrierStatus.objects.get(pk=field.widget.attrs['status'])
+            proj_status, created = ScenarioBarrierStatus.objects.get_or_create(project=project, barrier_status=status)
+            proj_status.default_pre_passability = self.cleaned_data[field_name]
+            proj_status.save()
+
+class ProjectBarrierForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        from fishpass.models import Barrier, Project, ScenarioBarrier
+        super().__init__(*args, **kwargs)
+        self.fields['project'].widget = HiddenInput()
+        self.fields['barrier'].widget = HiddenInput()
+
+    class Meta:
+        model = ScenarioBarrier
+        fields = ['project', 'barrier', 'pre_pass', 'post_pass', 'cost', 'action']
 
 class UploadPADForm(forms.Form):
     file = forms.FileField()

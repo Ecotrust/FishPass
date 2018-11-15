@@ -7,3 +7,20 @@
   color: red;
   font-weight: bold;
 }
+
+.barrier-default-btn-wrap {
+  align-content: center;
+  display: flex;
+  margin: 0 0 1rem;
+}
+
+.barrier-default-btn-wrap .btn-group {
+}
+
+.barrier-default-btn-wrap .btn-group .btn {
+  background: transparent;
+  border-color: transparent;
+  color: #9C7B54;
+  font-size: .9375em;
+  flex: 1;
+}

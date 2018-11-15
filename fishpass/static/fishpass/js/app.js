@@ -29,15 +29,213 @@ var app = {
         script.onerror = () => reject(new Error("Script load error: " + src));
         document.head.append(script);
       })
+    },
+    loadProjectBarrierForm: function() {
+      $.ajax( {
+          url: `fishpass/project_barrier_form/${app.panel.form.project_id}/${app.map.selectedBarrier.pad_id}/`,
+          method: 'GET',
+          success: function(result) {
+            $('#project-barrier-form-wrap').empty();
+            title_html = app.map.selectedBarrier.site_name + " (" + app.map.selectedBarrier.stream_name +
+            ') - <a href="https://map.dfg.ca.gov/bios/?al=ds69&col=pad_id&val=' +
+            app.map.selectedBarrier.pad_id + '" target="_blank">View in BIOS</a>';
+            $('#project-barrier-modal').find('.modal-title').html(title_html);
+            $('#project-barrier-form-wrap').html(result);
+            $('#project-barrier-form').children('.form-error').hide();
+            $('#project-barrier-form-submit').on('click', app.saveProjectBarrierForm);
+            $('#project-barrier-form-reset').on('click', app.resetProjectBarrierForm);
+            $('#project-barrier-modal').modal('show');
+          },
+          error: function(result) {
+            $('#project-barrier-form').children('.form-error').html(result.responseText);
+            $('#project-barrier-form').children('.form-error').show();
+          }
+      });
+    },
+    resetProjectBarrierForm: function() {
+      $.ajax( {
+          url: `fishpass/project_barrier_form_reset/${app.panel.form.project_id}/${app.map.selectedBarrier.pad_id}/`,
+          method: 'GET',
+          success: function(result) {
+            $('#project-barrier-form-wrap').empty();
+            $('#project-barrier-form-wrap').html(result);
+            $('#project-barrier-form').children('.form-error').hide();
+            $('#project-barrier-form-submit').on('click', app.saveProjectBarrierForm);
+            $('#project-barrier-form-reset').on('click', app.resetProjectBarrierForm);
+          },
+          error: function(result) {
+            $('#project-barrier-form').children('.form-error').html(result.responseText);
+            $('#project-barrier-form').children('.form-error').show();
+          }
+      });
+    },
+    saveProjectBarrierForm: function() {
+      $form = $('#project-barrier-form');
+      $.ajax( {
+        url: `fishpass/project_barrier_form/${app.panel.form.project_id}/${app.map.selectedBarrier.pad_id}/`,
+        data: $form.serialize(),
+        type: 'POST',
+        success: function(result) {
+          if (result.success) {
+            $('#project-barrier-modal').modal('hide');
+          } else if(result.form) {
+            $('#project-barrier-form').html(result.form);
+          } else {
+            $('#project-barrier-form').children('.form-error').html('Error ' + result.status + ": " + result.message);
+            $('#project-barrier-form').children('.form-error').show();
+          }
+        },
+        error: function(result) {
+          $('#project-barrier-form').children('.form-error').html(result.responseText);
+          $('#project-barrier-form').children('.form-error').show();
+        }
+      })
+    },
+    loadProjectBarrierStatusForm: function() {
+      $.ajax( {
+          url: `fishpass/project_barrier_status_form/${app.panel.form.project_id}/`,
+          method: 'GET',
+          success: function(result) {
+            $('#project-barrier-status-form-wrap').empty();
+            $('#project-barrier-status-form-wrap').html(result);
+            $('#project-barrier-status-form').children('.form-error').hide();
+            $('#project-barrier-status-form-submit').on('click', app.saveProjectBarrierStatusForm);
+            $('#project-barrier-status-form-reset').on('click', app.resetProjectBarrierStatusForm);
+            $('#project-barrier-status-modal').modal('show');
+          },
+          error: function(result) {
+            $('#project-barrier-status-form').children('.form-error').html(result.responseText);
+            $('#project-barrier-status-form').children('.form-error').show();
+          }
+      });
+    },
+    resetProjectBarrierStatusForm: function() {
+      $.ajax( {
+          url: `fishpass/project_barrier_status_form_reset/${app.panel.form.project_id}/`,
+          method: 'GET',
+          success: function(result) {
+            $('#project-barrier-status-form-wrap').empty();
+            $('#project-barrier-status-form-wrap').html(result);
+            $('#project-barrier-status-form').children('.form-error').hide();
+            $('#project-barrier-status-form-submit').on('click', app.saveProjectBarrierStatusForm);
+            $('#project-barrier-status-form-reset').on('click', app.resetProjectBarrierStatusForm);
+          },
+          error: function(result) {
+            $('#project-barrier-status-form').children('.form-error').html(result.responseText);
+            $('#project-barrier-status-form').children('.form-error').show();
+          }
+      });
+    },
+    saveProjectBarrierStatusForm: function() {
+      $form = $('#project-barrier-status-form');
+      $.ajax( {
+        url: `fishpass/project_barrier_status_form/${app.panel.form.project_id}/`,
+        data: $form.serialize(),
+        type: 'POST',
+        success: function(result) {
+          if (result.success) {
+            $('#project-barrier-status-modal').modal('hide');
+          } else {
+            $('#project-barrier-status-form').children('.form-error').html('Error ' + result.status + ": " + result.message);
+            $('#project-barrier-status-form').children('.form-error').show();
+          }
+        },
+        error: function(result) {
+          $('#project-barrier-status-form').children('.form-error').html(result.responseText);
+          $('#project-barrier-status-form').children('.form-error').show();
+        }
+      })
+    },
+    loadProjectBarrierTypeForm: function() {
+      $.ajax( {
+          url: `fishpass/project_barrier_type_form/${app.panel.form.project_id}/`,
+          method: 'GET',
+          success: function(result) {
+            $('#project-barrier-type-form-wrap').empty();
+            $('#project-barrier-type-form-wrap').html(result);
+            $('#project-barrier-type-form').children('.form-error').hide();
+            $('#project-barrier-type-form-submit').on('click', app.saveProjectBarrierTypeForm);
+            $('#project-barrier-type-form-reset').on('click', app.resetProjectBarrierTypeForm);
+            $('#project-barrier-type-modal').modal('show');
+          },
+          error: function(result) {
+            $('#project-barrier-type-form').children('.form-error').html(result.responseText);
+            $('#project-barrier-type-form').children('.form-error').show();
+          }
+      });
+    },
+    resetProjectBarrierTypeForm: function() {
+      $.ajax( {
+          url: `fishpass/project_barrier_type_form_reset/${app.panel.form.project_id}/`,
+          method: 'GET',
+          success: function(result) {
+            $('#project-barrier-type-form-wrap').empty();
+            $('#project-barrier-type-form-wrap').html(result);
+            $('#project-barrier-type-form').children('.form-error').hide();
+            $('#project-barrier-type-form-submit').on('click', app.saveProjectBarrierTypeForm);
+            $('#project-barrier-type-form-reset').on('click', app.resetProjectBarrierTypeForm);
+          },
+          error: function(result) {
+            $('#project-barrier-type-form').children('.form-error').html(result.responseText);
+            $('#project-barrier-type-form').children('.form-error').show();
+          }
+      });
+    },
+    saveProjectBarrierTypeForm: function() {
+      $form = $('#project-barrier-type-form');
+      $.ajax( {
+        url: `fishpass/project_barrier_type_form/${app.panel.form.project_id}/`,
+        data: $form.serialize(),
+        type: 'POST',
+        success: function(result) {
+          if (result.success) {
+            $('#project-barrier-type-modal').modal('hide');
+          } else {
+            $('#project-barrier-type-form').children('.form-error').html('Error ' + result.status + ": " + result.message);
+            $('#project-barrier-type-form').children('.form-error').show();
+          }
+        },
+        error: function(result) {
+          $('#project-barrier-type-form').children('.form-error').html(result.responseText);
+          $('#project-barrier-type-form').children('.form-error').show();
+        }
+      })
+    },
+    getBarrierTests: function() {
+      $.ajax( {
+          url: 'fishpass/get_scenario_barrier_status/' + app.panel.form.project_id + '/',
+          // data: {
+          //   project_id: app.panel.form.project_id
+          // },
+          success: function(result) {
+            console.log(result);
+          }
+      });
+      $.ajax( {
+          url: 'fishpass/get_scenario_barrier_type/' + app.panel.form.project_id + '/',
+          // data: {
+          //   project_id: app.panel.form.project_id
+          // },
+          success: function(result) {
+            console.log(result);
+          }
+      });
     }
 }
 
 function selectSpatialOrganization(event) {
   var unitType = event.target.value.toLowerCase();
   if (app.map.layer.hasOwnProperty(unitType)) {
-    app.map.layer[unitType].layer.setVisible(true);
-    var createInteractionForLayer = newInteractionForLayer(app.map.layer[unitType].layer);
-    app.map.selection.setSelect(createInteractionForLayer);
+    // Clear all features from selection layer
+    layernames = Object.keys(app.mapbox.layers);
+    for (var i = 0; i < layernames.length; i++) {
+      app.map.disableLayer(layernames[i]);
+    }
+    // Clear "Target Area" field and re-trigger filtering.
+    app.clearTargetAreaInput();
+    app.map.enableLayer(unitType);
+    app.map.selection.spatialOrganizationSelection = newInteractionForLayer(app.map.layer[unitType].layer);
+    app.map.selection.setSelect(app.map.selection.spatialOrganizationSelection);
   }
 };
 
@@ -46,6 +244,37 @@ function spatialOrgLoad() {
 
   app.clearTargetAreaInput = function() {
     document.getElementById('id_target_area').value = '';
+    app.viewModel.scenarios.scenarioFormModel.filters.target_area_input = null;
+    app.map.selection.focusArea = [];
+    app.map.layer.focusArea.clearFeatures();
+    if (app.map.selection.hasOwnProperty('spatialOrganizationSelection')) {
+      app.map.selection.spatialOrganizationSelection.getFeatures().clear();
+      app.map.removeInteraction(app.map.selection.spatialOrganizationSelection);
+    }
+    app.viewModel.scenarios.scenarioFormModel.getUpdatedFilterResults();
+  }
+
+  app.initSpatialOrg = function() {
+    var focus_area_input = document.getElementById('id_target_area').value;
+    var focus_area_string_list = focus_area_input.split(',');
+    app.viewModel.scenarios.scenarioFormModel.filters.target_area_input = focus_area_input;
+    app.map.selection.focusArea = [];
+    for (var i = 0; i < focus_area_string_list.length; i++) {
+      app.map.selection.focusArea.push(parseInt(focus_area_string_list[i]));
+    }
+    if (app.map.selection.focusArea.length > 0 && !isNaN(app.map.selection.focusArea[0])) {
+      app.request.get_focus_area_geojson_by_ids(app.map.selection.focusArea, function(result){
+        // response contains GeoJSON object
+        app.map.layer.focusArea.addFeatures(result);
+      });
+    } else {
+      app.map.selection.focusArea = [];
+    }
+    unitType = document.getElementById('id_spatial_organization').value.toLowerCase();
+    app.map.enableLayer(unitType);
+    app.map.selection.spatialOrganizationSelection = newInteractionForLayer(app.map.layer[unitType].layer);
+    app.map.selection.setSelect(app.map.selection.spatialOrganizationSelection);
+    app.viewModel.scenarios.scenarioFormModel.getUpdatedFilterResults();
   }
 
   app.addIdToTargetAreaInput = function() {
@@ -53,25 +282,28 @@ function spatialOrgLoad() {
   }
 };
 
-scenario_type_selection_made = function(selectionType) {
-    var animateObj = {
-        zoom: 8,
-        center: [-13363592.377434019, 6154762.569701998],
-        duration: 800
-    }
-    // var extent = new ol.extent.boundingExtent([[-121.1, 47], [-119, 49]]);
-    // extent = ol.proj.transformExtent(extent, ol.proj.get('EPSG:4326'), ol.proj.get('EPSG:3857'));
-    if (selectionType === 'draw') {
-        app.map.layer.draw.layer.setVisible(true);
-        // app.map.removeInteraction(app.map.Pointer);
-        // app.map.getView().animate(animateObj);
-    } else {
-        app.map.removeInteraction(app.map.draw.draw);
-        app.map.layer.draw.layer.setVisible(false);
-        // app.map.addInteraction(app.map.Pointer);
-        // app.map.getView().animate(animateObj);
-    }
-}
+//
+//
+// scenario_type_selection_made = function(selectionType) {
+//     var animateObj = {
+//         zoom: 8,
+//         center: [-13363592.377434019, 6154762.569701998],
+//         duration: 800
+//     }
+//     // var extent = new ol.extent.boundingExtent([[-121.1, 47], [-119, 49]]);
+//     // extent = ol.proj.transformExtent(extent, ol.proj.get('EPSG:4326'), ol.proj.get('EPSG:3857'));
+//     if (selectionType === 'draw') {
+//         app.map.layer.draw.layer.setVisible(true);
+//         // app.map.removeInteraction(app.map.Pointer);
+//         // app.map.getView().animate(animateObj);
+//     } else {
+//         app.map.removeInteraction(app.map.draw.draw);
+//         app.map.layer.draw.layer.setVisible(false);
+//         // app.map.addInteraction(app.map.Pointer);
+//         // app.map.getView().animate(animateObj);
+//     }
+// }
+
 
 baseInit = function() {
     app.map.selection.setSelect(app.map.selection.selectNoneSingleClick);
@@ -172,7 +404,9 @@ app.resultsInit = function(id) {
 initFiltering = function() {
     setTimeout(function() {
         if ($('#step1').length > 0) {
-            app.viewModel.scenarios.scenarioFormModel.updateFilterResults();
+            app.initSpatialOrg();
+            $('#button_next').on('click', app.panel.stepControl);
+            $('#button_prev').on('click', app.panel.stepControl);
         } else {
             initFiltering();
         }
@@ -253,349 +487,18 @@ app.panel = {
                 app.state.navHeight = 'short';
             }
         },
-        name: '',
-        responseResultById: function(result) {
-            app.panel.results.aggPanel(result);
-            app.init['aggregate']();
-            app.panel.results.hydroPanel('Select a gauging station to see hydrologic results.');
-        },
-        loadHydroResult: function(result) {
-            app.panel.results.hydroPanel(result);
-            app.panel.results.showHydro();
-        },
-        addResults: function(content, callback) {
-            app.panel.results.getPanelResultsElement.innerHTML += content;
-            app.panel.results.expander();
-            if (callback) {
-                callback();
-            }
-        },
-        addHydroResults: function(content, callback) {
-            if (document.getElementById('hydro-results')) {
-                $('#hydro-results').replaceWith(content);
-            } else {
-                app.panel.results.addResults(content);
-            }
-            if (callback) {
-              callback();
-            }
-        },
-        showAggregate: function() {
-            $('.result-section').removeClass('show');
-            $('#aggregate-results').addClass('show');
-        },
-        showHydro: function() {
-            if (!document.getElementById('hydro-results')) {
-                $('.result-section').removeClass('show');
-                $('#hydro-note').addClass('show');
-            } else {
-                $('.result-section').removeClass('show');
-                $('#hydro-results').addClass('show');
-            }
-        },
-        expander: function() {
-            if (!document.querySelector('#expand')) {
-                app.panel.getPanelContentElement.insertAdjacentHTML('afterbegin', '<a id="expand" href="#" onclick="app.panel.toggleSize()" /><img src="/static/ucsrb/img/icon/i_expand.svg" alt="expand" /></a>');
-            }
-        },
-        aggPanel: function(results) {
-            app.panel.results.name = results.scenario.name;
-            var html = `<section class="aggregate result-section" id="aggregate-results">`;
-            html += `<div class="media align-items-center">
-            <img class="align-self-center mr-3" src="/static/ucsrb/img/icon/i_pie_chart.svg" alt="aggregate">
-                <div class="media-body">
-                    <h4 class="mt-2 mb-2">${app.panel.results.name}</h4>
-                </div>
-            </div>`;
-            html += `<div class="feature-result"><span class="lead">${results.scenario.acres}</span> acres</div><div class="overflow-gradient"><div class="result-list-wrap align-items-center">`;
-            for (var result of results.aggregate_results) {
-                html += `<h5>${Object.keys(result)}</h5>`;
-                html += app.panel.results.styleResultsAsRows(Object.values(result));
-            }
-            html += '</div></div>';
-            // html += `<div class="download-wrap"><button class="btn btn-outline-primary">Download</button></div>`
-            html += '</section>';
-            app.panel.results.addResults(html);
-        },
-        hydroPanel: function(results) {
-            if (typeof(results) === 'string') {
-                var html = `<section class="hydro-results result-section" id="hydro-note">`;
-                html += `<div>${results}</div>`;
-                html += `</section>`;
-                app.panel.results.addResults(html);
-                return;
-            }
-            // charts array
-            app.panel.results.charts = []
-            app.panel.results.summary = []
-            var html = `<section class="hydro-results result-section" id="hydro-results">`;
-                html += `<div id="pp-result" class="pourpoint-result-wrap"><div class="media align-items-center"><img class="align-self-center mr-3" src="/static/ucsrb/img/icon/i_hydro.svg" alt="aggregate"><div class="media-body"><h4 class="mt-0">${app.panel.results.name}</h4></div></div></div>`;
-
-                html += `<div class="feature-result dropdown-wrap"><div class="dropdown"><button class="btn btn-link dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select Chart</button>`;
-                html += `<div class="dropdown-menu dropdown-menu-center" id="chart-dropdown" aria-labelledby="dropdownMenuButton">`
-                for (var result in results.results) {
-                    // load into charts array
-                    var resultObj = results.results[result];
-                    if (resultObj.type != 'Summary') {
-                        for (var report in results.results[result].reports) {
-                            var reportObj = results.results[result].reports[report];
-                            app.panel.results.charts.push(reportObj);
-                            html += `<button class="dropdown-item btn-sm" id="chart-${report}" data-chart="${reportObj.title}" onclick="app.panel.results.chart.init(${report})" type="button">${reportObj.title}</button>`;
-                        }
-                    } else {
-                        for (var report in resultObj.reports) {
-                            var reportObj = results.results[result].reports[report];
-                            app.panel.results.summary.push(reportObj);
-                        }
-                        html += `<button class="dropdown-item btn-sm" id="chart-summary" data-chart="Summary" onclick="app.panel.summary.init()" type="button">Summary</button>`;
-                    }
-                }
-                html += `</div></div></div>`;
-                html += `<div class="chart-wrap"><div id="chartResult"></div></div>`;
-            html += '</section>';
-            // html += `<div class="download-wrap"><button class="btn btn-outline-primary">Download</button></div>`
-            app.panel.results.addHydroResults(html, function() {
-                $('.dropdown').on('click', function(event) {
-                    var chartName = event.target.dataset.chart;
-                    $(this).find('#dropdownMenuButton').text(chartName);
-                    $(this).find('button').removeClass('active');
-                    event.target.classList.add('active');
-                });
-                $('#chart-summary').click();
-            });
-
-            app.panel.loading.hide();
-        },
-        styleResultsAsRows: function(results) {
-            var html = '<div class="table-responsive"><table class="table-light table-borderless table"><tbody>';
-            for (var result in results) {
-                html += '<tr>'
-                for (var i = 0; i < results[result].length; i++) {
-
-                  for (var j=0; j < Object.keys(results[result][i]).length; j++){
-                    html += `<tr><td>${Object.keys(results[result][i])[j]}</td><td>${Object.values(results[result][i])[j]}</td></tr>`;
-                  }
-                }
-                html += '</tr>'
-            }
-            html += '</tr></tbody></table></div>'
-            return html;
-        },
-        styleSummaryResultsAsRows: function(results) {
-          var html = '<h2>Summary Report</h2>';
-          for (var result in results) {
-              html += `<h3>${results[result].title}</h3>`
-              html += '<div class="table-responsive"><table class="table-light table-borderless table"><tbody>';
-              // html += '<tr><th>Field</th><th>Value</th><th>Unit</th></tr>';
-              for (var i = 0; i < results[result].data.length; i++) {
-                html += `<tr><td>${results[result].data[i]["key"]}</td><td>${results[result].data[i]["value"]}</td><td>${results[result].data[i]["unit"]}</td></tr>`;
-              }
-              html += '</tbody></table></div>'
-          }
-          return html;
-        },
-        chart: {
-            init: function(chartIndex) {
-                app.panel.loading.show();
-                var chartJSON = {};
-                var data = app.panel.results.charts[chartIndex].data;
-                for (var chart in data) {
-                    resultsArray = [];
-                    if (chart !== 'baseline') {
-                        chartJSON.timestep = [];
-                        for (var i = 0; i < data[chart].length; i++) {
-                            resultsArray.push(data[chart][i].flow);
-                            chartJSON.timestep.push(data[chart][i].timestep);
-                        }
-                    } else {
-                        chartJSON.timestep = [];
-                        for (var i = 0; i < data[chart].length; i++) {
-                            resultsArray.push(data[chart][i].flow);
-                            chartJSON.timestep.push(data[chart][i].timestep);
-                        }
-                    }
-                    chartJSON[chart] = resultsArray;
-                }
-                app.panel.results.chart.obj = bb.generate({
-                    data: {
-                        json: chartJSON,
-                        x: 'timestep',
-                        xFormat: '%m.%d.%Y-%H:%M:%S',
-                        names: {
-                            flow: 'CFPS'
-                        },
-                        type: 'line',
-                        colors: {
-                            baseline: '#394861',
-                            'reduce to 30': '#FB7302',
-                            'reduce to 0': '#680109',
-                            'reduce to 50': '#93A35D',
-                        }
-                    },
-                    axis: {
-                        x: {
-                            show: true,
-                            inner: false,
-                            type: 'timeseries',
-                            tick: {
-                                count: 12,
-                                culling: false,
-                                fit: false,
-                                outer: true,
-                                format: function(val) {
-                                    var fval = d3.timeFormat('%b')(val);
-                                    return fval.substring(0,1);
-                                },
-                            },
-                            label: 'Month',
-                        },
-                        y: {
-                            show: true,
-                            inner: true,
-                            label: 'CFS',
-                        }
-                    },
-                    zoom: {
-                        enabled: true,
-                        rescale: true,
-                    },
-                    subchart: {
-                        show: true,
-                        size: {
-                             height: 40
-                         },
-                    },
-                    point: {
-                        show: false,
-                    },
-                    // legend: {
-                    //     position: 'inset',
-                    //     inset: {
-                    //         anchor: 'top-right'
-                    //     }
-                    // },
-                    tooltip: {
-                        format: {
-                            title: function(x) {
-                                return d3.timeFormat("%B %d @ %-I %p")(x);
-                            },
-                            value: function(value, ratio, id) {
-                                value = value.toFixed(4);
-                                return value;
-                            }
-                        }
-                    },
-                    padding: {
-                        left: 8,
-                        right: 8
-                    },
-                    bindto: `#chartResult`
-                });
-                app.panel.results.chart.resize();
-                app.panel.loading.hide();
-            },
-            resize: function() {
-                window.setTimeout(function() {
-                    app.panel.results.chart.obj.resize();
-                }, 300);
-            }
-        },
-        panelResultsElement: function() {
-            return this.getPanelResultsElement;
-        },
-        get getPanelResultsElement() {
-            return document.getElementById('results');
-        }
+        name: ''
     },
-    draw: {
-        setContent: function(content) {
-            app.panel.show();
-            app.state.panel.content = content;
-            app.panel.draw.getDrawContentElement.innerHTML = content;
-        },
-        finishDrawing: function() {
-            app.panel.moveRight();
-            window.setTimeout(function() {
-                var drawingArea = app.map.draw.getDrawingArea();
-                var drawingAcres = drawingArea/4046.86;
-                var saveDisable = 'disabled';
-                var warning = '<p><em>must be under ' + app.map.draw.maxAcres.toString() + '</em></p>';
-                if (drawingIsSmallEnough(drawingArea)) {
-                    saveDisable = '';
-                    warning = '';
-                }
-                var html = '<div class="featurepanel">' +
-                '<p class="display"><span class="bb">' + drawingAcres.toFixed(0).toString() + '</span> acres selected</p>' +
-                warning +
-                '<p><small>Click the map to start a new drawing<br />Re-select point to edit<br />Select drawing boundary to alter<br />Alt+Select point to delete</small></p>' +
-                '<form id="draw_submit_form" onsubmit="app.panel.draw.saveDrawing(); return false;">' +
-                '<label for="treat_name">Treatment Name:</label>' +
-                '<input type="text" name="treat_name" required><br>' +
-                '<label for="treat_desc">Description:</label>' +
-                '<textarea rows="2" columns="35" name="treat_desc"></textarea><br>' +
-                '<br>' +
-                '<div class="btn-toolbar justify-content-between drawing-buttons">' +
-                '<button type="submit" class="btn btn-primary ' + saveDisable + '" >Begin Evaluation</button>' +
-                '<button type="button" class="btn btn-outline-secondary" onclick="app.panel.draw.restart()">Restart</button>' +
-                '</div>' +
-                '</form>' +
-                '</div>';
-                app.panel.draw.setContent(html);
-            }, 300);
-        },
-        restart: function() {
-            app.map.draw.source.clear();
-            app.map.draw.disable();
-            app.map.draw.enable();
-            app.panel.hide();
-            app.panel.draw.finishDrawing();
-        },
-        addTreatmentArea: function() {
-            app.map.draw.enable();
-            var html = '<div class="featurepanel">' +
-            '<h4>Click on the map to start drawing your new forest management scenario.</h4>' +
-            '<div class="btn-toolbar justify-content-between drawing-buttons">' +
-            '<button type="button" class="btn btn-light" onclick="app.panel.draw.cancelDrawing()">Cancel</button>' +
-            '</div>' +
-            '</div>';
-            app.panel.draw.setContent(html);
-        },
-        cancelDrawing: function() {
-            app.map.draw.disable();
-            app.panel.draw.finishDrawing();
-        },
-        acceptDrawing: function() {
-            var html = '<div class="featurepanel">' +
-            '<h4>Do you want to harvest within this treatment area?</h4>' +
-            '<div class="btn-toolbar justify-content-between drawing-buttons">' +
-            '<button type="button" class="btn btn-light" onclick="app.panel.draw.saveDrawing()">Yes, I\'m Done</button>' +
-            '<button type="button" class="btn btn-light" onclick="app.panel.draw.finishDrawing()">No, Change This</button>' +
-            '</div>' +
-            '</div>';
-            app.panel.draw.setContent(html);
-        },
-        saveDrawing: function() {
-            var drawFeatures = app.map.draw.source.getFeatures();
-            totalArea = 0;
-            for (var i = 0; i < drawFeatures.length; i++) {
-                totalArea += ol.Sphere.getArea(drawFeatures[i].getGeometry());
-            }
-            if (drawingIsSmallEnough(totalArea)) {
-                var drawing_name = $('#draw_submit_form').find('[name=treat_name]').val();
-                var drawing_desc = $('#draw_submit_form').find('[name=treat_desc]').val();
-                app.request.saveDrawing(drawing_name, drawing_desc);
-            } else {
-                areaInAcres = totalArea/4046.86;
-                alert('Your treatment area is too large (' + areaInAcres.toFixed(0) + ' acres). Please keep it below ' + app.map.draw.maxAcres.toString() + ' acres');
-                app.panel.draw.acceptDrawing();
-            }
-        },
-        get getDrawContentElement() {
-            return document.getElementById('draw_form');
-        }
+    stepControl: function() {
+      selectFocusAreaStepId = 'step1';
+      if ($('#' + selectFocusAreaStepId).is(":visible")) {
+        app.map.selection.select.setActive(true);
+      } else {
+        app.map.selection.select.setActive(false);
+      }
     },
     element: function() { // returns a function. to edit dom element don't forget to invoke: element()
-    return this.getElement;
+      return this.getElement;
     },
 
     panelContentElement: function() { // returns a function. to edit dom element don't forget to invoke: panelContentElement()
@@ -815,9 +718,11 @@ $.ajaxSetup({
 */
 app.request = {
     /**
-     * [Get spatial organization layer]
+     * [Get spatial organization layer feature geojson]
      * @method
-     * @param  {[type]} layer [data param value to send]
+     * @param  {[type]} unitType [Focus Area Type (layer)]
+     * @param  {[type]} unitId [Focus Area's Unit ID]
+     * @param  {[type]} callback [Function to run on success]
      * @return {[type]}       [GeoJSON]
      */
     get_focus_area_geojson_by_type: function(unitType, unitId, callback) {
@@ -827,6 +732,29 @@ app.request = {
             data: {
                 unitType: unitType,
                 unitId: unitId
+            },
+            dataType: 'json',
+            success: function(response) {
+                callback(response);
+            },
+            error: function(response) {
+                console.log(`%cfail @ get planning units response: %o`, 'color: red', response);
+            }
+        })
+    },
+    /**
+     * [Get spatial organization layer features]
+     * @method
+     * @param  {[type]} fa_ids [list of Focus Area IDs]
+     * @param  {[type]} callback [Function to run on success
+     * @return {[type]}       [GeoJSON]
+     */
+    get_focus_area_geojson_by_ids: function(fa_ids, callback) {
+        // TODO write view to get spatial organiation layer
+        return $.ajax({
+            url: `/fishpass/get_focus_area_geojson_by_ids`,
+            data: {
+                fa_ids: fa_ids
             },
             dataType: 'json',
             success: function(response) {

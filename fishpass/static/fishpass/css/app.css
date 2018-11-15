@@ -821,12 +821,17 @@ Panel
     right: 0;
 }
 
+#panel .navbar {
+  height: 10vh;
+}
+
 #panel #scenario_form,
 #panel #draw_form,
 #panel #scenarios,
 #panel #results,
 #panel .result-section {
     font-size: .875em;
+    height: 90vh;
     opacity: 1;
     position: relative;
     transition: .3s all ease-in-out;
@@ -849,13 +854,28 @@ Panel
     padding: 1.5rem 1rem;
 }
 
-#panel #scenario_form .btn,
-#panel #draw_form .btn {
-    font-size: 1em;
+#panel .cancel-nav {
+  bottom: 0;
+  font-size: 1.25em;
+  height: 6vh;
+  left: 0;
+  position: absolute;
 }
 
-.drawing-buttons {
+#panel .featurepanel .wizard_nav {
+  bottom: 0;
+  height: 6vh;
+  position: absolute;
+  right: 0;
+}
 
+#panel .featurepanel .wizard_nav .btn-group {
+  margin-right: 0;
+}
+
+#panel .featurepanel .wizard_nav .btn {
+  font-size: 1.25em;
+  border-radius: 0;
 }
 
 .bb {

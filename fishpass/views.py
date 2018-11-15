@@ -84,6 +84,20 @@ def get_focus_area_geojson_by_type(request):
     geojson = get_geojson_from_queryset(focus_area_qs)
     return JsonResponse(geojson)
 
+# get geo queryset from list of FocusArea IDs
+# return geojson
+def get_focus_area_geojson_by_ids(request):
+    from fishpass.models import FocusArea
+    if request.method == 'GET':
+        try:
+            fa_ids = request.GET.getlist('fa_ids[]')
+        except:
+            fa_ids = []
+            pass
+    focus_area_qs = FocusArea.objects.filter(pk__in=fa_ids)
+    geojson = get_geojson_from_queryset(focus_area_qs)
+    return JsonResponse(geojson)
+
 def scenario_barrier(request, project_id, barrier_id, context={}):
     retjson = {
         'status': 200,
@@ -92,42 +106,239 @@ def scenario_barrier(request, project_id, barrier_id, context={}):
     }
     return JsonResponse(retjson)
 
-def scenario_barrier_type(request, project_id, context={}):
-    retjson = {
-        'status': 200,
-        'success': True,
-        'message': "Successfully updated Project Barrier Type"
-    }
-    return JsonResponse(retjson)
+# def scenario_barrier_type(request, project_id, context={}):
+#     retjson = {
+#         'status': 200,
+#         'success': True,
+#         'message': "Successfully updated Project Barrier Type"
+#     }
+#     return JsonResponse(retjson)
 
+# def get_scenario_barrier_status_defaults(request, project_id, context={}):
+#     from fishpass.models import BarrierStatus
+#     if request.method == 'GET':
+#         statuses = BarrierStatus.objects.all()
+#         return JsonResponse(statuses.to_dict())
 
 def get_scenario_barrier_status(request, project_id, context={}):
     # Get project from uid
     from features.registry import get_feature_by_uid
+    from fishpass.models import BarrierStatus, ScenarioBarrierStatus
+
     project = get_feature_by_uid(project_id)
     # Query for all BarrierStatuses
     statuses = BarrierStatus.objects.all()
     # Query for any ScenarioBarrierStatuses
-    scenario_barrier_statuses = ScenarioBarrierStatuses.objects.filter(project=project)
+    scenario_barrier_statuses = ScenarioBarrierStatus.objects.filter(project=project)
     # TODO: Make status_values an ordered dict
     status_values = {}
-    # TODO: for status_type in statuses.order_by('order'):
+    for status in statuses.order_by('order'):
     #   check if scenario_barrier_status override exists
-    #   if so:
-    #       status_values[BARRIER_STATUS] = scenario_barrier_status.get(type=TYPE).pre-pass
-    #   else:
+        if status in scenario_barrier_statuses:
+    #       status_values[BARRIER_STATUS] = scenario_barrier_status.get(status=status).pre-pass
+            status_values[status.name] = scenario_barrier_statuses.get(barrier_status=status).default_pre_passability
+        else:
     #       status_values[BARRIER_STATUS] = status.pre-passing
+            status_values[status.name] = status.default_pre_passability
     # TODO: return json response of dict
+    return JsonResponse(status_values)
 
+# def get_scenario_barrier_type_defaults(request, project_id, context={}):
+#     from fishpass.models import BarrierType
+#     if request.method == 'GET':
+#         types = BarrierType.objects.all()
+#         return JsonResponse(types.to_dict())
 
-def scenario_barrier_status(request, project_id, context={}):
+def get_scenario_barrier_type(request, project_id, context={}):
+    # Get project from uid
+    from features.registry import get_feature_by_uid
+    from fishpass.models import BarrierType, ScenarioBarrierType
 
-    retjson = {
-        'status': 200,
-        'success': True,
-        'message': "Successfully updated Project Barrier Status"
-    }
-    return JsonResponse(retjson)
+    project = get_feature_by_uid(project_id)
+    # Query for all BarrierStatuses
+    types = BarrierType.objects.all()
+    # Query for any ScenarioBarrierStatuses
+    scenario_barrier_types = ScenarioBarrierType.objects.filter(project=project)
+    # TODO: Make status_values an ordered dict
+    type_values = {}
+    for type in types.order_by('order'):
+    #   check if scenario_barrier_status override exists
+        if type in scenario_barrier_types:
+    #       type_values[BARRIER_TYPE] = scenario_barrier_types.get(barrier_type=TYPE)
+            type_values['%s' % (type,)] = scenario_barrier_types.get(barrier_type='%s' % (type,))
+        else:
+    #       type_values[BARRIER_TYPE] = status.pre-passing
+            type_values['%s' % (type,)] = '%s' % (type,)
+    # TODO: return json response of dict
+    return JsonResponse(type_values)
+#
+# def update_scenario_barrier(request):
+#     # if form.is_valid():
+#         # Get form values
+#         # get/create ScenarioBarrier record
+#         # Update with form values
+#     return JsonResponse({})
+#
+# def scenario_barrier_status(request, project_id, context={}):
+#     # if request.method == 'POST':
+#         # get_or_create
+#     retjson = {
+#         'status': 200,
+#         'success': True,
+#         'message': "Successfully updated Project Barrier Status"
+#     }
+#     return JsonResponse(retjson)
+
+def project_barrier_status_form_reset(request, project_uid, context={}):
+    if request.user.is_authenticated():
+        from fishpass.models import Project, ScenarioBarrierStatus
+        project_id = int(project_uid.split('_')[-1])
+        project = Project.objects.get(pk=project_id)
+        for status in ScenarioBarrierStatus.objects.filter(project=project):
+            status.delete()
+        request.method = 'GET'
+    return project_barrier_status_form(request, project_uid, context=context)
+
+def project_barrier_status_form(request, project_uid, template=loader.get_template('fishpass/modals/project_barrier_modal_form.html'), context={}):
+    if request.user.is_authenticated():
+        from fishpass.forms import ProjectBarrierStatusForm
+        from fishpass.models import Project
+        project_id = int(project_uid.split('_')[-1])
+        project = Project.objects.get(pk=project_id)
+        if request.method == 'POST':
+            form = ProjectBarrierStatusForm(request.POST,project=project)
+            if form.is_valid():
+                try:
+                    form.save(project)
+                    retjson = {
+                        'status': 200,
+                        'success': True,
+                        'message': "Successfully updated Project Barrier Status"
+                    }
+                except Exception as e:
+                    retjson = {
+                        'status': 500,
+                        'success': False,
+                        'message': e.message
+                    }
+            else:
+                retjson = {
+                    'status': 406,  # 406: Not Acceptable
+                    'success': False,
+                    'message': "Form is not valid"
+                }
+            return JsonResponse(retjson)
+        else:
+            project_barrier_status_form = ProjectBarrierStatusForm(project=project)
+            context['project_barrier_form'] = project_barrier_status_form
+            context['project_barrier_form_id'] = 'project-barrier-status-form'
+            return HttpResponse(template.render(context, request))
+    return None
+
+def project_barrier_type_form_reset(request, project_uid, context={}):
+    if request.user.is_authenticated():
+        from fishpass.models import Project, ScenarioBarrierType
+        project_id = int(project_uid.split('_')[-1])
+        project = Project.objects.get(pk=project_id)
+        for status in ScenarioBarrierType.objects.filter(project=project):
+            status.delete()
+        request.method = 'GET'
+    return project_barrier_type_form(request, project_uid, context=context)
+
+def project_barrier_type_form(request, project_uid, template=loader.get_template('fishpass/modals/project_barrier_modal_form_type.html'), context={}):
+    if request.user.is_authenticated():
+        from fishpass.forms import ProjectBarrierTypeForm
+        from fishpass.models import Project
+        project_id = int(project_uid.split('_')[-1])
+        project = Project.objects.get(pk=project_id)
+        if request.method == 'POST':
+            form = ProjectBarrierTypeForm(request.POST,project=project)
+            if form.is_valid():
+                try:
+                    form.save(project)
+                    retjson = {
+                        'status': 200,
+                        'success': True,
+                        'message': "Successfully updated Project Barrier Type"
+                    }
+                except Exception as e:
+                    retjson = {
+                        'status': 500,
+                        'success': False,
+                        'message': e.message
+                    }
+            else:
+                retjson = {
+                    'status': 406,  # 406: Not Acceptable
+                    'success': False,
+                    'message': "Form is not valid"
+                }
+            return JsonResponse(retjson)
+        else:
+            project_barrier_type_form = ProjectBarrierTypeForm(project=project)
+            context['project_barrier_form'] = project_barrier_type_form
+            context['project_barrier_form_id'] = 'project-barrier-type-form'
+            return HttpResponse(template.render(context, request))
+    return None
+
+def project_barrier_form(request, project_uid, barrier_id, template=loader.get_template('fishpass/modals/project_barrier_modal_form.html'), context={}):
+    from fishpass.models import ScenarioBarrier
+    if request.user.is_authenticated():
+        from fishpass.forms import ProjectBarrierForm
+        from fishpass.models import Project, Barrier
+        project_id = int(project_uid.split('_')[-1])
+        project = Project.objects.get(pk=project_id)
+        barrier = Barrier.objects.get(pad_id=barrier_id)
+        (project_barrier, created) = ScenarioBarrier.objects.get_or_create(project=project,barrier=barrier)
+        if request.method == 'POST':
+            form = ProjectBarrierForm(request.POST,instance=project_barrier)
+            if form.is_valid():
+                try:
+                    form.save()
+                    retjson = {
+                        'status': 200,
+                        'success': True,
+                        'message': "Successfully updated Project Barrier"
+                    }
+                except Exception as e:
+                    import ipdb; ipdb.set_trace()
+                    retjson = {
+                        'status': 500,
+                        'success': False,
+                        'message': e.message,
+                        'form': None
+                    }
+            else:
+                retjson = {
+                    'status': 406,  # 406: Not Acceptable
+                    'success': False,
+                    'message': "Form is not valid",
+                    'form': form.as_table()
+                }
+            return JsonResponse(retjson)
+        else:
+            initial = {}
+            if not project_barrier.pre_pass and project_barrier.barrier.barrier_status:
+                initial['pre_pass'] = project_barrier.barrier.barrier_status.default_pre_passability
+            if not project_barrier.post_pass and project_barrier.barrier.site_type:
+                initial['post_pass'] = project_barrier.barrier.site_type.default_post_passability
+            if not project_barrier.cost and project_barrier.barrier.site_type:
+                initial['cost'] = project_barrier.barrier.site_type.default_cost
+            project_barrier_form = ProjectBarrierForm(instance=project_barrier, initial=initial)
+            context['project_barrier_form'] = project_barrier_form
+            context['project_barrier_form_id'] = 'project-barrier-form'
+            return HttpResponse(template.render(context, request))
+    return None
+
+def project_barrier_form_reset(request, project_uid, barrier_id, context={}):
+    if request.user.is_authenticated():
+        from fishpass.models import Project, ScenarioBarrier, Barrier
+        project_id = int(project_uid.split('_')[-1])
+        project = Project.objects.get(pk=project_id)
+        barrier = Barrier.objects.get(pad_id=barrier_id)
+        ScenarioBarrier.objects.filter(project=project, barrier=barrier).delete()
+        request.method = 'GET'
+    return project_barrier_form(request, project_uid, barrier_id, context=context)
 
 def get_user_scenario_list(request):
     #TODO: use "scenarios.views.get_scenarios" if possible.
@@ -166,7 +377,7 @@ def get_geojson_from_queryset(query, project=None):
             }
 
         # convert attributes to json notation
-        if project:
+        if hasattr(feature, 'to_dict'):
             feat_dict = feature.to_dict(project)
             for field in feat_dict.keys():
                 feat_json['properties'][field] = feat_dict[field]
@@ -194,16 +405,15 @@ def run_filter_query(filters):
                     ownership_keys.append(ot_id)
             query = query.filter(ownership_type__in=ownership_keys)
 
-    if 'target_area' in filters.keys() and filters['target_area'] == 'true':
-        if 'target_area_input' in filters.keys() and len(filters['target_area_input']) > 0:
-            focus_ids = []
-            for fa_id_raw in filters['target_area_input'].split(','):
-                fa_id = int(fa_id_raw.strip())
-                target = FocusArea.objects.get(pk=fa_id)
-                focus_ids = focus_ids + [x.pad_id for x in query.filter(geometry__intersects=target.geometry)]
-            # remove dupes
-            focus_ids = list(set(focus_ids))
-            query = query.filter(pad_id__in=focus_ids)
+    if 'target_area_input' in filters.keys() and len(filters['target_area_input']) > 0:
+        focus_ids = []
+        for fa_id_raw in filters['target_area_input'].split(','):
+            fa_id = int(fa_id_raw.strip())
+            target = FocusArea.objects.get(pk=fa_id)
+            focus_ids = focus_ids + [x.pad_id for x in query.filter(geometry__intersects=target.geometry)]
+        # remove dupes
+        focus_ids = list(set(focus_ids))
+        query = query.filter(pad_id__in=focus_ids)
 
     if 'treat_downstream' in filters.keys() and filters['treat_downstream'] == 'true':
         if 'treat_downstream_input' in filters.keys() and filters['treat_downstream_input'] == 'adjust':
@@ -239,8 +449,8 @@ def get_filter_results(request, query=False, notes=[], extra_context={}):
         filter_dict = dict(request.GET.items())
         (query, notes) = run_filter_query(filter_dict)
     count = query.count()
-    #TODO: get geojson. Update Barrier layer on return if ('show filter results' = True)
-    geojson = None
+    #get geojson. Update Barrier layer on return if ('show filter results' = True)
+    geojson = get_geojson_from_queryset(query, None)
 
     results_dict = {
         'count': count,
@@ -294,12 +504,6 @@ def get_barrier_layer(request, project=None, query=False, notes=[],extra_context
 
     return_json = [return_dict]
     return JsonResponse(return_dict)
-
-def update_scenario_barrier(request):
-    #Get form values
-    # get/create ScenarioBarrier record
-    # Update with form values
-    return JsonResponse({})
 
 def get_ds_ids(barrier, focus_ids, ds_ids):
     from fishpass.models import Barrier
@@ -400,7 +604,11 @@ def createOptiPassInputFile(project, file_location):
 
     barrier_dicts = []
     if len(project.target_area) > 1:
-        fa_ids = FocusArea.objects.filter(id__in=eval(project.target_area))
+        target_ids = eval(project.target_area)
+        if hasattr(target_ids, '__iter__'):
+            fa_ids = FocusArea.objects.filter(id__in=target_ids)
+        else:
+            fa_ids = FocusArea.objects.filter(id__in=[target_ids])
     else:
         fa_ids = FocusArea.objects.filter(unit_type='County')
 
