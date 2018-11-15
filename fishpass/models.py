@@ -513,7 +513,7 @@ class ProjectReportBarrier(models.Model):
 # outside of scenario model, between pad and user entry
 class ScenarioBarrier(models.Model):
     ACTION_CHOICES = [
-        ('consider', 'Consider'),
+        ('consider', 'Consider for solution'),
         ('include', 'Include in solution'),
         ('exclude', 'Exclude from solution')
     ]

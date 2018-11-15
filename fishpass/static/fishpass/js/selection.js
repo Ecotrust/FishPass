@@ -58,6 +58,11 @@ barrierClickSelectAction = function(feat) {
   app.map.selection.select.setActive(false);
   app.map.barrierSelected = true;
   app.map.barrierInfo.tooltip('hide');
+
+  app.map.getView().setCenter(feat.getGeometry().getCoordinates());
+  app.map.selectedBarrier = feat.get('pad_id');
+  app.initProjectSpecificBarrier();
+
 };
 
 barrierClearSelectAction = function() {

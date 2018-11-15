@@ -281,12 +281,63 @@ def project_barrier_type_form(request, project_uid, template=loader.get_template
     return None
 
 def project_barrier_form(request, project_uid, barrier_id, template=loader.get_template('fishpass/modals/project_barrier_modal_form.html'), context={}):
-    retjson = {
-        'status': 200,
-        'success': True,
-        'message': "Successfully updated Project Barrier %s" % barrier_id
-    }
-    return JsonResponse(retjson)
+    from fishpass.models import ScenarioBarrier
+    if request.user.is_authenticated():
+        from fishpass.forms import ProjectBarrierForm
+        from fishpass.models import Project, Barrier
+        project_id = int(project_uid.split('_')[-1])
+        project = Project.objects.get(pk=project_id)
+        barrier = Barrier.objects.get(pad_id=barrier_id)
+        (project_barrier, created) = ScenarioBarrier.objects.get_or_create(project=project,barrier=barrier)
+        if request.method == 'POST':
+            form = ProjectBarrierForm(request.POST,instance=project_barrier)
+            if form.is_valid():
+                try:
+                    form.save()
+                    retjson = {
+                        'status': 200,
+                        'success': True,
+                        'message': "Successfully updated Project Barrier"
+                    }
+                except Exception as e:
+                    import ipdb; ipdb.set_trace()
+                    retjson = {
+                        'status': 500,
+                        'success': False,
+                        'message': e.message,
+                        'form': None
+                    }
+            else:
+                retjson = {
+                    'status': 406,  # 406: Not Acceptable
+                    'success': False,
+                    'message': "Form is not valid",
+                    'form': form.as_table()
+                }
+            return JsonResponse(retjson)
+        else:
+            initial = {}
+            if not project_barrier.pre_pass and project_barrier.barrier.barrier_status:
+                initial['pre_pass'] = project_barrier.barrier.barrier_status.default_pre_passability
+            if not project_barrier.post_pass and project_barrier.barrier.site_type:
+                initial['post_pass'] = project_barrier.barrier.site_type.default_post_passability
+            if not project_barrier.cost and project_barrier.barrier.site_type:
+                initial['cost'] = project_barrier.barrier.site_type.default_cost
+            project_barrier_form = ProjectBarrierForm(instance=project_barrier, initial=initial)
+            context['project_barrier_form'] = project_barrier_form
+            context['project_barrier_form_id'] = 'project-barrier-form'
+            return HttpResponse(template.render(context, request))
+    return None
+
+def project_barrier_form_reset(request, project_uid, barrier_id, context={}):
+    if request.user.is_authenticated():
+        from fishpass.models import Project, ScenarioBarrier, Barrier
+        project_id = int(project_uid.split('_')[-1])
+        project = Project.objects.get(pk=project_id)
+        barrier = Barrier.objects.get(pad_id=barrier_id)
+        ScenarioBarrier.objects.filter(project=project, barrier=barrier).delete()
+        request.method = 'GET'
+    return project_barrier_form(request, project_uid, barrier_id, context=context)
 
 def get_user_scenario_list(request):
     #TODO: use "scenarios.views.get_scenarios" if possible.

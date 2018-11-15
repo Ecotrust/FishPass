@@ -30,6 +30,63 @@ var app = {
         document.head.append(script);
       })
     },
+    loadProjectBarrierForm: function() {
+      $.ajax( {
+          url: `fishpass/project_barrier_form/${app.panel.form.project_id}/${app.map.selectedBarrier}/`,
+          method: 'GET',
+          success: function(result) {
+            $('#project-barrier-form-wrap').empty();
+            $('#project-barrier-form-wrap').html(result);
+            $('#project-barrier-form').children('.form-error').hide();
+            $('#project-barrier-form-submit').on('click', app.saveProjectBarrierForm);
+            $('#project-barrier-form-reset').on('click', app.resetProjectBarrierForm);
+            $('#project-barrier-modal').modal('show');
+          },
+          error: function(result) {
+            $('#project-barrier-form').children('.form-error').html(result.responseText);
+            $('#project-barrier-form').children('.form-error').show();
+          }
+      });
+    },
+    resetProjectBarrierForm: function() {
+      $.ajax( {
+          url: `fishpass/project_barrier_form_reset/${app.panel.form.project_id}/${app.map.selectedBarrier}/`,
+          method: 'GET',
+          success: function(result) {
+            $('#project-barrier-form-wrap').empty();
+            $('#project-barrier-form-wrap').html(result);
+            $('#project-barrier-form').children('.form-error').hide();
+            $('#project-barrier-form-submit').on('click', app.saveProjectBarrierForm);
+            $('#project-barrier-form-reset').on('click', app.resetProjectBarrierForm);
+          },
+          error: function(result) {
+            $('#project-barrier-form').children('.form-error').html(result.responseText);
+            $('#project-barrier-form').children('.form-error').show();
+          }
+      });
+    },
+    saveProjectBarrierForm: function() {
+      $form = $('#project-barrier-form');
+      $.ajax( {
+        url: `fishpass/project_barrier_form/${app.panel.form.project_id}/${app.map.selectedBarrier}/`,
+        data: $form.serialize(),
+        type: 'POST',
+        success: function(result) {
+          if (result.success) {
+            $('#project-barrier-modal').modal('hide');
+          } else if(result.form) {
+            $('#project-barrier-form').html(result.form);
+          } else {
+            $('#project-barrier-form').children('.form-error').html('Error ' + result.status + ": " + result.message);
+            $('#project-barrier-form').children('.form-error').show();
+          }
+        },
+        error: function(result) {
+          $('#project-barrier-form').children('.form-error').html(result.responseText);
+          $('#project-barrier-form').children('.form-error').show();
+        }
+      })
+    },
     loadProjectBarrierStatusForm: function() {
       $.ajax( {
           url: `fishpass/project_barrier_status_form/${app.panel.form.project_id}/`,

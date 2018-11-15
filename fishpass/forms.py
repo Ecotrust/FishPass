@@ -323,17 +323,6 @@ class ProjectForm(ScenarioForm):
             exclude.append(f.attname)
         widgets = {}
 
-# class ProjectBarrierForm(forms.Form):
-    # project = forms.ChoiceField(choices=)
-    # barrier = models.ForeignKey(Barrier)
-    # pre_pass = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name="Pre-Passability")
-    # post_pass = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name="Post-Passability")
-    # cost = models.FloatField(null=True,blank=True,default=None,verbose_name="Estimated cost to mitigate")
-    # action
-    #
-    # class Meta(FeatureForm.Meta):
-    #     model = ScenarioBarrier
-
 
 class ProjectBarrierTypeForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -423,12 +412,6 @@ class ProjectBarrierStatusForm(forms.Form):
 
         # Step through all barrier status instances
         for status in barrier_statuses.order_by('order'):
-            # # Create name field for each instance
-            # barrier_status_field_name = 'status_%s' % (status.name,)
-            # # self.fields[barrier_status_field_name] = forms.CharField(required=False, disabled=True, label='')
-            # self.fields[barrier_status_field_name] = forms.CharField(disabled=True, label='')
-            # self.initial[barrier_status_field_name] = status.name
-
             # create pre-pass field for each instance
             barrier_status_prepass_field_name = "status_type_%s" % status.name
             # self.fields[barrier_status_prepass_field_name] = PrePassField(
@@ -462,6 +445,17 @@ class ProjectBarrierStatusForm(forms.Form):
             proj_status, created = ScenarioBarrierStatus.objects.get_or_create(project=project, barrier_status=status)
             proj_status.default_pre_passability = self.cleaned_data[field_name]
             proj_status.save()
+
+class ProjectBarrierForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        from fishpass.models import Barrier, Project, ScenarioBarrier
+        super().__init__(*args, **kwargs)
+        self.fields['project'].widget = HiddenInput()
+        self.fields['barrier'].widget = HiddenInput()
+
+    class Meta:
+        model = ScenarioBarrier
+        fields = ['project', 'barrier', 'pre_pass', 'post_pass', 'cost', 'action']
 
 class UploadPADForm(forms.Form):
     file = forms.FileField()
