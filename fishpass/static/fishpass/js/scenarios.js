@@ -408,9 +408,9 @@ function scenarioFormModel(options) {
       $('#id_budget_max').attr({'min': min_cost, 'max': max_cost});
       var current_budget = parseInt($('#id_budget').val());
       if (current_budget < min_cost) {
-        $('#id_budget').val() = min_cost;
+        $('#id_budget').val(min_cost);
       } else if (current_budget > max_cost) {
-        $('#id_budget').val() = max_cost;
+        $('#id_budget').val(max_cost);
       }
       if (parseInt($('#id_budget_min').val()) < min_cost ) {
         $('#id_budget_min').val(min_cost);
@@ -419,7 +419,7 @@ function scenarioFormModel(options) {
         $('#id_budget_max').val(max_cost);
       }
       // Force no more than 10 iterations for range run
-      var min_increment = (max_cost - min_cost) / 10;
+      var min_increment = ($('#id_budget_max').val() - $('#id_budget_min').val()) / 10;
       if (parseInt($('#id_batch_increment').val()) < min_increment) {
         $('#id_batch_increment').val(min_increment);
       }
