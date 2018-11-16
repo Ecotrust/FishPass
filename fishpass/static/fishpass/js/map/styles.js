@@ -132,5 +132,39 @@ app.map.styles = {
       fill: new ol.style.Fill({
         color: 'transparent'
       })
-    })
+    }),
+    Barrier: function(feature, resolution) {
+        consideration = feature.get('action');
+        if (!consideration) {
+          radius = 3
+          stroke_color = 'black',
+          fill_color = 'rgba(0,0,0,1)'
+        } else if (consideration == 'include') {
+          radius = 5
+          stroke_color = 'green',
+          fill_color = 'rgba(0,255,0,0.5)'
+        } else if (consideration == 'consider') {
+          radius = 5
+          // stroke_color = 'orange',
+          stroke_color = '#FA8072', //Salmon
+          // fill_color = 'rgba(255,127,0,0.5)' //Orange
+          fill_color = 'rgba(250,128,114,0.5)' //Salmon
+        } else {
+          radius = 3
+          stroke_color = 'black',
+          fill_color = 'rgba(0,0,0,0.5)'
+        }
+        return new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 6,
+                fill: new ol.style.Fill({
+                  color: fill_color,
+                }),
+                stroke: new ol.style.Stroke({
+                  color: stroke_color,
+                  width: 2
+                })
+            })
+        });
+    }
 };

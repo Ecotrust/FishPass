@@ -164,7 +164,6 @@
 
     <script src="{% static 'fishpass/lib/ol-layerswitcher/dist/ol-layerswitcher.js' %}"></script>
     <script src="{% static 'fishpass/js/app.js' %}"></script>
-    <script src="{% static 'fishpass/js/report.js' %}"></script>
 
     <script src="{% static 'visualize/js/' %}{{ MAP_TECH }}_settings.js"></script>
     <script src="{% static 'scenarios/js/' %}{{ MAP_TECH }}_settings.js"></script>
@@ -183,6 +182,7 @@
     <script src="{% static 'fishpass/js/map/layers.js' %}"></script>
     <script src="{% static 'fishpass/js/map/widgets.js' %}"></script>
     <script src="{% static 'fishpass/js/map.js' %}"></script>
+    <script src="{% static 'fishpass/js/report.js' %}"></script>
     <script>
       // app.map.geojson = {{ GEOJSON | safe }};
       app.report_init({'geojson': {{ GEOJSON | safe }}});
