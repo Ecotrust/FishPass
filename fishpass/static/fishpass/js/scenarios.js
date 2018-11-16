@@ -402,45 +402,77 @@ function scenarioFormModel(options) {
         });
     };
 
+    self.setMinMaxBudget = function(min_cost, max_cost) {
+      $('#id_budget').attr({'min': min_cost, 'max': max_cost});
+      $('#id_budget_min').attr({'min': min_cost, 'max': max_cost});
+      $('#id_budget_max').attr({'min': min_cost, 'max': max_cost});
+      var current_budget = parseInt($('#id_budget').val());
+      if (current_budget < min_cost) {
+        $('#id_budget').val() = min_cost;
+      } else if (current_budget > max_cost) {
+        $('#id_budget').val() = max_cost;
+      }
+      if (parseInt($('#id_budget_min').val()) < min_cost ) {
+        $('#id_budget_min').val(min_cost);
+      }
+      if (parseInt($('#id_budget_max').val()) > max_cost ) {
+        $('#id_budget_max').val(max_cost);
+      }
+      // Force no more than 10 iterations for range run
+      var min_increment = (max_cost - min_cost) / 10;
+      if (parseInt($('#id_batch_increment').val()) < min_increment) {
+        $('#id_batch_increment').val(min_increment);
+      }
+    }
+
     self.getUpdatedFilterResults = function() {
         self.updatedFilterResultsLayer.setVisibility(false);
         self.showButtonSpinner(true);
 
         (function() {
             var request = $.ajax({
-                url: '/scenarios/get_filter_results',
+                url: `/scenarios/get_filter_results/${app.panel.form.project_id}/`,
                 type: 'GET',
                 data: self.filters,
                 dataType: 'json',
                 success: function(data) {
-                    if (self.currentGridRequest() === request) {
-                        var geojson = data[0].geojson,
-                            featureCount = data[0].count;
-                        if (data[0].notes.length > 0) {
-                          self.filterNotesMessage(data[0].notes);
-                          self.filterNotesExist(true);
-                        }
-                        self.updatedFilterResultsLayer.removeAllFeatures();
-                        if (featureCount && geojson) {
-                            self.updatedFilterResultsLayer.addGeoJSONFeatures(geojson);
-                        }
-                        self.updatedFilterResultsLayer.setVisibility(true);
-                        self.gridCellsRemaining(featureCount);
-
-                        if (featureCount == 0) {
-                          if ($('#scenarios-form .alert').length > 0) {
-                            $('#scenarios-form .alert').removeClass('d-none');
-                          } else {
-                            $('#scenarios-form').append(`<div class="alert alert-warning" role="alert" data-bind="text: self.filterNotesMessage()"></div>`);
-                          }
-                        } else {
-                          if ($('#scenarios-form .alert').length > 0) {
-                            $('#scenarios-form .alert').addClass('d-none');
-                          }
-                        }
-
-                        self.showButtonSpinner(false);
+                    self.filterNotesExist(false);
+                    var geojson = data[0].geojson,
+                        featureCount = data[0].count,
+                        min_cost = data[0].min_cost,
+                        max_cost = data[0].max_cost;
+                    if (data[0].notes.length > 0) {
+                      self.filterNotesMessage(data[0].notes);
+                      self.filterNotesExist(true);
+                    } else if (min_cost == null || max_cost == null) {
+                      self.filterNotesMessage('No viable mitigation projects found.');
+                      self.filterNotesExist(true);
+                    } else {
+                      self.setMinMaxBudget(min_cost, max_cost);
                     }
+                    self.updatedFilterResultsLayer.removeAllFeatures();
+                    if (featureCount && geojson) {
+                        self.updatedFilterResultsLayer.addGeoJSONFeatures(geojson);
+                    }
+                    self.updatedFilterResultsLayer.setVisibility(true);
+                    self.gridCellsRemaining(featureCount);
+                    if (featureCount == 0) {
+                      self.filterNotesMessage('No barriers selected to treat.');
+                      self.filterNotesExist(true);
+                    }
+                    if (self.filterNotesExist()) {
+                      if ($('#scenarios-form .alert').length > 0) {
+                        $('#scenarios-form .alert').removeClass('d-none');
+                      } else {
+                        $('#scenarios-form').append(`<div class="alert alert-warning" role="alert" data-bind="text: self.filterNotesMessage()"></div>`);
+                      }
+                    } else {
+                      if ($('#scenarios-form .alert').length > 0) {
+                        $('#scenarios-form .alert').addClass('d-none');
+                      }
+                    }
+
+                    self.showButtonSpinner(false);
                 },
                 error: function(result) {
                     self.showButtonSpinner(false);
@@ -1027,6 +1059,9 @@ function scenariosModel(options) {
             success: function(data) {
                 self.scenarioForm(true);
                 $('#scenario_form').html(data);
+                $('#scenario_form').bind('keypress keydown keyup', function(e){
+                   if(e.keyCode == 13) { e.preventDefault(); }
+                });
                 self.scenarioFormModel = new scenarioFormModel();
                 app.viewModel.scenarios.scenarioFormModel = self.scenarioFormModel;
                 var model = app.viewModel.scenarios.scenarioFormModel;

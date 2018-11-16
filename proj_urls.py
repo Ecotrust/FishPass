@@ -31,7 +31,8 @@ urlpatterns = [
     ### INSERT PROJECT URL INCLUDES HERE ###
     url(r'^features/', include('features.urls')),
     url(r'^manipulators/', include('manipulators.urls')),
-    url(r'^scenarios/get_filter_results', get_filter_results),
+    url(r'^scenarios/get_filter_results/(?P<project_id>[\w_]+)/$', get_filter_results),
+    url(r'^scenarios/get_filter_results/', get_filter_results),
     url(r'^scenarios/get_filter_count', get_filter_count),
     url(r'^scenarios/', include('scenarios.urls')),
     url(r'^account/auth/', include('social.apps.django_app.urls', namespace='social')),

@@ -156,17 +156,14 @@ class Barrier(models.Model):
         if self.site_type.barrier_specific:
             override_fields['estimated_cost'] = 'Barrier Specific',
         if project:
-            override_type_list = ScenarioBarrierType.objects.filter(barrier_type=feature.barrier_type,project=project)
+            override_type_list = ScenarioBarrierType.objects.filter(barrier_type=self.site_type,project=project)
             if override_type_list.count() > 0:
                 override_type = override_type_list[0]
                 if override_type.default_cost:
                     override_fields['estimated_cost'] = override_type.default_cost
-                elif override_type.barrier_specific:
-                    override_fields['estimated_cost'] = 'Barrier Specific'
                 if override_type.default_post_passability:
                     override_fields['post_passability'] = override_type.default_post_passability
-                override_fields['fixable'] = override_type.fixable
-            override_status_list = ScenarioBarrierStatus.objects.filter(barrier_status=feature.barrier_status,project=project)
+            override_status_list = ScenarioBarrierStatus.objects.filter(barrier_status=self.barrier_status,project=project)
             if override_status_list.count() > 0:
                 override_status = override_status_list[0]
                 if override_status.default_pre_passability:
@@ -498,7 +495,6 @@ class ProjectReport(models.Model):
     class Meta:
         verbose_name = 'Project Report'
         verbose_name_plural = 'Project Reports'
-
 
 class ProjectReportBarrier(models.Model):
     project_report = models.ForeignKey(ProjectReport)
