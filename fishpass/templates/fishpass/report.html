@@ -13,11 +13,11 @@
     <link rel="stylesheet" href="{% static 'scenarios/css/scenarios_form.css' %}" type="text/css">
 
     <link rel="stylesheet" href="{% static 'fishpass/css/app.css' %}"/>
-      <link rel="stylesheet" href="{% static 'fishpass/css/_40-app.css' %}"/>
-      <link rel="stylesheet" href="{% static 'fishpass/css/_64-app.css' %}"/>
-      <link rel="stylesheet" href="{% static 'fishpass/css/_90-app.css' %}"/>
+    <link rel="stylesheet" href="{% static 'fishpass/css/_40-app.css' %}"/>
+    <link rel="stylesheet" href="{% static 'fishpass/css/_64-app.css' %}"/>
+    <link rel="stylesheet" href="{% static 'fishpass/css/_90-app.css' %}"/>
 
-      <link rel="stylesheet" href="{% static 'fishpass/css/scenario_form.css' %}"/>
+    <link rel="stylesheet" href="{% static 'fishpass/css/scenario_form.css' %}"/>
 {% endblock site_style %}
 
 {% block extra_css %}
@@ -178,5 +178,13 @@
         appCode: '{{ HERE_APP_CODE }}',
       }
     </script>
+    <script src="{% static 'fishpass/js/map/init.js' %}"></script>
+    <script src="{% static 'fishpass/js/map/styles.js' %}"></script>
+    <script src="{% static 'fishpass/js/map/layers.js' %}"></script>
+    <script src="{% static 'fishpass/js/map/widgets.js' %}"></script>
     <script src="{% static 'fishpass/js/map.js' %}"></script>
+    <script>
+      // app.map.geojson = {{ GEOJSON | safe }};
+      app.report_init({'geojson': {{ GEOJSON | safe }}});
+    </script>
 {% endblock extra_js %}

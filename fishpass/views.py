@@ -481,6 +481,8 @@ def get_project_min_max(query, project):
     #     import ipdb; ipdb.set_trace()
     return (min, max)
 
+
+
 '''
 '''
 @cache_page(60 * 60) # 1 hour of caching
@@ -494,14 +496,17 @@ def get_filter_results(request, project_id=None, query=False, notes=[], extra_co
         filter_dict = dict(request.GET.items())
         (query, notes) = run_filter_query(filter_dict)
     count = query.count()
-    #get geojson. Update Barrier layer on return if ('show filter results' = True)
-    geojson = get_geojson_from_queryset(query, None)
+
     if project_id:
         project = get_feature_by_uid(project_id)
         (min_cost, max_cost) = get_project_min_max(query, project)
     else:
+        project = None
         min_cost = None
         max_cost = None
+    # get geojson. Update Barrier layer on return if ('show filter results' = True)
+    # we don't want the 'project' data since it may not match our current (unsaved) form
+    geojson = get_geojson_from_queryset(query, None)
 
     results_dict = {
         'count': count,
@@ -876,9 +881,7 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
     else:
         reports = ProjectReport.objects.filter(project=project)
 
-    #TODO: generate geojson of solution
-    #   Do this in a separate view
-    #   Should come from scenarios.views.get_filter_results
+
     # TODO: sort out filter vs. all results
     #   this can be managed on front end
     reports_dict = {}
@@ -894,6 +897,16 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
     context['SEARCH_DISABLED'] = settings.SEARCH_DISABLED
     context['project'] = project.to_dict()
     context['reports'] = reports_list
+    if reports.count() > 0:
+        from fishpass.models import Barrier
+        barrier_ids = [int(x) for x in reports[0].barriers_dict().keys()]
+        barrier_query = Barrier.objects.filter(pad_id__in=barrier_ids)
+        # generate geojson of solution
+        geojson = get_geojson_from_queryset(barrier_query, project)
+        context['GEOJSON'] = json.dumps(geojson)
+    else:
+        context['GEOJSON'] = json.dumps({})
+
     # context['barriers'] = report.barriers_dict(action_only)
     return HttpResponse(template.render(context, request))
 
