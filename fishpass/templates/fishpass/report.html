@@ -9,19 +9,16 @@
     <link rel="stylesheet" href="{% static 'fishpass/lib/ol-ext/dist/ol-ext.min.css' %}" type="text/css">
 
     <link rel="stylesheet" href="{% static 'visualize/css/ol4_settings.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'visualize/css/map_popup.css' %}" type="text/css">
-    <link rel="stylesheet" href="{% static 'scenarios/css/scenarios_form.css' %}" type="text/css">
 
     <link rel="stylesheet" href="{% static 'fishpass/css/app.css' %}"/>
     <link rel="stylesheet" href="{% static 'fishpass/css/_40-app.css' %}"/>
     <link rel="stylesheet" href="{% static 'fishpass/css/_64-app.css' %}"/>
     <link rel="stylesheet" href="{% static 'fishpass/css/_90-app.css' %}"/>
-
-    <link rel="stylesheet" href="{% static 'fishpass/css/scenario_form.css' %}"/>
 {% endblock site_style %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'fishpass/css/report.css' %}">
+<link rel="stylesheet" href="{% static 'fishpass/css/selection.css' %}"/>
 {% endblock extra_css %}
 
 {% block header %}{% endblock header %}
@@ -183,8 +180,8 @@
     <script src="{% static 'fishpass/js/map/widgets.js' %}"></script>
     <script src="{% static 'fishpass/js/map.js' %}"></script>
     <script src="{% static 'fishpass/js/report.js' %}"></script>
+    <!-- <script src="{% static 'fishpass/js/selection.js' %}"></script> -->
     <script>
-      // app.map.geojson = {{ GEOJSON | safe }};
-      app.report_init({'geojson': {{ GEOJSON | safe }}});
+      app.report_init({{ GEOJSON | safe }});
     </script>
 {% endblock extra_js %}
