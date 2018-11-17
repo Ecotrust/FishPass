@@ -144,7 +144,7 @@ class Barrier(models.Model):
     geometry = gismodels.PointField(null=True,blank=True,default=None,srid=settings.GEOMETRY_DB_SRID)
 
     def to_dict(self, project=None, downstream=False):
-        # Calculate any project overrides
+        # Calculate any project overrides (default by type and status)
         override_fields = {
             'estimated_cost': self.site_type.default_cost,
             'pre_passability': self.barrier_status.default_pre_passability,
@@ -153,24 +153,32 @@ class Barrier(models.Model):
             'fixable': self.site_type.fixable,
             'action': 'consider'
         }
-        if self.site_type.barrier_specific:
-            override_fields['estimated_cost'] = 'Barrier Specific',
+        # Consider project-level type and status overrides
         if project:
-            override_type_list = ScenarioBarrierType.objects.filter(barrier_type=feature.barrier_type,project=project)
+            override_type_list = ScenarioBarrierType.objects.filter(barrier_type=self.site_type,project=project)
             if override_type_list.count() > 0:
                 override_type = override_type_list[0]
                 if override_type.default_cost:
                     override_fields['estimated_cost'] = override_type.default_cost
-                elif override_type.barrier_specific:
-                    override_fields['estimated_cost'] = 'Barrier Specific'
                 if override_type.default_post_passability:
                     override_fields['post_passability'] = override_type.default_post_passability
-                override_fields['fixable'] = override_type.fixable
-            override_status_list = ScenarioBarrierStatus.objects.filter(barrier_status=feature.barrier_status,project=project)
+            override_status_list = ScenarioBarrierStatus.objects.filter(barrier_status=self.barrier_status,project=project)
             if override_status_list.count() > 0:
                 override_status = override_status_list[0]
                 if override_status.default_pre_passability:
                     override_fields['pre_passability'] = override_status.default_pre_passability
+        # Consider Barrier Cost overrides
+        barrier_costs = BarrierCost.objects.filter(pad_id=self.pad_id)
+        if barrier_costs.count() > 0:
+            if barrier_costs[0].site_type:
+                override_fields['post_passability'] = barrier_costs[0].site_type.default_post_passability
+                override_fields['estimated_cost'] = barrier_costs[0].site_type.default_cost
+            if barrier_costs[0].cost:
+                override_fields['estimated_cost'] = barrier_costs[0].cost
+            if barrier_costs[0].barrier_status:
+                override_fields['pre_passability'] = barrier_costs[0].barrier_status.default_pre_passability
+        # Consider Project-Specific Barrier overrides
+        if project:
             override_barrier_list = ScenarioBarrier.objects.filter(barrier=self,project=project)
             if override_barrier_list.count() > 0:
                 override_barrier = override_barrier_list[0]
@@ -498,7 +506,6 @@ class ProjectReport(models.Model):
     class Meta:
         verbose_name = 'Project Report'
         verbose_name_plural = 'Project Reports'
-
 
 class ProjectReportBarrier(models.Model):
     project_report = models.ForeignKey(ProjectReport)

@@ -437,24 +437,83 @@ def get_filter_count(request, query=False, notes=[]):
         (query, notes) = run_filter_query(filter_dict)
     return HttpResponse(query.count(), status=200)
 
+def get_project_min_max(query):
+    min = None
+    max = None
+    for barrier in query:
+        bar_dict = barrier.to_dict(project)
+
+def get_project_min_max(query, project):
+    from numbers import Number
+    from collections.abc import Iterable
+    min = None
+    max = None
+    enforced_min = None
+    for barrier in query:
+        bar_dict = barrier.to_dict(project)
+        if bar_dict['fixable'] and bar_dict['action'] != 'exclude' and bar_dict['pre_passability'] < bar_dict['post_passability']:
+            if isinstance(bar_dict['estimated_cost'], Number):
+                estimated_cost = bar_dict['estimated_cost']
+            elif isinstance(bar_dict['estimated_cost'], Iterable) and len(bar_dict['estimated_cost']) == 2 and (type(bar_dict['estimated_cost'][1]) == float or type(bar_dict['estimated_cost'][1]) == int):
+                estimated_cost = bar_dict['estimated_cost'][1]
+            else:
+                estimated_cost = False
+            if estimated_cost:
+                if max:
+                    max += estimated_cost
+                else:
+                    max = estimated_cost
+                if min:
+                    if min > estimated_cost:
+                        min = estimated_cost
+                else:
+                    min = estimated_cost
+                if bar_dict['action'] == 'include':
+                    if enforced_min:
+                        if enforced_min > estimated_cost:
+                            enforced_min = estimated_cost
+                    else:
+                        enforced_min = estimated_cost
+
+    if enforced_min:
+        print("Enforced Min = %s" % enforced_min )
+        min = enforced_min
+    # else:
+    #     import ipdb; ipdb.set_trace()
+    return (min, max)
+
+
+
 '''
 '''
 @cache_page(60 * 60) # 1 hour of caching
-def get_filter_results(request, query=False, notes=[], extra_context={}):
+def get_filter_results(request, project_id=None, query=False, notes=[], extra_context={}):
     from features.views import check_user
     request = check_user(request)
     from django.db.models.query import QuerySet
     from django.contrib.gis.db.models.query import GeoQuerySet
+    from features.registry import get_feature_by_uid
     if not type(query) in [QuerySet, GeoQuerySet] :
         filter_dict = dict(request.GET.items())
         (query, notes) = run_filter_query(filter_dict)
     count = query.count()
-    #get geojson. Update Barrier layer on return if ('show filter results' = True)
+
+    if project_id:
+        project = get_feature_by_uid(project_id)
+        (min_cost, max_cost) = get_project_min_max(query, project)
+    else:
+        project = None
+        min_cost = None
+        max_cost = None
+    # get geojson. Update Barrier layer on return if ('show filter results' = True)
+    # we don't want the 'project' data since it may not match our current (unsaved) form
     geojson = get_geojson_from_queryset(query, None)
 
     results_dict = {
         'count': count,
         'geojson': geojson,
+        'min_cost': min_cost,
+        'max_cost': max_cost,
         'notes': notes
     }
     try:
@@ -737,6 +796,7 @@ def addOutfileToReport(outfile, project):
                 elif 'NETGAIN:' in row:
                     report_dict['netgain'] = float(row.split('\t')[1])
                 elif row == '\n':
+                    ProjectReport.objects.filter(project=project).delete()
                     report_obj, created = ProjectReport.objects.get_or_create(**report_dict)
 
 def run_optipass(request, scenario_id):
@@ -745,7 +805,9 @@ def run_optipass(request, scenario_id):
     try:
         optipass(project)
         return HttpResponse(request)
-    except:
+    except Exception as e:
+        # TODO: collect and report Error back to initiation page
+        print(str(e))
         return HttpResponse(status=500)
 
 def optipass(project):
@@ -786,7 +848,9 @@ def optipass(project):
         ]
 
         # Run Command
-        subprocess.run(process_list)
+        run_result = subprocess.run(process_list)
+        if run_result.returncode != 0:
+            raise ValueError
 
         # Convert output into project report
         addOutfileToReport(outfile, project)
@@ -818,9 +882,7 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
     else:
         reports = ProjectReport.objects.filter(project=project)
 
-    #TODO: generate geojson of solution
-    #   Do this in a separate view
-    #   Should come from scenarios.views.get_filter_results
+
     # TODO: sort out filter vs. all results
     #   this can be managed on front end
     reports_dict = {}
@@ -836,6 +898,16 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
     context['SEARCH_DISABLED'] = settings.SEARCH_DISABLED
     context['project'] = project.to_dict()
     context['reports'] = reports_list
+    if reports.count() > 0:
+        from fishpass.models import Barrier
+        barrier_ids = [int(x) for x in reports[0].barriers_dict().keys()]
+        barrier_query = Barrier.objects.filter(pad_id__in=barrier_ids)
+        # generate geojson of solution
+        geojson = get_geojson_from_queryset(barrier_query, project)
+        context['GEOJSON'] = json.dumps(geojson)
+    else:
+        context['GEOJSON'] = json.dumps({})
+
     # context['barriers'] = report.barriers_dict(action_only)
     return HttpResponse(template.render(context, request))
 

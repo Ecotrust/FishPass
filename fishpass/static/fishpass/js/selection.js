@@ -93,7 +93,8 @@ function barrierLayerLoad() {
   app.map.barrierHoverInteraction = new ol.interaction.Select({
     condition: ol.events.condition.pointerMove,
     layers: [
-      app.viewModel.scenarios.scenarioFormModel.updatedFilterResultsLayer
+      app.viewModel.scenarios.scenarioFormModel.updatedFilterResultsLayer,
+      app.map.layer.barriers.layer
     ],
     style: app.map.styles.PointSelected
   });

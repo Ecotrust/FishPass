@@ -185,43 +185,9 @@ function scenarioFormModel(options) {
       mapSettings = {};
     }
 
-    var barrierStyle = function(feature, resolution) {
-        consideration = feature.get('action');
-        if (!consideration) {
-          radius = 3
-          stroke_color = 'black',
-          fill_color = 'rgba(0,0,0,1)'
-        } else if (consideration == 'include') {
-          radius = 5
-          stroke_color = 'green',
-          fill_color = 'rgba(0,255,0,0.5)'
-        } else if (consideration == 'consider') {
-          radius = 5
-          // stroke_color = 'orange',
-          stroke_color = '#FA8072', //Salmon
-          // fill_color = 'rgba(255,127,0,0.5)' //Orange
-          fill_color = 'rgba(250,128,114,0.5)' //Salmon
-        } else {
-          radius = 3
-          stroke_color = 'black',
-          fill_color = 'rgba(0,0,0,0.5)'
-        }
-        return new ol.style.Style({
-            image: new ol.style.Circle({
-                radius: 6,
-                fill: new ol.style.Fill({
-                  color: fill_color,
-                }),
-                stroke: new ol.style.Stroke({
-                  color: stroke_color,
-                  width: 2
-                })
-            })
-        });
-    }
 
     if (mapSettings.getInitFilterResultsLayer) {
-      self.updatedFilterResultsLayer = mapSettings.getInitFilterResultsLayer('barriers', barrierStyle);
+      self.updatedFilterResultsLayer = mapSettings.getInitFilterResultsLayer('barriers', app.map.styles.Barrier);
     } else {
       //old OL2 code - will break and let us know when we haven't overridden it.
       mapSettings.defaultStyle = new OpenLayers.Style({
@@ -402,45 +368,77 @@ function scenarioFormModel(options) {
         });
     };
 
+    self.setMinMaxBudget = function(min_cost, max_cost) {
+      $('#id_budget').attr({'min': min_cost, 'max': max_cost});
+      $('#id_budget_min').attr({'min': min_cost, 'max': max_cost});
+      $('#id_budget_max').attr({'min': min_cost, 'max': max_cost});
+      var current_budget = parseInt($('#id_budget').val());
+      if (current_budget < min_cost) {
+        $('#id_budget').val(min_cost);
+      } else if (current_budget > max_cost) {
+        $('#id_budget').val(max_cost);
+      }
+      if (parseInt($('#id_budget_min').val()) < min_cost ) {
+        $('#id_budget_min').val(min_cost);
+      }
+      if (parseInt($('#id_budget_max').val()) > max_cost ) {
+        $('#id_budget_max').val(max_cost);
+      }
+      // Force no more than 10 iterations for range run
+      var min_increment = ($('#id_budget_max').val() - $('#id_budget_min').val()) / 10;
+      if (parseInt($('#id_batch_increment').val()) < min_increment) {
+        $('#id_batch_increment').val(min_increment);
+      }
+    }
+
     self.getUpdatedFilterResults = function() {
         self.updatedFilterResultsLayer.setVisibility(false);
         self.showButtonSpinner(true);
 
         (function() {
             var request = $.ajax({
-                url: '/scenarios/get_filter_results',
+                url: `/scenarios/get_filter_results/${app.panel.form.project_id}/`,
                 type: 'GET',
                 data: self.filters,
                 dataType: 'json',
                 success: function(data) {
-                    if (self.currentGridRequest() === request) {
-                        var geojson = data[0].geojson,
-                            featureCount = data[0].count;
-                        if (data[0].notes.length > 0) {
-                          self.filterNotesMessage(data[0].notes);
-                          self.filterNotesExist(true);
-                        }
-                        self.updatedFilterResultsLayer.removeAllFeatures();
-                        if (featureCount && geojson) {
-                            self.updatedFilterResultsLayer.addGeoJSONFeatures(geojson);
-                        }
-                        self.updatedFilterResultsLayer.setVisibility(true);
-                        self.gridCellsRemaining(featureCount);
-
-                        if (featureCount == 0) {
-                          if ($('#scenarios-form .alert').length > 0) {
-                            $('#scenarios-form .alert').removeClass('d-none');
-                          } else {
-                            $('#scenarios-form').append(`<div class="alert alert-warning" role="alert" data-bind="text: self.filterNotesMessage()"></div>`);
-                          }
-                        } else {
-                          if ($('#scenarios-form .alert').length > 0) {
-                            $('#scenarios-form .alert').addClass('d-none');
-                          }
-                        }
-
-                        self.showButtonSpinner(false);
+                    self.filterNotesExist(false);
+                    var geojson = data[0].geojson,
+                        featureCount = data[0].count,
+                        min_cost = data[0].min_cost,
+                        max_cost = data[0].max_cost;
+                    if (data[0].notes.length > 0) {
+                      self.filterNotesMessage(data[0].notes);
+                      self.filterNotesExist(true);
+                    } else if (min_cost == null || max_cost == null) {
+                      self.filterNotesMessage('No viable mitigation projects found.');
+                      self.filterNotesExist(true);
+                    } else {
+                      self.setMinMaxBudget(min_cost, max_cost);
                     }
+                    self.updatedFilterResultsLayer.removeAllFeatures();
+                    if (featureCount && geojson) {
+                        self.updatedFilterResultsLayer.addGeoJSONFeatures(geojson);
+                    }
+                    self.updatedFilterResultsLayer.setVisibility(true);
+                    self.gridCellsRemaining(featureCount);
+                    if (featureCount == 0) {
+                      self.filterNotesMessage('No barriers selected to treat.');
+                      self.filterNotesExist(true);
+                    }
+                    if (self.filterNotesExist()) {
+                      if ($('#scenarios-form .alert').length > 0) {
+                        $('#scenarios-form .alert').removeClass('d-none');
+                      } else {
+                        $('#scenarios-form').append(`<div class="alert alert-warning" role="alert" data-bind="text: self.filterNotesMessage()"></div>`);
+                      }
+                    } else {
+                      if ($('#scenarios-form .alert').length > 0) {
+                        $('#scenarios-form .alert').addClass('d-none');
+                      }
+                    }
+
+                    self.showButtonSpinner(false);
                 },
                 error: function(result) {
                     self.showButtonSpinner(false);
@@ -1027,6 +1025,9 @@ function scenariosModel(options) {
             success: function(data) {
                 self.scenarioForm(true);
                 $('#scenario_form').html(data);
+                $('#scenario_form').bind('keypress keydown keyup', function(e){
+                   if(e.keyCode == 13) { e.preventDefault(); }
+                });
                 self.scenarioFormModel = new scenarioFormModel();
                 app.viewModel.scenarios.scenarioFormModel = self.scenarioFormModel;
                 var model = app.viewModel.scenarios.scenarioFormModel;
