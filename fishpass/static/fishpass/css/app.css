@@ -43,8 +43,7 @@ Navbar
 */
 
 .top-nav-wrap {
-    background: #58595B;
-    color: #fff;
+  z-index: 4;
 }
 
 #menu:first-child {
@@ -381,7 +380,7 @@ Map controls
 #map .ol-zoom,
 .ol-geo-search,
 #map .layer-switcher {
-    top: 2.25vh;
+    top: 8.25vh;
 }
 
 #map .layer-switcher {
@@ -400,7 +399,7 @@ Map controls
     background-color: transparent;
     left: auto;
     right: 2vh;
-    max-width: 9vh;
+    max-width: 11vh;
 }
 
 #map .ol-zoom button {
@@ -415,14 +414,15 @@ Map controls
 }
 
 #map .ol-rotate {
-    top: 11vh;
+    top: 19vh;
     right: 2vh;
 }
 
 #map .layer-switcher {
     background-color: transparent;
     right: 2vh;
-    top: 6.5vh;
+    top: 14.5vh;
+    z-index: 1;
 }
 
 #map .layer-switcher.shown {
@@ -803,9 +803,8 @@ Panel
 */
 
 #panel {
-    background: rgba(255,255,255,0.95);
     left: 0;
-    top: 0;
+    top: 7vh;
     bottom: 0;
     overflow: auto;
     position: absolute;
@@ -830,6 +829,7 @@ Panel
 #panel #scenarios,
 #panel #results,
 #panel .result-section {
+    background: rgba(255,255,255,0.95);
     font-size: .875em;
     height: 90vh;
     opacity: 1;
@@ -1002,7 +1002,7 @@ Panel
 }
 
 .panel #scenarios-form .accordion-inner {
-    background: rgba(255,255,255,0.3);
+    /* background: rgba(255,255,255,0.3); */
     margin: 5px auto;
     padding: 10px;
     text-align: center;

@@ -35,11 +35,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
 {% endblock js_head %}
 
-{% block header %}
-  {% csrf_token %}
-{% endblock header %}
-
-
 {% block content %}
     <section class="map-wrap">
         <!-- <div class="overlay">
@@ -77,31 +72,7 @@
           <div id="popup-content"></div>
         </div>
         <div id="panel" class="panel">
-            <nav class="navbar navbar-light justify-content-center nav">
-              <button class="navbar-toggler dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-
-              <div class="dropdown-menu" id="menu">
-                <div class="list-group">
-                    {% if 'app' not in request.path %}
-                        <a href="/app/" class="dropdown-item list-group-item list-group-item-action">Launch App</a>
-                    {% endif %}
-                    <!-- <a href="{% url 'help' %}" class="dropdown-item list-group-item list-group-item-action">Help</a> -->
-                    {% if user.is_authenticated %}
-                        <a href="/accounts/" class="dropdown-item list-group-item list-group-item-action">Manage Account</a>
-                        <button id="sign-out" data-action="sign-out" class="dropdown-item list-group-item list-group-item-action">Sign out</button>
-                    {% else %}
-                        <!-- if account is in path then form fields are missing -->
-                        {% if 'account' not in request.path %}
-                            <button id="sign-in-modal" data-action="sign-in-modal" class="dropdown-item list-group-item list-group-item-action">Login</button>
-                        {% else %}
-                            <a href="{% url 'account:login' %}" class="btn btn-link account-action">Register</a>
-                        {% endif %}
-                    {% endif %}
-                </div>
-              </div>
-            </nav>
             <div id="panel-content" class="panel-content panel_inner">
-              <!-- <div id="draw_form"></div> -->
               <div id="scenarios"></div>
               <div id="scenario_form"></div>
               <div id="results"></div>
@@ -157,7 +128,7 @@
     <script src="{% static 'fishpass/js/selection.js' %}"></script>
     <!-- <script src="{% static 'fishpass/js/app.events.js' %}"></script> -->
     <!-- <script src="{% static 'fishpass/js/visualization.js' %}"></script> -->
-    <!-- <script src="{% static 'fishpass/lib/geosearch.js' %}"></script> -->
+    <script src="{% static 'fishpass/lib/geosearch.js' %}"></script>
 
     <script src="{% static 'scenarios/js/models.js' %}"></script>
     <script src="{% static 'fishpass/js/scenarios.js' %}"></script>

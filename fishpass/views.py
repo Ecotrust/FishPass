@@ -33,7 +33,7 @@ def app(request, template=loader.get_template('fishpass/app.html'), context=acco
     else:
         return render(request, 'accounts/login.html')
 
-    default_project_name = "%s - %s" % (str(request.user), datetime.now().strftime("%H:%M %d/%m/%Y"))
+    default_project_name = "%s - %s" % (str(request.user), datetime.now().strftime("%H:%M %m/%d/%Y"))
 
 
 

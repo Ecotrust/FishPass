@@ -21,7 +21,7 @@
                         <label>Name</label>
                         <input type="text" name="name" maxlength="255" required="True" id="id_name" class="form-control" value="{{ initialProjectName }}">
                     </div>
-                    <a href="#" id="createProjectSubmit" type="button" class="submit_button btn btn-success" onclick="this.blur(); return false;">
+                    <a href="#" id="createProjectSubmit" type="button" class="btn btn-main" onclick="this.blur(); return false;">
                       Begin
                     </a>
                   </form>
@@ -33,7 +33,11 @@
                     {% for project in projects %}
                       <div id="row-{{ project.uid }}" class="row align-items-center">
                         <div class="col-8">
-                          <a class='view-project-link' href="/fishpass/get_report/{{ project.uid }}/">{{ project.name }}</a>
+                          <!-- if project is unfinished use span instead of link to report -->
+                          <!-- {% if project.active %} -->
+                            <!-- <span>{{ project.name }}</span> -->
+                          <!-- {% endif %} -->
+                          <a class="view-project-link" class="btn" href="/fishpass/get_report/{{ project.uid }}/">{{ project.name }}</a>
                         </div>
                         <!-- <td><a class='view-project-link' href="/fishpass/get_report/{{ project.uid }}/">view</a></td> -->
                         <div class="col-2">

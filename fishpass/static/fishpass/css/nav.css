@@ -17,7 +17,7 @@
 }
 
 .top-nav-wrap .navbar {
-    padding: 0 2rem;
+    padding: 0 2vh;
 }
 
 .navbar-brand {
@@ -62,7 +62,7 @@ nav .navbar-toggler:after {
 
 nav .navbar-toggler .navbar-toggler-icon {
     background-size: contain;
-    background-position: center;
+    background-position: right center;
     background-repeat: no-repeat;
     height: 60%;
     display: block;
@@ -84,13 +84,14 @@ nav .navbar-toggler[aria-expanded="false"] .navbar-toggler-icon {
 }
 
 #menu {
-    left: 2rem;
+    left: auto;
+    right: 2vh;
     padding: 0;
     z-index: 3;
 }
 
 .username-wrap .account-action {
-    color: #67b8c6;
+    color: #9C7B54;
     font-size: .875em;
     font-weight: 700;
     opacity: 1;

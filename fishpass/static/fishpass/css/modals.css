@@ -1,6 +1,104 @@
+/**
+ * =========================================================================
+    Modal
+ ===========================================================================
+ */
+
+.modal-content {
+    background: #217867;
+    border: none;
+    border-radius: 0;
+    color: #fff;
+}
+
+.modal-content .card {
+    background: #217867;
+}
+
+.modal .close {
+    color: #fff;
+}
+
+.modal-content input,
+.modal-content input[type='text'] {
+    font-size: 1em;
+    max-width: 100%;
+}
+
+.modal-content [type="button"] {
+  -webkit-appearance: none;
+  background: #E6F1DB;
+  color: #9C7B54;
+  font-family: 'Bitter', 'Lato', sans-serif;
+  font-size: 1.125em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: .6125em 1.1875em;
+  text-transform: uppercase;
+}
+
+.modal-content .left-inner-addon {
+    margin-bottom: 1rem;
+}
+
+.modal-content form > div > label {
+    font-size: .875em;
+}
+
+.modal-content .btn-link {
+    background: #fff;
+    color: #58595b;
+    font-family: 'Cabin', 'Libre Franklin', sans-serif;
+    font-weight: 700;
+    margin: 0 .25rem;
+    padding: .125rem .375rem;
+}
+
+.modal-content hr {
+    height: 3px;
+}
+
+#login-modal .accounts-form-wrap {
+   border: none;
+}
+
+#login-modal a {
+   color: #CCECAC;
+}
+
+#login-modal hr {
+   background: #fff;
+}
+
+#login-modal .close {
+   border: none;
+   padding: .675rem 1rem 1rem;
+}
+
+.login-intro-wrap h2 {
+    font-size: 1.375em;
+    text-align: center;
+}
+
+.login-intro-wrap p {
+    display: none;
+}
+
+.login-form-wrap {
+    margin-bottom: 1rem;
+}
+
+.login-help-wrap a {
+    font-size: .875em;
+}
+
+#register-form input[type=submit] {
+    margin-top: 1.5rem;
+}
+
 #launch-modal .modal-dialog {
   width: 90vw;
-  max-width: 800px;
+  max-width: 940px;
 }
 
 #launch-modal h3 {
@@ -8,7 +106,7 @@
 }
 
 .modal-content input, .modal-content input[type='text'] {
-  padding: 0.5em;
+  padding: 0.25rem .6125rem;
 }
 
 .project-list {
@@ -16,12 +114,24 @@
   max-height: 45vh;
 }
 
+.project-list .row {
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+  line-height: 2;
+  margin-bottom: .25rem;
+  padding-bottom: .25rem;
+}
+
 .project-list td {
     padding: 0.5em;
 }
 
+.project-list {
+  font-size: 1em;
+}
+
 .project-list a {
   color: #E6F1DB;
+  font-size: 1em;
 }
 
 .project-list a:hover {
@@ -35,12 +145,13 @@
     color: #ffdd00;
     font-size: .6125em;
     margin: 0 -2px;
-    padding: .375rem .06125rem;
+    padding: 0 .06125rem;
     text-align: center;
 }
 
 .project-list .btn-trash:hover,
-.project-list .edit-form-link:hover {
+.project-list .edit-form-link:hover,
+.project-list a:hover {
     background: rgba(255,0,0,0.15);
 }
 
