@@ -391,12 +391,12 @@ function scenarioFormModel(options) {
         $('#id_budget_max').val(min_cost);
       }
       if (parseInt($('#id_budget_max').val()) > max_cost || reset ) {
-        $('#id_budget_max').val(max_cost);
+        $('#id_budget_max').val(max_cost+1);
       }
 
       // Force no more than 10 iterations for range run
       var min_increment = parseInt(($('#id_budget_max').val() - $('#id_budget_min').val()) / 10);
-      if (min_increment == 0) {
+      if (min_increment < 1) {
         min_increment = 1;
       }
       var max_increment = parseInt($('#id_budget_max').val() - $('#id_budget_min').val());
@@ -1083,6 +1083,7 @@ function scenariosModel(options) {
                         model.toggleParameter(parameters[i]);
                       }
                     }
+                    formSetup();
                   },
                   50
                 );

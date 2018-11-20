@@ -502,7 +502,7 @@ def get_filter_results(request, project_id=None, query=False, notes=[], extra_co
         max_cost = None
         available_project_count = None
 
-    if 'assign_cost_input' not in request.GET.keys() or request.GET['assign_cost_input'] == 'false':
+    if 'assign_cost_input' in request.GET.keys() and request.GET['assign_cost_input'] == 'false':
         min_cost = 1
         max_cost = available_project_count
 
