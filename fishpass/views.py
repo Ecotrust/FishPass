@@ -33,7 +33,7 @@ def app(request, template=loader.get_template('fishpass/app.html'), context=acco
     else:
         return render(request, 'accounts/login.html')
 
-    default_project_name = "%s - %s" % (str(request.user), datetime.now().strftime("%H:%M %d/%m/%Y"))
+    default_project_name = "%s - %s" % (str(request.user), datetime.now().strftime("%H:%M %m/%d/%Y"))
 
 
 
@@ -55,7 +55,8 @@ def new_project(request):
     else:
         return HttpResponse('Request type must be "POST"', status=405)
 
-def home(request, template=loader.get_template('fishpass/home.html'), context={'title': 'FishPASS - Home'}):
+def home(request, template=loader.get_template('fishpass/home.html'), context=accounts_context()):
+    context['title'] = 'FishPASS - Home'
     context['SEARCH_DISABLED'] = settings.SEARCH_DISABLED
     return HttpResponse(template.render(context, request))
 

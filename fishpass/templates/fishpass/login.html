@@ -2,7 +2,7 @@
     {% include 'accounts/login_form.html' %}
     <script>
         (function() {
-            var email_input = document.getElementById('id_username');
+            var email_input = document.getElementById('id_email');
             if (email_input) {
                 email_input.setAttribute('id', 'id_login_email');
             }
@@ -13,8 +13,8 @@
         })();
     </script>
     <hr />
-    <div class="row justify-content-between">
-        <div class="col-8">
+    <div class="row justify-content-center">
+        <div class="col-auto">
             <p><strong>Don't have an account?</strong></p>
         </div>
         <div class="col-auto">
@@ -24,8 +24,8 @@
 </div>
 
 <div class="collapse multi-collapse" id="register-collapse">
-    <div class="row justify-content-between">
-        <div class="col-8">
+    <div class="row justify-content-center">
+        <div class="col-auto">
             <p><strong>Already have an account?</strong></p>
         </div>
         <div class="col-auto">
