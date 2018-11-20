@@ -1,6 +1,6 @@
 {% block form_block %}
   <div class="featurepanel">
-    
+
     <div class="barrier-default-btn-wrap">
       <div class="btn-group" role="group" aria-label="Barrier Defaults">
         <button type="button" class="btn btn-primary" onclick="app.initProjectSpecificBarrierStatus()" id="open-barrier-status-form">Set Barrier Status</button>
@@ -27,6 +27,8 @@
             <i class="icon-large icon-refresh icon-spin" style="margin-left: 5px; height: 5px" data-bind="visible: showingFilteringResults() && showButtonSpinner()"></i>
           </a>
         </div>
+
+        <div class="alert-secondary">Potential Mitigation Projects: <span class="badge" style="margin-right: 5px; margin-left: -5px;" data-bind="text: gridCellsRemaining()"></span> <i class="icon-large icon-refresh icon-spin" style="margin-left: 5px; height: 5px" data-bind="visible: showingFilteringResults() && showButtonSpinner()"></i></div>
 
         {% block debug_action %}
         <!-- <p>Action: {{ action }}</p> -->

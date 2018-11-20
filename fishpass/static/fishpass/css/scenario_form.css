@@ -145,6 +145,18 @@ Panel
     width: 100%;
 }
 
+#scenarios-form #ownership_input_widget {
+    margin: 0;
+}
+
+#scenarios-form #id_ownership_input_checkboxes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  width: 100%;
+}
+
 .step-inputs {
     font-size: .9375em;
     font-weight: 400;
@@ -247,9 +259,9 @@ Panel
 .panel #scenarios-form .accordion-inner {
     /* background: rgba(255,255,255,0.3); */
     margin: 5px auto;
-    padding: 10px;
-    text-align: center;
-    word-spacing: 5px;
+    /* padding: 10px; */
+    /* text-align: center; */
+    /* word-spacing: 5px; */
     width: 90%;
 }
 
