@@ -1,5 +1,13 @@
 {% block form_block %}
   <div class="featurepanel">
+    
+    <div class="barrier-default-btn-wrap">
+      <div class="btn-group" role="group" aria-label="Barrier Defaults">
+        <button type="button" class="btn btn-primary" onclick="app.initProjectSpecificBarrierStatus()" id="open-barrier-status-form">Set Barrier Status</button>
+        <button type="button" class="btn btn-primary" onclick="app.initProjectSpecificBarrierType()" id="open-barrier-types-form">Set Barrier Types</button>
+      </div>
+    </div>
+
     <div class="featurepanel-form-wrap">
       {% load static from staticfiles %}
 
@@ -9,13 +17,6 @@
 
       {% block form_filters %}
         <h4>{{title}}</h4>
-
-        <div class="barrier-default-btn-wrap">
-          <div class="btn-group" role="group" aria-label="Barrier Defaults">
-            <button type="button" class="btn btn-secondary" onclick="app.initProjectSpecificBarrierStatus()" id="open-barrier-status-form">Set Barrier Status</button>
-            <button type="button" class="btn btn-secondary" onclick="app.initProjectSpecificBarrierType()" id="open-barrier-types-form">Set Barrier Types</button>
-          </div>
-        </div>
 
         <div class="show-blocks-btn" style="display: none;">
           <a class="button btn enabled-grid-button" style="padding: 4px 9px; margin-right: 10px;" data-bind="click: showFilteringResults">
