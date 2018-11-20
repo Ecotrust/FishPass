@@ -66,7 +66,7 @@ p {
     margin: 0 0 1.5rem;
 }
 
-a, button {
+a {
     cursor: pointer;
 }
 
@@ -104,6 +104,28 @@ a.btn-outline-light {
     border-width: 2px;
     border-radius: 0;
 }
+
+button,
+.btn-primary,
+.btn-secondary,
+.btn-light {
+    border: none;
+    color: #9C7B54;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+button,
+.btn-primary {
+    background: #E6F1DB;
+}
+
+.btn-secondary {
+    background: #CCECAC;
+}
+    .btn-secondary:hover {
+        background: #E6F1DB;
+    }
 
 h1 {
     font-size: 2.5em;
