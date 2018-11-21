@@ -437,21 +437,18 @@ def get_filter_count(request, query=False, notes=[]):
         (query, notes) = run_filter_query(filter_dict)
     return HttpResponse(query.count(), status=200)
 
-def get_project_min_max(query):
-    min = None
-    max = None
-    for barrier in query:
-        bar_dict = barrier.to_dict(project)
 
 def get_project_min_max(query, project):
     from numbers import Number
     from collections.abc import Iterable
     min = None
     max = None
+    available_project_count = 0
     enforced_min = None
     for barrier in query:
         bar_dict = barrier.to_dict(project)
         if bar_dict['fixable'] and bar_dict['action'] != 'exclude' and bar_dict['pre_passability'] < bar_dict['post_passability']:
+            available_project_count += 1
             if isinstance(bar_dict['estimated_cost'], Number):
                 estimated_cost = bar_dict['estimated_cost']
             elif isinstance(bar_dict['estimated_cost'], Iterable) and len(bar_dict['estimated_cost']) == 2 and (type(bar_dict['estimated_cost'][1]) == float or type(bar_dict['estimated_cost'][1]) == int):
@@ -478,9 +475,7 @@ def get_project_min_max(query, project):
     if enforced_min:
         print("Enforced Min = %s" % enforced_min )
         min = enforced_min
-    # else:
-    #     import ipdb; ipdb.set_trace()
-    return (min, max)
+    return (min, max, available_project_count)
 
 
 
@@ -500,11 +495,17 @@ def get_filter_results(request, project_id=None, query=False, notes=[], extra_co
 
     if project_id:
         project = get_feature_by_uid(project_id)
-        (min_cost, max_cost) = get_project_min_max(query, project)
+        (min_cost, max_cost, available_project_count) = get_project_min_max(query, project)
     else:
         project = None
         min_cost = None
         max_cost = None
+        available_project_count = None
+
+    if 'assign_cost_input' in request.GET.keys() and request.GET['assign_cost_input'] == 'false':
+        min_cost = 1
+        max_cost = available_project_count
+
     # get geojson. Update Barrier layer on return if ('show filter results' = True)
     # we don't want the 'project' data since it may not match our current (unsaved) form
     geojson = get_geojson_from_queryset(query, None)

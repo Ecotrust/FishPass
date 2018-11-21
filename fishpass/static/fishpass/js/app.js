@@ -325,6 +325,31 @@ setInit = function() {
     app.map.layer.draw.layer.getSource().clear();
 };
 
+initBudgetToggle = function() {
+  if ($('#id_budget_type').val() == 'budget') {
+    $('.ranged-budget-form').hide();
+    $('.fixed-budget-form').show();
+  } else {
+    $('.fixed-budget-form').hide();
+    $('.ranged-budget-form').show();
+  }
+}
+
+formSetup = function() {
+  
+  $('#id_budget').parent().parent().addClass('fixed-budget-form');
+  $('#id_budget_min').parent().parent().addClass('ranged-budget-form');
+  $('#id_budget_max').parent().parent().addClass('ranged-budget-form');
+  $('#id_batch_increment').parent().parent().addClass('ranged-budget-form');
+
+  if (!app.viewModel.scenarios.scenarioFormModel.filters.hasOwnProperty('assign_cost')) {
+    app.viewModel.scenarios.scenarioFormModel.filters['assign_cost'] = $('#id_assign_cost')[0].checked;
+  }
+
+  $('#id_budget_type').on('change', initBudgetToggle);
+  initBudgetToggle();
+}
+
 reportInit = function() {
 
 }

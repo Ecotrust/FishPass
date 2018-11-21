@@ -176,6 +176,7 @@ function scenarioFormModel(options) {
     self.target_area = ko.observable(true);
     self.treat_downstream = ko.observable('consider');
     self.ownership_input = ko.observable(false);
+    self.assign_cost = ko.observable(false);
 
     self.lastChange = (new Date()).getTime();
 
@@ -368,27 +369,45 @@ function scenarioFormModel(options) {
         });
     };
 
-    self.setMinMaxBudget = function(min_cost, max_cost) {
+    self.setMinMaxBudget = function(min_cost, max_cost, reset) {
       $('#id_budget').attr({'min': min_cost, 'max': max_cost});
       $('#id_budget_min').attr({'min': min_cost, 'max': max_cost});
       $('#id_budget_max').attr({'min': min_cost, 'max': max_cost});
+
       var current_budget = parseInt($('#id_budget').val());
       if (current_budget < min_cost) {
         $('#id_budget').val(min_cost);
       } else if (current_budget > max_cost) {
         $('#id_budget').val(max_cost);
       }
-      if (parseInt($('#id_budget_min').val()) < min_cost ) {
+
+      if (parseInt($('#id_budget_min').val()) < min_cost  || reset ) {
         $('#id_budget_min').val(min_cost);
       }
-      if (parseInt($('#id_budget_max').val()) > max_cost ) {
-        $('#id_budget_max').val(max_cost);
+      if (parseInt($('#id_budget_min').val()) > max_cost ) {
+        $('#id_budget_min').val(max_cost);
       }
+      if (parseInt($('#id_budget_max').val()) < min_cost ) {
+        $('#id_budget_max').val(min_cost);
+      }
+      if (parseInt($('#id_budget_max').val()) > max_cost || reset ) {
+        $('#id_budget_max').val(max_cost+1);
+      }
+
       // Force no more than 10 iterations for range run
-      var min_increment = ($('#id_budget_max').val() - $('#id_budget_min').val()) / 10;
-      if (parseInt($('#id_batch_increment').val()) < min_increment) {
-        $('#id_batch_increment').val(min_increment);
+      var min_increment = parseInt(($('#id_budget_max').val() - $('#id_budget_min').val()) / 10);
+      if (min_increment < 1) {
+        min_increment = 1;
       }
+      var max_increment = parseInt($('#id_budget_max').val() - $('#id_budget_min').val());
+      $('#id_batch_increment').attr({'min': min_increment, 'max': max_increment});
+
+      if (parseInt($('#id_batch_increment').val() || reset ) < min_increment) {
+        $('#id_batch_increment').val(min_increment);
+      } else if (parseInt($('#id_batch_increment').val()) > max_increment) {
+        $('#id_batch_increment').val(max_increment);
+      }
+
     }
 
     self.getUpdatedFilterResults = function() {
@@ -414,7 +433,7 @@ function scenarioFormModel(options) {
                       self.filterNotesMessage('No viable mitigation projects found.');
                       self.filterNotesExist(true);
                     } else {
-                      self.setMinMaxBudget(min_cost, max_cost);
+                      self.setMinMaxBudget(min_cost, max_cost, false);
                     }
                     self.updatedFilterResultsLayer.removeAllFeatures();
                     if (featureCount && geojson) {
@@ -488,6 +507,11 @@ function scenarioFormModel(options) {
             }
         }
         self.updateFilter(param, min, max, input, checkboxes);
+        if (param == 'assign_cost') {
+          setTimeout(function() {
+            self.setMinMaxBudget(parseInt($('#id_budget_min').attr('min')), parseInt($('#id_budget_max').attr('max')), true);
+          }, 100);
+        }
     };
 
     // TODO: Cleanup needed. This was written to take 5 parameters to explicitly
@@ -535,8 +559,17 @@ function scenarioFormModel(options) {
             // Handle directly passed variable
             field_value = key_object[suffix];
             if (field_value) {
-              key = param + suffix;
-              self.filters[key] = field_value;
+              if ($('#id_' + param).is(':checkbox')) {
+                if ($('#id_' + param)[0].checked) {
+                  self.filters[param] = true;
+                  self.filters[param + suffix] = true;
+                } else {
+                  self.filters[param] = false;
+                  self.filters[param + suffix] = false;
+                }
+              } else {
+                self.filters[param + suffix] = field_value;
+              }
             // Look for existing values in the form iteslf with jQuery
             } else if ($('#id_' + key).length > 0) {
               self.filters[key] = $('#id_' + key).value();
@@ -1050,6 +1083,7 @@ function scenariosModel(options) {
                         model.toggleParameter(parameters[i]);
                       }
                     }
+                    formSetup();
                   },
                   50
                 );

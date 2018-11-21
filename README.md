@@ -156,7 +156,7 @@ sudo cp /usr/local/apps/marineplanner-core/deployment/rc.local /etc/rc.local
 configuration:  
      Internet Site 
 System mail name : 
-     enter the domain name you plan to use, i.e.: s2f.ucsrb.org 
+     enter the domain name you plan to use, i.e.: fishpass.psmfc.org 
 
 Then set Django settings to look something like this:
 ```
@@ -166,7 +166,7 @@ EMAIL_PORT = 25
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = False
-DEFAULT_FROM_EMAIL = 'MarinePlanner<marineplanner@your.domain>'
+DEFAULT_FROM_EMAIL = 'FISHPass<fishpass@your.domain>'
 ```
 Configure DNS for secure delivery (see internal documentation)
 

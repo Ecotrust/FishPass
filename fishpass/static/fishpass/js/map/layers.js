@@ -18,25 +18,25 @@ app.mapbox.layers = {
   //   map_layer_id: 'streams'
   // },
   'huc08': {
-    id: 'fishpasssupport.1hsy8b3k',
+    id: 'fishpasssupport.0j3vqpr8',
     id_field: 'HUC_8',
-    name_field: 'SUBREGION',
+    name_field: 'HUC_8',
     name: 'HUC 08',
     report_methods: ['filter'],
     map_layer_id: 'huc08'
   },
   'huc10': {
-    id: 'fishpasssupport.6xqs1esz',
+    id: 'fishpasssupport.c2ulfosi',
     id_field: 'HUC_10',
-    name_field: 'HU_10_Name',
+    name_field: 'HUC_10',
     name: 'HUC 10',
     report_methods: ['filter'],
     map_layer_id: 'huc10'
   },
   'huc12': {
-    id: 'ucsrbsupport.HUC12_3857',
+    id: 'fishpasssupport.d1sxwwnb',
     id_field: 'HUC_12',
-    name_field: 'HU_12_NAME',
+    name_field: 'HUC_12',
     name: 'HUC 12',
     report_methods: ['filter'],
     map_layer_id: 'huc12'
@@ -91,7 +91,7 @@ app.map.layer = {
         unitType: 'HUC08',
         id: 'huc08', // set id equal to x in app.map.layer.x
         source: new ol.source.VectorTile({
-          attributions: 'NRCS',
+          attributions: 'U.S. Department of Agriculture, Natural Resources Conservation Service, National Cartography and Geospatial Center, 2009',
           format: new ol.format.MVT({
             featureClass: ol.Feature
           }),
@@ -111,7 +111,7 @@ app.map.layer = {
         unitType: 'HUC10',
         id: 'huc10', // set id equal to x in app.map.layer.x
         source: new ol.source.VectorTile({
-          attributions: 'NRCS',
+          attributions: 'U.S. Department of Agriculture, Natural Resources Conservation Service, National Cartography and Geospatial Center, 2009',
           format: new ol.format.MVT({
             featureClass: ol.Feature
           }),
@@ -131,7 +131,7 @@ app.map.layer = {
         unitType: 'HUC12',
         id: 'huc12', // set id equal to x in app.map.layer.x
         source: new ol.source.VectorTile({
-          attributions: 'NRCS',
+          attributions: 'U.S. Department of Agriculture, Natural Resources Conservation Service, National Cartography and Geospatial Center, 2009',
           format: new ol.format.MVT({
             featureClass: ol.Feature
           }),
