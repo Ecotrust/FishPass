@@ -301,6 +301,23 @@ CMS_ADMIN_BUTTON = False
 RECAPTCHA_PUBLIC_KEY = 'SiteKey'
 RECAPTCHA_PRIVATE_KEY = 'SetInLocalSettings'
 
+# ACCOUNTS_TEMPLATES['index'] = 'accounts/index.html'
+# ACCOUNTS_TEMPLATES['login'] = 'accounts/login.html'
+# ACCOUNTS_TEMPLATES['user_detail_form'] = 'accounts/user_detail_form.html'
+# ACCOUNTS_TEMPLATES['change_password_form'] = 'accounts/change_password_form.html'
+# ACCOUNTS_TEMPLATES['registration_error'] = 'accounts/registration_error.html'
+# ACCOUNTS_TEMPLATES['success'] = 'accounts/success.html'
+# ACCOUNTS_TEMPLATES['register'] = 'accounts/register.html'
+# ACCOUNTS_TEMPLATES['check_your_email'] = 'accounts/check_your_email.html'
+# ACCOUNTS_TEMPLATES['social_confirm'] = 'accounts/social_confirm.html'
+# ACCOUNTS_TEMPLATES['verify_email_txt'] = 'accounts/mail/verify_email.txt'
+# ACCOUNTS_TEMPLATES['verify_email_html'] = 'accounts/mail/verify_email.html'
+# ACCOUNTS_TEMPLATES['verify_email_success'] = 'accounts/verify_email_success.html'
+# ACCOUNTS_TEMPLATES['debug'] = 'accounts/debug.html'
+# ACCOUNTS_TEMPLATES['wait_for_email'] = 'accounts/wait_for_email.html'
+# ACCOUNTS_TEMPLATES['forgot'] = 'accounts/forgot/forgot.html'
+# ACCOUNTS_TEMPLATES['reset_successful'] = 'accounts/forgot/reset_successful.html'
+# ACCOUNTS_TEMPLATES['reset'] = 'accounts/forgot/reset.html'
 
 try:
     from marineplanner.local_settings import *
