@@ -91,13 +91,13 @@ class Command(BaseCommand):
             desc_field = None
             if in_type == 'HUC08':
                 id_field = 'HUC_8'
-                # desc_field = 'SUBBASIN'
+                desc_field = 'HUC_8'
             if in_type == 'HUC10':
                 id_field = 'HUC_10'
-                # desc_field = 'HU_10_Name'
+                desc_field = 'HUC_10'
             if in_type == 'HUC12':
                 id_field = 'HUC_12'
-                # desc_field = 'HU_12_NAME'
+                desc_field = 'HUC_12'
             if in_type == 'County':
                 id_field = 'CNTYIDFP'
                 # desc_field = 'NAME'
@@ -126,7 +126,7 @@ class Command(BaseCommand):
             for project in Project.objects.filter(spatial_organization=in_type):
                 project.target_area = None
                 project.save()
-                
+
             # Delete previous Focus Areas of given type
             self.stdout.write('Deleting all existing %s focus areas...' % in_type)
             FocusArea.objects.filter(unit_type=in_type).delete()
