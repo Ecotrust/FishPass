@@ -211,11 +211,22 @@ Panel
     width: 75%;
 }
 
+.panel form .form-group label {
+  line-height: 2rem;
+}
+
+.parameter-label {
+  padding-left: 5px;
+}
+
 .panel form input[type=text],
-.panel form textarea {
+.panel form textarea,
+.panel form select {
+    background: #fff;
     border: 1px solid #67b8c6;
     font-size: .875em;
-    line-height: 2;
+    height: 2rem;
+    line-height: 2rem;
     margin-bottom: .5rem;
     padding: .125rem .375rem;
     width: 100%;
@@ -224,6 +235,13 @@ Panel
 
 .panel form textarea {
     height: 4rem;
+}
+
+#id_target_area {
+  height: 0;
+  margin: 0;
+  padding: 0;
+  visibility: hidden;
 }
 
 .panel form input[type='checkbox'] {

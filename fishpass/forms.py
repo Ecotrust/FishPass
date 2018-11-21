@@ -125,8 +125,8 @@ class ProjectForm(ScenarioForm):
 
     target_area = forms.CharField(
         widget=forms.Textarea,
-        label="Target Area",
-        help_text="This should be invisible. Stringified GeoJSON Multiselection of FocusAreas",
+        label='',
+        # help_text="This should be invisible. Stringified GeoJSON Multiselection of FocusAreas",
         required=False,
     )
 
