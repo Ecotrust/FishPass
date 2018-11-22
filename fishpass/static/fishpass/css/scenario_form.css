@@ -84,7 +84,7 @@ Panel
 #panel .featurepanel-form-wrap {
   display: block;
   overflow: auto;
-  padding: 2rem 1rem 0;
+  padding: 1rem 1rem 0;
   position: relative;
   height: 81vh;
 }
@@ -108,6 +108,7 @@ Panel
 }
 
 #panel .featurepanel .wizard_nav .btn {
+  background: #CCECAC;
   border-radius: 0 !important;
   height: 6vh;
   line-height: 6vh;
@@ -157,6 +158,21 @@ Panel
   width: 100%;
 }
 
+.step {
+  position: relative;
+  padding: 0 5px;
+}
+
+  .step:after {
+    background: #217867;
+    content: '';
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 15px;
+    width: 1px;
+  }
+
 .step-inputs {
     font-size: .9375em;
     font-weight: 400;
@@ -167,8 +183,15 @@ Panel
     margin-bottom: .5rem;
 }
 
+.panel p {
+  margin-bottom: .5rem;
+}
+
 .panel .instructions {
     font-weight: 700;
+    margin-top: .5rem;
+    margin-bottom: .5rem;
+    padding-bottom: .5rem;
 }
 
 .panel h4 {
@@ -187,32 +210,38 @@ Panel
 }
 
 .progress {
-    background: rgba(230,231,232,0.15);
-    border-radius: .25rem;
-    margin: .5rem 0 0;
-    height: 4px;
+    background: rgba(230,231,232,0.25);
+    margin: .75rem 0;
+    height: 5px;
 }
 
 .progress-bar {
     /* background: rgba(230,231,232,0.95); */
-    background: rgba(3,122,251,1);
-    border-radius: .25rem;
+    background: #2C5AA0;
 }
-#step1.max4 .progress-bar {
+#step1 .progress-bar {
     width: 0%;
 }
-#step2.max4 .progress-bar {
+#step2 .progress-bar {
     width: 25%;
 }
-#step3.max4 .progress-bar {
+#step3 .progress-bar {
     width: 50%;
 }
-#step4.max4 .progress-bar {
+#step4 .progress-bar {
     width: 75%;
 }
 
-.panel form .form-group label {
+.panel .badge-success {
+    background: #217867;
+}
+
+.panel form label {
   line-height: 2rem;
+}
+
+.panel form #step2_inputs label {
+  line-height: 1.5;
 }
 
 .parameter-label {
@@ -220,6 +249,7 @@ Panel
 }
 
 .panel form input[type=text],
+.panel form input[type=number],
 .panel form textarea,
 .panel form select {
     background: #fff;
@@ -235,6 +265,12 @@ Panel
 
 .panel form textarea {
     height: 4rem;
+}
+
+.panel form input.slidervalue,
+.panel form input[type=number] {
+  width: 33%;
+  max-width: 125px;
 }
 
 #id_target_area {

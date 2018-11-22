@@ -28,7 +28,7 @@
       </a>
     </div>
 
-    <div><span class="alert-secondary">Potential Mitigation Projects: <span class="badge" style="margin-right: 5px; margin-left: -5px;" data-bind="text: gridCellsRemaining()"></span> <i class="icon-large icon-refresh icon-spin" style="margin-left: 5px; height: 5px" data-bind="visible: showingFilteringResults() && showButtonSpinner()"></i></span></div>
+    <div>Potential Mitigation Projects <span class="badge badge-success" data-bind="text: gridCellsRemaining()"></span> <i class="icon-large icon-refresh icon-spin" style="margin-left: 5px; height: 5px" data-bind="visible: showingFilteringResults() && showButtonSpinner()"></i></div>
 
     {% block debug_action %}
     <!-- <p>Action: {{ action }}</p> -->
@@ -48,7 +48,10 @@
 
       {% for step in form.get_steps %}
       <div id="step{{ forloop.counter }}" class="step">
-        <p class="step-text"><i>Step {{ forloop.counter }} of {{ form.get_steps|length|add:"1" }} </i></p>
+        <div class="progress">
+          <div class="progress-bar" aria-valuenow="{{ forloop.counter }}" aria-valuemin="0" aria-valuemax="{{ form.get_steps|length|add:"1" }}"></div>
+        </div>
+        <!-- <span class="step-text"><i>Step {{ forloop.counter }} of {{ form.get_steps|length|add:"1" }} </i></span> -->
         <p class="instructions">{{ step.instructions }}</p>
         <div id="step{{ forloop.counter }}_inputs">
           <ul class="parameters">

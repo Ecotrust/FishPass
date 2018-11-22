@@ -84,6 +84,8 @@ class BackwardCompatibleCheckboxSelectMultiple(BackwardCompatibleChoiceWidget):
         return False
 
     def id_for_label(self, id_, index=None):
+        # This hook is necessary because widget has multiple HTML elements and, thus, multiple IDs.
+        # https://docs.djangoproject.com/en/1.11/ref/forms/widgets/#django.forms.Widget.id_for_label
         """"
         Don't include for="field_0" in <label> because clicking such a label
         would toggle the first checkbox.
@@ -124,7 +126,11 @@ class ProjectForm(ScenarioForm):
     # )
 
     target_area = forms.CharField(
-        widget=forms.Textarea,
+        widget=forms.Textarea(
+            attrs={
+                'class': 'invisible focus-area-textarea',
+            }
+        ),
         label='',
         # help_text="This should be invisible. Stringified GeoJSON Multiselection of FocusAreas",
         required=False,
