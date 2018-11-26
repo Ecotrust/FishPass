@@ -52,6 +52,10 @@ Panel
     padding: 0;
 }
 
+#panel section {
+    padding: .75rem 1rem;
+}
+
 /* barrier default buttons */
 #scenarios-form .btn-submit {
   visibility: hidden;
@@ -61,6 +65,11 @@ Panel
 #error_bar {
   color: red;
   font-weight: bold;
+}
+
+#remaining {
+  background: rgba(44, 90, 160, 0.1875);
+  margin: -1rem -1rem 1rem;
 }
 
 .barrier-default-btn-wrap {
@@ -160,11 +169,11 @@ Panel
 
 .step {
   position: relative;
-  padding: 0 5px;
+  /* padding: 0 5px; */
 }
 
   .step:after {
-    background: #217867;
+    /* background: #217867; */
     content: '';
     height: 100%;
     position: absolute;
@@ -188,6 +197,8 @@ Panel
 }
 
 .panel .instructions {
+    color: #1B2C46;
+    font-size: 1.125em;
     font-weight: 700;
     margin-top: .5rem;
     margin-bottom: .5rem;
@@ -195,8 +206,10 @@ Panel
 }
 
 .panel h4 {
-    font-size: 1.25em;
-    margin-bottom: 1rem;
+    color: #1B2C46;
+    font-style: italic;
+    font-size: .875em;
+    margin-bottom: 0;
 }
 
 .panel .show-blocks-btn {
@@ -233,7 +246,7 @@ Panel
 }
 
 .panel .badge-success {
-    background: #217867;
+    background: #2C5AA0;
 }
 
 .panel form label {
@@ -252,8 +265,8 @@ Panel
 .panel form input[type=number],
 .panel form textarea,
 .panel form select {
-    background: #fff;
-    border: 1px solid #67b8c6;
+    background: rgba(230, 241, 219, 0.5);
+    border: 1px solid #9C7B54;
     font-size: .875em;
     height: 2rem;
     line-height: 2rem;
