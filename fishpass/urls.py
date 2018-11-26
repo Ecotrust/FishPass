@@ -1,13 +1,15 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from fishpass import views
 from django.contrib.auth import views as auth_views
 from django.contrib.flatpages import views as flat_views
 from scenarios.views import get_scenarios
+from django.views.generic import RedirectView
 
 urlpatterns = [
     ### App URLs
     url(r'^home/?$', views.home),
-    url(r'^app/?$', views.app, name="app"),
+    url(r'^app$', RedirectView.as_view(url='/app/')),
+    url(r'^app/$', views.app, name="app"),
     url(r'^help/$', flat_views.flatpage, {'url': '/help/'}, name="help"),
     url(r'^about/$', flat_views.flatpage, {'url': '/about/'}, name='about'),
     url(r'demo/$', views.demo, name='demo'),
@@ -33,7 +35,11 @@ urlpatterns = [
     url(r'^get_report/(?P<projid>[\w_]+)/$', views.get_report),
     url(r'^export_report/(?P<projid>[\w_]+)/$', views.export_report),
 
-    url(r'$', views.home, name='home'),
+    url(r'^$', views.home, name='home'),
+
+    ### FlatPages
+    url(r'^pages/', include('django.contrib.flatpages.urls')),
+    url(r'^(?P<url>.*/?)$', flat_views.flatpage),
 ]
 
 from django.contrib import admin

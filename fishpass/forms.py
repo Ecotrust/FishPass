@@ -145,20 +145,12 @@ class ProjectForm(ScenarioForm):
         initial='consider',
     )
 
-    # TODO: pre-pass/post-pass/cost-estimates:
-    #     ScenarioBarrierType
-    #     ScenarioBarrierStatus
-    #     scenarioBarrier
-    # This is likely best handled inside of a custom forms.html
-
     ownership_input = HiddenScenarioBooleanField(
         label="Filter By Ownership",
         # help_text="This should be true: ALWAYS",
         initial=False,
         required=False,
     )
-
-
 
     ownership_input_options = ((x, settings.OWNERSHIP_LOOKUP[x]) for x in settings.OWNERSHIP_LOOKUP.keys())
     initial_ownership = list(set([str(x.id) for x in OwnershipType.objects.all()] + [x for x in settings.OWNERSHIP_LOOKUP.keys()]))
@@ -180,8 +172,6 @@ class ProjectForm(ScenarioForm):
         required = False,
         initial=True
     )
-
-    # TODO: Allow users to edit estimated costs by Barrier Type
 
     budget_type = forms.ChoiceField(
         choices = (('budget', 'Fixed Budget'),('batch', 'Ranged Budget')),
@@ -269,7 +259,6 @@ class ProjectForm(ScenarioForm):
         return self._get_fields(names)
 
     def get_steps(self):
-        #TODO: fill steps_list with your get_step_fields functions
         steps_list = (self.get_step_0_fields(),self.get_step_1_fields(),self.get_step_2_fields(),)
         return_list = []
         default_instructions = 'Select criteria to filter your results'
