@@ -354,14 +354,9 @@ class Project(Scenario):
 
     treat_downstream = models.CharField(max_length=30, default='consider', choices=settings.DS_TREATMENT_CHOICES)
 
-    # For pre-pass, post-pass, and cost estimates unique to this project, see:
-    #   ScenarioBarrier (barrier specific for all three)
-    #   ScenarioBarrierType (Change estimated cost or post-pass for a given type)
-    #   ScenarioBarrierStatus (Change pre-pass for a given status)
-
-    #TODO: sort this multiselect of unknown length out.
+    checkbox_default = str([str(x.id) for x in OwnershipType.objects.all()])
     ownership_input = models.BooleanField(default=False,verbose_name="Select ownership types")
-    ownership_input_checkboxes = models.TextField(blank=True, null=True, default=None)
+    ownership_input_checkboxes = models.TextField(blank=True, null=True, default=checkbox_default)
     assign_cost = models.BooleanField(default=True,verbose_name="Assign Barrier Costs",help_text="Consider the unique cost of mitigating each barrier by $")
     budget_type = models.CharField(max_length=40, default='budget', choices=BUDGET_CHOICES, verbose_name="Fixed Budget or Range")
     budget = models.IntegerField(null=True,blank=True,default=0,validators=[MinValueValidator(0)])
