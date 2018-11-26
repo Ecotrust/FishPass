@@ -180,7 +180,7 @@ Panel
 .panel #scenarios-form {
     border: none;
     border-radius: 0;
-    /* height: auto; */
+    height: auto;
     margin: 0 auto 5px auto;
     overflow: auto;
     /* padding: 0; */
