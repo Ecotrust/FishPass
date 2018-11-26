@@ -200,13 +200,13 @@ class ProjectForm(ScenarioForm):
     budget_min = forms.IntegerField(
         required=False,
         initial=100000,
-        widget=forms.TextInput(
+        widget=forms.NumberInput(
             attrs={
                 # 'class': 'slidervalue readonly-value',
-                'class': 'rangevalue',
-                'pre_text': '<div class="input-group"><span class="input-group-addon">$</span>',
+                'class': 'form-control rangevalue',
+                'pre_text': '$',
                 # 'readonly': 'readonly',
-                'post_text': '</div>',
+                # 'post_text': '</div>',
             }
         )
     )
@@ -214,12 +214,13 @@ class ProjectForm(ScenarioForm):
     budget_max = forms.IntegerField(
         required=False,
         initial=1000000,
-        widget=forms.TextInput(
+        widget=forms.NumberInput(
             attrs={
-                'class': 'slidervalue readonly-value',
-                'pre_text': 'to',
-                'readonly': 'readonly',
-                'post_text': '$',
+                # 'class': 'slidervalue readonly-value',
+                'class': 'form-control rangevalue',
+                'pre_text': '$',
+                # 'readonly': 'readonly',
+                # 'post_text': '</div>',
             }
         )
     )

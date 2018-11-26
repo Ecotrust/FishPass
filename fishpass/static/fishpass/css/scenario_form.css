@@ -284,15 +284,24 @@ Panel
     max-width: 100%;
 }
 
+.panel .input-group input[type=number] {
+  margin-bottom: 0;
+  width: 1%;
+}
+
+.panel .input-group-text:not(:empty) {
+    padding: 0 .375rem;
+}
+
 .panel form textarea {
     height: 4rem;
 }
 
-.panel form input.rangevalue,
+/* .panel form input.rangevalue,
 .panel form input[type=number] {
   width: 33%;
   max-width: 125px;
-}
+} */
 
 #id_target_area {
   height: 0;

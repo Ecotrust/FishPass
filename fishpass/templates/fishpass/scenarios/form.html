@@ -78,27 +78,53 @@
               <div id="{{ field.html_name }}_widget" class="inputfield accordion-body collapse" data-bind="css: {'in': {{ field.html_name }}()}">
                 <div class="accordion-inner">
               {% endif %} <!-- field -->
-                  <div class="form-group">
-                    {% if field_min %}
-                    {{ field_min.field.widget.attrs.pre_text | safe }}
-                    {{ field_min.as_widget }}
-                    {{ field_min.field.widget.attrs.post_text | safe }}
-                    {% endif %}{% if field_max %}
-                    {{ field_max.field.widget.attrs.pre_text | safe  }}
-                    {{ field_max.as_widget }}
-                    {{ field_max.field.widget.attrs.post_text | safe  }}
-                  {% endif %}{% if field_input %}
-                  {% if field %}{% else %}
-                    <label>
-                      {{ field_input.label }}
-                      {% if field_input.help_text %}
-                      <i class="info-icon icon-info-sign field-tooltip"
-                      data-toggle="tooltip"
-                      data-original-title="{{ field_input.help_text }}"
-                      data-placement="top"></i>
-                      {% endif %}
-                    </label>
+                <div class="form-row">
+                  {% if field_min %}
+                    <div class="form-group col-md-6">
+                      <div class="input-group">
+                        {% if field_min.field.widget.attrs.pre_text %}
+                          <div class="input-group-prepend">
+                            <span class="input-group-text" id="min-budget-pre">{{ field_min.field.widget.attrs.pre_text | safe }}</span>
+                          </div>
+                        {% endif %}
+                        {{ field_min.as_widget }}
+                        {% if field_min.field.widget.attrs.post_text %}
+                          <div class="input-group-append">
+                            <span class="input-group-text" id="min-budget-post">{{ field_min.field.widget.attrs.post_text | safe }}</span>
+                          </div>
+                        {% endif %}
+                      </div>
+                    </div>
                   {% endif %}
+                  {% if field_max %}
+                    <div class="form-group col-md-6">
+                      <div class="input-group">
+                        {% if field_min.field.widget.attrs.pre_text %}
+                          <div class="input-group-prepend">
+                            <span class="input-group-text" id="max-budget-pre">{{ field_max.field.widget.attrs.pre_text | safe  }}</span>
+                          </div>
+                        {% endif %}
+                        {{ field_max.as_widget }}
+                        {% if field_min.field.widget.attrs.post_text %}
+                          <div class="input-group-append">
+                            <span class="input-group-text" id="max-budget-post">{{ field_max.field.widget.attrs.post_text | safe  }}</span>
+                          </div>
+                        {% endif %}
+                      </div>
+                    </div>
+                  {% endif %}
+                  {% if field_input %}
+                    {% if field %}{% else %}
+                      <label>
+                        {{ field_input.label }}
+                        {% if field_input.help_text %}
+                        <i class="info-icon icon-info-sign field-tooltip"
+                        data-toggle="tooltip"
+                        data-original-title="{{ field_input.help_text }}"
+                        data-placement="top"></i>
+                        {% endif %}
+                      </label>
+                    {% endif %}
                   {{ field_input.field.widget.attrs.pre_text | safe  }}
                   {{ field_input.as_widget }}
                   {{ field_input.field.widget.attrs.post_text | safe  }}
