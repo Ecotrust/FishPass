@@ -267,7 +267,7 @@ Panel
     height: 4rem;
 }
 
-.panel form input.slidervalue,
+.panel form input.rangevalue,
 .panel form input[type=number] {
   width: 33%;
   max-width: 125px;

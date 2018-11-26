@@ -24,7 +24,7 @@
         <span class="badge" style="margin-right: 5px; margin-left: -5px;" data-bind="text: gridCellsRemaining()"></span>
         <i class="icon-large icon-check-empty" style="margin-left: 5px;" data-bind="visible: ! showingFilteringResults()"></i>
         <i class="icon-large icon-check" style="margin-left: 5px;" data-bind="visible: showingFilteringResults() && !showButtonSpinner()"></i>
-        <i class="icon-large icon-refresh icon-spin" style="margin-left: 5px; height: 5px" data-bind="visible: showingFilteringResults() && showButtonSpinner()"></i>
+        <i class="icon-large icon-refresh icon-spin" data-bind="visible: showingFilteringResults() && showButtonSpinner()"></i>
       </a>
     </div>
 
@@ -212,7 +212,10 @@
 {% endfor %}
 
 <div id="step{{ form.get_steps|length|add:"1" }}" class="step">
-  <p class="step-text"><i>Step {{ form.get_steps|length|add:"1" }} of {{ form.get_steps|length|add:"1" }} </i>
+  <div class="progress">
+    <div class="progress-bar" aria-valuenow="{{ forloop.counter }}" aria-valuemin="0" aria-valuemax="{{ form.get_steps|length|add:"1" }}"></div>
+  </div>
+  <!-- <p class="step-text"><i>Step {{ form.get_steps|length|add:"1" }} of {{ form.get_steps|length|add:"1" }} </i> -->
     <div data-bind="css: { 'disabled': gridCellsRemaining()==0 }">
       <p class="instructions">Provide a <b>Name</b> to identify your Grid Filtering design </p>
       <div class="step{{ form.get_steps|length|add:"1" }}-inputs">

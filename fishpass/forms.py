@@ -202,10 +202,11 @@ class ProjectForm(ScenarioForm):
         initial=100000,
         widget=forms.TextInput(
             attrs={
-                'class': 'slidervalue readonly-value',
-                'pre_text': 'from',
-                'readonly': 'readonly',
-                'post_text': '$',
+                # 'class': 'slidervalue readonly-value',
+                'class': 'rangevalue',
+                'pre_text': '<div class="input-group"><span class="input-group-addon">$</span>',
+                # 'readonly': 'readonly',
+                'post_text': '</div>',
             }
         )
     )
