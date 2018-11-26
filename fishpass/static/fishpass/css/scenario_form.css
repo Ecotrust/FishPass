@@ -76,7 +76,8 @@ Panel
   align-content: center;
   display: flex;
   justify-content: stretch;
-  height: 6vh;
+  min-height: 40px;
+  height: 7vh;
   margin: 0;
 }
 
@@ -85,8 +86,28 @@ Panel
 }
 
 .barrier-default-btn-wrap .btn-group .btn {
-  font-size: .9375em;
+  background: #CCECAC;
+  font-size: .875em;
   flex: 1;
+}
+  .barrier-default-btn-wrap .btn-group .btn:hover {
+    background: #E6F1DB;
+  }
+
+@media (min-width: 900px) {
+  .barrier-default-btn-wrap .btn-group .btn {
+    font-size: .9375em;
+  }
+}
+
+#open-barrier-status-form {
+  border-bottom: 2px solid #9C7B54;
+  margin-right: 1px;
+}
+
+#open-barrier-types-form {
+  border-bottom: 2px solid #9c7b54;
+  margin-left: 1px;
 }
 
 /* panel form */
@@ -95,12 +116,13 @@ Panel
   overflow: auto;
   padding: 1rem 1rem 0;
   position: relative;
-  height: 81vh;
+  height: 80vh;
 }
 
 #panel .cancel-nav {
   bottom: 0;
   height: 6vh;
+  min-height: 40px;
   left: 0;
   position: absolute;
 }
@@ -108,6 +130,7 @@ Panel
 #panel .featurepanel .wizard_nav {
   bottom: 0;
   height: 6vh;
+  min-height: 40px;
   position: absolute;
   right: 0;
 }
@@ -121,6 +144,7 @@ Panel
   border-radius: 0 !important;
   color: #1B2C46;
   height: 6vh;
+  min-height: 40px;
   line-height: 6vh;
   padding: 0 1.25rem;
 }
@@ -156,7 +180,7 @@ Panel
 .panel #scenarios-form {
     border: none;
     border-radius: 0;
-    height: auto;
+    /* height: auto; */
     margin: 0 auto 5px auto;
     overflow: auto;
     /* padding: 0; */

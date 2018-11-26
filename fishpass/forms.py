@@ -203,7 +203,7 @@ class ProjectForm(ScenarioForm):
         widget=forms.NumberInput(
             attrs={
                 # 'class': 'slidervalue readonly-value',
-                'class': 'form-control rangevalue',
+                'class': 'slidervalue form-control rangevalue',
                 'pre_text': '$',
                 # 'readonly': 'readonly',
                 # 'post_text': '</div>',
@@ -217,7 +217,7 @@ class ProjectForm(ScenarioForm):
         widget=forms.NumberInput(
             attrs={
                 # 'class': 'slidervalue readonly-value',
-                'class': 'form-control rangevalue',
+                'class': 'slidervalue form-control rangevalue',
                 'pre_text': '$',
                 # 'readonly': 'readonly',
                 # 'post_text': '</div>',
@@ -225,15 +225,15 @@ class ProjectForm(ScenarioForm):
         )
     )
 
-    budget_input = forms.IntegerField(
-        widget=DualSliderWidget(
-            'budget_min',
-            'budget_max',
-            min=0,
-            max=50000000,
-            step=1000           #This doesn't work at all for non-assigned costs. Do we need to make 2 of these?
-        )
-    )
+    # budget_input = forms.IntegerField(
+    #     widget=DualSliderWidget(
+    #         'budget_min',
+    #         'budget_max',
+    #         min=0,
+    #         max=50000000,
+    #         step=1000           #This doesn't work at all for non-assigned costs. Do we need to make 2 of these?
+    #     )
+    # )
 
     batch_increment = forms.IntegerField(
         label='Increment',
@@ -263,7 +263,7 @@ class ProjectForm(ScenarioForm):
             (None, None, None, 'assign_cost'),
             (None, None, None, 'budget_type'),
             (None, None, None, 'budget'),
-            (None, 'budget_min', 'budget_max', 'budget_input'),
+            (None, 'budget_min', 'budget_max'),
             (None, None, None, 'batch_increment'),
         ]
         return self._get_fields(names)

@@ -74,10 +74,10 @@
                 </div>
               {% endif %} <!-- field -->
               {% if field_min or field_max or field_input or field_checkbox %}
-              {% if field %}
-              <div id="{{ field.html_name }}_widget" class="inputfield accordion-body collapse" data-bind="css: {'in': {{ field.html_name }}()}">
-                <div class="accordion-inner">
-              {% endif %} <!-- field -->
+                {% if field %}
+                <div id="{{ field.html_name }}_widget" class="inputfield accordion-body collapse" data-bind="css: {'in': {{ field.html_name }}()}">
+                  <div class="accordion-inner">
+                {% endif %} <!-- field -->
                 <div class="form-row">
                   {% if field_min %}
                     <div class="form-group col-md-6">
@@ -114,7 +114,8 @@
                     </div>
                   {% endif %}
                   {% if field_input %}
-                    {% if field %}{% else %}
+                    {% if field %}
+                    {% else %}
                       <label>
                         {{ field_input.label }}
                         {% if field_input.help_text %}
@@ -125,13 +126,14 @@
                         {% endif %}
                       </label>
                     {% endif %}
-                  {{ field_input.field.widget.attrs.pre_text | safe  }}
-                  {{ field_input.as_widget }}
-                  {{ field_input.field.widget.attrs.post_text | safe  }}
-                  {% endif %}{% if field_checkbox %}
-                  {{ field_checkbox.field.widget.attrs.pre_text | safe }}
-                  {{ field_checkbox.as_widget }}
-                  {{ field_checkbox.field.widget.attrs.post_text | safe }}
+                    {{ field_input.field.widget.attrs.pre_text | safe  }}
+                    {{ field_input.as_widget }}
+                    {{ field_input.field.widget.attrs.post_text | safe  }}
+                  {% endif %}
+                  {% if field_checkbox %}
+                    {{ field_checkbox.field.widget.attrs.pre_text | safe }}
+                    {{ field_checkbox.as_widget }}
+                    {{ field_checkbox.field.widget.attrs.post_text | safe }}
                   {% endif %}
 
                   {% if field.field.widget.attrs.layer_id and field.field.widget.attrs.layer_title %}
