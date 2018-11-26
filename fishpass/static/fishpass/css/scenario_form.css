@@ -117,12 +117,17 @@ Panel
 }
 
 #panel .featurepanel .wizard_nav .btn {
-  background: #CCECAC;
+  background: rgba(44, 90, 160, 0.125);
   border-radius: 0 !important;
+  color: #1B2C46;
   height: 6vh;
   line-height: 6vh;
   padding: 0 1.25rem;
 }
+  #panel .featurepanel .wizard_nav .btn:hover {
+    background: rgba(44, 90, 160, 0.75);
+    color: #fff;
+  }
 
 #panel .cancel-nav .btn {
   border-radius: 0 !important;
@@ -130,6 +135,9 @@ Panel
   line-height: 6vh;
   padding: 0 1rem;
 }
+  #panel .cancel-nav .btn:hover {
+    background: #dcdcdc;
+  }
 
 .bb {
     border-bottom: 3px solid #e2e05e;
@@ -151,7 +159,7 @@ Panel
     height: auto;
     margin: 0 auto 5px auto;
     overflow: auto;
-    padding: 0;
+    /* padding: 0; */
     width: 100%;
 }
 
@@ -265,8 +273,8 @@ Panel
 .panel form input[type=number],
 .panel form textarea,
 .panel form select {
-    background: rgba(230, 241, 219, 0.5);
-    border: 1px solid #9C7B54;
+    background: rgba(44, 90, 160, 0.125);
+    border: 1px solid #1B2C46;
     font-size: .875em;
     height: 2rem;
     line-height: 2rem;
