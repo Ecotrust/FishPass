@@ -870,6 +870,7 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
     #TODO: Get and verify user account || sharing permissions
     # verify user ownership of project
     project = get_feature_by_uid(projid)
+    #TODO: support filters on action vs. non-action
     action_only = False
     if request.method == 'GET':
         try:
