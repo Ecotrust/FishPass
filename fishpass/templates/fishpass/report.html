@@ -1,6 +1,8 @@
 {% extends "fishpass/base.html" %}
 {% load static %}
 
+{% block header %}{% endblock header %}
+
 {% block site_style %}
     {{ block.super }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/openlayers/4.6.5/ol.css" media="screen,projection"/>
@@ -21,127 +23,131 @@
 <link rel="stylesheet" href="{% static 'fishpass/css/selection.css' %}"/>
 {% endblock extra_css %}
 
-{% block header %}{% endblock header %}
-
 {% block content %}
-  <section class="report-map-wrap">
-    <nav class="navbar navbar-light justify-content-center nav">
-      <button class="navbar-toggler dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-
-      <div class="dropdown-menu" id="menu">
-        <div class="list-group">
-            {% if 'app' not in request.path %}
-                <a href="/app/" class="dropdown-item list-group-item list-group-item-action">Launch App</a>
-            {% endif %}
-            <!-- <a href="{% url 'help' %}" class="dropdown-item list-group-item list-group-item-action">Help</a> -->
-            {% if user.is_authenticated %}
-                <a href="/accounts/" class="dropdown-item list-group-item list-group-item-action">Manage Account</a>
-                <button id="sign-out" data-action="sign-out" class="dropdown-item list-group-item list-group-item-action">Sign out</button>
-            {% else %}
-                <!-- if account is in path then form fields are missing -->
-                {% if 'account' not in request.path %}
-                    <button id="sign-in-modal" data-action="sign-in-modal" class="dropdown-item list-group-item list-group-item-action">Login</button>
-                {% else %}
-                    <a href="{% url 'account:login' %}" class="btn btn-link account-action">Register</a>
-                {% endif %}
-            {% endif %}
+<div class="container-fluid report-container">
+  <div class="row-fluid">
+    <div class="col">
+      <!-- <div class="nav-wrap top-nav-wrap"> -->
+        {% include 'fishpass/navbar.html' %}
+      <!-- </div> -->
+    </div>
+  </div>
+  <div class="row">
+    <div class="container">
+      <div class="row">
+        <!--
+        <div class="col">
+        </div>
+        -->
+        <div class="col">
+          <section class="report-map-wrap">
+            <div id="map" class="map"></div>
+          </section>
+        </div>
+        <!--
+        <div class="col">
+        </div>
+        -->
+      </div>
+      <div class="row">
+        <div class="col">
+          <h1>{{ title }}</h1>
         </div>
       </div>
-    </nav>
-    <div id="map" class="map"></div>
-  </section>
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <h2>{{ title }}</h2>
+      {% for report_dict in reports %}
+        <div class="row">
+          <h2>Aggregate Report</h2>
+          <section id="agg-report" class="report-section">
+            <div class="card-columns p2">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{ report_dict.barriers.items|length }} Barriers</h5>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Total Cost</h5>
+                  <p class="card-text muted">{{ report_dict.report.budget }}</p>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Status</h5>
+                  <p class="card-text muted">{{ report_dict.report.status }}</p>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">% Optimality Gap</h5>
+                  <p class="card-text muted">{{ report_dict.report.optgap }}</p>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Estimated Habitat Improved</h5>
+                  <p class="card-text muted">{{ report_dict.report.ptnl_habitat }}</p>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Net Gain</h5>
+                  <p class="card-text muted">{{ report_dict.report.netgain }}</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <div class="row">
+          <div class="col">
+            <h2>Individual Barriers</h2>
+            <section id="barrier-report" class="report-section col">
+            <div class="row">
+              <div class="col-3">
+                <div class="nav flex-column nav-pills" id="barrier-tab" role="tablist" aria-orientation="vertical">
+                  {% for barrier_id,barrier_data in report_dict.barriers.items %}
+                    {% if forloop.counter < 5 %}
+                      <a class="nav-link {% if forloop.counter < 2 %}active{% endif %}" id="barrier-{{ barrier_id }}-tab" data-toggle="pill" href="#barrier-{{ barrier_id }}" role="tab" aria-controls="barrier-{{ barrier_id }}" aria-selected="true">{{ barrier_id }}</a>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="col-9">
+                <div class="tab-content" id="barrier-content">
+                  {% for barrier_id,barrier_data in report_dict.barriers.items %}
+                    {% if forloop.counter < 10 %}
+                      <div class="tab-pane fade {% if forloop.counter < 2 %}show active{% endif %}" id="barrier-{{ barrier_id }}" role="tabpanel" aria-labelledby="barrier-{{ barrier_id }}">
+                        <ul class="list-group">
+                          {% for key,value in barrier_data.items %}
+                            {% if key != 'pad_id' %}
+                              <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span class="badge badge-value">{{ value }}</span> {{ key }}
+                              </li>
+                            {% endif %}
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    {% else %}
+                      {{ barrier_id }}
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+              <!-- <p>{/{ barriers }}</p> -->
+
+          </section>
+          </div>
+        </div>
+      {% endfor %} <!-- report -->
+
+      <div class="row">
+        <div class="col">
+          <button>Download</button>
+        </div>
       </div>
     </div>
-    {% for report_dict in reports %}
-      <div class="row">
-        <h1>Aggregate Report</h1>
-        <section id="agg-report" class="report-section">
-          <div class="card-columns p2">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">{{ report_dict.barriers.items|length }} Barriers</h5>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Total Cost</h5>
-                <p class="card-text muted">{{ report_dict.report.budget }}</p>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Status</h5>
-                <p class="card-text muted">{{ report_dict.report.status }}</p>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">% Optimality Gap</h5>
-                <p class="card-text muted">{{ report_dict.report.optgap }}</p>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Estimated Habitat Improved</h5>
-                <p class="card-text muted">{{ report_dict.report.ptnl_habitat }}</p>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Net Gain</h5>
-                <p class="card-text muted">{{ report_dict.report.netgain }}</p>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-      <div class="row">
-        <h1>Individual Barriers</h1>
-        <section id="barrier-report" class="report-section col">
-          <div class="row">
-            <div class="col-3">
-              <div class="nav flex-column nav-pills" id="barrier-tab" role="tablist" aria-orientation="vertical">
-                {% for barrier_id,barrier_data in report_dict.barriers.items %}
-                  {% if forloop.counter < 5 %}
-                    <a class="nav-link {% if forloop.counter < 2 %}active{% endif %}" id="barrier-{{ barrier_id }}-tab" data-toggle="pill" href="#barrier-{{ barrier_id }}" role="tab" aria-controls="barrier-{{ barrier_id }}" aria-selected="true">{{ barrier_id }}</a>
-                  {% endif %}
-                {% endfor %}
-              </div>
-            </div>
-            <div class="col-9">
-              <div class="tab-content" id="barrier-content">
-                {% for barrier_id,barrier_data in report_dict.barriers.items %}
-                  {% if forloop.counter < 10 %}
-                    <div class="tab-pane fade {% if forloop.counter < 2 %}show active{% endif %}" id="barrier-{{ barrier_id }}" role="tabpanel" aria-labelledby="barrier-{{ barrier_id }}">
-                      <ul class="list-group">
-                        {% for key,value in barrier_data.items %}
-                          {% if key != 'pad_id' %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                              <span class="badge badge-value">{{ value }}</span> {{ key }}
-                            </li>
-                          {% endif %}
-                        {% endfor %}
-                      </ul>
-                    </div>
-                  {% else %}
-                    {{ barrier_id }}
-                  {% endif %}
-                {% endfor %}
-              </div>
-            </div>
-          </div>
-            <!-- <p>{/{ barriers }}</p> -->
-
-        </section>
-      </div>
-    {% endfor %} <!-- report -->
-
-    <button>Download</button>
   </div>
+</div>
 
   {% include 'fishpass/modals.html' %}
 
@@ -174,7 +180,7 @@
         appCode: '{{ HERE_APP_CODE }}',
       }
     </script>
-    <script src="{% static 'fishpass/js/map/init.js' %}"></script>
+    <script src="{% static 'fishpass/js/map/init_report.js' %}"></script>
     <script src="{% static 'fishpass/js/map/styles.js' %}"></script>
     <script src="{% static 'fishpass/js/map/layers.js' %}"></script>
     <script src="{% static 'fishpass/js/map/widgets.js' %}"></script>

@@ -10,6 +10,10 @@ table, th, td {
   border: 1px solid black;
 }
 
+.report-container {
+  margin-bottom: 15px;
+}
+
 .report-map-wrap {
   height: 60vh;
   margin: 0 auto 2rem;
@@ -24,6 +28,14 @@ table, th, td {
 .report-map-wrap .navbar {
   position: fixed;
   z-index: 5;
+}
+
+#map .ol-zoom {
+  top: 0.5em;
+}
+
+#map .layer-switcher {
+  top: 2.5em;
 }
 
 .card {
