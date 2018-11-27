@@ -190,12 +190,13 @@ class ProjectForm(ScenarioForm):
     budget_min = forms.IntegerField(
         required=False,
         initial=100000,
-        widget=forms.TextInput(
+        widget=forms.NumberInput(
             attrs={
-                'class': 'slidervalue readonly-value',
-                'pre_text': 'from',
-                'readonly': 'readonly',
-                'post_text': '$',
+                # 'class': 'slidervalue readonly-value',
+                'class': 'slidervalue form-control rangevalue',
+                'pre_text': '$',
+                # 'readonly': 'readonly',
+                # 'post_text': '</div>',
             }
         )
     )
@@ -203,25 +204,26 @@ class ProjectForm(ScenarioForm):
     budget_max = forms.IntegerField(
         required=False,
         initial=1000000,
-        widget=forms.TextInput(
+        widget=forms.NumberInput(
             attrs={
-                'class': 'slidervalue readonly-value',
-                'pre_text': 'to',
-                'readonly': 'readonly',
-                'post_text': '$',
+                # 'class': 'slidervalue readonly-value',
+                'class': 'slidervalue form-control rangevalue',
+                'pre_text': '$',
+                # 'readonly': 'readonly',
+                # 'post_text': '</div>',
             }
         )
     )
 
-    budget_input = forms.IntegerField(
-        widget=DualSliderWidget(
-            'budget_min',
-            'budget_max',
-            min=0,
-            max=50000000,
-            step=1000           #This doesn't work at all for non-assigned costs. Do we need to make 2 of these?
-        )
-    )
+    # budget_input = forms.IntegerField(
+    #     widget=DualSliderWidget(
+    #         'budget_min',
+    #         'budget_max',
+    #         min=0,
+    #         max=50000000,
+    #         step=1000           #This doesn't work at all for non-assigned costs. Do we need to make 2 of these?
+    #     )
+    # )
 
     batch_increment = forms.IntegerField(
         label='Increment',
@@ -251,7 +253,7 @@ class ProjectForm(ScenarioForm):
             (None, None, None, 'assign_cost'),
             (None, None, None, 'budget_type'),
             (None, None, None, 'budget'),
-            (None, 'budget_min', 'budget_max', 'budget_input'),
+            (None, 'budget_min', 'budget_max'),
             (None, None, None, 'batch_increment'),
         ]
         return self._get_fields(names)

@@ -52,6 +52,10 @@ Panel
     padding: 0;
 }
 
+#panel section {
+    padding: .75rem 1rem;
+}
+
 /* barrier default buttons */
 #scenarios-form .btn-submit {
   visibility: hidden;
@@ -63,11 +67,17 @@ Panel
   font-weight: bold;
 }
 
+#remaining {
+  background: rgba(44, 90, 160, 0.1875);
+  margin: -1rem -1rem 1rem;
+}
+
 .barrier-default-btn-wrap {
   align-content: center;
   display: flex;
   justify-content: stretch;
-  height: 6vh;
+  min-height: 40px;
+  height: 7vh;
   margin: 0;
 }
 
@@ -76,8 +86,28 @@ Panel
 }
 
 .barrier-default-btn-wrap .btn-group .btn {
-  font-size: .9375em;
+  background: #CCECAC;
+  font-size: .875em;
   flex: 1;
+}
+  .barrier-default-btn-wrap .btn-group .btn:hover {
+    background: #E6F1DB;
+  }
+
+@media (min-width: 900px) {
+  .barrier-default-btn-wrap .btn-group .btn {
+    font-size: .9375em;
+  }
+}
+
+#open-barrier-status-form {
+  border-bottom: 2px solid #9C7B54;
+  margin-right: 1px;
+}
+
+#open-barrier-types-form {
+  border-bottom: 2px solid #9c7b54;
+  margin-left: 1px;
 }
 
 /* panel form */
@@ -86,12 +116,13 @@ Panel
   overflow: auto;
   padding: 1rem 1rem 0;
   position: relative;
-  height: 81vh;
+  height: 80vh;
 }
 
 #panel .cancel-nav {
   bottom: 0;
   height: 6vh;
+  min-height: 40px;
   left: 0;
   position: absolute;
 }
@@ -99,6 +130,7 @@ Panel
 #panel .featurepanel .wizard_nav {
   bottom: 0;
   height: 6vh;
+  min-height: 40px;
   position: absolute;
   right: 0;
 }
@@ -108,12 +140,18 @@ Panel
 }
 
 #panel .featurepanel .wizard_nav .btn {
-  background: #CCECAC;
+  background: rgba(44, 90, 160, 0.125);
   border-radius: 0 !important;
+  color: #1B2C46;
   height: 6vh;
+  min-height: 40px;
   line-height: 6vh;
   padding: 0 1.25rem;
 }
+  #panel .featurepanel .wizard_nav .btn:hover {
+    background: rgba(44, 90, 160, 0.75);
+    color: #fff;
+  }
 
 #panel .cancel-nav .btn {
   border-radius: 0 !important;
@@ -121,6 +159,9 @@ Panel
   line-height: 6vh;
   padding: 0 1rem;
 }
+  #panel .cancel-nav .btn:hover {
+    background: #dcdcdc;
+  }
 
 .bb {
     border-bottom: 3px solid #e2e05e;
@@ -142,7 +183,7 @@ Panel
     height: auto;
     margin: 0 auto 5px auto;
     overflow: auto;
-    padding: 0;
+    /* padding: 0; */
     width: 100%;
 }
 
@@ -160,11 +201,11 @@ Panel
 
 .step {
   position: relative;
-  padding: 0 5px;
+  /* padding: 0 5px; */
 }
 
   .step:after {
-    background: #217867;
+    /* background: #217867; */
     content: '';
     height: 100%;
     position: absolute;
@@ -188,6 +229,8 @@ Panel
 }
 
 .panel .instructions {
+    color: #1B2C46;
+    font-size: 1.125em;
     font-weight: 700;
     margin-top: .5rem;
     margin-bottom: .5rem;
@@ -195,8 +238,10 @@ Panel
 }
 
 .panel h4 {
-    font-size: 1.25em;
-    margin-bottom: 1rem;
+    color: #1B2C46;
+    font-style: italic;
+    font-size: .875em;
+    margin-bottom: 0;
 }
 
 .panel .show-blocks-btn {
@@ -233,7 +278,7 @@ Panel
 }
 
 .panel .badge-success {
-    background: #217867;
+    background: #2C5AA0;
 }
 
 .panel form label {
@@ -252,8 +297,8 @@ Panel
 .panel form input[type=number],
 .panel form textarea,
 .panel form select {
-    background: #fff;
-    border: 1px solid #67b8c6;
+    background: rgba(44, 90, 160, 0.125);
+    border: 1px solid #1B2C46;
     font-size: .875em;
     height: 2rem;
     line-height: 2rem;
@@ -263,15 +308,24 @@ Panel
     max-width: 100%;
 }
 
+.panel .input-group input[type=number] {
+  margin-bottom: 0;
+  width: 1%;
+}
+
+.panel .input-group-text:not(:empty) {
+    padding: 0 .375rem;
+}
+
 .panel form textarea {
     height: 4rem;
 }
 
-.panel form input.slidervalue,
+/* .panel form input.rangevalue,
 .panel form input[type=number] {
   width: 33%;
   max-width: 125px;
-}
+} */
 
 #id_target_area {
   height: 0;
