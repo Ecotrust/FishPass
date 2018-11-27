@@ -1,8 +1,6 @@
 {% extends "fishpass/base.html" %}
 {% load static %}
 
-{% block header %}{% endblock header %}
-
 {% block site_style %}
     {{ block.super }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/openlayers/4.6.5/ol.css" media="screen,projection"/>
@@ -25,29 +23,14 @@
 
 {% block content %}
 <div class="container-fluid report-container">
-  <div class="row-fluid">
-    <div class="col">
-      <!-- <div class="nav-wrap top-nav-wrap"> -->
-        {% include 'fishpass/navbar.html' %}
-      <!-- </div> -->
-    </div>
-  </div>
   <div class="row">
     <div class="container">
       <div class="row">
-        <!--
-        <div class="col">
-        </div>
-        -->
         <div class="col">
           <section class="report-map-wrap">
             <div id="map" class="map"></div>
           </section>
         </div>
-        <!--
-        <div class="col">
-        </div>
-        -->
       </div>
       <div class="row">
         <div class="col">
@@ -56,46 +39,48 @@
       </div>
       {% for report_dict in reports %}
         <div class="row">
-          <h2>Aggregate Report</h2>
-          <section id="agg-report" class="report-section">
-            <div class="card-columns p2">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">{{ report_dict.barriers.items|length }} Barriers</h5>
+          <div class="col">
+            <h2>Aggregate Report</h2>
+            <section id="agg-report" class="report-section">
+              <div class="card-columns p2">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ report_dict.barriers.items|length }} Barriers</h5>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Total Cost</h5>
+                    <p class="card-text muted">{{ report_dict.report.budget }}</p>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Status</h5>
+                    <p class="card-text muted">{{ report_dict.report.status }}</p>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">% Optimality Gap</h5>
+                    <p class="card-text muted">{{ report_dict.report.optgap }}</p>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Estimated Habitat Improved</h5>
+                    <p class="card-text muted">{{ report_dict.report.ptnl_habitat }}</p>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Net Gain</h5>
+                    <p class="card-text muted">{{ report_dict.report.netgain }}</p>
+                  </div>
                 </div>
               </div>
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">Total Cost</h5>
-                  <p class="card-text muted">{{ report_dict.report.budget }}</p>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">Status</h5>
-                  <p class="card-text muted">{{ report_dict.report.status }}</p>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">% Optimality Gap</h5>
-                  <p class="card-text muted">{{ report_dict.report.optgap }}</p>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">Estimated Habitat Improved</h5>
-                  <p class="card-text muted">{{ report_dict.report.ptnl_habitat }}</p>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">Net Gain</h5>
-                  <p class="card-text muted">{{ report_dict.report.netgain }}</p>
-                </div>
-              </div>
-            </div>
-          </section>
+            </section>
+          </div>
         </div>
         <div class="row">
           <div class="col">
@@ -105,9 +90,7 @@
               <div class="col-3">
                 <div class="nav flex-column nav-pills" id="barrier-tab" role="tablist" aria-orientation="vertical">
                   {% for barrier_id,barrier_data in report_dict.barriers.items %}
-                    {% if forloop.counter < 5 %}
-                      <a class="nav-link {% if forloop.counter < 2 %}active{% endif %}" id="barrier-{{ barrier_id }}-tab" data-toggle="pill" href="#barrier-{{ barrier_id }}" role="tab" aria-controls="barrier-{{ barrier_id }}" aria-selected="true">{{ barrier_id }}</a>
-                    {% endif %}
+                    <a class="nav-link {% if forloop.counter < 2 %}active{% endif %}" id="barrier-{{ barrier_id }}-tab" data-toggle="pill" href="#barrier-{{ barrier_id }}" role="tab" aria-controls="barrier-{{ barrier_id }}" aria-selected="true">{{ barrier_id }}</a>
                   {% endfor %}
                 </div>
               </div>

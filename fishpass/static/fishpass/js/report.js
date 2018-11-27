@@ -1,6 +1,6 @@
 barrierHoverSelectAction = function(feat) {
   if (feat) {
-    var pixel = map.getPixelFromCoordinate(feat.getGeometry().getCoordinates());
+    var pixel = app.map.getPixelFromCoordinate(feat.getGeometry().getCoordinates());
     console.log(pixel);
     app.map.barrierInfo.tooltip('hide')
     .css({

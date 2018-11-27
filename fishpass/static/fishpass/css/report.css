@@ -11,6 +11,7 @@ table, th, td {
 }
 
 .report-container {
+  margin-top: 7vh;
   margin-bottom: 15px;
 }
 
