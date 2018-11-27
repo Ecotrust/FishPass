@@ -27,14 +27,14 @@
     <div class="container">
       <div class="row">
         <div class="col">
-          <section class="report-map-wrap">
-            <div id="map" class="map"></div>
-          </section>
+          <h1>{{ title }}</h1>
         </div>
       </div>
       <div class="row">
         <div class="col">
-          <h1>{{ title }}</h1>
+          <section class="report-map-wrap">
+            <div id="map" class="map"></div>
+          </section>
         </div>
       </div>
       {% for report_dict in reports %}
@@ -45,25 +45,30 @@
               <div class="card-columns p2">
                 <div class="card">
                   <div class="card-body">
-                    <h5 class="card-title">{{ report_dict.barriers.items|length }} Barriers</h5>
+                    <h5 class="card-title">Barriers Treated</h5>
+                    <p class="card-text muted">{{ report_dict.report.action_count }}</p>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Total Barriers</h5>
+                    <p class="card-text muted">{{ report_dict.report.barrier_count }}</p>
                   </div>
                 </div>
                 <div class="card">
                   <div class="card-body">
                     <h5 class="card-title">Total Cost</h5>
+                    <p class="card-text muted">{{ report_dict.report.cost }}</p>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Budget</h5>
+                    {% if report_dict.report.budget_type == 'budget' %}
                     <p class="card-text muted">{{ report_dict.report.budget }}</p>
-                  </div>
-                </div>
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">Status</h5>
-                    <p class="card-text muted">{{ report_dict.report.status }}</p>
-                  </div>
-                </div>
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">% Optimality Gap</h5>
-                    <p class="card-text muted">{{ report_dict.report.optgap }}</p>
+                    {% else %}
+                    <p class="card-text muted">{{ report_dict.report.budget_min }} - {{ report_dict.report.budget_max }}</p>
+                    {% endif %}
                   </div>
                 </div>
                 <div class="card">
@@ -87,7 +92,7 @@
             <h2>Individual Barriers</h2>
             <section id="barrier-report" class="report-section col">
             <div class="row">
-              <div class="col-3">
+              <div class="col-3 report-barrier-options">
                 <div class="nav flex-column nav-pills" id="barrier-tab" role="tablist" aria-orientation="vertical">
                   {% for barrier_id,barrier_data in report_dict.barriers.items %}
                     <a class="nav-link {% if forloop.counter < 2 %}active{% endif %}" id="barrier-{{ barrier_id }}-tab" data-toggle="pill" href="#barrier-{{ barrier_id }}" role="tab" aria-controls="barrier-{{ barrier_id }}" aria-selected="true">{{ barrier_id }}</a>

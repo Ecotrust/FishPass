@@ -39,6 +39,12 @@ table, th, td {
   top: 2.5em;
 }
 
+.report-barrier-options {
+  height: 75vh;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
 .list-group .barrier-report-item,
 .list-group .list-group-item {
   padding: 0.5rem;

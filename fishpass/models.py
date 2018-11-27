@@ -475,14 +475,27 @@ class ProjectReport(models.Model):
         return barrier_dict
 
     def to_dict(self):
+        total_barriers = ProjectReportBarrier.objects.filter(project_report=self)
+        action_barriers = total_barriers.filter(action=1)
+        cost = 0
+        for action_barrier in action_barriers:
+            bar_dict = action_barrier.to_dict()
+            cost += int(bar_dict['Cost'].replace(',','').replace('$',''))
+
         out_dict = {
             'project': str(self.project),
-            'budget': self.budget,
-            'status': self.status,
-            'optgap': self.optgap,
-            'ptnl_habitat': self.ptnl_habitat,
-            'netgain': self.netgain,
-            # 'geojson': {}, # TODO
+            'assign_cost': "$%s" % "{:,}".format(round(self.project.assign_cost)),
+            'budget_type': self.project.budget_type,
+            'barrier_count': total_barriers.count(),
+            'action_count': action_barriers.count(),
+            'cost': "$%s" % "{:,}".format(round(cost)),
+            'budget': "$%s" % "{:,}".format(round(self.project.budget)),
+            'budget_min': "$%s" % "{:,}".format(round(self.project.budget_min)),
+            'budget_max': "$%s" % "{:,}".format(round(self.project.budget_max)),
+            # 'status': self.status,
+            # 'optgap': self.optgap,
+            'ptnl_habitat': "%s mi" % "{:,}".format(round(self.ptnl_habitat,2)),
+            'netgain': "%s mi" % "{:,}".format(round(self.netgain,2)),
         }
 
         return out_dict
@@ -546,7 +559,11 @@ class ProjectReportBarrier(models.Model):
             else:
                 report_dict['Action'] = 'Do not treat'
             report_dict['Potential Habitat'] = "%s mi" % round(self.potential_habitat(bar_record), 2)
-            report_dict['Cost'] = "$%s" % "{:,}".format(round(full_dict['estimated_cost']))
+            try:
+                report_dict['Cost'] = "$%s" % "{:,}".format(round(full_dict['estimated_cost']))
+            except TypeError as e:
+                report_dict['Cost'] = "NA"
+                pass
             report_dict['Barriers Downstream'] = full_dict['downstream_barrier_count']
             report_dict['Site Type'] = full_dict['site_type']
             report_dict['Site Name'] = full_dict['site_name']
