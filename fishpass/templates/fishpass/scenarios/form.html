@@ -59,24 +59,24 @@
             {% for field, field_min, field_max, field_input, field_checkbox in step.fields %}
             <li>
               {% if field %}
-              <div class="accordion" id="{{ field.html_name }}_accordion">
-                <div class="accordion-heading" data-bind="click: function() {app.viewModel.scenarios.scenarioFormModel.toggleParameter('{{ field.html_name }}'); }">
-                  <label class="accordion-toggle">
-                    {{ field.as_widget }}
-                    <i class="check icon-large icon-check" data-bind="visible: {{ field.html_name }}()"></i>
-                    <i class="check icon-large icon-check-empty"></i>
-                    <span class="parameter-label" style="margin-left: 5px">{{ field.label }}</span>
-                    <i class="info-icon icon-info-sign field-tooltip"
-                    data-toggle="tooltip"
-                    data-original-title="{{ field.help_text }}"
-                    data-placement="top"></i>
-                  </label>
-                </div>
+                <div class="accordion" id="{{ field.html_name }}_accordion">
+                  <div class="accordion-heading" data-bind="click: function() {app.viewModel.scenarios.scenarioFormModel.toggleParameter('{{ field.html_name }}'); }">
+                    <label class="accordion-toggle">
+                      {{ field.as_widget }}
+                      <i class="check icon-large icon-check" data-bind="visible: {{ field.html_name }}()"></i>
+                      <i class="check icon-large icon-check-empty"></i>
+                      <span class="parameter-label" style="margin-left: 5px">{{ field.label }}</span>
+                      <i class="info-icon icon-info-sign field-tooltip"
+                      data-toggle="tooltip"
+                      data-original-title="{{ field.help_text }}"
+                      data-placement="top"></i>
+                    </label>
+                  </div>
               {% endif %} <!-- field -->
               {% if field_min or field_max or field_input or field_checkbox %}
                 {% if field %}
-                <div id="{{ field.html_name }}_widget" class="inputfield accordion-body collapse" data-bind="css: {'in': {{ field.html_name }}()}">
-                  <div class="accordion-inner">
+                  <div id="{{ field.html_name }}_widget" class="inputfield accordion-body collapse" data-bind="css: {'in': {{ field.html_name }}()}">
+                    <div class="accordion-inner">
                 {% endif %} <!-- field -->
                 <div class="form-row">
                   {% if field_min %}
@@ -114,21 +114,26 @@
                     </div>
                   {% endif %}
                   {% if field_input %}
-                    {% if field %}
-                    {% else %}
-                      <label>
-                        {{ field_input.label }}
+                    {% if not field %}
+                      <label>{{ field_input.label }}
                         {% if field_input.help_text %}
-                        <i class="info-icon icon-info-sign field-tooltip"
-                        data-toggle="tooltip"
-                        data-original-title="{{ field_input.help_text }}"
-                        data-placement="top"></i>
+                          <i class="info-icon icon-info-sign field-tooltip" data-toggle="tooltip" data-original-title="{{ field_input.help_text }}" data-placement="top"></i>
                         {% endif %}
                       </label>
                     {% endif %}
-                    {{ field_input.field.widget.attrs.pre_text | safe  }}
-                    {{ field_input.as_widget }}
-                    {{ field_input.field.widget.attrs.post_text | safe  }}
+                    <div class="input-group">
+                      {% if field_input.field.widget.attrs.pre_text %}
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">{{ field_input.field.widget.attrs.pre_text | safe  }}</span>
+                        </div>
+                      {% endif %}
+                      {{ field_input.as_widget }}
+                      {% if field_input.field.widget.attrs.post_text %}
+                        <div class="input-group-append">
+                          <span class="input-group-text">{{ field_input.field.widget.attrs.post_text | safe  }}</span>
+                        </div>
+                      {% endif %}
+                    </div>
                   {% endif %}
                   {% if field_checkbox %}
                     {{ field_checkbox.field.widget.attrs.pre_text | safe }}

@@ -182,9 +182,15 @@ class ProjectForm(ScenarioForm):
     )
 
     budget = forms.IntegerField(
-        label='Budget ($)',
+        label='Budget',
         initial=0,
         min_value=0,
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'currency form-control',
+                'pre_text': '$',
+            }
+        )
     )
 
     budget_min = forms.IntegerField(
@@ -192,11 +198,8 @@ class ProjectForm(ScenarioForm):
         initial=100000,
         widget=forms.NumberInput(
             attrs={
-                # 'class': 'slidervalue readonly-value',
-                'class': 'slidervalue form-control rangevalue',
+                'class': 'slidervalue currency form-control rangevalue',
                 'pre_text': '$',
-                # 'readonly': 'readonly',
-                # 'post_text': '</div>',
             }
         )
     )
@@ -206,16 +209,13 @@ class ProjectForm(ScenarioForm):
         initial=1000000,
         widget=forms.NumberInput(
             attrs={
-                # 'class': 'slidervalue readonly-value',
-                'class': 'slidervalue form-control rangevalue',
+                'class': 'slidervalue currency form-control rangevalue',
                 'pre_text': '$',
-                # 'readonly': 'readonly',
-                # 'post_text': '</div>',
             }
         )
     )
 
-    # budget_input = forms.IntegerField(
+    budget_input = forms.IntegerField(
     #     widget=DualSliderWidget(
     #         'budget_min',
     #         'budget_max',
@@ -223,7 +223,7 @@ class ProjectForm(ScenarioForm):
     #         max=50000000,
     #         step=1000           #This doesn't work at all for non-assigned costs. Do we need to make 2 of these?
     #     )
-    # )
+    )
 
     batch_increment = forms.IntegerField(
         label='Increment',
@@ -253,7 +253,8 @@ class ProjectForm(ScenarioForm):
             (None, None, None, 'assign_cost'),
             (None, None, None, 'budget_type'),
             (None, None, None, 'budget'),
-            (None, 'budget_min', 'budget_max'),
+            (None, None, None, 'budget_min'),
+            (None, None, None, 'budget_max'),
             (None, None, None, 'batch_increment'),
         ]
         return self._get_fields(names)
