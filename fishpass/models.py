@@ -244,7 +244,7 @@ class Barrier(models.Model):
             'upstream_miles': self.upstream_miles,  # this could use some number formatting
             'downstream_id': self.downstream_id,
             'downstream_barrier_count': self.downstream_barrier_count,
-            'BIOS_link': "<a href=%s%s>link</a>" % (settings.BIOS_URL, self.pad_id),
+            'BIOS_link': '<a href=%s%s target="_blank">link</a>' % (settings.BIOS_URL, self.pad_id),
             'estimated_cost': override_fields['estimated_cost'],
             'pre_passability': override_fields['pre_passability'],
             'post_passability': override_fields['post_passability'],
@@ -468,12 +468,7 @@ class ProjectReport(models.Model):
                 barriers = ProjectReportBarrier.objects.filter(project_report=self).order_by('barrier_id')
             barrier_dict = {}
             for barrier in barriers:
-                barrier_object = Barrier.objects.get(pad_id=int(barrier.barrier_id))
-                barrier_dict[barrier.barrier_id] = barrier_object.to_dict()
-                if barrier.action == 1:
-                    barrier_dict[barrier.barrier_id]['action'] = 'Treat'
-                else:
-                    barrier_dict[barrier.barrier_id]['action'] = 'Do not treat'
+                barrier_dict[barrier.barrier_id] = barrier.to_dict()
 
             # Cache for 1 week, will be reset if layer data changes
             cache.set(cache_key, barrier_dict, 60*60*24*7)
@@ -487,7 +482,7 @@ class ProjectReport(models.Model):
             'optgap': self.optgap,
             'ptnl_habitat': self.ptnl_habitat,
             'netgain': self.netgain,
-            'geojson': {}, # TODO
+            # 'geojson': {}, # TODO
         }
 
         return out_dict
@@ -507,10 +502,72 @@ class ProjectReportBarrier(models.Model):
     barrier_id = models.CharField(max_length=50)
     action = models.IntegerField()
 
+    def get_absolute_passability(self, bar_record=False):
+        if not bar_record:
+            bar_record = Barrier.objects.get(pk=self.barrier_id)
+        barrier_dict = bar_record.to_dict(self.project_report.project)
+        if bar_record.downstream_barrier_count > 0:
+            ds_report_barrier = ProjectReportBarrier.objects.get(barrier_id=bar_record.downstream_id, project_report=self.project_report)
+            ds_passability = ds_report_barrier.get_absolute_passability()
+        else:
+            ds_passability = 1
+        if self.action == 1:
+            passability = barrier_dict['post_passability']
+        else:
+            passability = barrier_dict['pre_passability']
+        return passability * ds_passability
+
+    def potential_habitat(self, bar_record=False):
+        if not bar_record:
+            bar_record = Barrier.objects.get(pk=self.barrier_id)
+        barrier_dict = bar_record.to_dict(self.project_report.project)
+        if self.project_report.project.treat_downstream == 'ignore':
+            if self.action == 1:
+                return bar_record.upstream_miles * barrier_dict['post_passability']
+            else:
+                return bar_record.upstream_miles * barrier_dict['pre_passability']
+        else:
+            absolute_passability = self.get_absolute_passability(bar_record)
+            return bar_record.upstream_miles * absolute_passability
+
+    def to_dict(self):
+        from django.core.cache import cache
+        cache_key = "project_barrier_%s" % self.pk
+        report_dict = cache.get(cache_key)
+        if not report_dict:
+            from collections import OrderedDict
+            bar_record = Barrier.objects.get(pk=self.barrier_id)
+            full_dict = bar_record.to_dict(self.project_report.project, )
+            report_dict = OrderedDict()
+            report_dict['PAD ID'] = full_dict['pad_id']
+            report_dict['View in BIOS'] = full_dict['BIOS_link']
+            if self.action == 1:
+                report_dict['Action'] = 'Treat'
+            else:
+                report_dict['Action'] = 'Do not treat'
+            report_dict['Potential Habitat'] = "%s mi" % round(self.potential_habitat(bar_record), 2)
+            report_dict['Cost'] = "$%s" % "{:,}".format(round(full_dict['estimated_cost']))
+            report_dict['Barriers Downstream'] = full_dict['downstream_barrier_count']
+            report_dict['Site Type'] = full_dict['site_type']
+            report_dict['Site Name'] = full_dict['site_name']
+            report_dict['Stream Name'] = full_dict['stream_name']
+            report_dict['Tributary To'] = full_dict['tributary_to']
+            # Get watershed name:
+            ws_name_field = settings.FOCUS_AREA_TYPE_NAME_LOOKUP[self.project_report.project.spatial_organization]
+            report_dict['Watershed'] = full_dict[ws_name_field]
+            report_dict['County'] = full_dict['county']
+            report_dict['Coordinates'] = "%s, %s" % (full_dict['latitude'], full_dict['longitude'])
+            cache.set(cache_key, report_dict, 60*60*24*7)
+        return report_dict
+
     class Meta:
         verbose_name = 'Project Report Barrier'
         verbose_name_plural = 'Project Report Barriers'
 
+    def save(self, *args, **kwargs):
+        from django.core.cache import cache
+        cache.delete("project_barrier_%s" % self.pk)
+        super(ProjectReportBarrier, self).save(*args, **kwargs)
 
 # outside of scenario model, between pad and user entry
 class ScenarioBarrier(models.Model):

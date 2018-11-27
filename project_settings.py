@@ -224,6 +224,15 @@ FOCUS_AREA_FIELD_ID_LOOKUP = {
 
 DEFAULT_FOCUS_AREA_TYPE = 'HUC_8'
 
+FOCUS_AREA_TYPE_NAME_LOOKUP = {
+    'HUC08': 'huc8_name',
+    'HUC10': 'huc10_name',
+    'HUC12': 'huc12_name',
+    'County': 'huc8_name',
+    'Region': 'huc8_name',
+    'State': 'huc8_name'
+}
+
 # This is only used for importing the PAD. Geometry_DB_SRID is used for import FocusAreas
 IMPORT_SRID = 4326
 
