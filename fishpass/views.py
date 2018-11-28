@@ -930,7 +930,7 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
     reports_dict = {}
     for report in reports.order_by('budget'):
         reports_dict[str(report.budget)] = report.to_dict()
-    reports_list = [{'report': x.to_dict, 'barriers':x.barriers_dict(action_only)} for x in reports.order_by('budget')]
+    reports_list = [{'report': x.to_dict(), 'barriers':x.barriers_dict(action_only)} for x in reports.order_by('budget')]
 
     context['title'] = str(project)
     context['MAPBOX_TOKEN'] = settings.MAPBOX_ACCESS_TOKEN

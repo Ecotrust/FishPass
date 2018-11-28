@@ -464,9 +464,9 @@ class ProjectReport(models.Model):
     def barriers_dict(self, action_only=False):
         from django.core.cache import cache
         if action_only:
-            cache_key = "%s_barriers_action_only" % self.uid()
+            cache_key = "%s_%s_barriers_action_only" % (self.uid(), str(self.budget))
         else:
-            cache_key = "%s_barriers" % self.uid()
+            cache_key = "%s_%s_barriers" % (self.uid(), str(self.budget))
         barrier_dict = cache.get(cache_key)
         if not barrier_dict:
             if action_only:
@@ -512,8 +512,8 @@ class ProjectReport(models.Model):
 
     def save(self, *args, **kwargs):
         from django.core.cache import cache
-        cache.delete("%s_barriers_action_only" % self.uid())
-        cache.delete("%s_barriers" % self.uid())
+        cache.delete("%s_%s_barriers_action_only" % (self.uid(), str(self.budget)))
+        cache.delete("%s_%s_barriers" % (self.uid(), str(self.budget)))
         super(ProjectReport, self).save(*args, **kwargs)
 
     class Meta:

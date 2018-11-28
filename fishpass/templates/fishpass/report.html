@@ -39,6 +39,32 @@
       </div>
       {% for report_dict in reports %}
         {% if report_dict.report.budget_type == 'batch' %}
+          {% if forloop.first %}
+            <ul class="nav nav-tabs" id="reportTab" role="tablist">
+          {% endif %}
+
+          <li class="nav-item">
+            {% if forloop.first %}
+            <a class="nav-link active" id="budget-{{ report_dict.report.budget_int }}-tab" data-toggle="tab" href="#budget-{{ report_dict.report.budget_int }}" role="tab" aria-controls="budget-{{ report_dict.report.budget_int }}" aria-selected="true">{{ report_dict.report.budget }}</a>
+            {% else %}
+            <a class="nav-link" id="budget-{{ report_dict.report.budget_int }}-tab" data-toggle="tab" href="#budget-{{ report_dict.report.budget_int }}" role="tab" aria-controls="budget-{{ report_dict.report.budget_int }}" aria-selected="false">{{ report_dict.report.budget }}</a>
+            {% endif %}
+          </li>
+
+          {% if forloop.last %}
+          </ul>
+          <div class="tab-content" id="reportTabContent">
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+
+      {% for report_dict in reports %}
+        {% if report_dict.report.budget_type == 'batch' %}
+          {% if forloop.first %}
+          <div class="tab-pane fade show active" id="budget-{{ report_dict.report.budget_int }}" role="tabpanel" aria-labelledby="budget-{{ report_dict.report.budget_int }}-tab">
+          {% else %}
+          <div class="tab-pane fade" id="budget-{{ report_dict.report.budget_int }}" role="tabpanel" aria-labelledby="budget-{{ report_dict.report.budget_int }}-tab">
+          {% endif %}
         {% endif %}
         <div class="row">
           <div class="col">
@@ -89,10 +115,6 @@
             </section>
           </div>
         </div>
-      {% endfor %}
-      {% for report_dict in reports %}
-        {% if report_dict.report.budget_type == 'batch' %}
-        {% endif %}
         <div class="row">
           <div class="col">
             <h2>Individual Barriers</h2>
@@ -126,7 +148,13 @@
           </section>
           </div>
         </div>
+        {% if report_dict.report.budget_type == 'batch' %}
+        </div>
+        {% endif %}
       {% endfor %} <!-- report -->
+      {% if report_dict.report.budget_type == 'batch' %}
+    </div> <!-- reportTabContent -->
+      {% endif %}
 
       <div class="row">
         <div class="col">
