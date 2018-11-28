@@ -38,6 +38,8 @@
         </div>
       </div>
       {% for report_dict in reports %}
+        {% if report_dict.report.budget_type == 'batch' %}
+        {% endif %}
         <div class="row">
           <div class="col">
             <h2>Aggregate Report</h2>
@@ -87,6 +89,10 @@
             </section>
           </div>
         </div>
+      {% endfor %}
+      {% for report_dict in reports %}
+        {% if report_dict.report.budget_type == 'batch' %}
+        {% endif %}
         <div class="row">
           <div class="col">
             <h2>Individual Barriers</h2>

@@ -487,7 +487,11 @@ class ProjectReport(models.Model):
         cost = 0
         for action_barrier in action_barriers:
             bar_dict = action_barrier.to_dict()
-            cost += int(bar_dict['Cost'].replace(',','').replace('$',''))
+            try:
+                cost += int(bar_dict['Cost'].replace(',','').replace('$',''))
+            except ValueError as e:
+                # Value is 'NA' - nothing to add to cost.
+                pass
 
         out_dict = {
             'project': str(self.project),
@@ -496,7 +500,7 @@ class ProjectReport(models.Model):
             'barrier_count': total_barriers.count(),
             'action_count': action_barriers.count(),
             'cost': "$%s" % "{:,}".format(round(cost)),
-            'budget': "$%s" % "{:,}".format(round(self.project.budget)),
+            'budget': "$%s" % "{:,}".format(self.budget),
             'budget_min': "$%s" % "{:,}".format(round(self.project.budget_min)),
             'budget_max': "$%s" % "{:,}".format(round(self.project.budget_max)),
             'ptnl_habitat': "%s mi" % "{:,}".format(round(self.ptnl_habitat,2)),

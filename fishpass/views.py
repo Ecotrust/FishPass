@@ -644,8 +644,6 @@ def createOptiPassInputFile(project, file_location):
     # start timer
     startFuncTime = datetime.now()
     print('Beginning createOptiPassInputFile...')
-    # get initial items for later use
-    projectReport = ProjectReport.objects.get(project=project)
     # get list of barriers
     barriers = [x for x in project.run()]
     barCrunchTime = (datetime.now()-startFuncTime).total_seconds()
