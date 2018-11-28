@@ -308,7 +308,9 @@ Panel
     max-width: 100%;
 }
 
-.panel .input-group input[type=number] {
+.panel .input-group #id_budget_min,
+.panel .input-group #id_budget_max,
+.panel .input-group #id_budget {
   margin-bottom: 0;
   width: 1%;
 }
