@@ -101,14 +101,14 @@
               <div class="col-3 report-barrier-options">
                 <div class="nav flex-column nav-pills" id="barrier-tab" role="tablist" aria-orientation="vertical">
                   {% for barrier_id,barrier_data in report_dict.barriers.items %}
-                    <a class="nav-link {% if forloop.counter < 2 %}active{% endif %}" id="barrier-{{ barrier_id }}-tab" data-toggle="pill" href="#barrier-{{ barrier_id }}" role="tab" aria-controls="barrier-{{ barrier_id }}" aria-selected="true">{{ barrier_id }}</a>
+                    <a class="nav-link {% if forloop.counter < 2 %}active{% endif %}" id="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}-tab" data-toggle="pill" href="#barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" role="tab" aria-controls="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" aria-selected="true">{{ barrier_id }}</a>
                   {% endfor %}
                 </div>
               </div>
               <div class="col-9">
                 <div class="tab-content" id="barrier-content">
                   {% for barrier_id,barrier_data in report_dict.barriers.items %}
-                    <div class="tab-pane fade {% if forloop.counter < 2 %}show active{% endif %}" id="barrier-{{ barrier_id }}" role="tabpanel" aria-labelledby="barrier-{{ barrier_id }}">
+                    <div class="tab-pane fade {% if forloop.counter < 2 %}show active{% endif %}" id="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" role="tabpanel" aria-labelledby="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}">
                       <ul class="list-group">
                         {% for key,value in barrier_data.items %}
                           <li class="list-group-item d-flex justify-content-between align-items-center barrier-report-item">

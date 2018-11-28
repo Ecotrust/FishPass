@@ -501,6 +501,7 @@ class ProjectReport(models.Model):
             'action_count': action_barriers.count(),
             'cost': "$%s" % "{:,}".format(round(cost)),
             'budget': "$%s" % "{:,}".format(self.budget),
+            'budget_int': self.budget,
             'budget_min': "$%s" % "{:,}".format(round(self.project.budget_min)),
             'budget_max': "$%s" % "{:,}".format(round(self.project.budget_max)),
             'ptnl_habitat': "%s mi" % "{:,}".format(round(self.ptnl_habitat,2)),
