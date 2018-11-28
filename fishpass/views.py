@@ -301,7 +301,6 @@ def project_barrier_form(request, project_uid, barrier_id, template=loader.get_t
                         'message': "Successfully updated Project Barrier"
                     }
                 except Exception as e:
-                    import ipdb; ipdb.set_trace()
                     retjson = {
                         'status': 500,
                         'success': False,
@@ -638,16 +637,21 @@ def apply_project_specific_barrier_details(barrier_dict, barrier_record):
     return barrier_dict
 
 def createOptiPassInputFile(project, file_location):
+    # import required libraries
     from fishpass.models import FocusArea, Barrier, BarrierCost, ScenarioBarrier, ScenarioBarrierType, ScenarioBarrierStatus, BarrierType, BarrierStatus
+    from fishpass.models import ProjectReport, ProjectReportBarrier
     from datetime import datetime
+    # start timer
     startFuncTime = datetime.now()
     print('Beginning createOptiPassInputFile...')
+    # get initial items for later use
+    projectReport = ProjectReport.objects.get(project=project)
     # get list of barriers
     barriers = [x for x in project.run()]
     barCrunchTime = (datetime.now()-startFuncTime).total_seconds()
     print("Filtering Done: %s seconds" % str(barCrunchTime))
 
-    # get downstream barriers
+    # get downstream barriers (9% runtime)
     # if treat_downstream is 'adjust', ds_ids are already in barriers. If 'ignore' we don't want them.
     ds_barriers = []
     ds_ids = []
@@ -662,6 +666,7 @@ def createOptiPassInputFile(project, file_location):
     dsBarTime = (datetime.now()-startFuncTime).total_seconds()-barCrunchTime
     print("DownStream ID Discovery Done: %s seconds" % str(dsBarTime))
 
+    # get initial queries (0% runtime)
     barrier_dicts = []
     if len(project.target_area) > 1:
         target_ids = eval(project.target_area)
@@ -685,6 +690,11 @@ def createOptiPassInputFile(project, file_location):
     project_barriers_records = ScenarioBarrier.objects.filter(project=project)
     startLoopTime = datetime.now()
     print('Initial queries complete: %s seconds' % str((startLoopTime-startFuncTime).total_seconds()-barCrunchTime-dsBarTime))
+
+    # gather barrier data (90% of runtime!)
+    # TODO: Speed this up
+    # Pre-populate ProjectReport and ProjectReportBarrier records
+    projectReports = ProjectReport.objects.filter(project=project)
     longest_loop_time = 0.0
     for barrier in all_barriers:
         midLoopTime = datetime.now()
@@ -742,6 +752,10 @@ def createOptiPassInputFile(project, file_location):
 
         barrier_dicts.append(barrier_dict)
 
+        if project.treat_downstream == 'adjust' or barrier in barriers:
+            for projectReport in projectReports:
+                projectReportBarrier = ProjectReportBarrier.objects.create(project_report=projectReport, barrier_id=barrier.pad_id, estimated_cost=barrier_dict['COST'], pre_passability=barrier_dict['PREPASS'], post_passability=barrier_dict['POSTPASS'])
+
         loopTime = (midLoopTime-datetime.now()).total_seconds()
         if loopTime > longest_loop_time:
             longest_loop_time = loopTime
@@ -776,29 +790,46 @@ def addOutfileToReport(outfile, project):
 
     from fishpass.models import ProjectReport, ProjectReportBarrier
     report_dict = {'project': project}
-    report_obj = False
+    report_objs = ProjectReport.objects.filter(project=project)
+    reading_project_summary = True
+    report_dicts = []
+    # report_obj = False
 
     with open(outfile) as txt:
+        # TODO: make this work for batch runs
         for row in txt:
-            if report_obj:
+            if not reading_project_summary:
                 if not row == '\n' and 'BARID' not in row and 'ACTION' not in row and '\t' in row:
-                    barrier_record = row.split('\t')
-                    if int(barrier_record[1]) in [0,1]:
-                        ProjectReportBarrier.objects.create(project_report=report_obj, barrier_id=barrier_record[0], action=int(barrier_record[1]))
+                    for index, value in enumerate(row.split('\t')):
+                        value = value.replace('\n','')
+                        # barrier_record = row.split('\t')
+                        if index == 0:
+                            barrier_id = value
+                        else:
+                            if int(value) in [0,1]:
+                                #this record should have been created and mostly populated during 'createOptipassInputFile'
+                                projReportBarrier, created = ProjectReportBarrier.objects.get_or_create(project_report=report_dicts[index-1], barrier_id=barrier_id)
+                                projReportBarrier.action = int(value)
+                                projReportBarrier.save()
+                                # ProjectReportBarrier.objects.create(project_report=report_obj, barrier_id=barrier_record[0], action=int(barrier_record[1]))
             else:
-                if 'BUDGET:' in row:
-                    report_dict['budget'] = float(row.split('\t')[1])
-                elif 'STATUS:' in row:
-                    report_dict['status'] = row.split('\t')[1].split('\n')[0]
-                elif '%OPTGAP:' in row:
-                    report_dict['optgap'] = float(row.split('\t')[1])
-                elif 'PTNL_HABITAT:' in row:
-                    report_dict['ptnl_habitat'] = float(row.split('\t')[1])
-                elif 'NETGAIN:' in row:
-                    report_dict['netgain'] = float(row.split('\t')[1])
-                elif row == '\n':
-                    ProjectReport.objects.filter(project=project).delete()
-                    report_obj, created = ProjectReport.objects.get_or_create(**report_dict)
+                attribute = row.split('\t')[0].replace(':','')
+                if attribute not in ['BUDGET', 'STATUS', '%OPTGAP','PTNL_HABITAT','NETGAIN']:
+                    # Save projectReports
+                    for report_dict in report_dicts:
+                        report_dict.save()
+                        reading_project_summary = False
+                for index, value in enumerate(row.split('\t')):
+                    value = value.replace('\n','')
+                    if index > 0:
+                        if attribute == 'BUDGET':
+                            report_dicts.append(report_objs.get(budget=int(float(value))))
+                        else:
+                            if attribute == 'STATUS':
+                                format_val = value
+                            else:
+                                format_val = float(value)
+                            setattr(report_dicts[index-1],attribute.lower().replace('%',''),format_val)
 
 def run_optipass(request, scenario_id):
     from features.registry import get_feature_by_uid
@@ -813,8 +844,12 @@ def run_optipass(request, scenario_id):
 
 def optipass(project):
     import os, subprocess, stat, shutil
-    input_file = os.path.join(settings.CSV_BASE_DIR, '%s_input.csv' % project.uid)
-    createOptiPassInputFile(project, input_file)
+    from fishpass.models import ProjectReport, ProjectReportBarrier
+
+    # clear out old report records
+    ProjectReportBarrier.objects.filter(project_report__project=project).delete()
+    ProjectReport.objects.filter(project=project).delete()
+
     # Sort out batch or budget soln
     budget_list = []
     if project.budget_type == 'batch':
@@ -825,6 +860,13 @@ def optipass(project):
         budget_list.append(project.budget_max)
     else:
         budget_list.append(project.budget)
+
+    for budget in budget_list:
+        ProjectReport.objects.create(project=project, budget=budget)
+
+    # create input file
+    input_file = os.path.join(settings.CSV_BASE_DIR, '%s_input.csv' % project.uid)
+    createOptiPassInputFile(project, input_file)
 
     # Downstream treatment strategy
     if project.treat_downstream == 'adjust':

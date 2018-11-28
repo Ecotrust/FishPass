@@ -442,17 +442,24 @@ class Project(Scenario):
 
 class ProjectReport(models.Model):
     project = models.ForeignKey(Project)
-    budget = models.IntegerField()
-    status = models.CharField(max_length=10)
-    optgap = models.FloatField(verbose_name='percent optimality gap')
-    ptnl_habitat = models.FloatField(verbose_name='potential habitat')
-    netgain = models.FloatField(verbose_name='net gain')
+    budget = models.IntegerField(default=0)
+    status = models.CharField(max_length=10, default='')
+    optgap = models.FloatField(verbose_name='percent optimality gap',default=0.0)
+    ptnl_habitat = models.FloatField(verbose_name='potential habitat',default=0.0)
+    netgain = models.FloatField(verbose_name='net gain',default=0.0)
 
     def uid(self):
         return "%s_report" % self.project.uid
 
     def __str__(self):
         return "%s Report" % str(self.project)
+
+    def cost(self):
+        barriers = ProjectReportBarrier.objects.filter(project_report=self)
+        cost=0
+        for barrier in barriers:
+            cost += barrier.estimated_cost
+        return cost
 
     def barriers_dict(self, action_only=False):
         from django.core.cache import cache
@@ -492,8 +499,6 @@ class ProjectReport(models.Model):
             'budget': "$%s" % "{:,}".format(round(self.project.budget)),
             'budget_min': "$%s" % "{:,}".format(round(self.project.budget_min)),
             'budget_max': "$%s" % "{:,}".format(round(self.project.budget_max)),
-            # 'status': self.status,
-            # 'optgap': self.optgap,
             'ptnl_habitat': "%s mi" % "{:,}".format(round(self.ptnl_habitat,2)),
             'netgain': "%s mi" % "{:,}".format(round(self.netgain,2)),
         }
@@ -513,7 +518,10 @@ class ProjectReport(models.Model):
 class ProjectReportBarrier(models.Model):
     project_report = models.ForeignKey(ProjectReport)
     barrier_id = models.CharField(max_length=50)
-    action = models.IntegerField()
+    action = models.IntegerField(default=0)
+    estimated_cost = models.IntegerField(null=True,blank=True,default=None)
+    pre_passability = models.FloatField(default=0.0)
+    post_passability = models.FloatField(default=0.0)
 
     def get_absolute_passability(self, bar_record=False):
         if not bar_record:
@@ -550,30 +558,28 @@ class ProjectReportBarrier(models.Model):
         if not report_dict:
             from collections import OrderedDict
             bar_record = Barrier.objects.get(pk=self.barrier_id)
-            full_dict = bar_record.to_dict(self.project_report.project, )
             report_dict = OrderedDict()
-            report_dict['PAD ID'] = full_dict['pad_id']
-            report_dict['View in BIOS'] = full_dict['BIOS_link']
+            report_dict['Site Name'] = bar_record.site_name
+            report_dict['PAD ID'] = self.barrier_id
+            report_dict['View in BIOS'] = '<a href=%s%s target="_blank">link</a>' % (settings.BIOS_URL, self.barrier_id)
             if self.action == 1:
                 report_dict['Action'] = 'Treat'
             else:
                 report_dict['Action'] = 'Do not treat'
             report_dict['Potential Habitat'] = "%s mi" % round(self.potential_habitat(bar_record), 2)
-            try:
-                report_dict['Cost'] = "$%s" % "{:,}".format(round(full_dict['estimated_cost']))
-            except TypeError as e:
+            if self.estimated_cost:
+                report_dict['Cost'] = "$%s" % "{:,}".format(round(self.estimated_cost))
+            else:
                 report_dict['Cost'] = "NA"
-                pass
-            report_dict['Barriers Downstream'] = full_dict['downstream_barrier_count']
-            report_dict['Site Type'] = full_dict['site_type']
-            report_dict['Site Name'] = full_dict['site_name']
-            report_dict['Stream Name'] = full_dict['stream_name']
-            report_dict['Tributary To'] = full_dict['tributary_to']
+            report_dict['Barriers Downstream'] = bar_record.downstream_barrier_count
+            report_dict['Site Type'] = bar_record.site_type
+            report_dict['Stream Name'] = bar_record.stream_name
+            report_dict['Tributary To'] = bar_record.tributary_to
             # Get watershed name:
             ws_name_field = settings.FOCUS_AREA_TYPE_NAME_LOOKUP[self.project_report.project.spatial_organization]
-            report_dict['Watershed'] = full_dict[ws_name_field]
-            report_dict['County'] = full_dict['county']
-            report_dict['Coordinates'] = "%s, %s" % (full_dict['latitude'], full_dict['longitude'])
+            report_dict['Watershed'] = getattr(bar_record, ws_name_field)
+            report_dict['County'] = bar_record.county
+            report_dict['Coordinates'] = "%s, %s" % (bar_record.latitude, bar_record.longitude)
             cache.set(cache_key, report_dict, 60*60*24*7)
         return report_dict
 
