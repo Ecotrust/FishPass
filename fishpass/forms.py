@@ -198,7 +198,7 @@ class ProjectForm(ScenarioForm):
         initial=100000,
         widget=forms.NumberInput(
             attrs={
-                'class': 'slidervalue currency form-control rangevalue',
+                'class': 'currency form-control rangevalue',
                 'pre_text': '$',
             }
         )
@@ -209,20 +209,10 @@ class ProjectForm(ScenarioForm):
         initial=1000000,
         widget=forms.NumberInput(
             attrs={
-                'class': 'slidervalue currency form-control rangevalue',
+                'class': 'currency form-control rangevalue',
                 'pre_text': '$',
             }
         )
-    )
-
-    budget_input = forms.IntegerField(
-    #     widget=DualSliderWidget(
-    #         'budget_min',
-    #         'budget_max',
-    #         min=0,
-    #         max=50000000,
-    #         step=1000           #This doesn't work at all for non-assigned costs. Do we need to make 2 of these?
-    #     )
     )
 
     batch_increment = forms.IntegerField(
@@ -234,7 +224,6 @@ class ProjectForm(ScenarioForm):
     def get_step_0_fields(self):
         names = [
             # (bool_field, min, max, field, [checkboxes])
-            # ('target_area', None, None, 'target_area_input'),
             (None, None, None, 'spatial_organization'),
             (None, None, None, 'target_area'),
             (None, None, None, 'treat_downstream'),
