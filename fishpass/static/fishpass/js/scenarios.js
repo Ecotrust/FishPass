@@ -178,6 +178,8 @@ function scenarioFormModel(options) {
     self.ownership_input = ko.observable(false);
     self.assign_cost = ko.observable(false);
 
+    self.update_filter_on_change = ko.observable(true);
+
     self.lastChange = (new Date()).getTime();
 
     try {
@@ -235,10 +237,14 @@ function scenarioFormModel(options) {
             param_bool(true);
             param_element.attr('checked', 'checked');
             param_widget.css('display', 'block');
-            self.updateFilters(param);
+            if (self.update_filter_on_change()) {
+              self.updateFilters(param);
+            }
         }
 
-        self.updateFilterCount(param);
+        if (self.update_filter_on_change()) {
+          self.updateFilterCount(param);
+        }
     };
 
     self.filters = {};
@@ -1080,7 +1086,9 @@ function scenariosModel(options) {
                     for (var i = 0; i < parameters.length; i++) {
                       var id = '#id_' + parameters[i];
                       if ($(id).is(':checked')) {
+                        model.update_filter_on_change(false);
                         model.toggleParameter(parameters[i]);
+                        model.update_filter_on_change(true);
                       }
                     }
                     formSetup();

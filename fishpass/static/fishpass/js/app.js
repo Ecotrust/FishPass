@@ -254,6 +254,14 @@ function spatialOrgLoad() {
     app.viewModel.scenarios.scenarioFormModel.getUpdatedFilterResults();
   }
 
+  app.updateAllFilters = function() {
+    app.viewModel.scenarios.scenarioFormModel.updateFilters('target_area');
+    app.viewModel.scenarios.scenarioFormModel.updateFilters('treat_downstream');
+    if ($("#id_ownership_input")[0].checked) {
+      app.viewModel.scenarios.scenarioFormModel.updateFilters('ownership_input');
+    }
+  }
+
   app.initSpatialOrg = function() {
     var focus_area_input = document.getElementById('id_target_area').value;
     var focus_area_string_list = focus_area_input.split(',');
@@ -274,6 +282,7 @@ function spatialOrgLoad() {
     app.map.enableLayer(unitType);
     app.map.selection.spatialOrganizationSelection = newInteractionForLayer(app.map.layer[unitType].layer);
     app.map.selection.setSelect(app.map.selection.spatialOrganizationSelection);
+    app.updateAllFilters();
     app.viewModel.scenarios.scenarioFormModel.getUpdatedFilterResults();
   }
 
@@ -336,7 +345,7 @@ initBudgetToggle = function() {
 }
 
 formSetup = function() {
-  
+
   $('#id_budget').parent().parent().addClass('fixed-budget-form');
   $('#id_budget_min').parent().parent().addClass('ranged-budget-form');
   $('#id_budget_max').parent().parent().addClass('ranged-budget-form');
@@ -429,9 +438,9 @@ app.resultsInit = function(id) {
 initFiltering = function() {
     setTimeout(function() {
         if ($('#step1').length > 0) {
-            app.initSpatialOrg();
             $('#button_next').on('click', app.panel.stepControl);
             $('#button_prev').on('click', app.panel.stepControl);
+            app.initSpatialOrg();
         } else {
             initFiltering();
         }
