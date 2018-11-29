@@ -25,6 +25,7 @@
     max-width: 100%;
 }
 
+.modal-content [type="submit"],
 .modal-content [type="button"] {
   -webkit-appearance: none;
   background: #E6F1DB;
@@ -59,20 +60,25 @@
 }
 
 #login-modal .accounts-form-wrap {
-   border: none;
+    border: none;
 }
 
 #login-modal a {
-   color: #CCECAC;
+    color: #CCECAC;
+    padding: 5px;
+    border-radius: 3px;
+}
+#login-modal a:hover {
+    background: #9C7B54;
 }
 
 #login-modal hr {
-   background: #fff;
+    background: #fff;
 }
 
 #login-modal .close {
-   border: none;
-   padding: .675rem 1rem 1rem;
+    border: none;
+    padding: .675rem 1rem 1rem;
 }
 
 .login-intro-wrap h2 {
