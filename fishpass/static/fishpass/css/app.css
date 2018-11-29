@@ -44,6 +44,7 @@ Navbar
 
 .top-nav-wrap {
   z-index: 4;
+  min-height: 40px;
 }
 
 #menu:first-child {

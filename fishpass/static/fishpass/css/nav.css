@@ -26,6 +26,7 @@
     margin: 0 5%;
     padding: 1vh 0;
     text-align: center;
+    min-height: 40px;
 }
 
 .navbar-brand a {
@@ -42,6 +43,8 @@
 .navbar-brand img {
     height: 5vh;
     width: auto;
+    min-width: 70px;
+    min-height: 26px;
 }
 
 nav .navbar-toggler {
@@ -55,6 +58,8 @@ nav .navbar-toggler {
     position: relative;
     padding: 0;
     width: 5vh;
+    min-height: 25px;
+    min-width: 25px;
 }
 
 nav .navbar-toggler:after {

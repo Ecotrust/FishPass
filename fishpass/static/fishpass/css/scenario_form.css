@@ -8,10 +8,9 @@ Panel
     left: 0;
     top: 7vh;
     bottom: 0;
-    overflow: auto;
+    overflow: hidden;
     position: absolute;
     z-index: 3;
-    width: 40vw;
 }
 #panel.left {
     left: 0;
@@ -50,6 +49,7 @@ Panel
 #panel #draw_form:not(:empty),
 #panel #scenarios:not(:empty) {
     padding: 0;
+    min-width: 280px;
 }
 
 #panel section {
@@ -76,8 +76,8 @@ Panel
   align-content: center;
   display: flex;
   justify-content: stretch;
-  min-height: 40px;
-  height: 7vh;
+  /* min-height: 40px; */
+  height: 50px;
   margin: 0;
 }
 
@@ -115,53 +115,89 @@ Panel
   display: block;
   overflow: auto;
   padding: 1rem 1rem 0;
-  position: relative;
-  height: 80vh;
+  position: absolute;
+  /* height: 80vh; */
+  top: 50px;
+  bottom: 50px;
+  width: 100%;
 }
 
 #panel .cancel-nav {
   bottom: 0;
-  height: 6vh;
-  min-height: 40px;
+  height: 49px;
   left: 0;
   position: absolute;
 }
 
 #panel .featurepanel .wizard_nav {
   bottom: 0;
-  height: 6vh;
-  min-height: 40px;
+  height: 50px;
+  /* min-height: 40px; */
   position: absolute;
   right: 0;
+  width: 100%;
+  border-top: 1px solid #9C7B54;
 }
 
 #panel .featurepanel .wizard_nav .btn-group {
   margin-right: 0;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  height: 100%;
 }
 
 #panel .featurepanel .wizard_nav .btn {
   background: rgba(44, 90, 160, 0.125);
   border-radius: 0 !important;
   color: #1B2C46;
-  height: 6vh;
-  min-height: 40px;
-  line-height: 6vh;
+  height: 100%;
+  /* min-height: 40px;
+  line-height: 6vh; */
   padding: 0 1.25rem;
+  min-width: 105px;
+  position: relative;
 }
-  #panel .featurepanel .wizard_nav .btn:hover {
-    background: rgba(44, 90, 160, 0.75);
-    color: #fff;
-  }
+
+#panel .featurepanel .wizard_nav .btn span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+#panel .featurepanel .wizard_nav .btn:hover {
+  background: rgba(44, 90, 160, 0.75);
+  color: #fff;
+}
+
+.cancel_button-wrapper {
+  height: 100%;
+}
 
 #panel .cancel-nav .btn {
   border-radius: 0 !important;
-  height: 6vh;
-  line-height: 6vh;
+  /* height: 100%; */
+  /* line-height: 6vh; */
   padding: 0 1rem;
+  position: relative;
+  min-width: 75px;
+  background: #e5ebf3;
 }
-  #panel .cancel-nav .btn:hover {
-    background: #dcdcdc;
-  }
+
+#panel .cancel-nav .btn span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+#panel .cancel-nav .btn:hover {
+  background: rgba(44, 90, 160, 0.75);
+  color: white;
+}
 
 .bb {
     border-bottom: 3px solid #e2e05e;
@@ -182,7 +218,7 @@ Panel
     border-radius: 0;
     height: auto;
     margin: 0 auto 5px auto;
-    overflow: auto;
+    overflow: hidden;
     /* padding: 0; */
     width: 100%;
 }
