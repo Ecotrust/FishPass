@@ -27,11 +27,11 @@ def app(request, template=loader.get_template('fishpass/app.html'), context=acco
     from fishpass.models import Project
     from datetime import datetime
 
-    # TODO: instead of redirecting user to accounts login, add login form to project creation model
     if request.user.is_authenticated:
         user_projects = Project.objects.filter(user=request.user).order_by('name')
     else:
-        return render(request, 'accounts/login.html')
+        from django.shortcuts import redirect
+        return redirect('/')
 
     default_project_name = "%s - %s" % (str(request.user), datetime.now().strftime("%H:%M %m/%d/%Y"))
 
