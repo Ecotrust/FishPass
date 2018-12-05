@@ -511,7 +511,7 @@ class ProjectReport(models.Model):
         for action_barrier in action_barriers:
             bar_dict = action_barrier.to_dict()
             try:
-                cost += int(bar_dict['Cost'].replace(',','').replace('$',''))
+                cost += int(bar_dict['Estimated Cost'].replace(',','').replace('$',''))
             except ValueError as e:
                 # Value is 'NA' - nothing to add to cost.
                 pass
@@ -597,9 +597,9 @@ class ProjectReportBarrier(models.Model):
                 report_dict['Action'] = 'Do not treat'
             report_dict['Potential Habitat'] = "%s mi" % round(self.potential_habitat(bar_record), 2)
             if self.estimated_cost:
-                report_dict['Cost'] = "$%s" % "{:,}".format(round(self.estimated_cost))
+                report_dict['Estimated Cost'] = "$%s" % "{:,}".format(round(self.estimated_cost))
             else:
-                report_dict['Cost'] = "NA"
+                report_dict['Estimated Cost'] = "NA"
             report_dict['Barriers Downstream'] = bar_record.downstream_barrier_count
             report_dict['Site Type'] = bar_record.site_type
             report_dict['Stream Name'] = bar_record.stream_name

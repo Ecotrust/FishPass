@@ -50,10 +50,10 @@
 
                 {% if forloop.last %}
                 </ul>
-                <div class="tab-content" id="reportTabContent">
                 {% endif %}
               {% endif %}
             {% endfor %}
+            <div class="tab-content" id="reportTabContent">
 
             {% for report_dict in reports %}
               {% if report_dict.report.budget_type == 'batch' %}
@@ -82,8 +82,8 @@
                       </div>
                       <div class="card">
                         <div class="card-body">
-                          <h5 class="card-title">Total Cost</h5>
-                          <p class="card-text muted" id="total-cost-{{ report_dict.report.budget_int }}">{{ report_dict.report.cost }}</p>
+                          <h5 class="card-title">Total Estimated Cost</h5>
+                          <p class="card-text muted" id="total-estimated-cost-{{ report_dict.report.budget_int }}">{{ report_dict.report.cost }}</p>
                         </div>
                       </div>
                       <div class="card">
@@ -115,6 +115,7 @@
                   <div class="row">
                     <div class="col-3 report-barrier-options">
                       <div class="nav flex-column nav-pills" id="barrier-tab" role="tablist" aria-orientation="vertical">
+                        <!-- { for barrier_id,barrier_data in report_dict.barriers.items %} -->
                         {% for barrier_id in report_dict.barriers %}
                           <a class="nav-link {% if forloop.counter < 2 %}active{% endif %}" id="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}-tab" data-toggle="pill" href="#barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" role="tab" aria-controls="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" aria-selected="true">{{ barrier_id }}</a>
                         {% endfor %}
@@ -122,17 +123,20 @@
                     </div>
                     <div class="col-9">
                       <div class="tab-content" id="barrier-content">
+                        <!-- { for barrier_id,barrier_data in report_dict.barriers.items %} -->
                         {% for barrier_id in report_dict.barriers %}
                           <div class="tab-pane fade {% if forloop.counter < 2 %}show active{% endif %}" id="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" role="tabpanel" aria-labelledby="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}">
-                            <!--
                             <ul class="list-group">
-                              { for key,value in barrier_data.items %}
+                              <li class="list-group-item d-flex justify-content-between align-items-center barrier-report-item">
+                                <span class="badge badge-value">Status</span> Loading...
+                              </li>
+                              <!-- { for key,value in barrier_data.items %}
                                 <li class="list-group-item d-flex justify-content-between align-items-center barrier-report-item">
                                   <span class="badge badge-value">{{ key }}</span> {{ value | safe }}
                                 </li>
                               { endfor %}
+                              -->
                             </ul>
-                            -->
                           </div>
                         {% endfor %}
                       </div>
@@ -140,34 +144,34 @@
                   </div>
                     <!-- <p>{/{ barriers }}</p> -->
 
-                </section>
+                  </section>
                 </div>
               </div>
               {% if report_dict.report.budget_type == 'batch' %}
+              <!-- close tab pane -->
               </div>
               {% endif %}
             {% endfor %} <!-- report -->
-            {% if report_dict.report.budget_type == 'batch' %}
-          </div> <!-- reportTabContent -->
-            {% endif %}
-
+            <!-- close reportTabContent -->
           </div>
-        </div>
+
+        </div> <!-- close column -->
+        <!-- </div> -->
         <div class="col">
           <section class="report-map-wrap">
             <div id="map" class="map"></div>
           </section>
         </div>
-      </div>
+      </div> <!-- close row -->
 
       <div class="row">
         <div class="col">
           <button>Download</button>
         </div>
       </div>
-    </div>
-  </div>
-</div>
+    </div> <!-- container -->
+  </div> <!-- row -->
+</div> <!-- container-fluid -->
 
   {% include 'fishpass/modals.html' %}
 
