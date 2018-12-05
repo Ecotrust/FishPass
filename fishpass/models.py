@@ -467,12 +467,29 @@ class ProjectReport(models.Model):
             cost += barrier.estimated_cost
         return cost
 
+    def barriers_list(self, action_only=False):
+        from django.core.cache import cache
+        if action_only:
+            cache_key = "%s_%s_barriers_list_action_only" % (self.uid(), str(self.budget))
+        else:
+            cache_key = "%s_%s_barriers_list" % (self.uid(), str(self.budget))
+        barrier_list = cache.get(cache_key)
+        if not barrier_list:
+            if action_only:
+                barriers = ProjectReportBarrier.objects.filter(project_report=self, action=1).order_by('barrier_id')
+            else:
+                barriers = ProjectReportBarrier.objects.filter(project_report=self).order_by('barrier_id')
+            barrier_list = [x.barrier_id for x in barriers]
+        return barrier_list
+
+
     def barriers_dict(self, action_only=False):
         from django.core.cache import cache
         if action_only:
             cache_key = "%s_%s_barriers_action_only" % (self.uid(), str(self.budget))
         else:
             cache_key = "%s_%s_barriers" % (self.uid(), str(self.budget))
+        print("CACHE KEY: %s" % cache_key)
         barrier_dict = cache.get(cache_key)
         if not barrier_dict:
             if action_only:
@@ -520,6 +537,7 @@ class ProjectReport(models.Model):
         from django.core.cache import cache
         cache.delete("%s_%s_barriers_action_only" % (self.uid(), str(self.budget)))
         cache.delete("%s_%s_barriers" % (self.uid(), str(self.budget)))
+        cache.delete("get_report_%s_action_only" % self.uid())
         super(ProjectReport, self).save(*args, **kwargs)
 
     class Meta:

@@ -906,6 +906,12 @@ def optipass(project):
 def get_report(request, projid, template=loader.get_template('fishpass/report.html'), context={'title': 'FishPASS - Report'}):
     from features.registry import get_feature_by_uid
     from fishpass.models import ProjectReport, ProjectReportBarrier
+    from django.core.cache import cache
+    from datetime import datetime
+
+    # start timer
+    startFuncTime = datetime.now()
+
 
     #TODO: Get and verify user account || sharing permissions
     # verify user ownership of project
@@ -919,36 +925,59 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
                 action_only = True
         except:
             pass
+
     if action_only:
-        reports = ProjectReport.objects.filter(project=project, action=1)
+        cache_key = "get_report_%s_action_only" % projid
     else:
-        reports = ProjectReport.objects.filter(project=project)
+        cache_key = "get_report_%s" % projid
 
+    context = cache.get(cache_key)
 
-    # TODO: sort out filter vs. all results
-    #   this can be managed on front end
-    reports_dict = {}
-    for report in reports.order_by('budget'):
-        reports_dict[str(report.budget)] = report.to_dict()
-    reports_list = [{'report': x.to_dict(), 'barriers':x.barriers_dict(action_only)} for x in reports.order_by('budget')]
+    if not context:
+        if action_only:
+            reports = ProjectReport.objects.filter(project=project, action=1)
+        else:
+            reports = ProjectReport.objects.filter(project=project)
 
-    context['title'] = str(project)
-    context['MAPBOX_TOKEN'] = settings.MAPBOX_ACCESS_TOKEN
-    context['HERE_TOKEN'] = settings.HERE_API_TOKEN
-    context['HERE_APP_CODE'] = settings.HERE_APP_CODE
-    context['MAP_TECH'] = settings.MAP_TECH
-    context['SEARCH_DISABLED'] = settings.SEARCH_DISABLED
-    context['project'] = project.to_dict()
-    context['reports'] = reports_list
-    if reports.count() > 0:
-        from fishpass.models import Barrier
-        barrier_ids = [int(x) for x in reports[0].barriers_dict().keys()]
-        barrier_query = Barrier.objects.filter(pad_id__in=barrier_ids)
-        # generate geojson of solution
-        geojson = get_geojson_from_queryset(barrier_query, project)
-        context['GEOJSON'] = json.dumps(geojson)
-    else:
-        context['GEOJSON'] = json.dumps({})
+        # TODO: sort out filter vs. all results
+        #   this can be managed on front end
+        print("GETTING REPORTS_DICT...")
+        reports_dict = {}
+        for report in reports.order_by('budget'):
+            reports_dict[str(report.budget)] = report.to_dict()
+        reportsDictTime = (datetime.now()-startFuncTime).total_seconds()
+        print("GET REPORTS_DICT TIME: %d seconds" % reportsDictTime)
+
+        print("GETTING REPORTS_LIST...")
+        reports_list = [{'report': x.to_dict(), 'barriers':x.barriers_list(action_only)} for x in reports.order_by('budget')]
+        reportsListTime = (datetime.now()-startFuncTime).total_seconds()-reportsDictTime
+        print("GET REPORTS_DICT TIME: %d seconds" % reportsListTime)
+
+        context['title'] = str(project)
+        context['MAPBOX_TOKEN'] = settings.MAPBOX_ACCESS_TOKEN
+        context['HERE_TOKEN'] = settings.HERE_API_TOKEN
+        context['HERE_APP_CODE'] = settings.HERE_APP_CODE
+        context['MAP_TECH'] = settings.MAP_TECH
+        context['SEARCH_DISABLED'] = settings.SEARCH_DISABLED
+        context['project'] = project.to_dict()
+        context['reports'] = reports_list
+
+        print("GETTING GEOJSON...")
+        if reports.count() > 0:
+            from fishpass.models import Barrier
+            # barrier_ids = [int(x) for x in reports[0].barriers_dict().keys()]
+            barrier_query = Barrier.objects.filter(pad_id__in=reports[0].barriers_list())
+            # generate geojson of solution
+            geojson = get_geojson_from_queryset(barrier_query, project)
+            context['GEOJSON'] = json.dumps(geojson)
+        else:
+            context['GEOJSON'] = json.dumps({})
+        geojsonTime = (datetime.now()-startFuncTime).total_seconds()-reportsDictTime-reportsListTime
+        print("GET GEOJSON TIME: %d seconds" % geojsonTime)
+
+        # Cache for 1 week, will be reset if layer data changes
+        cache.set(cache_key, context, 60*60*24*7)
+
 
     # context['barriers'] = report.barriers_dict(action_only)
     return HttpResponse(template.render(context, request))

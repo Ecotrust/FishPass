@@ -71,41 +71,37 @@
                       <div class="card">
                         <div class="card-body">
                           <h5 class="card-title">Barriers Treated</h5>
-                          <p class="card-text muted">{{ report_dict.report.action_count }}</p>
+                          <p class="card-text muted" id="barriers-treated-{{ report_dict.report.budget_int }}">{{ report_dict.report.action_count }}</p>
                         </div>
                       </div>
                       <div class="card">
                         <div class="card-body">
                           <h5 class="card-title">Total Barriers</h5>
-                          <p class="card-text muted">{{ report_dict.report.barrier_count }}</p>
+                          <p class="card-text muted" id="total-barriers-{{ report_dict.report.budget_int }}">{{ report_dict.report.barrier_count }}</p>
                         </div>
                       </div>
                       <div class="card">
                         <div class="card-body">
                           <h5 class="card-title">Total Cost</h5>
-                          <p class="card-text muted">{{ report_dict.report.cost }}</p>
+                          <p class="card-text muted" id="total-cost-{{ report_dict.report.budget_int }}">{{ report_dict.report.cost }}</p>
                         </div>
                       </div>
                       <div class="card">
                         <div class="card-body">
                           <h5 class="card-title">Budget</h5>
-                          {% if report_dict.report.budget_type == 'budget' %}
-                          <p class="card-text muted">{{ report_dict.report.budget }}</p>
-                          {% else %}
-                          <p class="card-text muted">{{ report_dict.report.budget_min }} - {{ report_dict.report.budget_max }}</p>
-                          {% endif %}
+                          <p class="card-text muted" id="budget-{{ report_dict.report.budget_int }}">{{ report_dict.report.budget }}</p>
                         </div>
                       </div>
                       <div class="card">
                         <div class="card-body">
                           <h5 class="card-title">Potential Habitat</h5>
-                          <p class="card-text muted">{{ report_dict.report.ptnl_habitat }}</p>
+                          <p class="card-text muted" id="potential-habitat-{{ report_dict.report.budget_int }}">{{ report_dict.report.ptnl_habitat }}</p>
                         </div>
                       </div>
                       <div class="card">
                         <div class="card-body">
                           <h5 class="card-title">Net Gain</h5>
-                          <p class="card-text muted">{{ report_dict.report.netgain }}</p>
+                          <p class="card-text muted" id="net-gain-{{ report_dict.report.budget_int }}">{{ report_dict.report.netgain }}</p>
                         </div>
                       </div>
                     </div>
@@ -119,22 +115,24 @@
                   <div class="row">
                     <div class="col-3 report-barrier-options">
                       <div class="nav flex-column nav-pills" id="barrier-tab" role="tablist" aria-orientation="vertical">
-                        {% for barrier_id,barrier_data in report_dict.barriers.items %}
+                        {% for barrier_id in report_dict.barriers %}
                           <a class="nav-link {% if forloop.counter < 2 %}active{% endif %}" id="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}-tab" data-toggle="pill" href="#barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" role="tab" aria-controls="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" aria-selected="true">{{ barrier_id }}</a>
                         {% endfor %}
                       </div>
                     </div>
                     <div class="col-9">
                       <div class="tab-content" id="barrier-content">
-                        {% for barrier_id,barrier_data in report_dict.barriers.items %}
+                        {% for barrier_id in report_dict.barriers %}
                           <div class="tab-pane fade {% if forloop.counter < 2 %}show active{% endif %}" id="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" role="tabpanel" aria-labelledby="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}">
+                            <!--
                             <ul class="list-group">
-                              {% for key,value in barrier_data.items %}
+                              { for key,value in barrier_data.items %}
                                 <li class="list-group-item d-flex justify-content-between align-items-center barrier-report-item">
                                   <span class="badge badge-value">{{ key }}</span> {{ value | safe }}
                                 </li>
-                              {% endfor %}
+                              { endfor %}
                             </ul>
+                            -->
                           </div>
                         {% endfor %}
                       </div>
