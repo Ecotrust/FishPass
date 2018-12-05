@@ -37,7 +37,11 @@
                           <!-- {% if project.active %} -->
                             <!-- <span>{{ project.name }}</span> -->
                           <!-- {% endif %} -->
+                          {% if project.has_report %}
                           <a class="view-project-link" class="btn" href="/fishpass/get_report/{{ project.uid }}/">{{ project.name }}</a>
+                          {% else %}
+                          {{ project.name }}
+                          {% endif %}
                         </div>
                         <!-- <td><a class='view-project-link' href="/fishpass/get_report/{{ project.uid }}/">view</a></td> -->
                         <div class="col-2">

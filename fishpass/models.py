@@ -427,6 +427,12 @@ class Project(Scenario):
             'report': {}
         }
 
+    @property
+    def has_report(self):
+        if ProjectReport.objects.filter(project=self).count() > 0:
+            return True
+        return False
+
     class Options:
         verbose_name = 'Project'
         # icon_url = 'marco/img/multi.png'
