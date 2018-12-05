@@ -30,131 +30,137 @@
           <h1>{{ title }}</h1>
         </div>
       </div>
+      <!-- Report Row -->
       <div class="row">
+        <div class="col">
+          <!-- <div class="container"> -->
+            {% for report_dict in reports %}
+              {% if report_dict.report.budget_type == 'batch' %}
+                {% if forloop.first %}
+                  <ul class="nav nav-tabs" id="reportTab" role="tablist">
+                {% endif %}
+
+                <li class="nav-item">
+                  {% if forloop.first %}
+                  <a class="nav-link active" id="budget-{{ report_dict.report.budget_int }}-tab" data-toggle="tab" href="#budget-{{ report_dict.report.budget_int }}" role="tab" aria-controls="budget-{{ report_dict.report.budget_int }}" aria-selected="true">{{ report_dict.report.budget }}</a>
+                  {% else %}
+                  <a class="nav-link" id="budget-{{ report_dict.report.budget_int }}-tab" data-toggle="tab" href="#budget-{{ report_dict.report.budget_int }}" role="tab" aria-controls="budget-{{ report_dict.report.budget_int }}" aria-selected="false">{{ report_dict.report.budget }}</a>
+                  {% endif %}
+                </li>
+
+                {% if forloop.last %}
+                </ul>
+                <div class="tab-content" id="reportTabContent">
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+
+            {% for report_dict in reports %}
+              {% if report_dict.report.budget_type == 'batch' %}
+                {% if forloop.first %}
+                <div class="tab-pane fade show active" id="budget-{{ report_dict.report.budget_int }}" role="tabpanel" aria-labelledby="budget-{{ report_dict.report.budget_int }}-tab">
+                {% else %}
+                <div class="tab-pane fade" id="budget-{{ report_dict.report.budget_int }}" role="tabpanel" aria-labelledby="budget-{{ report_dict.report.budget_int }}-tab">
+                {% endif %}
+              {% endif %}
+              <div class="row">
+                <div class="col">
+                  <h2>Aggregate Report</h2>
+                  <section id="agg-report" class="report-section">
+                    <div class="card-columns p2">
+                      <div class="card">
+                        <div class="card-body">
+                          <h5 class="card-title">Barriers Treated</h5>
+                          <p class="card-text muted">{{ report_dict.report.action_count }}</p>
+                        </div>
+                      </div>
+                      <div class="card">
+                        <div class="card-body">
+                          <h5 class="card-title">Total Barriers</h5>
+                          <p class="card-text muted">{{ report_dict.report.barrier_count }}</p>
+                        </div>
+                      </div>
+                      <div class="card">
+                        <div class="card-body">
+                          <h5 class="card-title">Total Cost</h5>
+                          <p class="card-text muted">{{ report_dict.report.cost }}</p>
+                        </div>
+                      </div>
+                      <div class="card">
+                        <div class="card-body">
+                          <h5 class="card-title">Budget</h5>
+                          {% if report_dict.report.budget_type == 'budget' %}
+                          <p class="card-text muted">{{ report_dict.report.budget }}</p>
+                          {% else %}
+                          <p class="card-text muted">{{ report_dict.report.budget_min }} - {{ report_dict.report.budget_max }}</p>
+                          {% endif %}
+                        </div>
+                      </div>
+                      <div class="card">
+                        <div class="card-body">
+                          <h5 class="card-title">Potential Habitat</h5>
+                          <p class="card-text muted">{{ report_dict.report.ptnl_habitat }}</p>
+                        </div>
+                      </div>
+                      <div class="card">
+                        <div class="card-body">
+                          <h5 class="card-title">Net Gain</h5>
+                          <p class="card-text muted">{{ report_dict.report.netgain }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <h2>Individual Barriers</h2>
+                  <section id="barrier-report" class="report-section col">
+                  <div class="row">
+                    <div class="col-3 report-barrier-options">
+                      <div class="nav flex-column nav-pills" id="barrier-tab" role="tablist" aria-orientation="vertical">
+                        {% for barrier_id,barrier_data in report_dict.barriers.items %}
+                          <a class="nav-link {% if forloop.counter < 2 %}active{% endif %}" id="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}-tab" data-toggle="pill" href="#barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" role="tab" aria-controls="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" aria-selected="true">{{ barrier_id }}</a>
+                        {% endfor %}
+                      </div>
+                    </div>
+                    <div class="col-9">
+                      <div class="tab-content" id="barrier-content">
+                        {% for barrier_id,barrier_data in report_dict.barriers.items %}
+                          <div class="tab-pane fade {% if forloop.counter < 2 %}show active{% endif %}" id="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" role="tabpanel" aria-labelledby="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}">
+                            <ul class="list-group">
+                              {% for key,value in barrier_data.items %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center barrier-report-item">
+                                  <span class="badge badge-value">{{ key }}</span> {{ value | safe }}
+                                </li>
+                              {% endfor %}
+                            </ul>
+                          </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                    <!-- <p>{/{ barriers }}</p> -->
+
+                </section>
+                </div>
+              </div>
+              {% if report_dict.report.budget_type == 'batch' %}
+              </div>
+              {% endif %}
+            {% endfor %} <!-- report -->
+            {% if report_dict.report.budget_type == 'batch' %}
+          </div> <!-- reportTabContent -->
+            {% endif %}
+
+          </div>
+        </div>
         <div class="col">
           <section class="report-map-wrap">
             <div id="map" class="map"></div>
           </section>
         </div>
       </div>
-      {% for report_dict in reports %}
-        {% if report_dict.report.budget_type == 'batch' %}
-          {% if forloop.first %}
-            <ul class="nav nav-tabs" id="reportTab" role="tablist">
-          {% endif %}
-
-          <li class="nav-item">
-            {% if forloop.first %}
-            <a class="nav-link active" id="budget-{{ report_dict.report.budget_int }}-tab" data-toggle="tab" href="#budget-{{ report_dict.report.budget_int }}" role="tab" aria-controls="budget-{{ report_dict.report.budget_int }}" aria-selected="true">{{ report_dict.report.budget }}</a>
-            {% else %}
-            <a class="nav-link" id="budget-{{ report_dict.report.budget_int }}-tab" data-toggle="tab" href="#budget-{{ report_dict.report.budget_int }}" role="tab" aria-controls="budget-{{ report_dict.report.budget_int }}" aria-selected="false">{{ report_dict.report.budget }}</a>
-            {% endif %}
-          </li>
-
-          {% if forloop.last %}
-          </ul>
-          <div class="tab-content" id="reportTabContent">
-          {% endif %}
-        {% endif %}
-      {% endfor %}
-
-      {% for report_dict in reports %}
-        {% if report_dict.report.budget_type == 'batch' %}
-          {% if forloop.first %}
-          <div class="tab-pane fade show active" id="budget-{{ report_dict.report.budget_int }}" role="tabpanel" aria-labelledby="budget-{{ report_dict.report.budget_int }}-tab">
-          {% else %}
-          <div class="tab-pane fade" id="budget-{{ report_dict.report.budget_int }}" role="tabpanel" aria-labelledby="budget-{{ report_dict.report.budget_int }}-tab">
-          {% endif %}
-        {% endif %}
-        <div class="row">
-          <div class="col">
-            <h2>Aggregate Report</h2>
-            <section id="agg-report" class="report-section">
-              <div class="card-columns p2">
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">Barriers Treated</h5>
-                    <p class="card-text muted">{{ report_dict.report.action_count }}</p>
-                  </div>
-                </div>
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">Total Barriers</h5>
-                    <p class="card-text muted">{{ report_dict.report.barrier_count }}</p>
-                  </div>
-                </div>
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">Total Cost</h5>
-                    <p class="card-text muted">{{ report_dict.report.cost }}</p>
-                  </div>
-                </div>
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">Budget</h5>
-                    {% if report_dict.report.budget_type == 'budget' %}
-                    <p class="card-text muted">{{ report_dict.report.budget }}</p>
-                    {% else %}
-                    <p class="card-text muted">{{ report_dict.report.budget_min }} - {{ report_dict.report.budget_max }}</p>
-                    {% endif %}
-                  </div>
-                </div>
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">Potential Habitat</h5>
-                    <p class="card-text muted">{{ report_dict.report.ptnl_habitat }}</p>
-                  </div>
-                </div>
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">Net Gain</h5>
-                    <p class="card-text muted">{{ report_dict.report.netgain }}</p>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <h2>Individual Barriers</h2>
-            <section id="barrier-report" class="report-section col">
-            <div class="row">
-              <div class="col-3 report-barrier-options">
-                <div class="nav flex-column nav-pills" id="barrier-tab" role="tablist" aria-orientation="vertical">
-                  {% for barrier_id,barrier_data in report_dict.barriers.items %}
-                    <a class="nav-link {% if forloop.counter < 2 %}active{% endif %}" id="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}-tab" data-toggle="pill" href="#barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" role="tab" aria-controls="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" aria-selected="true">{{ barrier_id }}</a>
-                  {% endfor %}
-                </div>
-              </div>
-              <div class="col-9">
-                <div class="tab-content" id="barrier-content">
-                  {% for barrier_id,barrier_data in report_dict.barriers.items %}
-                    <div class="tab-pane fade {% if forloop.counter < 2 %}show active{% endif %}" id="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" role="tabpanel" aria-labelledby="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}">
-                      <ul class="list-group">
-                        {% for key,value in barrier_data.items %}
-                          <li class="list-group-item d-flex justify-content-between align-items-center barrier-report-item">
-                            <span class="badge badge-value">{{ key }}</span> {{ value | safe }}
-                          </li>
-                        {% endfor %}
-                      </ul>
-                    </div>
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
-              <!-- <p>{/{ barriers }}</p> -->
-
-          </section>
-          </div>
-        </div>
-        {% if report_dict.report.budget_type == 'batch' %}
-        </div>
-        {% endif %}
-      {% endfor %} <!-- report -->
-      {% if report_dict.report.budget_type == 'batch' %}
-    </div> <!-- reportTabContent -->
-      {% endif %}
 
       <div class="row">
         <div class="col">
