@@ -49,3 +49,34 @@ app.report_init = function(geojson) {
 
 
 };
+
+getBudgetGeoJSON = function(e) {
+  alert('foo!');
+}
+
+getBarrierReport = function(e) {
+  href_array = window.location.href.split('/');
+  report_uid = href_array.pop();
+  while (report_uid.length < 1) {
+    report_uid = href_array.pop();
+  }
+  barrier_id = e.id.split('-')[1];
+  budget = e.id.split('-')[2];
+  // data = {
+  //   'report_uid': report_uid,
+  //   'barrier_id': parseInt(e.id.split('-')[1]),
+  //   'budget': parseInt(e.id.split('-')[2])
+  // }
+  $.ajax({
+      url: '/get_barrier_report/' + report_uid + '/' + barrier_id + '/' + budget + '/',
+      type: 'GET',
+      // data: data,
+      // dataType: 'json',
+      success: function(response) {
+        alert('good foo!');
+      },
+      error: function(response) {
+        alert('bad foo!');
+      }
+  });
+}

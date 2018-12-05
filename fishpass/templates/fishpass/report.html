@@ -42,9 +42,9 @@
 
                 <li class="nav-item">
                   {% if forloop.first %}
-                  <a class="nav-link active" id="budget-{{ report_dict.report.budget_int }}-tab" data-toggle="tab" href="#budget-{{ report_dict.report.budget_int }}" role="tab" aria-controls="budget-{{ report_dict.report.budget_int }}" aria-selected="true">{{ report_dict.report.budget }}</a>
+                  <a class="nav-link active" id="budget-{{ report_dict.report.budget_int }}-tab" data-toggle="tab" href="#budget-{{ report_dict.report.budget_int }}" role="tab" aria-controls="budget-{{ report_dict.report.budget_int }}" aria-selected="true" onclick="getBudgetGeoJSON(this)">{{ report_dict.report.budget }}</a>
                   {% else %}
-                  <a class="nav-link" id="budget-{{ report_dict.report.budget_int }}-tab" data-toggle="tab" href="#budget-{{ report_dict.report.budget_int }}" role="tab" aria-controls="budget-{{ report_dict.report.budget_int }}" aria-selected="false">{{ report_dict.report.budget }}</a>
+                  <a class="nav-link" id="budget-{{ report_dict.report.budget_int }}-tab" data-toggle="tab" href="#budget-{{ report_dict.report.budget_int }}" role="tab" aria-controls="budget-{{ report_dict.report.budget_int }}" aria-selected="false" onclick="getBudgetGeoJSON(this)">{{ report_dict.report.budget }}</a>
                   {% endif %}
                 </li>
 
@@ -117,7 +117,7 @@
                       <div class="nav flex-column nav-pills" id="barrier-tab" role="tablist" aria-orientation="vertical">
                         <!-- { for barrier_id,barrier_data in report_dict.barriers.items %} -->
                         {% for barrier_id in report_dict.barriers %}
-                          <a class="nav-link {% if forloop.counter < 2 %}active{% endif %}" id="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}-tab" data-toggle="pill" href="#barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" role="tab" aria-controls="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" aria-selected="true">{{ barrier_id }}</a>
+                          <a class="nav-link {% if forloop.counter < 2 %}active{% endif %}" id="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}-tab" data-toggle="pill" href="#barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" role="tab" aria-controls="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" aria-selected="true" onclick="getBarrierReport(this)">{{ barrier_id }}</a>
                         {% endfor %}
                       </div>
                     </div>
