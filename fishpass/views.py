@@ -965,6 +965,7 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
         context['reports'] = reports_list
         context['INIT_BUDGET'] = reports_list[0]['report']['budget_int']
         context['INIT_BARRIER_ID'] = reports_list[0]['barriers'][0]
+        context['BARRIER_LIST'] = reports_list[0]['barriers']
         context['GEOJSON'] = json.dumps({})
 
         # print("GETTING GEOJSON...")
@@ -1151,13 +1152,24 @@ def import_barrier_costs(request, template=loader.get_template('admin/import_bar
     context.update(extra_context)
     return HttpResponse(template.render(context, request))
 
-def get_report_geojson_by_budget(request, report_uid, budget):
-    return JsonResponse({})
+def get_report_geojson_by_budget(request, project_uid, budget):
+    from fishpass.models import ProjectReport, Barrier
+    from features.registry import get_feature_by_uid
+    project = get_feature_by_uid(project_uid)
+    report = ProjectReport.objects.get(project=project, budget=budget)
+    barrier_query = Barrier.objects.filter(pad_id__in=report.barriers_list())
+    # generate geojson of solution
+    geojson = get_geojson_from_queryset(barrier_query, project)
+    return JsonResponse(geojson)
 
-def get_barrier_report(request, report_uid, barrier_id, budget):
-    return HttpResponse(('<ul>'
-        '<li class="list-group-item d-flex justify-content-between align-items-center barrier-report-item">'
-        '<span class="badge badge-value">Status</span>'
-        'Loaded.'
-        '</li>'
-        '</ul>'))
+def get_barrier_report(request, project_uid, barrier_id, budget):
+    from fishpass.models import ProjectReport, ProjectReportBarrier
+    from features.registry import get_feature_by_uid
+    project = get_feature_by_uid(project_uid)
+    project_report = ProjectReport.objects.get(project=project, budget=budget)
+    barrier = ProjectReportBarrier.objects.get(project_report=project_report, barrier_id=barrier_id)
+    context = {
+        'barrier_dict': barrier.to_dict()
+    }
+    template=loader.get_template('fishpass/report_barrier.html')
+    return HttpResponse(template.render(context, request))

@@ -1,0 +1,7 @@
+<ul>
+  {% for key,value in barrier_dict.items %}
+    <li class="list-group-item d-flex justify-content-between align-items-center barrier-report-item">
+      <span class="badge badge-value">{{ key }}</span> {{ value | safe }}
+    </li>
+  {% endfor %}
+</ul>

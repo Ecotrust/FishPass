@@ -16,11 +16,11 @@ barrierHoverSelectAction = function(feat) {
 
 app.report_init = function(geojson, budget, init_barrier_id) {
   href_array = window.location.href.split('/');
-  report_uid = href_array.pop();
-  while (report_uid.length < 1) {
-    report_uid = href_array.pop();
+  project_uid = href_array.pop();
+  while (project_uid.length < 1) {
+    project_uid = href_array.pop();
   }
-  queryBarrierReport(report_uid, init_barrier_id, budget);
+  queryBarrierReport(project_uid, init_barrier_id, budget);
 
   app.map.initial_barriers_loaded = false;
   app.map.addLayer(app.map.layer.barriers.layer);
@@ -29,7 +29,8 @@ app.report_init = function(geojson, budget, init_barrier_id) {
   if (Object.keys(geojson).length > 0) {
     loadBarrierLayer(geojson);
   } else {
-    queryBudgetGeoJSON(report_uid, budget);
+    queryBudgetGeoJSON(project_uid, budget);
+    queryAllBarrierReports(project_uid, app.report.barrier_list, budget);
   }
 
 };
@@ -69,11 +70,11 @@ loadBarrierLayer = function(geojson) {
   }
 }
 
-queryBudgetGeoJSON = function(report_uid, budget) {
+queryBudgetGeoJSON = function(project_uid, budget) {
   // TODO: Remove points from map
   app.map.layer.barriers.layer.setVisible(false);
   $.ajax({
-      url: '/get_report_geojson_by_budget/' + report_uid + '/' + budget + '/',
+      url: '/get_report_geojson_by_budget/' + project_uid + '/' + budget + '/',
       type: 'GET',
       dataType: 'json',
       success: function(response) {
@@ -82,7 +83,6 @@ queryBudgetGeoJSON = function(report_uid, budget) {
 
         // Hide spinner
         $('#map-spinner').hide();
-        alert('good foo!');
       },
       error: function(response) {
         alert('Unable to load results on map.');
@@ -93,25 +93,31 @@ queryBudgetGeoJSON = function(report_uid, budget) {
 };
 
 getBudgetGeoJSON = function(e) {
-  alert('foo!');
   // Show Spinner
   $('#map-spinner').show()
   href_array = window.location.href.split('/');
-  report_uid = href_array.pop();
-  while (report_uid.length < 1) {
-    report_uid = href_array.pop();
+  project_uid = href_array.pop();
+  while (project_uid.length < 1) {
+    project_uid = href_array.pop();
   }
   budget = e.id.split('-')[1];
-  queryBudgetGeoJSON(report_uid, budget);
+  queryBudgetGeoJSON(project_uid, budget);
+  queryAllBarrierReports(project_uid, app.report.barrier_list, budget)
 };
 
-queryBarrierReport = function(report_uid, barrier_id, budget) {
+queryAllBarrierReports = function(project_uid, barrier_list, budget) {
+  for (var i = 0; i < barrier_list.length; i++) {
+    barrier_id = barrier_list[i];
+    queryBarrierReport(project_uid, barrier_id, budget);
+  }
+};
+
+queryBarrierReport = function(project_uid, barrier_id, budget) {
   $.ajax({
-      url: '/get_barrier_report/' + report_uid + '/' + barrier_id + '/' + budget + '/',
+      url: '/get_barrier_report/' + project_uid + '/' + barrier_id + '/' + budget + '/',
       type: 'GET',
       success: function(response) {
-        // TODO: Replace contents of $('#barrier-' + barrier_id + '-' + budget)
-        alert('good foo!');
+        $('#barrier-' + barrier_id + '-' + budget).html(response);
       },
       error: function(response) {
         alert('Unable to get barrier results');
@@ -121,11 +127,11 @@ queryBarrierReport = function(report_uid, barrier_id, budget) {
 
 getBarrierReport = function(e) {
   href_array = window.location.href.split('/');
-  report_uid = href_array.pop();
-  while (report_uid.length < 1) {
-    report_uid = href_array.pop();
+  project_uid = href_array.pop();
+  while (project_uid.length < 1) {
+    project_uid = href_array.pop();
   }
   barrier_id = e.id.split('-')[1];
   budget = e.id.split('-')[2];
-  queryBarrierReport(report_uid, barrier_id, budget);
+  queryBarrierReport(project_uid, barrier_id, budget);
 }
