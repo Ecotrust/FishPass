@@ -15,12 +15,12 @@ barrierHoverSelectAction = function(feat) {
 };
 
 app.report_init = function(geojson, budget, init_barrier_id) {
+  app.report.budgets_loaded = [];
   href_array = window.location.href.split('/');
   project_uid = href_array.pop();
   while (project_uid.length < 1) {
     project_uid = href_array.pop();
   }
-  queryBarrierReport(project_uid, init_barrier_id, budget);
 
   app.map.initial_barriers_loaded = false;
   app.map.addLayer(app.map.layer.barriers.layer);
@@ -93,22 +93,25 @@ queryBudgetGeoJSON = function(project_uid, budget) {
 };
 
 getBudgetGeoJSON = function(e) {
-  // Show Spinner
-  $('#map-spinner').show()
   href_array = window.location.href.split('/');
   project_uid = href_array.pop();
   while (project_uid.length < 1) {
     project_uid = href_array.pop();
   }
   budget = e.id.split('-')[1];
+  // Show Spinner
+  $('#map-spinner').show()
   queryBudgetGeoJSON(project_uid, budget);
   queryAllBarrierReports(project_uid, app.report.barrier_list, budget)
 };
 
 queryAllBarrierReports = function(project_uid, barrier_list, budget) {
-  for (var i = 0; i < barrier_list.length; i++) {
-    barrier_id = barrier_list[i];
-    queryBarrierReport(project_uid, barrier_id, budget);
+  if (!app.report.budgets_loaded.includes(budget)){
+    app.report.budgets_loaded.push(budget);
+    for (var i = 0; i < barrier_list.length; i++) {
+      barrier_id = barrier_list[i];
+      queryBarrierReport(project_uid, barrier_id, budget);
+    }
   }
 };
 
