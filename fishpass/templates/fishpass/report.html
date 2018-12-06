@@ -128,7 +128,7 @@
                           <div class="tab-pane fade {% if forloop.counter < 2 %}show active{% endif %}" id="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" role="tabpanel" aria-labelledby="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}">
                             <ul class="list-group">
                               <li class="list-group-item d-flex justify-content-between align-items-center barrier-report-item">
-                                <span class="badge badge-value">Status</span> Loading...
+                                <span class="badge badge-value">Status</span> <img src="{% static 'ckeditor/ckeditor/skins/moono/images/spinner.gif' %}" /> Loading...
                               </li>
                               <!-- { for key,value in barrier_data.items %}
                                 <li class="list-group-item d-flex justify-content-between align-items-center barrier-report-item">
@@ -160,6 +160,7 @@
         <div class="col">
           <section class="report-map-wrap">
             <div id="map" class="map"></div>
+            <div class="spinner" id='map-spinner'></div>
           </section>
         </div>
       </div> <!-- close row -->
