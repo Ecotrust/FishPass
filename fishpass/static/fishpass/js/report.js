@@ -75,6 +75,7 @@ queryBudgetGeoJSON = function(report_uid, budget) {
   $.ajax({
       url: '/get_report_geojson_by_budget/' + report_uid + '/' + budget + '/',
       type: 'GET',
+      dataType: 'json',
       success: function(response) {
         // Load points on map
         loadBarrierLayer(response);

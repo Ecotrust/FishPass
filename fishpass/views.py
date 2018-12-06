@@ -1150,3 +1150,14 @@ def import_barrier_costs(request, template=loader.get_template('admin/import_bar
 
     context.update(extra_context)
     return HttpResponse(template.render(context, request))
+
+def get_report_geojson_by_budget(request, report_uid, budget):
+    return JsonResponse({})
+
+def get_barrier_report(request, report_uid, barrier_id, budget):
+    return HttpResponse(('<ul>'
+        '<li class="list-group-item d-flex justify-content-between align-items-center barrier-report-item">'
+        '<span class="badge badge-value">Status</span>'
+        'Loaded.'
+        '</li>'
+        '</ul>'))
