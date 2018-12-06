@@ -963,6 +963,9 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
         context['SEARCH_DISABLED'] = settings.SEARCH_DISABLED
         context['project'] = project.to_dict()
         context['reports'] = reports_list
+        context['INIT_BUDGET'] = reports_list[0]['report']['budget_int']
+        context['INIT_BARRIER_ID'] = reports_list[0]['barriers'][0]
+        context['GEOJSON'] = json.dumps({})
 
         # print("GETTING GEOJSON...")
         # if reports.count() > 0:
