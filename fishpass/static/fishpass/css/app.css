@@ -422,6 +422,7 @@ Map controls
 #map .layer-switcher {
     background-color: transparent;
     right: 2vh;
+    left: auto;
     top: 14.5vh;
     z-index: 1;
 }
