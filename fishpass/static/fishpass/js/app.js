@@ -57,6 +57,7 @@ var app = {
           url: `fishpass/project_barrier_form_reset/${app.panel.form.project_id}/${app.map.selectedBarrier.pad_id}/`,
           method: 'GET',
           success: function(result) {
+            app.viewModel.scenarios.scenarioFormModel.updatedFilterResultsLayer.getSource().getFeatureById(app.map.selectedBarrier.pad_id).set('user_override', false);
             $('#project-barrier-form-wrap').empty();
             $('#project-barrier-form-wrap').html(result);
             $('#project-barrier-form').children('.form-error').hide();
@@ -76,6 +77,7 @@ var app = {
         data: $form.serialize(),
         type: 'POST',
         success: function(result) {
+          app.viewModel.scenarios.scenarioFormModel.updatedFilterResultsLayer.getSource().getFeatureById(app.map.selectedBarrier.pad_id).set('user_override', true);
           if (result.success) {
             $('#project-barrier-modal').modal('hide');
           } else if(result.form) {

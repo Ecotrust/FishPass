@@ -27,6 +27,7 @@ class BarrierStatus(models.Model):
     name = models.CharField(max_length=90)
     default_pre_passability = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],default=1.0, verbose_name='Pre-passability')
     order = models.IntegerField(default=999)
+    color = models.CharField(max_length=50, null=True, blank=True, default=None)
 
     def __str__(self):
         return self.name
@@ -151,7 +152,8 @@ class Barrier(models.Model):
             'post_passability': self.site_type.default_post_passability,
             # TODO: Perhaps: if not fixable, cost = NA, post_passability = 0, action = 'exclude'
             'fixable': self.site_type.fixable,
-            'action': 'consider'
+            'action': 'consider',
+            'user_override': False,
         }
         # Consider project-level type and status overrides
         if project:
@@ -182,6 +184,7 @@ class Barrier(models.Model):
             override_barrier_list = ScenarioBarrier.objects.filter(barrier=self,project=project)
             if override_barrier_list.count() > 0:
                 override_barrier = override_barrier_list[0]
+                override_fields['user_override'] = True
                 if override_barrier.pre_pass:
                     override_fields['pre_passability'] = override_barrier.pre_pass
                 if override_barrier.post_pass:
@@ -250,6 +253,7 @@ class Barrier(models.Model):
             'post_passability': override_fields['post_passability'],
             'fixable': override_fields['fixable'],
             'action': override_fields['action'],
+            'user_override': override_fields['user_override'],
             'downstream_only': downstream,
             'road' : self.road,
             'post_mile': self.post_mile,

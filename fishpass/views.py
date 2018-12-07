@@ -352,6 +352,48 @@ def get_user_scenario_list(request):
         })
     return JsonResponse(sorted(user_scenarios_list, key=lambda k: k['name'].lower()), safe=False)
 
+def get_report_geojson_from_reports(barrier_reports):
+    from fishpass.models import Barrier
+    from django.core.cache import cache
+    cache_key = "%s_report_geojson" % '_'.join([str(x.pk) for x in barrier_reports.order_by('pk')])
+    geojson = cache.get(cache_key)
+
+    if not geojson:
+        geojson = {
+            "type": "FeatureCollection",
+            "features": []
+        }
+        for barrier_report in barrier_reports:
+            feature = Barrier.objects.get(pad_id=int(barrier_report.barrier_id))
+            # derive geojson
+            if hasattr(feature, 'geometry') and (type(feature.geometry) == Polygon or type(feature.geometry) == MultiPolygon):
+                feat_json = {
+                    "type": "Feature",
+                    "geometry": json.loads(feature.geometry.geojson),
+                    "properties": {}
+                }
+            else:
+                feat_json = {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [feature.geometry.x, feature.geometry.y]
+                    },
+                    "properties": {}
+                }
+            feat_json['properties']['id'] = feature.pk
+            feat_json['properties']['pad_id'] = feature.pad_id
+            feat_json['properties']['action'] = barrier_report.action
+            feat_json['properties']['site_name'] = feature.site_name
+            feat_json['properties']['stream_name'] = feature.stream_name
+            feat_json['properties']['status'] = feature.barrier_status.name
+            feat_json['properties']['status_color'] = feature.barrier_status.color
+            geojson['features'].append(feat_json)
+
+
+    return geojson
+
+
 def get_geojson_from_queryset(query, project=None):
     geojson = {
         "type": "FeatureCollection",
@@ -436,7 +478,6 @@ def get_filter_count(request, query=False, notes=[]):
         (query, notes) = run_filter_query(filter_dict)
     return HttpResponse(query.count(), status=200)
 
-
 def get_project_min_max(query, project):
     from numbers import Number
     from collections.abc import Iterable
@@ -476,8 +517,6 @@ def get_project_min_max(query, project):
         min = enforced_min
     return (min, max, available_project_count)
 
-
-
 '''
 '''
 @cache_page(60 * 60) # 1 hour of caching
@@ -506,8 +545,8 @@ def get_filter_results(request, project_id=None, query=False, notes=[], extra_co
         max_cost = available_project_count
 
     # get geojson. Update Barrier layer on return if ('show filter results' = True)
-    # we don't want the 'project' data since it may not match our current (unsaved) form
-    geojson = get_geojson_from_queryset(query, None)
+
+    geojson = get_geojson_from_queryset(query, project)
 
     results_dict = {
         'count': count,
@@ -1153,13 +1192,15 @@ def import_barrier_costs(request, template=loader.get_template('admin/import_bar
     return HttpResponse(template.render(context, request))
 
 def get_report_geojson_by_budget(request, project_uid, budget):
-    from fishpass.models import ProjectReport, Barrier
+    from fishpass.models import ProjectReport, ProjectReportBarrier
     from features.registry import get_feature_by_uid
     project = get_feature_by_uid(project_uid)
     report = ProjectReport.objects.get(project=project, budget=budget)
-    barrier_query = Barrier.objects.filter(pad_id__in=report.barriers_list())
+    barrier_reports = ProjectReportBarrier.objects.filter(project_report=report)
+    # barrier_query = Barrier.objects.filter(pad_id__in=report.barriers_list())
     # generate geojson of solution
-    geojson = get_geojson_from_queryset(barrier_query, project)
+    # geojson = get_geojson_from_queryset(barrier_query, project)
+    geojson = get_report_geojson_from_reports(barrier_reports)
     return JsonResponse(geojson)
 
 def get_barrier_report(request, project_uid, barrier_id, budget):

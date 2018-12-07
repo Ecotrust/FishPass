@@ -169,7 +169,7 @@ app.map.layer = {
         name: 'Barriers',
         title: 'Barriers',
         id: 'barriers', // set id equal to x in app.map.layer.x
-        style: app.map.styles.Barrier,
+        style: app.map.styles.ReportPoint,
         visible: true,
       }),
       addFeatures: function(geojsonObject) {

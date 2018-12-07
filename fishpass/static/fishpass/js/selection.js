@@ -61,6 +61,7 @@ barrierClickSelectAction = function(feat) {
 
   app.map.getView().setCenter(feat.getGeometry().getCoordinates());
   app.map.selectedBarrier = feat.getProperties();
+  feat.setId(feat.get('pad_id'));
   app.initProjectSpecificBarrier();
 
 };

@@ -134,25 +134,27 @@ app.map.styles = {
       })
     }),
     Barrier: function(feature, resolution) {
-        consideration = feature.get('action');
-        if (!consideration) {
-          radius = 3
-          stroke_color = 'black',
-          fill_color = 'rgba(0,0,0,1)'
-        } else if (consideration == 'include') {
-          radius = 5
-          stroke_color = 'green',
-          fill_color = 'rgba(0,255,0,0.5)'
-        } else if (consideration == 'consider') {
-          radius = 5
-          // stroke_color = 'orange',
-          stroke_color = '#FA8072', //Salmon
-          // fill_color = 'rgba(255,127,0,0.5)' //Orange
-          fill_color = 'rgba(250,128,114,0.5)' //Salmon
+        fill_color = feature.get('status_color');
+        if (! fill_color || fill_color.length < 1) {
+          fill_color = 'rgba(250,128,114,0.7)'; //Salmon
+          status = feature.get('barrier_status');
+          if (status && status.length > 1) {
+            if (status == "Partial" || status == "Temporal & Partial") {
+              fill_color = 'rgba(128,128,128,0.7)';
+            } else if (status == "Total" || status == "Temporal & Total") {
+              fill_color = 'rgba(255,0,0,0.7)';
+            }
+          }
+        }
+        user_override = feature.get('user_override');
+        if (user_override) {
+          stroke_color = 'yellow';
+          stroke_width = 2;
+          zIndex = 100;
         } else {
-          radius = 3
-          stroke_color = 'black',
-          fill_color = 'rgba(0,0,0,0.5)'
+          stroke_color = 'black';
+          stroke_width = 1;
+          zIndex = 10;
         }
         return new ol.style.Style({
             image: new ol.style.Circle({
@@ -162,9 +164,51 @@ app.map.styles = {
                 }),
                 stroke: new ol.style.Stroke({
                   color: stroke_color,
-                  width: 2
+                  width: stroke_width
                 })
-            })
+            }),
+            zIndex: zIndex
         });
+    },
+    ReportPoint: function(feature, resolution) {
+      var radius = 6;
+      fill_color = feature.get('status_color');
+      if (! fill_color || fill_color.length < 1) {
+        status = feature.get('barrier_status');
+        if (status && status.length > 1) {
+          if (status == "Partial" || status == "Temporal & Partial") {
+            fill_color = 'rgba(128,128,128,0.5)';
+          } else if (status == "Total" || status == "Temporal & Total") {
+            fill_color = 'rgba(255,0,0,0.5)';
+          } else if (status == "Temporal") {
+            fill_color = 'rgba(250,128,114,0.5)'; //Salmon
+          } else {
+            fill_color = 'rgba(250,128,114,0.5)'; //Salmon
+          }
+        } else {
+          fill_color = 'rgba(250,128,114,0.5)'; //Salmon
+        }
+      }
+      action = feature.get('action');
+      if (action == 1 ) {
+        stroke_color = 'green';
+        zIndex = 100;
+      } else {
+        stroke_color = '#FA8072'
+        zIndex = 0;
+      }
+      return new ol.style.Style({
+          image: new ol.style.Circle({
+              radius: radius,
+              fill: new ol.style.Fill({
+                color: fill_color,
+              }),
+              stroke: new ol.style.Stroke({
+                color: stroke_color,
+                width: 2
+              })
+          }),
+          zIndex: zIndex
+      });
     }
 };
