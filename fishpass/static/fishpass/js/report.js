@@ -27,6 +27,7 @@ barrierClickInteraction = function(feat) {
 }
 
 app.report_init = function(geojson, budget) {
+  $('#download-report-button').on('click', function() {alert('Download Functionality Coming Soon!')});
   app.map.barrierSelected = false;
   app.report.current_budget = budget;
   app.report.budgets_loaded = [];
