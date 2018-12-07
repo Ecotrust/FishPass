@@ -1004,7 +1004,6 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
     # start timer
     startFuncTime = datetime.now()
 
-
     #TODO: Get and verify user account || sharing permissions
     # verify user ownership of project
     project = get_feature_by_uid(projid)
@@ -1042,7 +1041,19 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
         print("GET REPORTS_DICT TIME: %d seconds" % reportsDictTime)
 
         print("GETTING REPORTS_LIST...")
-        reports_list = [{'report': x.to_dict(), 'barriers':x.barriers_list(action_only)} for x in reports.order_by('budget')]
+        reports_list = []
+        for report in reports.order_by('budget'):
+            all_barriers = report.barriers_list(action_only)
+            action_barriers = all_barriers.filter(action=1).order_by('barrier_id')
+            untouched_barriers = all_barriers.filter(action=0).order_by('barrier_id')
+            reports_list.append(
+                {
+                    'report': report.to_dict(),
+                    'barriers': [x.barrier_id for x in all_barriers],
+                    'action_barriers': [x.barrier_id for x in action_barriers],
+                    'untouched_barriers': [x.barrier_id for x in untouched_barriers]
+                }
+            )
         # reports_list = [{'report': x.to_dict(), 'barriers':x.barriers_dict(action_only)} for x in reports.order_by('budget')]
         reportsListTime = (datetime.now()-startFuncTime).total_seconds()-reportsDictTime
         print("GET REPORTS_DICT TIME: %d seconds" % reportsListTime)
@@ -1056,8 +1067,7 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
         context['project'] = project.to_dict()
         context['reports'] = reports_list
         context['INIT_BUDGET'] = reports_list[0]['report']['budget_int']
-        context['INIT_BARRIER_ID'] = reports_list[0]['barriers'][0]
-        context['BARRIER_LIST'] = reports_list[0]['barriers']
+        context['ALL_BARRIER_LIST'] = reports_list[0]['barriers']
         context['GEOJSON'] = json.dumps({})
 
         # print("GETTING GEOJSON...")

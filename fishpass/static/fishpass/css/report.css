@@ -76,6 +76,10 @@ table, th, td {
   font-size: 1em;
 }
 
+.nav-link {
+  text-align: center;
+}
+
 #barrier-report .nav-link.active {
   background: #217867;
   color: #fff;
@@ -87,6 +91,16 @@ table, th, td {
   }
 }
 
+.action-barrier-pill {
+  background: #ccecab;
+  line-height: 75%;
+  border: 1px solid #9C7B54;
+  margin: 1px;
+}
+
+.treatment-subtitle {
+  font-size: 0.7rem;
+}
 
 /* Spinner from Damien Romito here: https://stackoverflow.com/a/20013732 */
 .spinner {

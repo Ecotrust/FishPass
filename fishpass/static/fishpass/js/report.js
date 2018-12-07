@@ -14,7 +14,7 @@ barrierHoverSelectAction = function(feat) {
   }
 };
 
-app.report_init = function(geojson, budget, init_barrier_id) {
+app.report_init = function(geojson, budget) {
   app.report.budgets_loaded = [];
   href_array = window.location.href.split('/');
   project_uid = href_array.pop();

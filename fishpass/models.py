@@ -471,20 +471,27 @@ class ProjectReport(models.Model):
             cost += barrier.estimated_cost
         return cost
 
+    def action_barriers_list(self):
+        return ProjectReportBarrier.objects.filter(project_report=self, action=1).order_by('barrier_id')
+
+    def action_barriers_list(self, action_only=False):
+        if action_only:
+            return []
+        else:
+            return ProjectReportBarrier.objects.filter(project_report=self, action=0).order_by('barrier_id')
+
     def barriers_list(self, action_only=False):
         from django.core.cache import cache
         if action_only:
-            cache_key = "%s_%s_barriers_list_action_only" % (self.uid(), str(self.budget))
+            # cache_key = "%s_%s_barriers_list_action_only" % (self.uid(), str(self.budget))
+            barriers = ProjectReportBarrier.objects.filter(project_report=self, action=1).order_by('barrier_id')
         else:
-            cache_key = "%s_%s_barriers_list" % (self.uid(), str(self.budget))
-        barrier_list = cache.get(cache_key)
-        if not barrier_list:
-            if action_only:
-                barriers = ProjectReportBarrier.objects.filter(project_report=self, action=1).order_by('barrier_id')
-            else:
-                barriers = ProjectReportBarrier.objects.filter(project_report=self).order_by('barrier_id')
-            barrier_list = [x.barrier_id for x in barriers]
-        return barrier_list
+            barriers = ProjectReportBarrier.objects.filter(project_report=self).order_by('barrier_id')
+            # cache_key = "%s_%s_barriers_list" % (self.uid(), str(self.budget))
+        # barrier_list = cache.get(cache_key)
+        # if not barrier_list:
+            # barrier_list = [x.barrier_id for x in barriers]
+        return barriers
 
 
     def barriers_dict(self, action_only=False):
