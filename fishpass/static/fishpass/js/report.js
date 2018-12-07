@@ -14,7 +14,21 @@ barrierHoverSelectAction = function(feat) {
   }
 };
 
+barrierClickInteraction = function(feat) {
+  if (feat) {
+    barrier_id = feat.getId();
+    if (!barrier_id) {
+      barrier_id = feat.get('pad_id');
+      feat.setId(barrier_id);
+    }
+    $('#barrier-' + barrier_id + '-' + app.report.current_budget + '-tab').trigger('click');
+    app.map.barrierSelected = barrier_id;
+  }
+}
+
 app.report_init = function(geojson, budget) {
+  app.map.barrierSelected = false;
+  app.report.current_budget = budget;
   app.report.budgets_loaded = [];
   href_array = window.location.href.split('/');
   project_uid = href_array.pop();
@@ -50,6 +64,13 @@ loadBarrierLayer = function(geojson) {
       style: app.map.styles.PointSelected
     });
 
+    app.map.barrierClickInteraction = new ol.interaction.Select({
+      layers: [
+        app.map.layer.barriers.layer
+      ],
+      style: app.map.styles.ReportBarrierSelected
+    });
+
     app.map.barrierSelected = false;
 
     $('#map').prepend('<div id="barrier-info"></div>');
@@ -62,9 +83,21 @@ loadBarrierLayer = function(geojson) {
     }, 50);
 
     app.map.addInteraction(app.map.barrierHoverInteraction);
+    app.map.addInteraction(app.map.barrierClickInteraction);
 
     app.map.barrierHoverInteraction.on('select', function(event) {
       barrierHoverSelectAction(event.selected[0]);
+    });
+    app.map.barrierClickInteraction.on('select', function(event) {
+      barrierClickInteraction(event.selected[0]);
+    });
+    app.map.on('click', function(event) {
+      if (app.map.barrierSelected) {
+        event.preventDefault();
+        event.stopPropagation();
+        app.map.barrierClickInteraction.getFeatures().clear();
+        app.map.barrierSelected = false;
+      }
     });
     app.map.initial_barriers_loaded = true;
   }
@@ -99,6 +132,7 @@ getBudgetGeoJSON = function(e) {
     project_uid = href_array.pop();
   }
   budget = e.id.split('-')[1];
+  app.report.current_budget = budget;
   // Show Spinner
   $('#map-spinner').show()
   queryBudgetGeoJSON(project_uid, budget);

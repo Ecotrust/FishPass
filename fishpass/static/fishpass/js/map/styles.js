@@ -210,5 +210,40 @@ app.map.styles = {
           }),
           zIndex: zIndex
       });
+    },
+    ReportBarrierSelected: function(feature, resolution) {
+      var radius = 6;
+      fill_color = feature.get('status_color');
+      if (! fill_color || fill_color.length < 1) {
+        status = feature.get('barrier_status');
+        if (status && status.length > 1) {
+          if (status == "Partial" || status == "Temporal & Partial") {
+            fill_color = 'rgba(128,128,128,0.5)';
+          } else if (status == "Total" || status == "Temporal & Total") {
+            fill_color = 'rgba(255,0,0,0.5)';
+          } else if (status == "Temporal") {
+            fill_color = 'rgba(250,128,114,0.5)'; //Salmon
+          } else {
+            fill_color = 'rgba(250,128,114,0.5)'; //Salmon
+          }
+        } else {
+          fill_color = 'rgba(250,128,114,0.5)'; //Salmon
+        }
+      }
+      stroke_color = 'yellow';
+      zIndex = 100;
+      return new ol.style.Style({
+          image: new ol.style.Circle({
+              radius: radius,
+              fill: new ol.style.Fill({
+                color: fill_color,
+              }),
+              stroke: new ol.style.Stroke({
+                color: stroke_color,
+                width: 2
+              })
+          }),
+          zIndex: zIndex
+      });
     }
 };

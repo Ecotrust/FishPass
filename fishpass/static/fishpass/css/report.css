@@ -24,6 +24,8 @@ table, th, td {
 
 .report-map-wrap #map {
   left: 0;
+  border: 3px solid #9C7B54;
+  border-radius: 4px;
 }
 
 .report-map-wrap .navbar {
