@@ -394,38 +394,47 @@ def get_report_geojson_from_reports(barrier_reports):
     return geojson
 
 
-def get_geojson_from_queryset(query, project=None):
-    geojson = {
-        "type": "FeatureCollection",
-        "features": []
-    }
-    for feature in query:
-        # derive geojson
-        if hasattr(feature, 'geometry') and (type(feature.geometry) == Polygon or type(feature.geometry) == MultiPolygon):
-            feat_json = {
-                "type": "Feature",
-                "geometry": json.loads(feature.geometry.geojson),
-                "properties": {}
-            }
-        else:
-            feat_json = {
-                "type": "Feature",
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [feature.geometry.x, feature.geometry.y]
-                },
-                "properties": {}
-            }
+def get_geojson_from_queryset(query, project=None, cache_key=None):
+    from django.core.cache import cache
+    if cache_key:
+        geojson = cache.get(cache_key)
+    else:
+        geojson = None
+    if not geojson:
+        geojson = {
+            "type": "FeatureCollection",
+            "features": []
+        }
+        for feature in query:
+            # derive geojson
+            if hasattr(feature, 'geometry') and (type(feature.geometry) == Polygon or type(feature.geometry) == MultiPolygon):
+                feat_json = {
+                    "type": "Feature",
+                    "geometry": json.loads(feature.geometry.geojson),
+                    "properties": {}
+                }
+            else:
+                feat_json = {
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [feature.geometry.x, feature.geometry.y]
+                    },
+                    "properties": {}
+                }
 
-        # convert attributes to json notation
-        if hasattr(feature, 'to_dict'):
-            feat_dict = feature.to_dict(project)
-            for field in feat_dict.keys():
-                feat_json['properties'][field] = feat_dict[field]
-        else:
-            feat_json['properties']['id'] = feature.pk
-        # apply geojson to return object
-        geojson['features'].append(feat_json)
+            # convert attributes to json notation
+            if hasattr(feature, 'to_dict'):
+                feat_dict = feature.to_dict(project)
+                for field in feat_dict.keys():
+                    feat_json['properties'][field] = feat_dict[field]
+            else:
+                feat_json['properties']['id'] = feature.pk
+            # apply geojson to return object
+            geojson['features'].append(feat_json)
+
+        if cache_key:
+            cache.set(cache_key, geojson, 60*60*24*7)
 
     return geojson
 
@@ -521,6 +530,7 @@ def get_project_min_max(query, project):
 '''
 @cache_page(60 * 60) # 1 hour of caching
 def get_filter_results(request, project_id=None, query=False, notes=[], extra_context={}):
+    from fishpass.models import ScenarioBarrier
     from features.views import check_user
     request = check_user(request)
     from django.db.models.query import QuerySet
@@ -531,22 +541,65 @@ def get_filter_results(request, project_id=None, query=False, notes=[], extra_co
         (query, notes) = run_filter_query(filter_dict)
     count = query.count()
 
+    user_override_cache_key = False
+    target_area_cache_key = False
+    treat_downstream_cache_key = False
+    ownership_cache_key = False
+
     if project_id:
         project = get_feature_by_uid(project_id)
         (min_cost, max_cost, available_project_count) = get_project_min_max(query, project)
+        try:
+            user_override_cache_key = "%s_overrides" % '_'.join([str(x.pk) for x in ScenarioBarrier.objects.filter(project=project).order_by('pk')])
+        except TypeError as e:
+            pass
     else:
         project = None
         min_cost = None
         max_cost = None
         available_project_count = None
 
+    if 'target_area' in filter_dict.keys() and 'target_area_input' in filter_dict.keys() and filter_dict['target_area'] == 'true' and not filter_dict['target_area_input'] in ['', None]:
+        try:
+            target_area_keys = filter_dict['target_area_input'].split(',')
+            target_area_keys.sort()
+            target_area_cache_key = '_'.join(target_area_keys)
+        except Exception as e:
+            pass
+
+    if 'treat_downstream' in filter_dict.keys() and 'treat_downstream_input' in filter_dict.keys():
+        treat_downstream_cache_key = "%s_treat_downstream" % str(filter_dict['treat_downstream_input'])
+
+    if 'ownership_input' in filter_dict.keys() and filter_dict['ownership_input'] == 'true' and 'ownership_input_checkboxes' in filter_dict.keys() and filter_dict['ownership_input_checkboxes'] == 'true':
+        ownership_boxes = []
+        for key in filter_dict.keys():
+            if 'ownership_input_checkboxes_' in key and filter_dict[key] == 'true':
+                ownership_boxes.append(key.split('ownership_input_checkboxes_')[1])
+        if len(ownership_boxes) > 0:
+            ownership_boxes.sort()
+            ownership_cache_key = "%s_ownership" % '_'.join(ownership_boxes)
+
+    cache_key_parts = []
+    if user_override_cache_key:
+        cache_key_parts.append(user_override_cache_key)
+    if target_area_cache_key:
+        cache_key_parts.append(target_area_cache_key)
+    if treat_downstream_cache_key:
+        cache_key_parts.append(treat_downstream_cache_key)
+    if ownership_cache_key:
+        cache_key_parts.append(ownership_cache_key)
+
+    if len(cache_key_parts) > 0:
+        cache_key = '%s_barrier_geojson' % '_'.join(cache_key_parts)
+    else:
+        cache_key = 'blank_barrier_geojson'
+
     if 'assign_cost_input' in request.GET.keys() and request.GET['assign_cost_input'] == 'false':
         min_cost = 1
         max_cost = available_project_count
 
     # get geojson. Update Barrier layer on return if ('show filter results' = True)
-
-    geojson = get_geojson_from_queryset(query, project)
+    geojson = get_geojson_from_queryset(query, project, cache_key)
 
     results_dict = {
         'count': count,
