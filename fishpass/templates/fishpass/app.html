@@ -27,6 +27,7 @@
 
     <link rel="stylesheet" href="{% static 'fishpass/css/scenario_form.css' %}"/>
     <link rel="stylesheet" href="{% static 'fishpass/css/selection.css' %}"/>
+    <link rel="stylesheet" href="{% static 'fishpass/css/app_legend.css' %}"/>
 {% endblock site_style %}
 
 {% block js_head %}
@@ -37,35 +38,6 @@
 
 {% block content %}
     <section class="map-wrap">
-        <!-- <div class="overlay">
-            <div class="instructions d-flex justify-content-center">
-                <h2 class="mx-auto w-80 text-center">Start by deciding how you want<br/>to interact with the map.</h2>
-                <div id="collapsable-help-wrap" class="text-center mx-auto mt-4 w-50">
-                  <a class="w80 mx-auto" data-toggle="collapse" role="button" href="#collapsableHelp" aria-expanded="false" aria-controls="collapsableHelp">Can't decide?</a>
-                  <div class="collapse" id="collapsableHelp">
-                    <div class="card card-body text-left">
-                      <p>
-                        <strong>Select Stream Segment</strong>
-                        <br />
-                        Choose a part of the river system to affect stream flows from actions of forest management
-                      </p>
-                      <p>
-                          <strong>Filter Forest Regions</strong>
-                          <br />
-                          Identify which forest area you would like to treat to improve downstream streamflow
-                      </p>
-                      <p>
-                          <strong>Draw Treatment Area</strong>
-                          <br />
-                          Specifically identify the exact forested areas you plan to treat
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div class="d-flex hvh">&nbsp;</div>
-                <div id="instruction" class="d-flex align-self-center justify-content-center"></div>
-            </div>
-        </div> -->
         <div id="map" class="map"></div>
         <div id="popup" class="ol-popup">
           <a href="#" id="popup-closer" class="ol-popup-closer" title="close popup"></a>
@@ -78,6 +50,8 @@
               <div id="results"></div>
             </div>
         </div>
+
+        {% include 'fishpass/legends/app_legend.html' %}
     </section>
 
     {% include 'fishpass/modals.html' %}

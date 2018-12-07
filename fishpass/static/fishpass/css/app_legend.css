@@ -1,0 +1,35 @@
+#app-legend {
+    position: absolute;
+    left: 32vw;
+    top: 10vh;
+    background-color: white;
+    padding: 0.5rem;
+    border: 1px solid #9C7B54;
+    border-radius: 4px;
+}
+
+#app-legend p {
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+    font-size: 1em;
+}
+
+.legend-barrier {
+  height: 17px;
+  width: 22px;
+}
+
+@media all and (max-width: 1023px) {
+    #app-legend{
+        /* margin-left: 0px; */
+        left: 37vw;
+    }
+}
+
+@media all and (max-width: 40em) {
+    #app-legend{
+        /* margin-left: 0px; */
+        left: 290px;
+    }
+}
