@@ -1068,12 +1068,12 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
         context['reports'] = reports_list
         context['INIT_BUDGET'] = reports_list[0]['report']['budget_int']
         context['ALL_BARRIER_LIST'] = reports_list[0]['barriers']
-        context['LEGEND'] = [[x.name, x.color] for x in BarrierStatus.objects.all().order_by('order')]
         context['GEOJSON'] = json.dumps({})
 
         # Cache for 1 week, will be reset if layer data changes
         cache.set(cache_key, context, 60*60*24*7)
 
+    context['LEGEND'] = [[x.name, x.color] for x in BarrierStatus.objects.all().order_by('order')]
 
     # context['barriers'] = report.barriers_dict(action_only)
     return HttpResponse(template.render(context, request))
