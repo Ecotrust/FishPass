@@ -16,6 +16,7 @@ class Command(BaseCommand):
         import xlrd
         from datetime import datetime
         from io import StringIO, BytesIO
+        from django.core.cache import cache
         from fishpass.models import Barrier, BarrierType, BarrierStatus, OwnershipType, FocusArea, BarrierCost, BlockedSpeciesType, TreatmentStatus
 
         def format_return(success, errors, warnings, import_count=None):
@@ -29,6 +30,7 @@ class Command(BaseCommand):
             })
 
         print("IMPORTING PAD")
+        cache.clear()
 
         field_lookup = {
             'PAD_ID': 'pad_id',
