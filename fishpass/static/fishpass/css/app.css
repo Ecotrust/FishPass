@@ -57,6 +57,10 @@ Nav with scenario options (select, filter, draw)
 ===========================================================================
 */
 
+#panel {
+  border-right: 1px solid #9C7B54;
+}
+
 .secondary-nav {
     background: #fff;
     height: 14rem;
