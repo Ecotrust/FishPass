@@ -18,6 +18,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'fishpass/css/report.css' %}">
+<link rel="stylesheet" href="{% static 'fishpass/css/report_legend.css' %}">
 <link rel="stylesheet" href="{% static 'fishpass/css/selection.css' %}"/>
 {% endblock extra_css %}
 
@@ -158,10 +159,19 @@
         </div> <!-- close column -->
         <!-- </div> -->
         <div class="col">
-          <section class="report-map-wrap">
-            <div id="map" class="map"></div>
-            <div class="spinner" id='map-spinner'></div>
-          </section>
+          <div class="row">
+            <div class="col">
+              {% include 'fishpass/legends/report_legend.html' %}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <section class="report-map-wrap">
+                <div id="map" class="map"></div>
+                <div class="spinner" id='map-spinner'></div>
+              </section>
+            </div>
+          </div>
         </div>
       </div> <!-- close row -->
 

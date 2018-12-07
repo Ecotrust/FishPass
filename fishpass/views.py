@@ -997,7 +997,7 @@ def optipass(project):
 
 def get_report(request, projid, template=loader.get_template('fishpass/report.html'), passed_context={'title': 'FishPASS - Report'}):
     from features.registry import get_feature_by_uid
-    from fishpass.models import ProjectReport, ProjectReportBarrier
+    from fishpass.models import ProjectReport, ProjectReportBarrier, BarrierStatus
     from django.core.cache import cache
     from datetime import datetime
 
@@ -1068,22 +1068,8 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
         context['reports'] = reports_list
         context['INIT_BUDGET'] = reports_list[0]['report']['budget_int']
         context['ALL_BARRIER_LIST'] = reports_list[0]['barriers']
+        context['LEGEND'] = [[x.name, x.color] for x in BarrierStatus.objects.all().order_by('order')]
         context['GEOJSON'] = json.dumps({})
-
-        # print("GETTING GEOJSON...")
-        # if reports.count() > 0:
-        #     from fishpass.models import Barrier
-        #     # barrier_ids = [int(x) for x in reports[0].barriers_dict().keys()]
-        #     # barrier_query = Barrier.objects.filter(pad_id__in=reports[0].barriers_list())
-        #     # generate geojson of solution
-        #     # geojson = get_geojson_from_queryset(barrier_query, project)
-        #
-        #     # context['GEOJSON'] = json.dumps(geojson)
-        #     context['GEOJSON'] = json.dumps({})
-        # else:
-        #     context['GEOJSON'] = json.dumps({})
-        # geojsonTime = (datetime.now()-startFuncTime).total_seconds()-reportsDictTime-reportsListTime
-        # print("GET GEOJSON TIME: %d seconds" % geojsonTime)
 
         # Cache for 1 week, will be reset if layer data changes
         cache.set(cache_key, context, 60*60*24*7)

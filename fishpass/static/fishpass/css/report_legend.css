@@ -1,0 +1,38 @@
+#report-legend-wrapper {
+  background: #EDC;
+  /* background: #9C7B54; */
+  border-radius: 4px;
+  margin: 0.5em;
+}
+
+.legend-icon {
+  width: 17px;
+  min-width: 17px;
+  height: 17px;
+  min-height: 17px;
+  border-radius: 50%;
+  background: rgba(250,128,114,0.7);
+}
+
+.legend-icon-selected,
+.legend-icon-treated,
+.legend-icon-untreated {
+  background: transparent;
+}
+.legend-icon-selected {
+  border: 2px solid yellow;
+}
+
+.legend-icon-treated {
+  border: 2px solid green;
+}
+
+.legend-icon-untreated {
+  border: 2px solid rgba(250,128,114,1);
+}
+
+.legend-icon-table,
+.legend-icon-table tbody tr td {
+  margin: 0.3em;
+  border: none;
+}
