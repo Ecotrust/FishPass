@@ -528,19 +528,50 @@ class ProjectReport(models.Model):
                 # Value is 'NA' - nothing to add to cost.
                 pass
 
+        if self.project.assign_cost:
+            assign_cost = "$%s" % "{:,}".format(round(self.project.assign_cost))
+        else:
+            assign_cost = None
+
+        if self.budget:
+            budget = "$%s" % "{:,}".format(self.budget)
+        else:
+            budget = None
+
+        budget_min = None
+        budget_max = None
+        try:
+            if self.budget_min:
+                budget_min = "$%s" % "{:,}".format(round(self.project.budget_min))
+
+            if self.budget_max:
+                budget_max = "$%s" % "{:,}".format(round(self.project.budget_max))
+        except AttributeError as e:
+            pass
+
+        if self.ptnl_habitat:
+            ptnl_habitat = "%s mi" % "{:,}".format(round(self.ptnl_habitat,2))
+        else:
+            ptnl_habitat = None
+
+        if self.netgain:
+            netgain = "%s mi" % "{:,}".format(round(self.netgain,2))
+        else:
+            netgain = None
+
         out_dict = {
             'project': str(self.project),
-            'assign_cost': "$%s" % "{:,}".format(round(self.project.assign_cost)),
+            'assign_cost': assign_cost,
             'budget_type': self.project.budget_type,
             'barrier_count': total_barriers.count(),
             'action_count': action_barriers.count(),
             'cost': "$%s" % "{:,}".format(round(cost)),
-            'budget': "$%s" % "{:,}".format(self.budget),
+            'budget': budget,
             'budget_int': self.budget,
-            'budget_min': "$%s" % "{:,}".format(round(self.project.budget_min)),
-            'budget_max': "$%s" % "{:,}".format(round(self.project.budget_max)),
-            'ptnl_habitat': "%s mi" % "{:,}".format(round(self.ptnl_habitat,2)),
-            'netgain': "%s mi" % "{:,}".format(round(self.netgain,2)),
+            'budget_min': budget_min,
+            'budget_max': budget_max,
+            'ptnl_habitat': ptnl_habitat,
+            'netgain': netgain,
         }
 
         return out_dict
