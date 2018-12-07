@@ -468,7 +468,8 @@ class ProjectReport(models.Model):
         barriers = ProjectReportBarrier.objects.filter(project_report=self)
         cost=0
         for barrier in barriers:
-            cost += barrier.estimated_cost
+            if barrier.estimated_cost:
+                cost += barrier.estimated_cost
         return cost
 
     def action_barriers_list(self):
