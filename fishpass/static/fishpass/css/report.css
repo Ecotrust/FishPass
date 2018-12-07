@@ -104,6 +104,10 @@ table, th, td {
   font-size: 0.7rem;
 }
 
+.barrier-image {
+  max-width: 80%;
+}
+
 /* Spinner from Damien Romito here: https://stackoverflow.com/a/20013732 */
 .spinner {
    position: absolute;

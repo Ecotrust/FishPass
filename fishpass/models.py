@@ -619,6 +619,8 @@ class ProjectReportBarrier(models.Model):
             ws_name_field = settings.FOCUS_AREA_TYPE_NAME_LOOKUP[self.project_report.project.spatial_organization]
             report_dict['Watershed'] = getattr(bar_record, ws_name_field)
             report_dict['County'] = bar_record.county
+            if bar_record.image_link and len(bar_record.image_link) > 0:
+                report_dict['Image'] = '<img src="' + bar_record.image_link + '" class="barrier-image">'
             report_dict['Coordinates'] = "%s, %s" % (bar_record.latitude, bar_record.longitude)
             cache.set(cache_key, report_dict, 60*60*24*7)
         return report_dict
