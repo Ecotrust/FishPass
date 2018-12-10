@@ -358,7 +358,10 @@ class Project(Scenario):
 
     treat_downstream = models.CharField(max_length=30, default='consider', choices=settings.DS_TREATMENT_CHOICES)
 
-    checkbox_default = str([str(x.id) for x in OwnershipType.objects.all()])
+    try:
+        checkbox_default = str([str(x.id) for x in OwnershipType.objects.all()])
+    except Exception as e:
+        checkbox_default = None
     ownership_input = models.BooleanField(default=False,verbose_name="Select ownership types")
     ownership_input_checkboxes = models.TextField(blank=True, null=True, default=checkbox_default)
     assign_cost = models.BooleanField(default=True,verbose_name="Assign Barrier Costs",help_text="Consider the unique cost of mitigating each barrier by $")
