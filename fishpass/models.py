@@ -7,11 +7,11 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 GEOMETRY_DB_SRID = settings.GEOMETRY_DB_SRID
 
-def purge_exports():
+def purge_exports(uid='fishpass_project_'):
     import os, re
-    for f in os.listdir(CSV_REPORTS_DIR):
-        if re.search('fishpass_project_', f):
-            os.remove(os.path.join(CSV_REPORTS_DIR, f))
+    for f in os.listdir(settings.CSV_REPORTS_DIR):
+        if re.search(uid, f):
+            os.remove(os.path.join(settings.CSV_REPORTS_DIR, f))
 
 # Create your models here.
 class BarrierType(models.Model):
@@ -27,6 +27,7 @@ class BarrierType(models.Model):
 
     def save(self):
         super(BarrierType, self).save(*args, **kwargs)
+        purge_exports()
 
     class Meta:
         verbose_name = 'Barrier Type'
@@ -41,6 +42,10 @@ class BarrierStatus(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self):
+        super(BarrierStatus, self).save(*args, **kwargs)
+        purge_exports()
+
     class Meta:
         verbose_name = 'Barrier Status'
         verbose_name_plural = 'Barrier Statuses'
@@ -52,6 +57,10 @@ class OwnershipType(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self):
+        super(OwnershipType, self).save(*args, **kwargs)
+        purge_exports()
 
     class Meta:
         verbose_name = 'Lookup - Ownership Type'
@@ -282,6 +291,7 @@ class Barrier(models.Model):
         from django.contrib.gis.geos import Point
         self.geometry = Point(self.longitude, self.latitude,None,4326)
         super(Barrier, self).save(*args, **kwargs)
+        purge_exports()
 
     class Meta:
         verbose_name = 'Barrier'
@@ -303,6 +313,10 @@ class BarrierCost(models.Model):
             barrier_name = str(self.pad_id)
             pass
         return "%s Costs" % barrier_name
+
+    def save(self):
+        super(BarrierCost, self).save(*args, **kwargs)
+        purge_exports()
 
     class Meta:
         verbose_name = 'Barrier Specific Override'
@@ -702,6 +716,10 @@ class ScenarioBarrier(models.Model):
         verbose_name = 'Project-Specific Barrier Setting'
         verbose_name_plural = 'Project-Specific Barrier Settings'
 
+    def save(self):
+        super(ScenarioBarrier, self).save(*args, **kwargs)
+        purge_exports(self.project.uid)
+
 class ScenarioBarrierType(models.Model):
     project = models.ForeignKey(Project)
     barrier_type = models.ForeignKey(BarrierType)
@@ -712,6 +730,10 @@ class ScenarioBarrierType(models.Model):
         verbose_name = 'Project-Specific Barrier Type Setting'
         verbose_name_plural = 'Project-Specific Barrier Type Settings'
 
+    def save(self):
+        super(ScenarioBarrierType, self).save(*args, **kwargs)
+        purge_exports(self.project.uid)
+
 class ScenarioBarrierStatus(models.Model):
     project = models.ForeignKey(Project)
     barrier_status = models.ForeignKey(BarrierStatus)
@@ -720,3 +742,7 @@ class ScenarioBarrierStatus(models.Model):
     class Meta:
         verbose_name = 'Project-Specific Barrier Status Setting'
         verbose_name_plural = 'Project-Specific Barrier Status Settings'
+
+    def save(self):
+        super(ScenarioBarrierStatus, self).save(*args, **kwargs)
+        purge_exports(self.project.uid)
