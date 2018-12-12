@@ -1,7 +1,6 @@
 barrierHoverSelectAction = function(feat) {
   if (feat) {
     var pixel = app.map.getPixelFromCoordinate(feat.getGeometry().getCoordinates());
-    console.log(pixel);
     app.map.barrierInfo.tooltip('hide')
     .css({
       left: pixel[0] + 'px',
@@ -26,8 +25,43 @@ barrierClickInteraction = function(feat) {
   }
 }
 
+check_for_download = function(project_uid, type, time) {
+  $.ajax({
+    url: '/check_download_report/',
+    type: 'GET',
+    data: {
+        project_uid: project_uid,
+        report_type: type,
+        timer: time
+    },
+    success: function(response) {
+      if (response.hasOwnProperty('available') && response.available == true) {
+        if (type == 'all') {
+          $('#download-report-button').on('click', function() {alert('File is ready')});
+          $('#download-report-button').html('Download Full Results');
+          $('#download-report-button').prop('disabled', false);
+        }
+        if (type == 'filtered') {
+          $('#download-report-button').on('click', function() {alert('File is ready')});
+          $('#download-report-button').html('Download Full Results');
+          $('#download-report-button').prop('disabled', false);
+        }
+      } else {
+        setTimeout(function() {
+          time = time + 5; // Wait time in seconds. After 60 server to try re-recreating the missing file.
+          check_for_download(project_uid, type, time);
+        }, 5000);
+      }
+    },
+    error: function(response) {
+      console.log('failed to check if report (' + type + ') was ready');
+    }
+  })
+}
+
 app.report_init = function(geojson, budget) {
   $('#download-report-button').on('click', function() {alert('Download Functionality Coming Soon!')});
+  $('#download-filtered-report-button').on('click', function() {alert('Download Functionality Coming Soon!')});
   app.map.barrierSelected = false;
   app.report.current_budget = budget;
   app.report.budgets_loaded = [];
@@ -36,6 +70,10 @@ app.report_init = function(geojson, budget) {
   while (project_uid.length < 1) {
     project_uid = href_array.pop();
   }
+
+  check_for_download(project_uid, 'all', 0);
+  check_for_download(project_uid, 'filtered', 0);
+
 
   app.map.initial_barriers_loaded = false;
   app.map.addLayer(app.map.layer.barriers.layer);

@@ -339,6 +339,191 @@ def project_barrier_form_reset(request, project_uid, barrier_id, context={}):
         request.method = 'GET'
     return project_barrier_form(request, project_uid, barrier_id, context=context)
 
+def generate_report_csv(project_uid, report_type):
+    import os
+    from fishpass.models import ProjectReport, ProjectReportBarrier, Barrier
+    from features.registry import get_feature_by_uid
+    import csv
+
+    try:
+        project = get_feature_by_uid(project_uid)
+    except Exception as e:
+        print('ERROR: Could not get project from project UID: %s' % project_uid)
+        return None
+
+    report_list = ProjectReport.objects.filter(project=project).order_by('budget')
+    if report_list.count() < 1:
+        print('ERROR: No Project Report found for project: %s' % project_uid)
+        return None
+
+    if report_type == 'all':
+        csv_file_suffix = '_export_all.csv'
+        barrier_list = [x.barrier_id for x in ProjectReportBarrier.objects.filter(project_report=report_list[0])]
+    else:
+        csv_file_suffix = '_export_filtered.csv'
+        barrier_list = []
+        for report in report_list:
+            barrier_list += [x.barrier_id for x in ProjectReportBarrier.objects.filter(project_report=report, action=1)]
+            barrier_list = list(set(barrier_list))
+
+    barrier_list.sort()
+
+    csv_filename = os.path.join(settings.MEDIA_ROOT,'reports','%s%s' % (project_uid, csv_file_suffix))
+
+    # TODO: if assigned costs, cost_unit = '$', else cost_unit = 'count'
+    cost_unit = '$'
+
+    if report_list.count() > 1:
+        top_index = report_list.count()-1
+        project_report_items = [
+            ('Min Budget (%s):' % cost_unit, report_list[0].budget),
+            ('Max Budget (%s):' % cost_unit, report_list[top_index].budget),
+            ('Budget Step Size (%s):' % cost_unit, project.batch_increment)
+        ]
+    else:
+        project_report_items = [
+            ('Budget (%s):' % cost_unit, report_list[0].budget),
+        ]
+
+    barrier_items_header_dicts = [
+        {'label': 'PAD-ID', 'field': 'pad_id', 'project_specific': False},
+        {'label': 'Estimated Cost ($)', 'field': 'estimated_cost', 'project_specific': True},
+        {'label': 'Barriers Downstream', 'field': 'downstream_barrier_count', 'project_specific': False},
+        {'label': 'Site Type', 'field': 'site_type', 'project_specific': False},
+        {'label': 'Site Name', 'field': 'site_name', 'project_specific': False},
+    ]
+    barrier_items_header_list = [x['label'] for x in barrier_items_header_dicts]
+
+    for report in report_list:
+        barrier_items_header_list.append('Action')
+        # barrier_items_header_list.append('Ptnl. Hab')
+
+    barrier_dict = {}
+    barrier_reports = ProjectReportBarrier.objects.filter(barrier_id__in=barrier_list, project_report__in=report_list).order_by('project_report__budget')
+    # For each barrier
+    for index, barrier_id in enumerate(barrier_list):
+        barrier_id_reports = barrier_reports.filter(barrier_id=barrier_id).order_by('project_report__budget')
+        # if index == 0:
+        barrier_report = barrier_id_reports[0]
+        barrier = Barrier.objects.get(pad_id=int(barrier_id))
+        barrier_dict[str(barrier_id)] = {}
+        for field in barrier_items_header_dicts:
+            if field['project_specific']:
+                value = getattr(barrier_report, field['field'])
+            else:
+                value = getattr(barrier, field['field'])
+            barrier_dict[str(barrier_id)][field['label']] = str(value)
+        barrier_dict[str(barrier_id)]['Actions'] = []
+        # For each budget report instance for that barrier
+        for barrier_report in barrier_id_reports:
+            if barrier_report.action == 0:
+                barrier_action = 'DO NOT FIX'
+            else:
+                barrier_action = 'REMEDIATE'
+            barrier_dict[str(barrier_id)]['Actions'].append(barrier_action)
+
+    barrier_items_list = []
+    for barrier_id in barrier_list:
+        action_count = 0
+        barrier_item_row = []
+        for key in barrier_items_header_list:
+            if not key == 'Action':
+                try:
+                    barrier_item_row.append(str(barrier_dict[str(barrier_id)][key]))
+                except TypeError as e:
+                    import ipdb; ipdb.set_trace()
+                    print(e)
+            else:
+                barrier_item_row.append(barrier_dict[str(barrier_id)]['Actions'][action_count])
+                action_count += 1
+        barrier_items_list.append(barrier_item_row)
+
+    action_index = barrier_items_header_list.index('Action')
+
+    action_field_names = [
+        {'label': 'Budget (%s)' % cost_unit, 'field': 'budget'},
+        {'label': 'Estimated Cost (%s)' % cost_unit, 'field': 'cost'},
+        {'label': 'Ptnl. Habitat (mi)', 'field': 'ptnl_habitat'},
+        {'label': 'Ptnl. Habitat Gain (mi)', 'field': 'netgain'},
+    ]
+    action_field_rows = []
+    for action_field_name in action_field_names:
+        action_field_row = [''] * (action_index-1)
+        action_field_row.append(action_field_name['label'])
+        for budget in report_list:
+            if action_field_name['field'] == 'cost':
+                action_field_row.append(budget.cost())
+            else:
+                action_field_row.append(getattr(budget,action_field_name['field']))
+        action_field_rows.append(action_field_row)
+
+    required_row_length = len(barrier_items_header_list)
+    blank_row = [''] * required_row_length
+
+    with open(csv_filename, 'w') as csvfile:
+        writer = csv.writer(csvfile)
+        for project_report_item in project_report_items:
+            new_row = [project_report_item[0], project_report_item[1]] + [''] * (required_row_length - 2)
+            writer.writerow(new_row)
+
+        writer.writerow(blank_row)
+        for action_field_row in action_field_rows:
+            while len(action_field_row) < required_row_length:
+                action_field_row += ['']
+            writer.writerow(action_field_row)
+
+        writer.writerow(barrier_items_header_list)
+        for barrier_item in barrier_items_list:
+            while len(barrier_item) < required_row_length:
+                barrier_item += ['']
+            writer.writerow(barrier_item)
+
+def check_download_report(request):
+    import os
+    from django.http import HttpResponse, HttpResponseBadRequest, JsonResponse
+    from django.core.cache import cache
+    from fishpass import celery
+    if request.method == "GET":
+        data = request.GET
+    else:
+        # We don't care if this is GET or POST - the result should be the same
+        data = request.POST
+    try:
+        project_uid = data['project_uid']
+        report_type = data['report_type']
+        timer = data['timer']
+    except Exception as e:
+        return HttpResponseBadRequest('request requires project_uid, report_type, and timer arguments')
+
+    if report_type == 'all':
+        csv_file_suffix = '_export_all.csv'
+    else:
+        csv_file_suffix = '_export_filtered.csv'
+
+    csv_filename = os.path.join(settings.MEDIA_ROOT,'reports','%s%s' % (project_uid, csv_file_suffix))
+
+    if os.path.isfile(csv_filename):
+        json = {
+            'available': True,
+            'link': '/media/reports/%s%s' % (project_uid, csv_file_suffix)
+        }
+        return JsonResponse(json)
+    else:
+        if int(timer) >= 60:
+            cache_key = "%s_%s_report_task_id" % (project_uid, report_type)
+            celery_task = cache.get(cache_key)
+
+            if not celery_task or celery.app.AsyncResult(celery_task).status == 'PENDING' :
+                # Do this as a separate process!
+                celery_task = celery.run_view.delay('fishpass', 'generate_report_csv', project_uid, report_type)
+                cache.set(cache_key, celery_task.task_id, 60*60*24*7)
+                # generate_report_csv(project_uid, report_type)
+        return JsonResponse({
+            'available': False,
+            'link': None
+        })
+
+
 def get_user_scenario_list(request):
     #TODO: use "scenarios.views.get_scenarios" if possible.
     from fishpass.models import Project
@@ -996,6 +1181,7 @@ def optipass(project):
     return project
 
 def get_report(request, projid, template=loader.get_template('fishpass/report.html'), passed_context={'title': 'FishPASS - Report'}):
+    import os.path
     from features.registry import get_feature_by_uid
     from fishpass.models import ProjectReport, ProjectReportBarrier, BarrierStatus
     from django.core.cache import cache
@@ -1057,6 +1243,17 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
         # reports_list = [{'report': x.to_dict(), 'barriers':x.barriers_dict(action_only)} for x in reports.order_by('budget')]
         reportsListTime = (datetime.now()-startFuncTime).total_seconds()-reportsDictTime
         print("GET REPORTS_DICT TIME: %d seconds" % reportsListTime)
+
+        report_all_csv_filename = os.path.join(settings.MEDIA_ROOT,'reports','%s_export_all.csv' % projid)
+        report_filtered_csv_filename = os.path.join(settings.MEDIA_ROOT,'reports','%s_export_filtered.csv' % projid)
+        if os.path.isfile(report_all_csv_filename):
+            context['DOWNLOAD_ALL'] = True
+        else:
+            context['DOWNLOAD_ALL'] = False
+        if os.path.isfile(report_filtered_csv_filename):
+            context['DOWNLOAD_FILTERED'] = True
+        else:
+            context['DOWNLOAD_FILTERED'] = False
 
         context['title'] = str(project)
         context['MAPBOX_TOKEN'] = settings.MAPBOX_ACCESS_TOKEN

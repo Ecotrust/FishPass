@@ -7,6 +7,12 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 GEOMETRY_DB_SRID = settings.GEOMETRY_DB_SRID
 
+def purge_exports():
+    import os, re
+    for f in os.listdir(CSV_REPORTS_DIR):
+        if re.search('fishpass_project_', f):
+            os.remove(os.path.join(CSV_REPORTS_DIR, f))
+
 # Create your models here.
 class BarrierType(models.Model):
     name = models.CharField(max_length=80)
@@ -18,6 +24,9 @@ class BarrierType(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self):
+        super(BarrierType, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Barrier Type'
@@ -440,6 +449,13 @@ class Project(Scenario):
             return True
         return False
 
+    def save(self):
+        super(Project, self).save(*args, **kwargs)
+        for report_type in ['all', 'filtered']:
+            cache_key = "%s_%s_report_task_id" % (self.uid, report_type)
+            celery_task = celery.run_view.delay('fishpass', 'generate_report_csv', self.uid, report_type)
+            cache.set(cache_key, celery_task.task_id, 60*60*24*7)
+
     class Options:
         verbose_name = 'Project'
         # icon_url = 'marco/img/multi.png'
@@ -468,7 +484,7 @@ class ProjectReport(models.Model):
         return "%s Report" % str(self.project)
 
     def cost(self):
-        barriers = ProjectReportBarrier.objects.filter(project_report=self)
+        barriers = ProjectReportBarrier.objects.filter(project_report=self, action=1)
         cost=0
         for barrier in barriers:
             if barrier.estimated_cost:
@@ -496,7 +512,6 @@ class ProjectReport(models.Model):
         # if not barrier_list:
             # barrier_list = [x.barrier_id for x in barriers]
         return barriers
-
 
     def barriers_dict(self, action_only=False):
         from django.core.cache import cache

@@ -43,7 +43,7 @@ FishPass - Web Frontend Interface for OptiPass
 1. Enable Anonymous User
    * TODO: decide if this is a valid use case, document if so.
 1. See steps below for installing OptiPass
-   
+
 ### Production Server Setup:
 #### Bootstrap MarinePlanner
 1. `sudo apt-get update`
@@ -124,6 +124,14 @@ Load Data:
    * you will have to change the file and supplied Focus Area type for other layers
    * See project_settings.py's FOCUS_AREA_TYPES for the other options
 
+#### Install Requirements for Asynchronous Report Generation
+```
+sudo apt-get install rabbitmq-server
+cd /usr/local/apps/marineplanner-core/marineplanner/marineplanner
+ln -s /usr/local/apps/marineplanner-core/apps/FishPass/fishpass/celery.py ./celery.py
+cat /usr/local/apps/marineplanner-core/apps/FishPass/fishpass/__init__.py >> __init__.py
+```
+
 #### Install and Configure NGINX and UWSGI
 1. Copy configuration script:
    * `ln -s /usr/local/apps/marineplanner-core/apps/FishPass/scripts/configure_production.sh /usr/local/apps/marineplanner-core/scripts/`
@@ -154,9 +162,9 @@ sudo cp /usr/local/apps/marineplanner-core/deployment/rc.local /etc/rc.local
 #### Install and Configure Email
 `sudo apt-get install postfix `
 configuration:  
-     Internet Site 
-System mail name : 
-     enter the domain name you plan to use, i.e.: fishpass.psmfc.org 
+     Internet Site
+System mail name :
+     enter the domain name you plan to use, i.e.: fishpass.psmfc.org
 
 Then set Django settings to look something like this:
 ```
@@ -171,7 +179,7 @@ DEFAULT_FROM_EMAIL = 'FISHPass<fishpass@your.domain>'
 Configure DNS for secure delivery (see internal documentation)
 
 #### Configure ReCaptcha and Registration
-**NOTE: This does not seem required for the signup popup, only if user finds /account/** 
+**NOTE: This does not seem required for the signup popup, only if user finds /account/**
 * pip install django-recaptcha
 * Install with [these directions]https://github.com/praekelt/django-recaptcha#installation
 * Use the 'NOCAPTCHA' setting (True)
@@ -236,5 +244,3 @@ To tell the server what time is most safe to reboot (when needed), uncomment the
 And set the time to your desired restart time.
 
 Read the source document for more details.
-
-

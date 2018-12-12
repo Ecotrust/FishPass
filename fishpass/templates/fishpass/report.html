@@ -27,11 +27,36 @@
   <div class="row">
     <div class="container">
       <div class="row">
-        <div class="col-10">
+        <div class="col">
           <h1>{{ title }}</h1>
         </div>
-        <div class="col-2">
-          <button id="download-report-button">Download</button>
+        <div class="col">
+          <div class="container">
+            <div class="row">
+              <div class="col">
+                  {% if DOWNLOAD_ALL %}
+                  <button id="download-report-button">
+                    Download Full Results
+                  </button>
+                  {% else %}
+                  <button id="download-report-button" disabled >
+                    <img src="{% static 'ckeditor/ckeditor/skins/moono/images/spinner.gif' %}" /> Preparing Full Results...
+                  </button>
+                  {% endif %}
+              </div>
+              <div class="col">
+                  {% if DOWNLOAD_FILTERED %}
+                  <button id="download-filtered-report-button">
+                    Download Filtered Results
+                  </button>
+                  {% else %}
+                  <button id="download-filtered-report-button" disabled >
+                    <img src="{% static 'ckeditor/ckeditor/skins/moono/images/spinner.gif' %}" /> Preparing Filtered Results...
+                  </button>
+                  {% endif %}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <!-- Report Row -->
@@ -101,6 +126,8 @@
     <script>
       app.report = {};
       app.report.barrier_list = {{ ALL_BARRIER_LIST | safe }};
+      app.report.download_all = {% filter force_escape|lower %}{{ DOWNLOAD_ALL }}{% endfilter %};
+      app.report.download_filtered = {% filter force_escape|lower %}{{ DOWNLOAD_FILTERED }}{% endfilter %};
       app.report_init({{ GEOJSON | safe }}, "{{ INIT_BUDGET }}");
     </script>
 {% endblock extra_js %}

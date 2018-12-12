@@ -10,18 +10,34 @@ table, th, td {
   border: 1px solid black;
 }
 
-#download-report-button {
+#download-report-button,
+#download-filtered-report-button {
   float: right;
   border: 1px solid #9C7B54;;
   border-radius: 4px;
   margin: 1.5rem;
 }
 
-#download-report-button:hover {
+#download-report-button:hover,
+#download-filtered-report-button:hover {
   color: white;
   background: #2c599f;
   cursor: pointer;
 }
+
+#download-report-button:disabled,
+#download-report-button:disabled:hover,
+#download-filtered-report-button:disabled,
+#download-filtered-report-button:disabled:hover {
+  float: right;
+  border: 1px solid #AE9D76;
+  border-radius: 4px;
+  margin: 1.5rem;
+  color: #AE9D76;
+  background: #E6F1DB;
+  cursor: wait;
+}
+
 .report-container {
   margin-top: 7vh;
   margin-bottom: 15px;

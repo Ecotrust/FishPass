@@ -182,6 +182,8 @@ INSTALLED_APPS = [
     'core',
     'compressor',
     'captcha',
+    # 'celery',
+    'django_celery_results',
     'import_export',
     'social.apps.django_app.default',
     'social_django',
@@ -198,6 +200,8 @@ INSTALLED_APPS = [
     ### END INSERTED INSTALLED APPS ###
     'ckeditor',
 ]
+
+CELERY_RESULT_BACKEND = 'django-db'
 
 # GET_SCENARIOS_URL = '/get_scenarios'
 # SCENARIO_FORM_URL = '/features/scenario/form/'
@@ -283,6 +287,7 @@ PYTHON_USER_GROUP = 'adm'
 MEDIA_ROOT = os.path.realpath(os.path.join(BASE_DIR, '..', 'apps', 'FishPass', 'fishpass', 'media'))
 # CSV_BASE_DIR = '/tmp'
 CSV_BASE_DIR = MEDIA_ROOT
+CSV_REPORTS_DIR = os.path.join(MEDIA_ROOT, 'reports')
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
 
