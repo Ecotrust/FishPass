@@ -25,7 +25,7 @@ class BarrierType(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self):
+    def save(self, *args, **kwargs):
         super(BarrierType, self).save(*args, **kwargs)
         purge_exports()
 
@@ -42,7 +42,7 @@ class BarrierStatus(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self):
+    def save(self, *args, **kwargs):
         super(BarrierStatus, self).save(*args, **kwargs)
         purge_exports()
 
@@ -58,7 +58,7 @@ class OwnershipType(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self):
+    def save(self, *args, **kwargs):
         super(OwnershipType, self).save(*args, **kwargs)
         purge_exports()
 
@@ -314,7 +314,7 @@ class BarrierCost(models.Model):
             pass
         return "%s Costs" % barrier_name
 
-    def save(self):
+    def save(self, *args, **kwargs):
         super(BarrierCost, self).save(*args, **kwargs)
         purge_exports()
 
@@ -463,7 +463,9 @@ class Project(Scenario):
             return True
         return False
 
-    def save(self):
+    def save(self, *args, **kwargs):
+        from fishpass import celery
+        from django.core.cache import cache
         super(Project, self).save(*args, **kwargs)
         for report_type in ['all', 'filtered']:
             cache_key = "%s_%s_report_task_id" % (self.uid, report_type)
@@ -716,7 +718,7 @@ class ScenarioBarrier(models.Model):
         verbose_name = 'Project-Specific Barrier Setting'
         verbose_name_plural = 'Project-Specific Barrier Settings'
 
-    def save(self):
+    def save(self, *args, **kwargs):
         super(ScenarioBarrier, self).save(*args, **kwargs)
         purge_exports(self.project.uid)
 
@@ -730,7 +732,7 @@ class ScenarioBarrierType(models.Model):
         verbose_name = 'Project-Specific Barrier Type Setting'
         verbose_name_plural = 'Project-Specific Barrier Type Settings'
 
-    def save(self):
+    def save(self, *args, **kwargs):
         super(ScenarioBarrierType, self).save(*args, **kwargs)
         purge_exports(self.project.uid)
 
@@ -743,6 +745,6 @@ class ScenarioBarrierStatus(models.Model):
         verbose_name = 'Project-Specific Barrier Status Setting'
         verbose_name_plural = 'Project-Specific Barrier Status Settings'
 
-    def save(self):
+    def save(self, *args, **kwargs):
         super(ScenarioBarrierStatus, self).save(*args, **kwargs)
         purge_exports(self.project.uid)

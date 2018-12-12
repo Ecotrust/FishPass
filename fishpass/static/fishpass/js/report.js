@@ -42,9 +42,9 @@ check_for_download = function(project_uid, type, time) {
           $('#download-report-button').prop('disabled', false);
         }
         if (type == 'filtered') {
-          $('#download-report-button').on('click', function() {alert('File is ready')});
-          $('#download-report-button').html('Download Full Results');
-          $('#download-report-button').prop('disabled', false);
+          $('#download-filtered-report-button').on('click', function() {alert('File is ready')});
+          $('#download-filtered-report-button').html('Download Filtered Results');
+          $('#download-filtered-report-button').prop('disabled', false);
         }
       } else {
         setTimeout(function() {
