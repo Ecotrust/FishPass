@@ -13,8 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.views.static import serve
 ### INSERT ADDITIONAL IMPORTS HERE ###
 import accounts.urls
 from fishpass.views import get_filter_results, get_filter_count, import_PAD, import_barrier_costs
@@ -48,5 +50,10 @@ urlpatterns = [
     # url(r'^account/auth/', include('social.apps.django_app.urls', namespace='social')),
     # url(r'^account/', include('accounts.urls', namespace="account")),
     # url(r'^data_manager/', include('data_manager.urls', namespace="data_manager")),
-
 ]
+
+if settings.DEBUG:
+  urlpatterns +=[
+    url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    # url(r'^static/(?P.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
+  ]

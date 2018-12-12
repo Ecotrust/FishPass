@@ -42,7 +42,7 @@ urlpatterns = [
 
     ### FlatPages
     url(r'^pages/', include('django.contrib.flatpages.urls')),
-    url(r'^(?P<url>.*/?)$', flat_views.flatpage),
+    # url(r'^(?P<url>.*/?)$', flat_views.flatpage),
 ]
 
 from django.contrib import admin

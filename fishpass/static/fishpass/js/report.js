@@ -37,14 +37,22 @@ check_for_download = function(project_uid, type, time) {
     success: function(response) {
       if (response.hasOwnProperty('available') && response.available == true) {
         if (type == 'all') {
-          $('#download-report-button').on('click', function() {alert('File is ready')});
           $('#download-report-button').html('Download Full Results');
           $('#download-report-button').prop('disabled', false);
+          $('#download-report-button').unbind('click');
+          $('#download-report-button').on('click', function(event) {
+            event.preventDefault();
+            window.location.href = response.link;
+          });
         }
         if (type == 'filtered') {
-          $('#download-filtered-report-button').on('click', function() {alert('File is ready')});
           $('#download-filtered-report-button').html('Download Filtered Results');
           $('#download-filtered-report-button').prop('disabled', false);
+          $('#download-filtered-report-button').unbind('click');
+          $('#download-filtered-report-button').on('click', function(event) {
+            event.preventDefault();
+            window.location.href = response.link;
+          });
         }
       } else {
         setTimeout(function() {
