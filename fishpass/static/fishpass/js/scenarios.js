@@ -432,6 +432,7 @@ function scenarioFormModel(options) {
                         featureCount = data[0].count,
                         min_cost = data[0].min_cost,
                         max_cost = data[0].max_cost;
+                    app.map.geoSearch.loadJson(geojson);
                     if (data[0].notes.length > 0) {
                       self.filterNotesMessage(data[0].notes);
                       self.filterNotesExist(true);

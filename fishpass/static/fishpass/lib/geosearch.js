@@ -84,6 +84,14 @@ app.map.geoSearch.closeSearchBox = function() {
  */
 app.map.geoSearch.geojson;
 
+app.map.geoSearch.loadJson = function(geojson) {
+  if (typeof(geojson) == "string") {
+    app.map.geoSearch.geojson = JSON.parse(geojson);
+  } else {
+    app.map.geoSearch.geojson = geojson;
+  }
+}
+
 /**
  * Geosearch geojson object to run qeuries against
  * @return {[json]} [FeatureCollection]
@@ -91,17 +99,17 @@ app.map.geoSearch.geojson;
  * self-executing function
  * might as well grab all the options async upfront
  */
-app.map.geoSearch.requestJSON = (function() {
-    return $.ajax({
-        url: '/static/ucsrb/data/gnis_3857.geojson',
-        success: function(response) {
-            app.map.geoSearch.geojson = JSON.parse(response);
-        },
-        error: function(response) {
-            console.log('%cError during geosearch: %o', 'color: red;', response);
-        }
-    });
-})();
+// app.map.geoSearch.requestJSON = (function() {
+//     return $.ajax({
+//         url: '/static/ucsrb/data/gnis_3857.geojson',
+//         success: function(response) {
+//             app.map.geoSearch.geojson = JSON.parse(response);
+//         },
+//         error: function(response) {
+//             console.log('%cError during geosearch: %o', 'color: red;', response);
+//         }
+//     });
+// })();
 
 /**
  * search for matches to input field value
@@ -119,7 +127,7 @@ app.map.geoSearch.autoCompleteLookup = function() {
               resultsList.innerHTML += `<button tabindex="0" class="geosearch-result btn btn-link dropdown-item">No results found</button>`;
             } else {
               options.map(function(option, i) {
-                  resultsList.innerHTML += `<button data-coords="${option.geometry.coordinates}" tabindex="0" role="button" class="btn btn-link geosearch-result dropdown-item">${option.properties.F_NAME}</button>`;
+                  resultsList.innerHTML += `<button data-coords="${option.geometry.coordinates}" tabindex="0" role="button" class="btn btn-link geosearch-result dropdown-item">${option.properties.pad_id}: ${option.properties.site_name}</button>`;
               });
               resultsList.addEventListener('click', function resultSelect(event) {
                   var x = event.target.dataset.coords.split(',');
@@ -144,7 +152,8 @@ app.map.geoSearch.autoCompleteLookup = function() {
 app.map.geoSearch.autoCompleteResults = function(val) {
     var options = [];
     for (var feature of app.map.geoSearch.geojson.features) {
-        if (val.toLowerCase() === feature['properties']['F_NAME'].slice(0, val.length).toLowerCase()) {
+        if (feature['properties']['site_name'].toLowerCase().indexOf(val.toLowerCase()) !== -1 ||
+                  feature['properties']['pad_id'].toString().indexOf(val) !== -1 ) {
             options.push(feature);
         }
     }
