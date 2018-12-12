@@ -145,7 +145,7 @@ mkdir /var/run/celery
 chown celery:celery /var/log/celery
 chown celery:celery /var/run/celery
 systemctl start celery.service
-sudo chown celery /usr/local/apps/marineplanner-core/apps/FishPass/fishpass/media
+sudo chown celery /usr/local/apps/marineplanner-core/apps/FishPass/fishpass/media/reports
 ```
 NOTE: Double-check that you have media served by nginx (like static)
 
