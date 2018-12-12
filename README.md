@@ -159,6 +159,9 @@ sudo service uwsgi restart
 sudo cp /usr/local/apps/marineplanner-core/deployment/rc.local /etc/rc.local
 ```
 
+##### Ubuntu 18.04 update
+rc.local does not run by default on 18.04. You need to tell it to run on boot using systemd and systemctl. I recommend [this tutorail](https://www.linuxbabe.com/linux-server/how-to-enable-etcrc-local-with-systemd)
+
 #### Install and Configure Email
 `sudo apt-get install postfix `
 configuration:  
