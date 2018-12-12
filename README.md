@@ -132,6 +132,16 @@ ln -s /usr/local/apps/marineplanner-core/apps/FishPass/fishpass/celery.py ./cele
 cat /usr/local/apps/marineplanner-core/apps/FishPass/fishpass/__init__.py >> __init__.py
 ```
 
+##### Celery on boot
+via http://docs.celeryproject.org/en/latest/userguide/daemonizing.html#usage-systemd
+```
+sudo su root
+ln -s /usr/local/apps/marineplanner-core/apps/Fishpass/fishpass/deploy/celery.service /etc/systemd/system/celery.service
+mkdir /etc/conf.d
+ln -s /usr/local/apps/marineplanner-core/apps/Fishpass/fishpass/deploy/celery /etc/conf.d/celery
+adduser celery
+```
+
 #### Install and Configure NGINX and UWSGI
 1. Copy configuration script:
    * `ln -s /usr/local/apps/marineplanner-core/apps/FishPass/scripts/configure_production.sh /usr/local/apps/marineplanner-core/scripts/`
