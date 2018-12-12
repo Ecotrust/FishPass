@@ -513,7 +513,7 @@ def check_download_report(request):
             cache_key = "%s_%s_report_task_id" % (project_uid, report_type)
             celery_task = cache.get(cache_key)
 
-            if not celery_task or celery.app.AsyncResult(celery_task).status == 'PENDING' :
+            if not celery_task or celery.app.AsyncResult(celery_task).status in ['PENDING', 'SUCCESS', 'FAILURE', 'REVOKED'] :
                 # Do this as a separate process!
                 celery_task = celery.run_view.delay('fishpass', 'generate_report_csv', project_uid, report_type)
                 cache.set(cache_key, celery_task.task_id, 60*60*24*7)
