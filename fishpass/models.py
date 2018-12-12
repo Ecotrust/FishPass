@@ -465,12 +465,17 @@ class Project(Scenario):
 
     def save(self, *args, **kwargs):
         from fishpass import celery
+        from fishpass.views import generate_report_csv
         from django.core.cache import cache
         super(Project, self).save(*args, **kwargs)
         for report_type in ['all', 'filtered']:
             cache_key = "%s_%s_report_task_id" % (self.uid, report_type)
-            celery_task = celery.run_view.delay('fishpass', 'generate_report_csv', self.uid, report_type)
-            cache.set(cache_key, celery_task.task_id, 60*60*24*7)
+            try:
+                celery_task = celery.run_view.delay('fishpass', 'generate_report_csv', self.uid, report_type)
+                cache.set(cache_key, celery_task.task_id, 60*60*24*7)
+            except Exception as e:
+                generate_report_csv(self.uid, report_type)
+                pass
 
     class Options:
         verbose_name = 'Project'

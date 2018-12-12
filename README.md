@@ -136,9 +136,9 @@ cat /usr/local/apps/marineplanner-core/apps/FishPass/fishpass/__init__.py >> __i
 via http://docs.celeryproject.org/en/latest/userguide/daemonizing.html#usage-systemd
 ```
 sudo su root
-ln -s /usr/local/apps/marineplanner-core/apps/Fishpass/fishpass/deploy/celery.service /etc/systemd/system/celery.service
+ln -s /usr/local/apps/marineplanner-core/apps/FishPass/fishpass/deploy/celery.service /etc/systemd/system/celery.service
 mkdir /etc/conf.d
-ln -s /usr/local/apps/marineplanner-core/apps/Fishpass/fishpass/deploy/celery /etc/conf.d/celery
+ln -s /usr/local/apps/marineplanner-core/apps/FishPass/fishpass/deploy/celery /etc/conf.d/celery
 adduser celery
 ```
 
