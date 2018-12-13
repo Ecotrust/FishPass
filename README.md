@@ -141,11 +141,11 @@ mkdir /etc/conf.d
 ln -s /usr/local/apps/marineplanner-core/apps/FishPass/fishpass/deploy/celery /etc/conf.d/celery
 adduser celery
 mkdir /var/log/celery
-mkdir /var/run/celery
 chown celery:celery /var/log/celery
-chown celery:celery /var/run/celery
 systemctl start celery.service
 sudo chown celery /usr/local/apps/marineplanner-core/apps/FishPass/fishpass/media/reports
+sudo systemctl enable celery
+sudo systemctl daemon-reload
 ```
 NOTE: Double-check that you have media served by nginx (like static)
 
