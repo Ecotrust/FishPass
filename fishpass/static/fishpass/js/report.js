@@ -1,3 +1,12 @@
+$(document).ready( function () {
+    $('#net-gain-card').children().tooltip(
+      {
+        placement: 'right',
+        title: 'This is the sum of the estimated habitat upstream of each barrier suggested for treatment that have been “weighted/changed” using cumulative passability.'
+      }
+    );
+} );
+
 barrierHoverSelectAction = function(feat) {
   if (feat) {
     var pixel = app.map.getPixelFromCoordinate(feat.getGeometry().getCoordinates());
