@@ -1256,6 +1256,7 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
             context['DOWNLOAD_FILTERED'] = False
 
         context['title'] = str(project)
+        context['DESCRIPTION'] = project.description
         context['MAPBOX_TOKEN'] = settings.MAPBOX_ACCESS_TOKEN
         context['HERE_TOKEN'] = settings.HERE_API_TOKEN
         context['HERE_APP_CODE'] = settings.HERE_APP_CODE
