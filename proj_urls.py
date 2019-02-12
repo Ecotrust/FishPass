@@ -39,7 +39,7 @@ urlpatterns = [
     url(r'^accounts/', include('accounts.urls', namespace="account")),
     url(r'^data_manager/', include('data_manager.urls')),
     url(r'^drawing/', include('drawing.urls')),
-    url(r'^visualize/', include('visualize.urls')),
+    # url(r'^visualize/', include('visualize.urls')),
     url(r'^fishpass/', include('fishpass.urls')),
 
     url(r'^', include('fishpass.urls')),
