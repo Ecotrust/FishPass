@@ -1180,6 +1180,65 @@ def optipass(project):
     os.remove(input_file)
     return project
 
+def init_report(request, projid, template=loader.get_template('fishpass/tabularreport.html'), context=None, passed_context={'title': 'FishPASS - Report'}):
+    import os.path
+    from features.registry import get_feature_by_uid
+    from fishpass.models import ProjectReport#, ProjectReportBarrier, BarrierStatus
+    from django.core.cache import cache
+
+    project = get_feature_by_uid(projid)
+    #TODO: support filters on action vs. non-action
+    action_only = False
+    if request.method == 'GET':
+        try:
+            action_only = request.GET['action_only']
+            if action_only:
+                action_only = True
+        except:
+            pass
+
+    # if action_only:
+    #     cache_key = "get_report_%s_action_only" % projid
+    # else:
+    #     cache_key = "get_report_%s" % projid
+    #
+    # context = cache.get(cache_key)
+
+    if not context:
+        context=passed_context
+        if action_only:
+            reports = ProjectReport.objects.filter(project=project, action=1)
+        else:
+            reports = ProjectReport.objects.filter(project=project)
+
+    context['title'] = str(project)
+    context['DESCRIPTION'] = project.description
+    context['MAP_TECH'] = settings.MAP_TECH
+    report_all_csv_filename = os.path.join(settings.MEDIA_ROOT,'reports','%s_export_all.csv' % projid)
+    report_filtered_csv_filename = os.path.join(settings.MEDIA_ROOT,'reports','%s_export_filtered.csv' % projid)
+    if os.path.isfile(report_all_csv_filename):
+        context['DOWNLOAD_ALL'] = True
+    else:
+        context['DOWNLOAD_ALL'] = False
+    if os.path.isfile(report_filtered_csv_filename):
+        context['DOWNLOAD_FILTERED'] = True
+    else:
+        context['DOWNLOAD_FILTERED'] = False
+    context['GEOJSON'] = {}
+    context['INIT_BUDGET'] = reports.order_by('budget')[0].budget
+    context['report_dict'] = {
+        'report': {
+            'action_count': 'calculating...',
+            'barrier_count': 'calculating...',
+            'cost': 'calculating...',
+            'budget': 'calculating...',
+            'ptnl_habitat': 'calculating...',
+            'netgain': 'calculating...',
+        }
+    }
+
+    return HttpResponse(template.render(context, request))
+
 def get_report(request, projid, template=loader.get_template('fishpass/report.html'), passed_context={'title': 'FishPASS - Report'}):
     import os.path
     from features.registry import get_feature_by_uid
@@ -1449,6 +1508,18 @@ def get_report_geojson_by_budget(request, project_uid, budget):
     # geojson = get_geojson_from_queryset(barrier_query, project)
     geojson = get_report_geojson_from_reports(barrier_reports)
     return JsonResponse(geojson)
+
+def get_report_summary_by_budget(request, project_uid, budget, template=loader.get_template('fishpass/report_panel_cards.html')):
+    from fishpass.models import ProjectReport, ProjectReportBarrier
+    from features.registry import get_feature_by_uid
+    project = get_feature_by_uid(project_uid)
+    report = ProjectReport.objects.get(project=project, budget=budget)
+    context = {
+        'report_dict': {
+            'report': report.to_dict()
+        }
+    }
+    return HttpResponse(template.render(context, request))
 
 def get_barrier_report(request, project_uid, barrier_id, budget):
     from fishpass.models import ProjectReport, ProjectReportBarrier

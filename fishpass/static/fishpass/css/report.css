@@ -15,7 +15,7 @@ table, th, td {
   float: right;
   border: 1px solid #9C7B54;;
   border-radius: 4px;
-  margin: 1.5rem;
+  margin: 0.5rem 1.5rem;
 }
 
 #download-report-button:hover,
@@ -133,6 +133,10 @@ table, th, td {
 
 .barrier-image {
   max-width: 80%;
+}
+
+#title-row {
+  text-align: center;
 }
 
 /* Spinner from Damien Romito here: https://stackoverflow.com/a/20013732 */

@@ -1,0 +1,194 @@
+{% extends "fishpass/base.html" %}
+{% load static %}
+
+{% block site_style %}
+    {{ block.super }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/openlayers/4.6.5/ol.css" media="screen,projection"/>
+    <link rel="stylesheet" href="{% static 'fishpass/lib/ol-layerswitcher/src/ol-layerswitcher.css' %}"/>
+
+    <link rel="stylesheet" href="{% static 'fishpass/lib/ol-ext/dist/ol-ext.min.css' %}" type="text/css">
+
+    <link rel="stylesheet" href="{% static 'visualize/css/ol4_settings.css' %}" type="text/css">
+
+    <link rel="stylesheet" href="{% static 'fishpass/css/app.css' %}"/>
+    <link rel="stylesheet" href="{% static 'fishpass/css/_40-app.css' %}"/>
+    <link rel="stylesheet" href="{% static 'fishpass/css/_64-app.css' %}"/>
+    <link rel="stylesheet" href="{% static 'fishpass/css/_90-app.css' %}"/>
+{% endblock site_style %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'fishpass/css/report.css' %}">
+  <link rel="stylesheet" href="{% static 'fishpass/css/report_legend.css' %}">
+  <link rel="stylesheet" href="{% static 'fishpass/css/selection.css' %}"/>
+  <link rel="stylesheet" type="text/css" href="{% static 'fishpass/lib/DataTables/datatables.min.css' %}"/>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="container-fluid report-container">
+  <div class="row">
+    <div class="container">
+      <!-- Report Row -->
+      <div class="row" id="summary-row">
+        <div class="col-lg-6"> <!-- report column -->
+          <div class="row" id="title-row"> <!-- Title -->
+            <div class="col">
+              <h1>{{ title }}</h1>
+              <span>{{ DESCRIPTION }}</span>
+            </div>
+          </div>
+          <div class="row" id="budget-tabs-row"> <!-- Budget tabs -->
+            {% for report_dict in reports %}
+              {% if report_dict.report.budget_type == 'batch' %} <!-- batch run budget tabs -->
+                {% if forloop.first %}
+                  <ul class="nav nav-tabs" id="reportTab" role="tablist">
+                {% endif %}
+
+                <li class="nav-item">
+                  {% if forloop.first %}
+                  <a class="nav-link active" id="budget-{{ report_dict.report.budget_int }}-tab" data-toggle="tab" href="#budget-{{ report_dict.report.budget_int }}" role="tab" aria-controls="budget-{{ report_dict.report.budget_int }}" aria-selected="true" onclick="getBudgetGeoJSON(this)">{{ report_dict.report.budget }}</a>
+                  {% else %}
+                  <a class="nav-link" id="budget-{{ report_dict.report.budget_int }}-tab" data-toggle="tab" href="#budget-{{ report_dict.report.budget_int }}" role="tab" aria-controls="budget-{{ report_dict.report.budget_int }}" aria-selected="false" onclick="getBudgetGeoJSON(this)">{{ report_dict.report.budget }}</a>
+                  {% endif %}
+                </li>
+
+                {% if forloop.last %}
+                </ul>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </div>
+          <div class="row" id="download-buttons-row"> <!-- download buttons -->
+            <div class="col" id="download-buttons-column">
+              <div class="container">
+                <div class="row">
+                  <div class="col">
+                      {% if DOWNLOAD_ALL %}
+                      <button id="download-report-button">
+                        Download Full Results
+                      </button>
+                      {% else %}
+                      <button id="download-report-button" disabled >
+                        <img src="{% static 'ckeditor/ckeditor/skins/moono/images/spinner.gif' %}" /> Preparing Full Results...
+                      </button>
+                      {% endif %}
+                  </div>
+                  <div class="col">
+                      {% if DOWNLOAD_FILTERED %}
+                      <button id="download-filtered-report-button">
+                        Download Filtered Results
+                      </button>
+                      {% else %}
+                      <button id="download-filtered-report-button" disabled >
+                        <img src="{% static 'ckeditor/ckeditor/skins/moono/images/spinner.gif' %}" /> Preparing Filtered Results...
+                      </button>
+                      {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% include 'fishpass/tabular_report_panel.html' %}
+        </div> <!-- close report column -->
+        <div class="col-lg-6"> <!-- map column -->
+          <div class="row">
+            <div class="col">
+              {% include 'fishpass/legends/report_legend.html' %}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <section class="report-map-wrap">
+                <div id="map" class="map"></div>
+                <div class="spinner" id='map-spinner'></div>
+              </section>
+            </div>
+          </div>
+        </div>
+
+        <!-- </div> -->
+      </div> <!-- close row -->
+      <div class="row" id="barrier-report-row">
+        <div class="col" id="barrier-report-column">
+          <h2>Individual Barriers</h2>
+          <section id="barrier-report" class="report-section col">
+            <div class="row" id="tabular-results-container">
+              <!-- table goes here! -->
+              <table id="foo-table" class="display">
+                <thead>
+                  <tr>
+                    <th>Foo</th>
+                    <th>Bar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>2</td>
+                    <td>a</td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>c</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>b</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div> <!-- container -->
+  </div> <!-- row -->
+</div> <!-- container-fluid -->
+
+  {% include 'fishpass/modals.html' %}
+
+{% endblock content %}
+
+{% block footer %}{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/2.1.0/knockout-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.3.2/knockout.mapping.js"></script>
+    <script src="{% static 'js/knockout-bindings.js' %}"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/openlayers/4.6.5/ol.js"></script>
+
+    <script src="{% static 'fishpass/lib/ol-layerswitcher/dist/ol-layerswitcher.js' %}"></script>
+    <script src="{% static 'fishpass/js/app.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'fishpass/lib/DataTables/datatables.min.js' %}"></script>
+
+    <script src="{% static 'visualize/js/' %}{{ MAP_TECH }}_settings.js"></script>
+    <script src="{% static 'scenarios/js/' %}{{ MAP_TECH }}_settings.js"></script>
+
+    <script>
+      app.mapbox = {
+          key: '{{ MAPBOX_TOKEN }}'
+      };
+      app.here = {
+        key: '{{ HERE_TOKEN }}',
+        appCode: '{{ HERE_APP_CODE }}',
+      }
+    </script>
+    <script src="{% static 'fishpass/js/map/init_report.js' %}"></script>
+    <script src="{% static 'fishpass/js/map/styles.js' %}"></script>
+    <script src="{% static 'fishpass/js/map/layers.js' %}"></script>
+    <script src="{% static 'fishpass/js/map/widgets.js' %}"></script>
+    <script src="{% static 'fishpass/js/map.js' %}"></script>
+    <script src="{% static 'fishpass/js/report.js' %}"></script>
+    <script src="{% static 'fishpass/js/tabular_report.js' %}"></script>
+    <!-- <script src="{% static 'fishpass/js/selection.js' %}"></script> -->
+    <script>
+      app.report = {};
+      app.report.barrier_list = []
+      app.report.download_all = {% filter force_escape|lower %}{{ DOWNLOAD_ALL }}{% endfilter %};
+      app.report.download_filtered = {% filter force_escape|lower %}{{ DOWNLOAD_FILTERED }}{% endfilter %};
+      app.report_init({{ GEOJSON | safe }}, "{{ INIT_BUDGET }}");
+    </script>
+{% endblock extra_js %}

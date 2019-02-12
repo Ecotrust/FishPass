@@ -1,0 +1,38 @@
+<div class="card-columns p2">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Barriers Treated</h5>
+      <p class="card-text muted" id="barriers-treated-{{ report_dict.report.budget_int }}">{{ report_dict.report.action_count }}</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Total Barriers</h5>
+      <p class="card-text muted" id="total-barriers-{{ report_dict.report.budget_int }}">{{ report_dict.report.barrier_count }}</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Total Estimated Cost</h5>
+      <p class="card-text muted" id="total-estimated-cost-{{ report_dict.report.budget_int }}">{{ report_dict.report.cost }}</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Budget</h5>
+      <p class="card-text muted" id="budget-{{ report_dict.report.budget_int }}">{{ report_dict.report.budget }}</p>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">Potential Habitat</h5>
+      <p class="card-text muted" id="potential-habitat-{{ report_dict.report.budget_int }}">{{ report_dict.report.ptnl_habitat }}</p>
+    </div>
+  </div>
+  <div class="card" id="net-gain-card">
+    <div class="card-body">
+      <h5 class="card-title">Potential Habitat Gain (Weighted)</h5>
+      <p class="card-text muted" id="net-gain-{{ report_dict.report.budget_int }}">{{ report_dict.report.netgain }}</p>
+    </div>
+  </div>
+</div>
