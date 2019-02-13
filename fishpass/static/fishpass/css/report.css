@@ -1,23 +1,31 @@
 body {
-  overflow: auto;
+  overflow-y: auto;
+  font-size: 0.9rem;
+
 }
 
-table {
+/* table {
   margin: 2em;
 }
 
 table, th, td {
   border: 1px solid black;
-}
+} */
 
 button, .btn {
   border: 1px solid #9C7B54;
   border-radius: 4px;
-  margin: 0.5rem 1.5rem;
+  /* margin: 0.5rem 1.5rem; */
+  font-size: 0.7rem;
+  padding: 0.5rem;
 }
 
 button.dt-button {
   margin: 0;
+}
+
+#summary-row {
+  margin-bottom: 1rem;
 }
 
 #download-report-button,
@@ -25,7 +33,8 @@ button.dt-button {
   float: right;
   border: 1px solid #9C7B54;;
   border-radius: 4px;
-  margin: 0.5rem 1.5rem;
+  /* margin: 0.5rem 1.5rem; */
+  margin-top: 0.2rem;
 }
 
 #download-report-button:hover,
@@ -67,12 +76,13 @@ button.dt-button {
 }
 
 .budget-button {
+  font-size: 0.6rem;
   border-radius: 0.2rem;
   border: 0.05rem solid #9C7B54;
   background-color: #E6f1DB;
   margin: 0.1rem;
   /* flex-grow: 1; */
-  width: 140px;
+  width: 100px;
 }
 .budget-button.selected {
   background-color:#9C7B54;
@@ -81,9 +91,25 @@ button.dt-button {
   border: 0.05rem solid #brown;
 }
 
+.agg-col {
+  min-height: 24rem;
+}
+
+.map-col {
+  position: fixed;
+  right: 0;
+  top: 8vh;
+  z-index: 100;
+}
+
+.report-map-wrap-col {
+  text-align: center;
+}
+
 .report-map-wrap {
-  height: 60vh;
-  margin: 0 0.5rem 1rem;
+  width: 430px;
+  height: 23rem;
+  margin: auto;
   position: relative;
 }
 
@@ -128,7 +154,7 @@ button.dt-button {
 }
 
 .card .card-title {
-  font-size: 1.125em;
+  font-size: 0.9rem;
   margin-bottom: .125rem;
 }
 
@@ -169,6 +195,7 @@ button.dt-button {
   font-size: 0.7rem;
 }
 
+
 .barrier-image {
   max-width: 80%;
 }
@@ -177,8 +204,25 @@ button.dt-button {
   text-align: center;
 }
 
+/*
+#barrier-table {
+  width: 100%;
+  max-width: 100%;
+}
+
+.dataTables_wrapper {
+  max-width: 100%;
+}
+
 table.dataTable {
-  max-width: 80vw;
+  max-width: 100%;
+  display: block;
+  margin: 0;
+} */
+
+#report-legend {
+  justify-content: space-between;
+  font-size: smaller;
 }
 
 footer {

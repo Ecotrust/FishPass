@@ -77,8 +77,9 @@ loadBarrierTable = function(headers, default_headers, project_uid, budget) {
   };
   var table = $('#barrier-table').DataTable(
     {
-      // "bPaginate": false,
-      // "info": false,
+      "bPaginate": false,
+      "info": false,
+      "colReorder": true,
       "dom": 'Bfrtip',
       "buttons": buttons,
       "columns": columns,

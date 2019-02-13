@@ -1,24 +1,74 @@
 {% load static %}
 <div id="report-legend-wrapper">
-  <div class="d-flex flex-wrap">
+  <div id="report-legend" class="d-flex flex-wrap">
     {% for item in LEGEND %}
       {% if item.1 %}
         <div class="report-legend-item">
-          <table class="legend-icon-table"></tr><td><div class='legend-icon' style="background-color:{{ item.1 }}">&nbsp;</div></td><td>{{ item.0 }}</td></tr></table>
+          <table class="legend-icon-table">
+            <tr>
+              <td>
+                <svg class='legend-icon'>
+                  <circle cx="9" cy="8" r="8" stroke="{{ item.1 }}" stroke-width="0" fill="{{ item.1 }}" />
+                </svg>
+                <!-- <div class='legend-icon' style="background-color:{{ item.1 }}">&nbsp;</div> -->
+              </td>
+              <td>{{ item.0 }}</td>
+            </tr>
+          </table>
         </div>
       {% endif %}
     {% endfor %}
     <div class="report-legend-item">
-      <table class="legend-icon-table"></tr><td><div class='legend-icon'>&nbsp;</div></td><td>Other</td></tr></table>
+      <table class="legend-icon-table">
+        <tr>
+          <td>
+            <svg class='legend-icon'>
+              <circle cx="9" cy="8" r="8" fill="rgba(250,128,114,0.7)" />
+            </svg>
+            <!-- <div class='legend-icon'>&nbsp;</div> -->
+          </td>
+          <td>Other</td>
+        </tr>
+      </table>
     </div>
     <div class="report-legend-item">
-      <table class="legend-icon-table"></tr><td><div class='legend-icon legend-icon-treated'>&nbsp;</div></td><td>Treated</td></tr></table>
+      <table class="legend-icon-table">
+        <tr>
+          <td>
+            <svg class='legend-icon'>
+              <circle cx="9" cy="8" r="7" stroke="green" stroke-width="2" fill="none" />
+            </svg>
+            <!-- <div class='legend-icon legend-icon-treated'>&nbsp;</div> -->
+          </td>
+          <td>Treated</td>
+        </tr>
+      </table>
     </div>
     <div class="report-legend-item">
-      <table class="legend-icon-table"></tr><td><div class='legend-icon legend-icon-untreated'>&nbsp;</div></td><td>Untreated</td></tr></table>
+      <table class="legend-icon-table">
+        <tr>
+          <td>
+            <svg class='legend-icon'>
+              <circle cx="9" cy="8" r="7" stroke="rgb(250,128,114)" stroke-width="2" fill="none" />
+            </svg>
+            <!-- <div class='legend-icon legend-icon-untreated'>&nbsp;</div> -->
+          </td>
+          <td>Untreated</td>
+        </tr>
+      </table>
     </div>
     <div class="report-legend-item">
-      <table class="legend-icon-table"></tr><td><div class='legend-icon legend-icon-selected'>&nbsp;</div></td><td>Selected</td></tr></table>
+      <table class="legend-icon-table">
+        <tr>
+          <td>
+            <svg class='legend-icon'>
+              <circle cx="9" cy="8" r="7" stroke="yellow" stroke-width="2" fill="none" />
+            </svg>
+            <!-- <div class='legend-icon legend-icon-selected'>&nbsp;</div> -->
+          </td>
+          <td>Selected</td>
+        </tr>
+      </table>
     </div>
   </div>
 </div>

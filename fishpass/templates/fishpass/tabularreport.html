@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="{% static 'fishpass/css/report_legend.css' %}">
   <link rel="stylesheet" href="{% static 'fishpass/css/selection.css' %}"/>
   <link rel="stylesheet" type="text/css" href="{% static 'fishpass/lib/DataTables/datatables.min.css' %}"/>
+  <link rel="stylesheet" href="{% static 'fishpass/css/report_print.css' %}">
 {% endblock extra_css %}
 
 {% block content %}
@@ -29,10 +30,10 @@
     <div class="container">
       <!-- Report Row -->
       <div class="row" id="summary-row">
-        <div class="col-lg-6"> <!-- report column -->
+        <div class="col-lg-6 agg-col"> <!-- report column -->
           <div class="row" id="title-row"> <!-- Title -->
             <div class="col">
-              <h1>{{ title }}</h1>
+              <h2>{{ title }}</h2>
               <span>{{ DESCRIPTION }}</span>
             </div>
           </div>
@@ -71,14 +72,14 @@
           </div>
           {% include 'fishpass/tabular_report_panel.html' %}
         </div> <!-- close report column -->
-        <div class="col-lg-6"> <!-- map column -->
+        <div class="col-lg-6 map-col"> <!-- map column -->
           <div class="row">
             <div class="col">
               {% include 'fishpass/legends/report_legend.html' %}
             </div>
           </div>
           <div class="row">
-            <div class="col">
+            <div class="col report-map-wrap-col">
               <section class="report-map-wrap">
                 <div id="map" class="map"></div>
                 <div class="spinner" id='map-spinner'></div>
@@ -91,7 +92,6 @@
       </div> <!-- close row -->
       <div class="row" id="barrier-report-row">
         <div class="col" id="barrier-report-column">
-          <h2>Individual Barriers</h2>
           <section id="barrier-report" class="report-section col">
             <div class="row" id="tabular-results-container">
               <!-- table goes here! -->

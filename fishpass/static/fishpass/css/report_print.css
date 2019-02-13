@@ -1,0 +1,33 @@
+@media print {
+
+  #download-buttons-row,
+  #toggle-columns-show,
+  #barrier-table_filter,
+  .ol-zoom,
+  .layer-switcher,
+  .ol-control,
+  .dt-buttons {
+    display: none;
+  }
+
+  .budget-button {
+    display: none;
+  }
+
+  .report-legend-wrapper {
+    margin: auto;
+    max-width: 500px;
+  }
+
+  .agg-col {
+    min-height: 10px;
+  }
+
+  .map-col {
+    position: inherit;
+    right: unset;
+    top: unset;
+    /* z-index: 100; */
+  }
+
+}
