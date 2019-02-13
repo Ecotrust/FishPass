@@ -43,11 +43,17 @@ table, th, td {
   margin-bottom: 15px;
 }
 
+.budget-tabs-row {
+  text-align: center;
+}
+
 .budget-button-wrapper {
-  display: flex;
+  display: inline-block;
   flex-wrap: wrap;
   /* justify-content: center; */
   /* align-items: center; */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .budget-button {
@@ -56,7 +62,7 @@ table, th, td {
   background-color: #E6f1DB;
   margin: 0.1rem;
   /* flex-grow: 1; */
-  width: 110px;
+  width: 140px;
 }
 .budget-button.selected {
   background-color:#9C7B54;

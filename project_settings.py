@@ -178,6 +178,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.gis',
     'django.contrib.flatpages',
+    'django.contrib.humanize',
     'marineplanner',
     'core',
     'compressor',
