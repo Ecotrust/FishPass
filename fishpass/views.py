@@ -1244,7 +1244,11 @@ def init_report(request, projid, template=loader.get_template('fishpass/tabularr
 def get_barrier_table_headers(request):
     from fishpass.models import ProjectReportBarrier
     header_list = [ x for x in ProjectReportBarrier.objects.all()[0].to_dict()]
-    return HttpResponse(json.dumps({'header_list': header_list}), content_type="application/json")
+    response = json.dumps({
+        'header_list': header_list,
+        'default_header_list': settings.DEFAULT_DISPLAY_HEADERS
+    })
+    return HttpResponse(response, content_type="application/json")
 
 def get_barriers_list(request, projid, action_only=False):
     from fishpass.models import ProjectReport
@@ -1555,12 +1559,8 @@ def get_raw_barrier_report(project_uid, barrier_id, budget):
 def get_barrier_report_list(request, project_uid, barrier_id, budget):
     barrier_dict = get_raw_barrier_report(project_uid, barrier_id, budget)
     barrier_results = { 'barrier_list': [str(x) for x in barrier_dict.values()] }
-    try:
-        return HttpResponse(json.dumps(barrier_results), content_type="application/json" )
-    except Exception as e:
-        foo = json.dumps({})
-        import ipdb; ipdb.set_trace()
-        return HttpResponse(foo, content_type="application/json" )
+
+    return HttpResponse(json.dumps(barrier_results), content_type="application/json" )
 
 
 def get_barrier_report(request, project_uid, barrier_id, budget):

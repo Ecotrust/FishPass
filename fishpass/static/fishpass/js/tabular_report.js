@@ -24,8 +24,7 @@ loadBarriers = function(geoJSON, project_uid, budget) {
     type: 'GET',
     dataType: 'json',
     success: function(response) {
-      var header_list = response.header_list;
-      loadBarrierTable(header_list, project_uid, budget);
+      loadBarrierTable(response.header_list, response.default_header_list, project_uid, budget);
     }
   })
 };
@@ -36,6 +35,7 @@ queryBarrierReport = function(project_uid, barrier_id, budget) {
       type: 'GET',
       success: function(response) {
         t = $('#barrier-table').DataTable();
+
         // for each feature, get barrier info and create the row and apply an ID corresponding to the FEATURE ID
         t.row.add(response.barrier_list).node().id = barrier_id;
         // for each row (or feature if in same loop) add click action to select and zoom to map feature when row is selected
@@ -54,24 +54,65 @@ queryBarrierReport = function(project_uid, barrier_id, budget) {
   });
 };
 
-loadBarrierTable = function(headers, project_uid, budget) {
+loadBarrierTable = function(headers, default_headers, project_uid, budget) {
   // clear barrier table
   $('#barrier-table').html('');
   // create barrier table header row/columns
+  // var default_headers = [];
   var columns = []
+  var hidden_columns = [];
   for (var i = 0; i < headers.length; i++){
     columns.push({ title: headers[i]});
+    if (default_headers.indexOf(headers[i]) < 0) {
+      hidden_columns.push(i);
+    }
   }
   if ( $.fn.DataTable.isDataTable( '#barrier-table' ) ) {
     $("#barrier-table").DataTable().destroy();
   }
-  $('#barrier-table').DataTable(
+  buttons = [];
+  for (var i=0; i < headers.length; i++) {
+    column = headers[i];
+    buttons.push({text:'<span class="table-button-attrs" data-column="' + i + '">' + column + '</span>'});
+  };
+  var table = $('#barrier-table').DataTable(
     {
       // "bPaginate": false,
       // "info": false,
-      "columns": columns
+      "dom": 'Bfrtip',
+      "buttons": buttons,
+      "columns": columns,
+      "columnDefs": [
+        {
+          "targets": hidden_columns,
+          "visible": false
+        }
+      ]
     }
   );
+
+  $('.dt-button').addClass('toggle-column');
+
+  // Enable Toggle buttons
+  $('.dt-button.toggle-column').on('click', function(e) {
+    e.preventDefault();
+
+    var column = table.column( $(this).children('span').children('.table-button-attrs').attr('data-column') ); //table.column takes a zero-indexed number
+    column.visible( ! column.visible());
+  });
+
+  // Hide toggle buttons
+  $('.dt-buttons').hide();
+
+  // Enable Show/Hide Toggle buttons
+  $('#toggle-columns-show').on('click', function(e) {
+    e.preventDefault();
+    if ( $('.dt-buttons').is(":visible") ) {
+      $('.dt-buttons').hide();
+    } else {
+      $('.dt-buttons').show();
+    }
+  });
   barrierFeatures = app.map.layer.barriers.layer.getSource().getFeatures();
   app.report_rows_added = 0;
   app.total_report_rows = barrierFeatures.length;

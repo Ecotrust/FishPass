@@ -290,6 +290,8 @@ MEDIA_ROOT = os.path.realpath(os.path.join(BASE_DIR, '..', 'apps', 'FishPass', '
 CSV_BASE_DIR = MEDIA_ROOT
 CSV_REPORTS_DIR = os.path.join(MEDIA_ROOT, 'reports')
 
+DEFAULT_DISPLAY_HEADERS = ['Site Name', 'PAD ID', 'View in BIOS', 'Action', 'Estimated Cost', ]
+
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 5000
 
 try:
