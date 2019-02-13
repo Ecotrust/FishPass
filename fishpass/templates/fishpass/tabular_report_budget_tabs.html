@@ -1,0 +1,7 @@
+<div class="budget-button-wrapper">
+  {% for report in REPORTS %}
+    {% if report.project.budget_type == 'batch' %} <!-- batch run budget tabs -->
+      <button class="btn budget-button{% if forloop.first %} selected{% endif %}" id="budget-{{ report.budget }}-tab"  onclick="getBudgetReport(this)">{{ report.budget }}</button>
+    {% endif %}
+  {% endfor %}
+</div>

@@ -37,25 +37,7 @@
             </div>
           </div>
           <div class="row" id="budget-tabs-row"> <!-- Budget tabs -->
-            {% for report_dict in reports %}
-              {% if report_dict.report.budget_type == 'batch' %} <!-- batch run budget tabs -->
-                {% if forloop.first %}
-                  <ul class="nav nav-tabs" id="reportTab" role="tablist">
-                {% endif %}
-
-                <li class="nav-item">
-                  {% if forloop.first %}
-                  <a class="nav-link active" id="budget-{{ report_dict.report.budget_int }}-tab" data-toggle="tab" href="#budget-{{ report_dict.report.budget_int }}" role="tab" aria-controls="budget-{{ report_dict.report.budget_int }}" aria-selected="true" onclick="getBudgetGeoJSON(this)">{{ report_dict.report.budget }}</a>
-                  {% else %}
-                  <a class="nav-link" id="budget-{{ report_dict.report.budget_int }}-tab" data-toggle="tab" href="#budget-{{ report_dict.report.budget_int }}" role="tab" aria-controls="budget-{{ report_dict.report.budget_int }}" aria-selected="false" onclick="getBudgetGeoJSON(this)">{{ report_dict.report.budget }}</a>
-                  {% endif %}
-                </li>
-
-                {% if forloop.last %}
-                </ul>
-                {% endif %}
-              {% endif %}
-            {% endfor %}
+            {% include 'fishpass/tabular_report_budget_tabs.html' %}
           </div>
           <div class="row" id="download-buttons-row"> <!-- download buttons -->
             <div class="col" id="download-buttons-column">
@@ -113,28 +95,7 @@
           <section id="barrier-report" class="report-section col">
             <div class="row" id="tabular-results-container">
               <!-- table goes here! -->
-              <table id="foo-table" class="display">
-                <thead>
-                  <tr>
-                    <th>Foo</th>
-                    <th>Bar</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>2</td>
-                    <td>a</td>
-                  </tr>
-                  <tr>
-                    <td>1</td>
-                    <td>c</td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td>b</td>
-                  </tr>
-                </tbody>
-              </table>
+              {% include 'fishpass/tabular_report_barriers_table.html' %}
             </div>
           </section>
         </div>

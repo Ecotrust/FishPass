@@ -1,10 +1,4 @@
 $(document).ready( function () {
-    $('#foo-table').DataTable(
-      {
-        "bPaginate": false,
-        "info": false
-      }
-    );
     $('#net-gain-card').children().tooltip(
       {
         placement: 'right',
@@ -23,6 +17,73 @@ queryAllBarrierReports = function(project_uid, barrier_list, budget) {
   }
 };
 
+loadBarriers = function(geoJSON, project_uid, budget) {
+  loadBarrierLayer(geoJSON);
+  $.ajax({
+    url: '/get_barrier_table_headers/',
+    type: 'GET',
+    dataType: 'json',
+    success: function(response) {
+      var header_list = response.header_list;
+      loadBarrierTable(header_list, project_uid, budget);
+    }
+  })
+};
+
+queryBarrierReport = function(project_uid, barrier_id, budget) {
+  $.ajax({
+      url: '/get_barrier_report_list/' + project_uid + '/' + barrier_id + '/' + budget + '/',
+      type: 'GET',
+      success: function(response) {
+        t = $('#barrier-table').DataTable();
+        // for each feature, get barrier info and create the row and apply an ID corresponding to the FEATURE ID
+        t.row.add(response.barrier_list).node().id = barrier_id;
+        // for each row (or feature if in same loop) add click action to select and zoom to map feature when row is selected
+          // In old solution, IDs were like "barrier-{{PAD ID}}-{{budget}}-tab" to be selected on map-click
+          // We need both click on table impacts map, click on map impacts table.
+        if (app.total_report_rows == t.rows().count()) {
+          $('#table-spinner').hide();
+          t.draw();
+        } else {
+          $('.dataTables_empty').html(t.rows().count() + ' of ' + app.total_report_rows + ' records loaded...');
+        }
+      },
+      error: function(response) {
+        console.log('Unable to get barrier results');
+      }
+  });
+};
+
+loadBarrierTable = function(headers, project_uid, budget) {
+  // clear barrier table
+  $('#barrier-table').html('');
+  // create barrier table header row/columns
+  var columns = []
+  for (var i = 0; i < headers.length; i++){
+    columns.push({ title: headers[i]});
+  }
+  if ( $.fn.DataTable.isDataTable( '#barrier-table' ) ) {
+    $("#barrier-table").DataTable().destroy();
+  }
+  $('#barrier-table').DataTable(
+    {
+      // "bPaginate": false,
+      // "info": false,
+      "columns": columns
+    }
+  );
+  barrierFeatures = app.map.layer.barriers.layer.getSource().getFeatures();
+  app.report_rows_added = 0;
+  app.total_report_rows = barrierFeatures.length;
+  for (var i = 0; i < app.total_report_rows; i++){
+    feature = barrierFeatures[i];
+    bar_id = feature.get('id');
+    feature.setId(bar_id);
+    queryBarrierReport(project_uid, bar_id, budget);
+  }
+
+}
+
 queryBudgetGeoJSON = function(project_uid, budget) {
   // TODO: Remove points from map
   app.map.layer.barriers.layer.setVisible(false);
@@ -32,12 +93,9 @@ queryBudgetGeoJSON = function(project_uid, budget) {
       dataType: 'json',
       success: function(response) {
         // Load points on map
-        loadBarrierLayer(response);
-
+        loadBarriers(response, project_uid, budget);
         // Hide spinner
         $('#map-spinner').hide();
-
-        queryAllBarrierReports(project_uid, app.report.barrier_list, budget);
       },
       error: function(response) {
         alert('Unable to load results on map.');
@@ -57,6 +115,26 @@ queryBudgetAggregateReport = function(project_uid, budget){
       $('#agg-results-spinner').hide();
     }
   })
+};
+
+getBudgetReport = function(e){
+  $('.budget-button.selected').removeClass('selected');
+  $('#' + e.id).addClass('selected');
+  //clear table
+  $('#barrier-table').html('');
+  $('#table-spinner').show()
+  href_array = window.location.href.split('/');
+  project_uid = href_array.pop();
+  while (project_uid.length < 1) {
+    project_uid = href_array.pop();
+  }
+  budget = e.id.split('-')[1];
+  app.report.current_budget = budget;
+  //reset agg results
+  queryBudgetAggregateReport(project_uid, budget);
+  //reset map
+  $('#map-spinner').show()
+  queryBudgetGeoJSON(project_uid, budget);
 };
 
 app.report_init = function(geojson, budget) {
@@ -79,10 +157,10 @@ app.report_init = function(geojson, budget) {
   app.map.addLayer(app.map.layer.barriers.layer);
   mapSettings.configureLayer(app.map.layer.barriers.layer);
   if (Object.keys(geojson).length > 0) {
-    loadBarrierLayer(geojson);
+    loadBarriers(geojson, project_uid, budget);
   } else {
-    queryBudgetGeoJSON(project_uid, budget);
     queryBudgetAggregateReport(project_uid, budget);
+    queryBudgetGeoJSON(project_uid, budget);
     // queryAllBarrierReports(project_uid, app.report.barrier_list, budget);
   }
 

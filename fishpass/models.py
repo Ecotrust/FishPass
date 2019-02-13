@@ -692,6 +692,8 @@ class ProjectReportBarrier(models.Model):
             report_dict['County'] = bar_record.county
             if bar_record.image_link and len(bar_record.image_link) > 0:
                 report_dict['Image'] = '<img src="' + bar_record.image_link + '" class="barrier-image">'
+            else:
+                report_dict['Image'] = ""
             report_dict['Coordinates'] = "%s, %s" % (bar_record.latitude, bar_record.longitude)
             cache.set(cache_key, report_dict, 60*60*24*7)
         return report_dict

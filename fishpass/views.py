@@ -1183,7 +1183,7 @@ def optipass(project):
 def init_report(request, projid, template=loader.get_template('fishpass/tabularreport.html'), context=None, passed_context={'title': 'FishPASS - Report'}):
     import os.path
     from features.registry import get_feature_by_uid
-    from fishpass.models import ProjectReport#, ProjectReportBarrier, BarrierStatus
+    from fishpass.models import ProjectReport, BarrierStatus#, ProjectReportBarrier
     from django.core.cache import cache
 
     project = get_feature_by_uid(projid)
@@ -1213,6 +1213,7 @@ def init_report(request, projid, template=loader.get_template('fishpass/tabularr
 
     context['title'] = str(project)
     context['DESCRIPTION'] = project.description
+    context['REPORTS'] = reports.order_by('budget')
     context['MAP_TECH'] = settings.MAP_TECH
     report_all_csv_filename = os.path.join(settings.MEDIA_ROOT,'reports','%s_export_all.csv' % projid)
     report_filtered_csv_filename = os.path.join(settings.MEDIA_ROOT,'reports','%s_export_filtered.csv' % projid)
@@ -1236,8 +1237,42 @@ def init_report(request, projid, template=loader.get_template('fishpass/tabularr
             'netgain': 'calculating...',
         }
     }
+    context['LEGEND'] = [[x.name, x.color] for x in BarrierStatus.objects.all().order_by('order')]
 
     return HttpResponse(template.render(context, request))
+
+def get_barrier_table_headers(request):
+    from fishpass.models import ProjectReportBarrier
+    header_list = [ x for x in ProjectReportBarrier.objects.all()[0].to_dict()]
+    return HttpResponse(json.dumps({'header_list': header_list}), content_type="application/json")
+
+def get_barriers_list(request, projid, action_only=False):
+    from fishpass.models import ProjectReport
+    project = get_feature_by_uid(projid)
+    if action_only:
+        reports = ProjectReport.objects.filter(project=project, action=1)
+    else:
+        reports = ProjectReport.objects.filter(project=project)
+    reports_list = generate_reports_list(reports, action_only)
+    barrier_list = reports_list[0]['barriers']
+    return HttpResponse(json.dumps({'barriers': barrier_list}), content_type="application/json")
+
+def generate_reports_list(reports, action_only):
+    reports_list = []
+    for report in reports.order_by('budget'):
+        all_barriers = report.barriers_list(action_only)
+        action_barriers = all_barriers.filter(action=1).order_by('barrier_id')
+        untouched_barriers = all_barriers.filter(action=0).order_by('barrier_id')
+        reports_list.append(
+            {
+                'report': report.to_dict(),
+                'barriers': [x.barrier_id for x in all_barriers],
+                'action_barriers': [x.barrier_id for x in action_barriers],
+                'untouched_barriers': [x.barrier_id for x in untouched_barriers]
+            }
+        )
+    # reports_list = [{'report': x.to_dict(), 'barriers':x.barriers_dict(action_only)} for x in reports.order_by('budget')]
+    return reports_list
 
 def get_report(request, projid, template=loader.get_template('fishpass/report.html'), passed_context={'title': 'FishPASS - Report'}):
     import os.path
@@ -1286,20 +1321,8 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
         print("GET REPORTS_DICT TIME: %d seconds" % reportsDictTime)
 
         print("GETTING REPORTS_LIST...")
-        reports_list = []
-        for report in reports.order_by('budget'):
-            all_barriers = report.barriers_list(action_only)
-            action_barriers = all_barriers.filter(action=1).order_by('barrier_id')
-            untouched_barriers = all_barriers.filter(action=0).order_by('barrier_id')
-            reports_list.append(
-                {
-                    'report': report.to_dict(),
-                    'barriers': [x.barrier_id for x in all_barriers],
-                    'action_barriers': [x.barrier_id for x in action_barriers],
-                    'untouched_barriers': [x.barrier_id for x in untouched_barriers]
-                }
-            )
-        # reports_list = [{'report': x.to_dict(), 'barriers':x.barriers_dict(action_only)} for x in reports.order_by('budget')]
+        reports_list = generate_reports_list(reports, action_only)
+
         reportsListTime = (datetime.now()-startFuncTime).total_seconds()-reportsDictTime
         print("GET REPORTS_DICT TIME: %d seconds" % reportsListTime)
 
@@ -1521,14 +1544,28 @@ def get_report_summary_by_budget(request, project_uid, budget, template=loader.g
     }
     return HttpResponse(template.render(context, request))
 
-def get_barrier_report(request, project_uid, barrier_id, budget):
+def get_raw_barrier_report(project_uid, barrier_id, budget):
     from fishpass.models import ProjectReport, ProjectReportBarrier
     from features.registry import get_feature_by_uid
     project = get_feature_by_uid(project_uid)
     project_report = ProjectReport.objects.get(project=project, budget=budget)
     barrier = ProjectReportBarrier.objects.get(project_report=project_report, barrier_id=barrier_id)
-    context = {
-        'barrier_dict': barrier.to_dict()
-    }
+    return barrier.to_dict()
+
+def get_barrier_report_list(request, project_uid, barrier_id, budget):
+    barrier_dict = get_raw_barrier_report(project_uid, barrier_id, budget)
+    barrier_results = { 'barrier_list': [str(x) for x in barrier_dict.values()] }
+    try:
+        return HttpResponse(json.dumps(barrier_results), content_type="application/json" )
+    except Exception as e:
+        foo = json.dumps({})
+        import ipdb; ipdb.set_trace()
+        return HttpResponse(foo, content_type="application/json" )
+
+
+def get_barrier_report(request, project_uid, barrier_id, budget):
     template=loader.get_template('fishpass/report_barrier.html')
+    context = {
+        'barrier_dict': get_raw_barrier_report(project_uid, barrier_id, budget)
+    }
     return HttpResponse(template.render(context, request))

@@ -43,6 +43,28 @@ table, th, td {
   margin-bottom: 15px;
 }
 
+.budget-button-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  /* justify-content: center; */
+  /* align-items: center; */
+}
+
+.budget-button {
+  border-radius: 0.2rem;
+  border: 0.05rem solid #9C7B54;
+  background-color: #E6f1DB;
+  margin: 0.1rem;
+  /* flex-grow: 1; */
+  width: 110px;
+}
+.budget-button.selected {
+  background-color:#9C7B54;
+  color: white;
+  font-weight: bold;
+  border: 0.05rem solid #brown;
+}
+
 .report-map-wrap {
   height: 60vh;
   margin: 0 0.5rem 1rem;
@@ -137,6 +159,10 @@ table, th, td {
 
 #title-row {
   text-align: center;
+}
+
+footer {
+  display: none;
 }
 
 /* Spinner from Damien Romito here: https://stackoverflow.com/a/20013732 */
