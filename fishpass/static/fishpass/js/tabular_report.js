@@ -103,6 +103,18 @@ queryBarrierReport = function(project_uid, barrier_id, budget) {
         if (app.total_report_rows == t.rows().count()) {
           $('#table-spinner').hide();
           t.draw();
+          $('#barrier-table tbody tr').on('mouseenter', function(e) {
+            app.map.layer.barriers.layer.getSource().getFeatureById(e.currentTarget.id).setStyle(app.map.styles.PointSelected);
+          })
+          $('#barrier-table tbody tr').on('mouseleave', function(e) {
+            app.map.layer.barriers.layer.getSource().getFeatureById(e.currentTarget.id).setStyle(app.map.styles.ReportPoint);
+          })
+          $('#barrier-table tbody tr').on('click', function(e) {
+            // select_barrier(e.currentTarget.id);
+            app.map.barrierClickInteraction.getFeatures().clear();
+            app.map.barrierClickInteraction.getFeatures().push(app.map.layer.barriers.layer.getSource().getFeatureById(e.currentTarget.id));
+            app.map.getView().setCenter(app.map.layer.barriers.layer.getSource().getFeatureById(e.currentTarget.id).getGeometry().getCoordinates());
+          })
         } else {
           $('.dataTables_empty').html(t.rows().count() + ' of ' + app.total_report_rows + ' records loaded...');
         }
