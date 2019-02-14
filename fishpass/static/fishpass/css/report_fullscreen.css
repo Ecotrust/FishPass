@@ -1,0 +1,13 @@
+@media only screen and (min-width: 992px) {
+
+  .agg-col {
+    min-height: 24rem;
+  }
+
+  .map-col {
+    position: fixed;
+    right: 0;
+    top: 8vh;
+    z-index: 100;
+  }
+}

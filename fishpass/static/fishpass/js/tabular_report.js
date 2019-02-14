@@ -62,7 +62,10 @@ loadBarrierTable = function(headers, default_headers, project_uid, budget) {
   var columns = []
   var hidden_columns = [];
   for (var i = 0; i < headers.length; i++){
-    columns.push({ title: headers[i]});
+    columns.push({
+      title: headers[i],
+      name: headers[i]
+    });
     if (default_headers.indexOf(headers[i]) < 0) {
       hidden_columns.push(i);
     }
@@ -97,8 +100,7 @@ loadBarrierTable = function(headers, default_headers, project_uid, budget) {
   // Enable Toggle buttons
   $('.dt-button.toggle-column').on('click', function(e) {
     e.preventDefault();
-
-    var column = table.column( $(this).children('span').children('.table-button-attrs').attr('data-column') ); //table.column takes a zero-indexed number
+    var column = table.column( $(this).text() + ':name' );
     column.visible( ! column.visible());
   });
 

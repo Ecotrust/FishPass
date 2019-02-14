@@ -33,8 +33,8 @@ urlpatterns = [
 
     url(r'^check_download_report/$', views.check_download_report),
     url(r'^get_user_scenario_list/$', views.get_user_scenario_list),
-    url(r'^get_report/(?P<projid>[\w_]+)/$', views.get_report),
-    url(r'^get_report2/(?P<projid>[\w_]+)/$', views.init_report),
+    # url(r'^get_report/(?P<projid>[\w_]+)/$', views.get_report),
+    url(r'^get_report/(?P<projid>[\w_]+)/$', views.init_report),
     url(r'^export_report/(?P<projid>[\w_]+)/$', views.export_report),
     url(r'^get_report_geojson_by_budget/(?P<project_uid>[\w_]+)/(?P<budget>[\w_]+)/$', views.get_report_geojson_by_budget),
     url(r'^get_report_summary_by_budget/(?P<project_uid>[\w_]+)/(?P<budget>[\w_]+)/$', views.get_report_summary_by_budget),

@@ -20,6 +20,10 @@ button, .btn {
   padding: 0.5rem;
 }
 
+.dt-buttons {
+  margin-top: 1rem;
+}
+
 button.dt-button {
   margin: 0;
 }
@@ -89,17 +93,6 @@ button.dt-button {
   color: white;
   font-weight: bold;
   border: 0.05rem solid #brown;
-}
-
-.agg-col {
-  min-height: 24rem;
-}
-
-.map-col {
-  position: fixed;
-  right: 0;
-  top: 8vh;
-  z-index: 100;
 }
 
 .report-map-wrap-col {
