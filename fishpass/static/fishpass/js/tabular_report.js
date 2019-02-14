@@ -1,4 +1,71 @@
 
+loadBarrierLayer = function(geojson) {
+  app.map.layer.barriers.addFeatures(geojson);
+  app.map.layer.barriers.layer.setVisible(true);
+  app.map.zoomToExtent(app.map.layer.barriers.layer.getSource().getExtent());
+
+  // TODO: Do we need to reset map interaction?
+  if (!app.map.initial_barriers_loaded) {
+    app.map.barrierHoverInteraction = new ol.interaction.Select({
+      condition: ol.events.condition.pointerMove,
+      layers: [
+        app.map.layer.barriers.layer
+      ],
+      style: app.map.styles.PointSelected
+    });
+
+    app.map.barrierClickInteraction = new ol.interaction.Select({
+      layers: [
+        app.map.layer.barriers.layer
+      ],
+      style: app.map.styles.ReportBarrierSelected
+    });
+
+    app.map.barrierSelected = false;
+
+    $('#map').prepend('<div id="barrier-info"></div>');
+    app.map.barrierInfo = $('#barrier-info');
+    setTimeout(function() {
+      app.map.barrierInfo.tooltip({
+        animation: false,
+        trigger: 'manual'
+      });
+    }, 50);
+
+    app.map.addInteraction(app.map.barrierHoverInteraction);
+    app.map.addInteraction(app.map.barrierClickInteraction);
+
+    app.map.barrierHoverInteraction.on('select', function(event) {
+      barrierHoverSelectAction(event.selected[0]);
+    });
+    app.map.barrierClickInteraction.on('select', function(event) {
+      barrierClickInteraction(event.selected[0]);
+    });
+    app.map.on('click', function(event) {
+      if (app.map.barrierSelected) {
+        event.preventDefault();
+        event.stopPropagation();
+        app.map.barrierClickInteraction.getFeatures().clear();
+        app.map.barrierSelected = false;
+        $('#barrier-table').DataTable().search('').draw(false);
+      }
+    });
+    app.map.initial_barriers_loaded = true;
+  }
+}
+
+barrierClickInteraction = function(feat) {
+  if (feat) {
+    barrier_id = feat.getId();
+    if (!barrier_id) {
+      barrier_id = feat.get('pad_id');
+      feat.setId(barrier_id);
+    }
+    app.map.barrierSelected = barrier_id;
+    $('#barrier-table').DataTable().search(barrier_id).draw(false);
+  }
+}
+
 queryAllBarrierReports = function(project_uid, barrier_list, budget) {
   if (!app.report.budgets_loaded.includes(budget)){
     app.report.budgets_loaded.push(budget);

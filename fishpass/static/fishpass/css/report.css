@@ -1,5 +1,5 @@
 body {
-  overflow-y: auto;
+  overflow-y: scroll;
   font-size: 0.9rem;
 
 }
