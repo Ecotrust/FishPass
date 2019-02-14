@@ -1,11 +1,3 @@
-$(document).ready( function () {
-    $('#net-gain-card').children().tooltip(
-      {
-        placement: 'right',
-        title: 'This is the sum of the estimated habitat upstream of each barrier suggested for treatment that have been “weighted/changed” using cumulative passability.'
-      }
-    );
-} );
 
 queryAllBarrierReports = function(project_uid, barrier_list, budget) {
   if (!app.report.budgets_loaded.includes(budget)){
@@ -157,6 +149,12 @@ queryBudgetAggregateReport = function(project_uid, budget){
     success: function(response) {
       $('#agg-report').html(response);
       $('#agg-results-spinner').hide();
+      $('#net-gain-card').children().tooltip(
+        {
+          placement: 'right',
+          title: 'This is the sum of the estimated habitat upstream of each barrier suggested for treatment that have been “weighted/changed” using cumulative passability.'
+        }
+      );
     }
   })
 };
