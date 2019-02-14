@@ -193,6 +193,7 @@ loadBarrierTable = function(headers, default_headers, project_uid, budget) {
   $('.dt-buttons').hide();
 
   // Enable Show/Hide Toggle buttons
+  $('#toggle-columns-show').unbind('click');
   $('#toggle-columns-show').on('click', function(e) {
     e.preventDefault();
     if ( $('.dt-buttons').is(":visible") ) {
