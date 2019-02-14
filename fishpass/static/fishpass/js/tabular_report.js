@@ -39,13 +39,16 @@ loadBarrierLayer = function(geojson) {
       barrierHoverSelectAction(event.selected[0]);
     });
     app.map.barrierClickInteraction.on('select', function(event) {
-      barrierClickInteraction(event.selected[0]);
+      barrierClickInteraction(event.selected[0], 'map');
     });
     app.map.on('click', function(event) {
       if (app.map.barrierSelected) {
         event.preventDefault();
         event.stopPropagation();
         app.map.barrierClickInteraction.getFeatures().clear();
+        for (var i= 0;  i < app.map.layer.barriers.layer.getSource().getFeatures().length; i++) {
+          app.map.layer.barriers.layer.getSource().getFeatures()[i].setStyle(app.map.styles.ReportPoint);
+        }
         app.map.barrierSelected = false;
         $('#barrier-table').DataTable().search('').draw(false);
       }
@@ -54,7 +57,7 @@ loadBarrierLayer = function(geojson) {
   }
 }
 
-barrierClickInteraction = function(feat) {
+barrierClickInteraction = function(feat, source) {
   if (feat) {
     barrier_id = feat.getId();
     if (!barrier_id) {
@@ -62,7 +65,13 @@ barrierClickInteraction = function(feat) {
       feat.setId(barrier_id);
     }
     app.map.barrierSelected = barrier_id;
-    $('#barrier-table').DataTable().search(barrier_id).draw(false);
+    for (var i= 0;  i < app.map.layer.barriers.layer.getSource().getFeatures().length; i++) {
+      app.map.layer.barriers.layer.getSource().getFeatures()[i].setStyle(app.map.styles.ReportPoint);
+    }
+    feat.setStyle(app.map.styles.ReportBarrierSelected);
+    if (source == 'map') {
+      $('#barrier-table').DataTable().search(barrier_id).draw(false);
+    }
   }
 }
 
@@ -104,17 +113,22 @@ queryBarrierReport = function(project_uid, barrier_id, budget) {
           $('#table-spinner').hide();
           t.draw();
           $('#barrier-table tbody tr').on('mouseenter', function(e) {
-            app.map.layer.barriers.layer.getSource().getFeatureById(e.currentTarget.id).setStyle(app.map.styles.PointSelected);
-          })
+            var feature = app.map.layer.barriers.layer.getSource().getFeatureById(e.currentTarget.id);
+            if (feature.getStyle() != app.map.styles.ReportBarrierSelected ) {
+              feature.setStyle(app.map.styles.PointSelected);
+            }
+          });
           $('#barrier-table tbody tr').on('mouseleave', function(e) {
-            app.map.layer.barriers.layer.getSource().getFeatureById(e.currentTarget.id).setStyle(app.map.styles.ReportPoint);
-          })
+            var feature = app.map.layer.barriers.layer.getSource().getFeatureById(e.currentTarget.id);
+            if (feature.getStyle() == app.map.styles.PointSelected ) {
+              feature.setStyle(app.map.styles.ReportPoint);
+            }
+          });
           $('#barrier-table tbody tr').on('click', function(e) {
-            // select_barrier(e.currentTarget.id);
-            app.map.barrierClickInteraction.getFeatures().clear();
-            app.map.barrierClickInteraction.getFeatures().push(app.map.layer.barriers.layer.getSource().getFeatureById(e.currentTarget.id));
-            app.map.getView().setCenter(app.map.layer.barriers.layer.getSource().getFeatureById(e.currentTarget.id).getGeometry().getCoordinates());
-          })
+            var feature = app.map.layer.barriers.layer.getSource().getFeatureById(e.currentTarget.id);
+            app.map.getView().setCenter(feature.getGeometry().getCoordinates());
+            barrierClickInteraction(feature, 'table');
+          });
         } else {
           $('.dataTables_empty').html(t.rows().count() + ' of ' + app.total_report_rows + ' records loaded...');
         }
