@@ -215,18 +215,39 @@
                 });
                 {% else %}
                 {% if field.html_name == None %}
-                // Input is not enclosed in a checkbox-controlled collapsible panel, always used in filtering
-                $('#id_{{ field_input.html_name }}').change( function() {
-                  if (app.viewModel.scenarios.scenarioFormModel && "{{ field_input.html_name }}" != "spatial_organization") {
-                    app.viewModel.scenarios.scenarioFormModel.updateFiltersAndCount('{{ field_input.html_name }}');
-                  }
-                });
+                  {% if field_input.html_name in form.COUNT_ONLY_FIELDS %}
+                    // Input is not enclosed in a checkbox-controlled collapsible panel, always used in filtering
+                    // {{ field_input.html_name }} is in {{ form.COUNT_ONLY_FIELDS }}
+                    $('#id_{{ field_input.html_name }}').change( function() {
+                      if (app.viewModel.scenarios.scenarioFormModel) {
+                        app.viewModel.scenarios.scenarioFormModel.updateFilterCount('{{ field_input.html_name }}');
+                      }
+                    });
+                  {% else %}
+                    // Input is not enclosed in a checkbox-controlled collapsible panel, always used in filtering
+                    // {{ field_input.html_name }} is NOT in {{ form.COUNT_ONLY_FIELDS }}
+                    $('#id_{{ field_input.html_name }}').change( function() {
+                      if (app.viewModel.scenarios.scenarioFormModel && "{{ field_input.html_name }}" != "spatial_organization") {
+                        app.viewModel.scenarios.scenarioFormModel.updateFiltersAndCount('{{ field_input.html_name }}');
+                      }
+                    });
+                  {% endif %}
                 {% else %}
-                $('#id_{{ field_input.html_name }}').change( function() {
-                  if (app.viewModel.scenarios.scenarioFormModel) {
-                    app.viewModel.scenarios.scenarioFormModel.updateFiltersAndCount('{{ field.html_name }}');
-                  }
-                });
+                  {% if field_input.html_name in form.COUNT_ONLY_FIELDS %}
+                    // {{ field_input.html_name }} is in {{ form.COUNT_ONLY_FIELDS }}
+                    $('#id_{{ field_input.html_name }}').change( function() {
+                      if (app.viewModel.scenarios.scenarioFormModel) {
+                        app.viewModel.scenarios.scenarioFormModel.updateFilterCount('{{ field.html_name }}');
+                      }
+                    });
+                  {% else %}
+                    // {{ field_input.html_name }} is NOT in {{ form.COUNT_ONLY_FIELDS }}
+                    $('#id_{{ field_input.html_name }}').change( function() {
+                      if (app.viewModel.scenarios.scenarioFormModel) {
+                        app.viewModel.scenarios.scenarioFormModel.updateFiltersAndCount('{{ field.html_name }}');
+                      }
+                    });
+                  {% endif %} <!-- specific field.html_name(s) -->
                 {% endif %} <!-- field.html_name -->
                 {% endif %}
               </script>

@@ -306,7 +306,7 @@ function scenarioFormModel(options) {
     self.gridCellsRemaining = ko.observable('...');
     self.filterNotesExist = ko.observable(false);
     self.filterNotesMessage = ko.observable('');
-    self.showingFilteringResults = ko.observable(true);
+    self.showingFilteringResults = ko.observable(false);
     self.inputsHaveChanged = ko.observable(true);
     self.showButtonSpinner = ko.observable(false);
     self.currentCountRequest = ko.observable(false);
@@ -354,25 +354,33 @@ function scenarioFormModel(options) {
     };
 
     self.updateFilterResults = function() {
-        // if (self.showingFilteringResults()) {
-        self.getUpdatedFilterResults();
-        // } else {
-        //     self.getUpdatedFilterCount();
-        // }
+        if (self.showingFilteringResults()) {
+          self.getUpdatedFilterResults();
+        } else {
+            self.getUpdatedFilterCount();
+        }
     };
 
     self.getUpdatedFilterCount = function() {
-        $.ajax({
-            url: '/scenarios/get_filter_count',
-            type: 'GET',
-            data: self.filters,
-            success: function(data) {
-                self.gridCellsRemaining(data);
-            },
-            error: function(error) {
-                console.log('error in getUpdatedFilterCount: ' + error);
-            }
-        });
+      self.updatedFilterResultsLayer.setVisibility(false);
+      self.showButtonSpinner(true);
+
+      (function() {
+          var request = $.ajax({
+              url: '/scenarios/get_filter_count',
+              type: 'GET',
+              data: self.filters,
+              dataType: 'json',
+              success: function(data) {
+                  self.gridCellsRemaining(data);
+              },
+              error: function(error) {
+                  console.log('error in getUpdatedFilterCount: ' + error);
+              }
+          });
+          self.currentGridRequest(request);
+          var request = request;
+      })();
     };
 
     self.setMinMaxBudget = function(min_cost, max_cost, reset) {

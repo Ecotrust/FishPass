@@ -98,6 +98,12 @@ class BackwardCompatibleCheckboxSelectMultiple(BackwardCompatibleChoiceWidget):
 class ProjectForm(ScenarioForm):
     from fishpass.models import FocusArea, OwnershipType
 
+    def __init__(self, *args, **kwargs):
+        # Call the default init process
+        super().__init__(*args, **kwargs)
+        self.COUNT_ONLY_FIELDS = ["target_area", "spatial_organization", "treat_downstream"]
+
+
     # TODO: Select FocusArea Layer
     UNIT_TYPE_CHOICES = []
     for type in settings.FOCUS_AREA_TYPES:

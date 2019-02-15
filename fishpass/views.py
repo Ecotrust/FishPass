@@ -661,6 +661,19 @@ def run_filter_query(filters):
 
     return (query, notes)
 
+def dictify_request(querydict):
+    from django.utils import six
+    ret_dict = {}
+    qdict = dict(six.iterlists(querydict))
+    for key in qdict.keys():
+        q_value = qdict[key]
+        if "[]" in key:
+            key = key.split('[]')[0]
+        if type(q_value) is list or type(q_value) is tuple:
+            q_value = ','.join(q_value)
+        ret_dict[key] = str(q_value)
+    return ret_dict
+
 '''
 '''
 @cache_page(60 * 60) # 1 hour of caching
@@ -668,7 +681,7 @@ def get_filter_count(request, query=False, notes=[]):
     from django.db.models.query import QuerySet
     from django.contrib.gis.db.models.query import GeoQuerySet
     if not type(query) in [QuerySet, GeoQuerySet] :
-        filter_dict = dict(request.GET.items())
+        filter_dict = dictify_request(request.GET)
         (query, notes) = run_filter_query(filter_dict)
     return HttpResponse(query.count(), status=200)
 
@@ -722,7 +735,7 @@ def get_filter_results(request, project_id=None, query=False, notes=[], extra_co
     from django.contrib.gis.db.models.query import GeoQuerySet
     from features.registry import get_feature_by_uid
     if not type(query) in [QuerySet, GeoQuerySet] :
-        filter_dict = dict(request.GET.items())
+        filter_dict = dictify_request(request.GET)
         (query, notes) = run_filter_query(filter_dict)
     count = query.count()
 
@@ -764,6 +777,11 @@ def get_filter_results(request, project_id=None, query=False, notes=[], extra_co
             ownership_boxes.sort()
             ownership_cache_key = "%s_ownership" % '_'.join(ownership_boxes)
 
+
+    if 'assign_cost_input' in request.GET.keys() and request.GET['assign_cost_input'] == 'false':
+        min_cost = 1
+        max_cost = available_project_count
+
     cache_key_parts = []
     if user_override_cache_key:
         cache_key_parts.append(user_override_cache_key)
@@ -779,9 +797,6 @@ def get_filter_results(request, project_id=None, query=False, notes=[], extra_co
     else:
         cache_key = 'blank_barrier_geojson'
 
-    if 'assign_cost_input' in request.GET.keys() and request.GET['assign_cost_input'] == 'false':
-        min_cost = 1
-        max_cost = available_project_count
 
     # get geojson. Update Barrier layer on return if ('show filter results' = True)
     geojson = get_geojson_from_queryset(query, project, cache_key)

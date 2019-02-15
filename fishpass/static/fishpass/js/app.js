@@ -253,7 +253,7 @@ function spatialOrgLoad() {
       app.map.selection.spatialOrganizationSelection.getFeatures().clear();
       app.map.removeInteraction(app.map.selection.spatialOrganizationSelection);
     }
-    app.viewModel.scenarios.scenarioFormModel.getUpdatedFilterResults();
+    app.viewModel.scenarios.scenarioFormModel.updateFilterResults();
   }
 
   app.updateAllFilters = function() {
@@ -285,7 +285,7 @@ function spatialOrgLoad() {
     app.map.selection.spatialOrganizationSelection = newInteractionForLayer(app.map.layer[unitType].layer);
     app.map.selection.setSelect(app.map.selection.spatialOrganizationSelection);
     app.updateAllFilters();
-    app.viewModel.scenarios.scenarioFormModel.getUpdatedFilterResults();
+    app.viewModel.scenarios.scenarioFormModel.updateFilterResults();
   }
 
   app.addIdToTargetAreaInput = function() {
@@ -529,8 +529,11 @@ app.panel = {
       selectFocusAreaStepId = 'step1';
       if ($('#' + selectFocusAreaStepId).is(":visible")) {
         app.map.selection.select.setActive(true);
+        app.viewModel.scenarios.scenarioFormModel.stopShowingFilteringResults();
       } else {
         app.map.selection.select.setActive(false);
+        app.viewModel.scenarios.scenarioFormModel.showingFilteringResults(true);
+        app.viewModel.scenarios.scenarioFormModel.updatedFilterResultsLayer.setVisibility(true);
       }
     },
     element: function() { // returns a function. to edit dom element don't forget to invoke: element()
