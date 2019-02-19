@@ -532,8 +532,10 @@ app.panel = {
         app.viewModel.scenarios.scenarioFormModel.stopShowingFilteringResults();
       } else {
         app.map.selection.select.setActive(false);
-        app.viewModel.scenarios.scenarioFormModel.showingFilteringResults(true);
-        app.viewModel.scenarios.scenarioFormModel.updatedFilterResultsLayer.setVisibility(true);
+        if (!app.viewModel.scenarios.scenarioFormModel.showingFilteringResults()) {
+          app.viewModel.scenarios.scenarioFormModel.showFilteringResults();
+          app.viewModel.scenarios.scenarioFormModel.updatedFilterResultsLayer.setVisibility(true);
+        }
       }
     },
     element: function() { // returns a function. to edit dom element don't forget to invoke: element()
