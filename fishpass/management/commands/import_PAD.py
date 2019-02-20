@@ -212,7 +212,10 @@ class Command(BaseCommand):
                     barrier.downstream_barrier_count = 0
                     barrier.save()
             except Exception as e:
-                warnings.append("Error with determining downstream barrier id for barrier %d. Barrier cannot be imported. Error details: %s" % (barrier.pad_id, str(e)))
+                warnings.append("Error with determining downstream barrier id for barrier %d. Setting it to NA and 0 downstream barrier count. Error details: %s" % (barrier.pad_id, str(e)))
+                barrier.downstream_id = 0
+                barrier.downstream_barrier_count = 0
+                barrier.save()
                 pass
 
 
