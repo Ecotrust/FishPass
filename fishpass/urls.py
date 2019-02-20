@@ -7,7 +7,7 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
     ### App URLs
-    url(r'^home/?$', views.home),
+    url(r'^home/?$', views.home, name="planner"),
     url(r'^app$', RedirectView.as_view(url='/app/')),
     url(r'^app/$', views.app, name="app"),
     url(r'^help/$', flat_views.flatpage, {'url': '/help/'}, name="help"),
