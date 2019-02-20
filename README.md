@@ -143,7 +143,7 @@ adduser celery
 mkdir /var/log/celery
 chown celery:celery /var/log/celery
 systemctl start celery.service
-sudo chown celery /usr/local/apps/marineplanner-core/apps/FishPass/fishpass/media/reports
+sudo chown celery:www-data /usr/local/apps/marineplanner-core/apps/FishPass/fishpass/media/reports
 sudo systemctl enable celery
 sudo systemctl daemon-reload
 ```
