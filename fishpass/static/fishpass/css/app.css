@@ -529,6 +529,11 @@ Map controls
 .layer-switcher .panel > ul > li {
 }
 
+/* focus-area (any layer not in a "group") hider */
+.layer-switcher .panel > ul > li.layer {
+    display: none;
+}
+
 /* group title */
 .layer-switcher .panel > ul > li > label {
     font-size: .75rem;
