@@ -1431,8 +1431,7 @@ def load_PAD_file(infile, user):
         os.remove(infile_name)
     except:
         pass
-    else:
-        return response
+    return response
 
 def load_barrier_cost_file(infile, user):
     import os, json
