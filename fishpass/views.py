@@ -431,7 +431,6 @@ def generate_report_csv(project_uid, report_type):
                 try:
                     barrier_item_row.append(str(barrier_dict[str(barrier_id)][key]))
                 except TypeError as e:
-                    import ipdb; ipdb.set_trace()
                     print(e)
             else:
                 barrier_item_row.append(barrier_dict[str(barrier_id)]['Actions'][action_count])
@@ -1389,7 +1388,7 @@ def load_PAD_file(infile, user):
     import os, json
     from django.core import management
     from django.db.models.fields.files import FieldFile
-    from django.core.files.uploadedfile import InMemoryUploadedFile
+    from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
     from django.core.files.storage import default_storage
 
     if not user.has_perm('fishpass.add_barrier'):
@@ -1400,7 +1399,7 @@ def load_PAD_file(infile, user):
             'import_count': None
         }
 
-    if type(infile) == InMemoryUploadedFile:
+    if type(infile) in [InMemoryUploadedFile, TemporaryUploadedFile]:
         from django.core.files.storage import default_storage
         infile_name = infile.name
 
