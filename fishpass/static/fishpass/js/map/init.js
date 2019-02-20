@@ -1,3 +1,39 @@
+mapSettings.getInitMap = function() {
+    map = new madronaMap({
+      target: 'map',
+      layers: [
+        new ol.layer.Group({
+          'title': 'Base maps',
+          layers: [
+            new ol.layer.Tile({
+              title: 'Open Street Map',
+              source: new ol.source.OSM(),
+              name: 'OSM Base Layer',
+              type: 'base'
+            }),
+            new ol.layer.Tile({
+              title: 'ESRI Topo Map',
+              source: new ol.source.XYZ({
+                url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}.png'
+              }),
+              name: 'ESRI Topo',
+              type: 'base'
+            })
+          ],
+        }),
+        new ol.layer.Group({
+          title: 'Overlays',
+          layers: []
+        })
+      ],
+      view: new ol.View({
+        center: [0, 0],
+        zoom: 2
+      })
+    });
+    return map;
+  };
+
 app.map = mapSettings.getInitMap();
 
 app.map.getView().setCenter([-13277300, 4497600]);

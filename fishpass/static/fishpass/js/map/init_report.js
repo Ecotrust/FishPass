@@ -7,17 +7,17 @@ app.map = new madronaMap({
       'title': 'Base maps',
       layers: [
         new ol.layer.Tile({
-          title: 'OSM Base Layer',
+          title: 'Open Street Map',
           source: new ol.source.OSM(),
           name: 'OSM Base Layer',
           type: 'base'
         }),
         new ol.layer.Tile({
-          title: 'ESRI Topo',
+          title: 'ESRI Topo Map',
           source: new ol.source.XYZ({
             url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}.png'
           }),
-          name: 'OSM Base Layer',
+          name: 'ESRI Topo',
           type: 'base'
         })
       ],

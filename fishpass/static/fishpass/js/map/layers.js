@@ -254,7 +254,7 @@ app.map.layer = {
     satellite: {
       layer: new ol.layer.Tile({
         name: 'Satellite',
-        title: 'Satellite',
+        title: 'Satellite Imagery',
         type: 'base',
         id: 'satellite',
         preload: Infinity,
