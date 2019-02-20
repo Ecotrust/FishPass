@@ -152,13 +152,27 @@ class Barrier(models.Model):
     post_mile = models.FloatField(null=True, blank=True, default=None, verbose_name="Post Mile Marker")                # New in PAD - add to model!
     species_blocked = models.ForeignKey(BlockedSpeciesType, null=True, blank=True, default=None, verbose_name="Blocked Species Type")    # New in PAD - add to model!
     notes = models.TextField(null=True,blank=True,default=None)                       # New in PAD - add to model!
+    #TrtStatus
     treatment_status = models.ForeignKey(TreatmentStatus,null=True,blank=True,default=None,verbose_name='Treatment Status')        # New in PAD - add to model!
+    #TrtRecom
     treatment_recommendation = models.TextField(null=True,blank=True,default=None,verbose_name="Treatment Recommendation")                       # New in PAD - add to model!
+    #Photo
     image_link = models.CharField(max_length=255,null=True, blank=True, default=None,verbose_name="Image Link")                  # New in PAD - add to model!
 
     # TODO: WHAT ARE THESE (types)?!
     accessible = models.TextField(null=True,blank=True,default=None,verbose_name='Accessible?')             # New in PAD - add to model!
     likely_exp = models.TextField(null=True,blank=True,default=None)
+
+    # TODO: Overflow
+    # NotSnappedReason
+    # Trace_Status
+    # Slope_Upstream_Avg
+    # Flow_Aug_Upstream_Avg
+    # Flow_Annual_Upstream_Avg
+    # BFH
+    # NorWeST_Mean_S1_93_11
+    # NorWeST_Mean_S37_9311M
+    overflow = models.TextField(null=True, blank=True, default=None, verbose_name="Additional Info")
 
     geometry = gismodels.PointField(null=True,blank=True,default=None,srid=settings.GEOMETRY_DB_SRID)
 
