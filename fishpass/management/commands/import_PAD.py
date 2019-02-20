@@ -62,6 +62,7 @@ class Command(BaseCommand):
             'Point_X': 'longitude',
             'Point_Y': 'latitude',
             'Miles_Upst': 'upstream_miles',
+            'Miles_Upstream': 'upstream_miles',
             'DS_ID': 'downstream_id',
             'DS_Num': 'downstream_barrier_count',
             'ESU_COHO': 'esu_coho',
@@ -103,9 +104,10 @@ class Command(BaseCommand):
             print(errors[-1])
             return(format_return(False, errors, warnings))
 
-        # for each line
         headers = []
+        other_columns = []
         import_count = 0
+        # for each line
         for row_num in range(sheet.nrows):
             sheet.row(row_num)
             row_dict = {}
@@ -113,13 +115,20 @@ class Command(BaseCommand):
                 if row_num == 0:
                     headers.append(sheet.cell_value(row_num,col_num))
                     if sheet.cell_value(row_num,col_num) not in field_lookup.keys():
-                        warnings.append('Column header "%s" not in list of accepted column names. Column will be ignored.' % sheet.cell_value(row_num,col_num))
+                        warnings.append('Column header "%s" not in list of accepted column names. Column will be stored under "overflow".' % sheet.cell_value(row_num,col_num))
                         print(warnings[-1])
                 elif headers[col_num] in field_lookup.keys():
                     if sheet.cell_value(row_num,col_num) == '':
                         row_dict[field_lookup[headers[col_num]]] = None
                     else:
                         row_dict[field_lookup[headers[col_num]]] = sheet.cell_value(row_num,col_num)
+                else:   # header is not in lookup and needs to be added to an "overflow" dict
+                    if "overflow" in row_dict.keys():
+                        row_dict["overflow"][headers[col_num]] = sheet.cell_value(row_num,col_num)
+                    else:
+                        row_dict["overflow"] = {
+                            headers[col_num]: sheet.cell_value(row_num,col_num)
+                        }
             # Check that required Fields are present in
             if row_num == 0:
                 for required_field in REQUIRED_MODEL_FIELDS:
@@ -141,38 +150,43 @@ class Command(BaseCommand):
                     print('deleting all old barrier records')
                     Barrier.objects.all().delete()
             else:
-                #     get or create BarrierType
-                (barrierType, created) = BarrierType.objects.get_or_create(name=row_dict['site_type'])
-                row_dict['site_type'] = barrierType
-                #     get or create BarrierStatus
-                (barrierStatus, created) = BarrierStatus.objects.get_or_create(name=row_dict['barrier_status'])
-                row_dict['barrier_status'] = barrierStatus
-                #     get or create OwnershipType
                 try:
-                    ownership_name = settings.OWNERSHIP_LOOKUP[str(int(row_dict['ownership_type']))]
-                except:
-                    ownsership_name = settings.OWNERSHIP_LOOKUP[settings.OWNERSHIP_DEFAULT]
-                    row_dict['ownership_type'] = int(settings.OWNERSHIP_DEFAULT)
-                (ownershipType, created) = OwnershipType.objects.get_or_create(id=int(row_dict['ownership_type']))
-                ownershipType.name = ownership_name
-                ownershipType.save()
-                row_dict['ownership_type'] = ownershipType
-                if 'species_blocked' in row_dict.keys() and row_dict['species_blocked']:
-                    (species_block_type, created) = BlockedSpeciesType.objects.get_or_create(name=row_dict['species_blocked'].lower().title())
-                    row_dict['species_blocked'] = species_block_type
-                if 'treatment_status' in row_dict.keys() and row_dict['treatment_status']:
-                    (treatment_status_type, created) = TreatmentStatus.objects.get_or_create(name=row_dict['treatment_status'].lower().title())
-                    row_dict['treatment_status'] = treatment_status_type
-                # parse datetime
-                if 'updated' in row_dict.keys() and row_dict['updated']:
-                    updated = datetime(*xlrd.xldate_as_tuple(row_dict['updated'], book.datemode))
-                    row_dict['updated'] = updated
-                try:
-                    # create Barrier
-                    Barrier.objects.create(**row_dict)
-                    import_count += 1
-                except ValueError:
-                    warnings.append('row: %d, value:%s' % (row_num, row_dict))
+                    #     get or create BarrierType
+                    (barrierType, created) = BarrierType.objects.get_or_create(name=row_dict['site_type'])
+                    row_dict['site_type'] = barrierType
+                    #     get or create BarrierStatus
+                    (barrierStatus, created) = BarrierStatus.objects.get_or_create(name=row_dict['barrier_status'])
+                    row_dict['barrier_status'] = barrierStatus
+                    #     get or create OwnershipType
+                    try:
+                        ownership_name = settings.OWNERSHIP_LOOKUP[str(int(row_dict['ownership_type']))]
+                    except:
+                        ownsership_name = settings.OWNERSHIP_LOOKUP[settings.OWNERSHIP_DEFAULT]
+                        row_dict['ownership_type'] = int(settings.OWNERSHIP_DEFAULT)
+                    (ownershipType, created) = OwnershipType.objects.get_or_create(id=int(row_dict['ownership_type']))
+                    ownershipType.name = ownership_name
+                    ownershipType.save()
+                    row_dict['ownership_type'] = ownershipType
+                    if 'species_blocked' in row_dict.keys() and row_dict['species_blocked']:
+                        (species_block_type, created) = BlockedSpeciesType.objects.get_or_create(name=row_dict['species_blocked'].lower().title())
+                        row_dict['species_blocked'] = species_block_type
+                    if 'treatment_status' in row_dict.keys() and row_dict['treatment_status']:
+                        (treatment_status_type, created) = TreatmentStatus.objects.get_or_create(name=row_dict['treatment_status'].lower().title())
+                        row_dict['treatment_status'] = treatment_status_type
+                    # parse datetime
+                    if 'updated' in row_dict.keys() and row_dict['updated']:
+                        updated = datetime(*xlrd.xldate_as_tuple(row_dict['updated'], book.datemode))
+                        row_dict['updated'] = updated
+                    try:
+                        # create Barrier
+                        Barrier.objects.create(**row_dict)
+                        import_count += 1
+                    except ValueError:
+                        warnings.append('row: %d, value:%s' % (row_num, row_dict))
+                        print(warnings[-1])
+                        pass
+                except Exception as e:
+                    warnings.append('Barrier ID %s (row %s) could not import: %s' % (str(row_dict['pad_id']), str(row_num), str(e)))
                     print(warnings[-1])
                     pass
 
@@ -183,16 +197,24 @@ class Command(BaseCommand):
 
         # Check for mismatch DS Barriers
         for barrier in Barrier.objects.all():
-            if barrier.downstream_id == 0:
-                if not barrier.downstream_barrier_count == 0:
-                    warnings.append('Barrier %d: "%s" has no downstream barrier id, but claims to have %d downstream barriers. Assuming 0.' % (barrier.pad_id, str(barrier), barrier.downstream_barrier_count))
+            try:
+                if barrier.downstream_id == 0:
+                    if not barrier.downstream_barrier_count == 0:
+                        warnings.append('Barrier %d: "%s" has no downstream barrier id, but claims to have %d downstream barriers. Assuming 0.' % (barrier.pad_id, str(barrier), barrier.downstream_barrier_count))
+                        barrier.downstream_barrier_count = 0
+                        barrier.save()
+                elif Barrier.objects.filter(pad_id=barrier.downstream_id).count() < 1:
+                    if barrier.downstream_id == None:
+                        warnings.append('Barrier %d: "%s" has unknown downstream barrier id. Setting it to NA and 0 downstream barrier count (from %d).' % (barrier.pad_id, str(barrier), barrier.downstream_barrier_count))
+                    else:
+                        warnings.append('Barrier %d: "%s" has unrecognized downstream barrier id "%d". Setting it to NA and 0 downstream barrier count (from %d).' % (barrier.pad_id, str(barrier), barrier.downstream_id, barrier.downstream_barrier_count))
+                    barrier.downstream_id = 0
                     barrier.downstream_barrier_count = 0
                     barrier.save()
-            elif Barrier.objects.filter(pad_id=barrier.downstream_id).count() < 1:
-                warnings.append('Barrier %d: "%s" has unknown downstream barrier id "%d". Setting it to NA and 0 downstream barrier count (from %d).' % (barrier.pad_id, str(barrier), barrier.downstream_id, barrier.downstream_barrier_count))
-                barrier.downstream_id = 0
-                barrier.downstream_barrier_count = 0
-                barrier.save()
+            except Exception as e:
+                warnings.append("Error with determining downstream barrier id for barrier %d. Barrier cannot be imported. Error details: %s" % (barrier.pad_id, str(e)))
+                pass
+
 
         print("%d barriers added." % import_count)
         return(format_return(True, errors, warnings, import_count))

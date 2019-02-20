@@ -1420,10 +1420,10 @@ def load_PAD_file(infile, user):
     try:
         json_dict_response = management.call_command('import_PAD', infile_name)
         response = json.loads(json_dict_response)
-    except:
+    except Exception as e:
         return {
             'success': False,
-            'errors': ['PAD IMPORT FAILED - Internal error'],
+            'errors': ['PAD IMPORT FAILED - Internal error: "%s"' % str(e)],
             'warnings': [],
             'import_count': None
         }
