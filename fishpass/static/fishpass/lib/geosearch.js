@@ -124,10 +124,10 @@ app.map.geoSearch.autoCompleteLookup = function() {
             resultsList.innerHTML = '';
             var options = app.map.geoSearch.autoCompleteResults(val);
             if (options.length === 0) {
-              resultsList.innerHTML += `<button tabindex="0" class="geosearch-result btn btn-link dropdown-item">No results found</button>`;
+              resultsList.innerHTML += '<button tabindex="0" class="geosearch-result btn btn-link dropdown-item">No results found</button>';
             } else {
               options.map(function(option, i) {
-                  resultsList.innerHTML += `<button data-coords="${option.geometry.coordinates}" tabindex="0" role="button" class="btn btn-link geosearch-result dropdown-item">${option.properties.pad_id}: ${option.properties.site_name}</button>`;
+                  resultsList.innerHTML += '<button data-coords="' + option.geometry.coordinates + '" tabindex="0" role="button" class="btn btn-link geosearch-result dropdown-item">' + option.properties.pad_id + ': ' + option.properties.site_name + '</button>';
               });
               resultsList.addEventListener('click', function resultSelect(event) {
                   var x = event.target.dataset.coords.split(',');
