@@ -39,7 +39,7 @@ submitCreateProjectForm = function($form) {
             } else {
                 app.viewModel.scenarios.errorMessage(result.responseText.split('\n\n')[0]);
             }
-            console.log(`%c form not submitted; %o`, 'color: salmon;', result);
+            console.log('%c form not submitted; %o', 'color: salmon;', result);
         }
     });
 };
@@ -70,7 +70,7 @@ $('.confirm-delete').on('click', function(e) {
   $(this).addClass('d-none');
   $('#delete-status-' + dataId).removeClass('d-none');
   $.ajax({
-      url: `/scenarios/delete_design/${dataId}/`,
+      url: '/scenarios/delete_design/' + dataId + '/',
       type: 'POST',
       data: {
           uid: dataId
@@ -79,7 +79,7 @@ $('.confirm-delete').on('click', function(e) {
           $("#row-" + dataId).remove();
       },
       error: function(response, status) {
-          alert(`failed to delete: %o`, response);
+          alert('failed to delete: %o', response);
           $('#delete-status-' + dataId).addClass('d-none');
           $('#delete-'+dataId).removeClass('d-none');
       }

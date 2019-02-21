@@ -32,7 +32,7 @@ var app = {
     },
     loadProjectBarrierForm: function() {
       $.ajax( {
-          url: `fishpass/project_barrier_form/${app.panel.form.project_id}/${app.map.selectedBarrier.pad_id}/`,
+          url: 'fishpass/project_barrier_form/' + app.panel.form.project_id + '/' + app.map.selectedBarrier.pad_id + '/',
           method: 'GET',
           success: function(result) {
             $('#project-barrier-form-wrap').empty();
@@ -54,7 +54,7 @@ var app = {
     },
     resetProjectBarrierForm: function() {
       $.ajax( {
-          url: `fishpass/project_barrier_form_reset/${app.panel.form.project_id}/${app.map.selectedBarrier.pad_id}/`,
+          url: 'fishpass/project_barrier_form_reset/' + app.panel.form.project_id + '/' + app.map.selectedBarrier.pad_id + '/',
           method: 'GET',
           success: function(result) {
             app.viewModel.scenarios.scenarioFormModel.updatedFilterResultsLayer.getSource().getFeatureById(app.map.selectedBarrier.pad_id).set('user_override', false);
@@ -73,7 +73,7 @@ var app = {
     saveProjectBarrierForm: function() {
       $form = $('#project-barrier-form');
       $.ajax( {
-        url: `fishpass/project_barrier_form/${app.panel.form.project_id}/${app.map.selectedBarrier.pad_id}/`,
+        url: 'fishpass/project_barrier_form/' + app.panel.form.project_id + '/' + app.map.selectedBarrier.pad_id + '/',
         data: $form.serialize(),
         type: 'POST',
         success: function(result) {
@@ -95,7 +95,7 @@ var app = {
     },
     loadProjectBarrierStatusForm: function() {
       $.ajax( {
-          url: `fishpass/project_barrier_status_form/${app.panel.form.project_id}/`,
+          url: 'fishpass/project_barrier_status_form/' + app.panel.form.project_id + '/',
           method: 'GET',
           success: function(result) {
             $('#project-barrier-status-form-wrap').empty();
@@ -113,7 +113,7 @@ var app = {
     },
     resetProjectBarrierStatusForm: function() {
       $.ajax( {
-          url: `fishpass/project_barrier_status_form_reset/${app.panel.form.project_id}/`,
+          url: 'fishpass/project_barrier_status_form_reset/' + app.panel.form.project_id + '/',
           method: 'GET',
           success: function(result) {
             $('#project-barrier-status-form-wrap').empty();
@@ -131,7 +131,7 @@ var app = {
     saveProjectBarrierStatusForm: function() {
       $form = $('#project-barrier-status-form');
       $.ajax( {
-        url: `fishpass/project_barrier_status_form/${app.panel.form.project_id}/`,
+        url: 'fishpass/project_barrier_status_form/' + app.panel.form.project_id + '/',
         data: $form.serialize(),
         type: 'POST',
         success: function(result) {
@@ -150,7 +150,7 @@ var app = {
     },
     loadProjectBarrierTypeForm: function() {
       $.ajax( {
-          url: `fishpass/project_barrier_type_form/${app.panel.form.project_id}/`,
+          url: 'fishpass/project_barrier_type_form/' + app.panel.form.project_id + '/',
           method: 'GET',
           success: function(result) {
             $('#project-barrier-type-form-wrap').empty();
@@ -168,7 +168,7 @@ var app = {
     },
     resetProjectBarrierTypeForm: function() {
       $.ajax( {
-          url: `fishpass/project_barrier_type_form_reset/${app.panel.form.project_id}/`,
+          url: 'fishpass/project_barrier_type_form_reset/' + app.panel.form.project_id + '/',
           method: 'GET',
           success: function(result) {
             $('#project-barrier-type-form-wrap').empty();
@@ -186,7 +186,7 @@ var app = {
     saveProjectBarrierTypeForm: function() {
       $form = $('#project-barrier-type-form');
       $.ajax( {
-        url: `fishpass/project_barrier_type_form/${app.panel.form.project_id}/`,
+        url: 'fishpass/project_barrier_type_form/' + app.panel.form.project_id + '/',
         data: $form.serialize(),
         type: 'POST',
         success: function(result) {
@@ -558,31 +558,31 @@ enableDrawing = function() {
     app.map.geoSearch.openSearchBox();
 }
 
-app.filterDropdownContent = `<div class="dropdown">
-        <button class="btn btn-sm ml-2 btn-outline-light dropdown-toggle" type="button" id="forestUnit" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select unit</button>
-        <div class="dropdown-menu forest-unit-dropdown" aria-labelledby="forestUnit">
-            <div id="forest-listener">
-                <button class="dropdown-item" type="button" data-layer="huc10">HUC 10</button>
-                <button class="dropdown-item" type="button" data-layer="huc12">HUC 12</button>
-                <button class="dropdown-item" type="button" data-layer="RMU">Forest Plan Mgmt Alloc</button>
-            </div>
-        </div>
-    </div>
-    <script>
-        (function() {
-            $('#forest-listener button').on('click', function(event) {
-                event.preventDefault();
-                $('#forest-listener').children().each(function(i) {
-                    if ($(this)[0].dataset.layer !== event.target.dataset.layer) {
-                        app.map.disableLayer($(this)[0].dataset.layer);
-                    }
-                });
-                var eventLayer = event.target.dataset.layer;
-                app.map.toggleLayer(eventLayer);
-                app.state.setStep = 1;
-            });
-        })();
-    </script>`;
+app.filterDropdownContent = '<div class="dropdown">\n' +
+'        <button class="btn btn-sm ml-2 btn-outline-light dropdown-toggle" type="button" id="forestUnit" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select unit</button>\n' +
+'        <div class="dropdown-menu forest-unit-dropdown" aria-labelledby="forestUnit">\n' +
+'            <div id="forest-listener">\n' +
+'                <button class="dropdown-item" type="button" data-layer="huc10">HUC 10</button>\n' +
+'                <button class="dropdown-item" type="button" data-layer="huc12">HUC 12</button>\n' +
+'                <button class="dropdown-item" type="button" data-layer="RMU">Forest Plan Mgmt Alloc</button>\n' +
+'            </div>\n' +
+'        </div>\n' +
+'    </div>\n' +
+'    <script>\n' +
+'        (function() {\n' +
+'            $("#forest-listener button").on("click", function(event) {\n' +
+'                event.preventDefault();\n' +
+'                $("#forest-listener").children().each(function(i) {\n' +
+'                    if ($(this)[0].dataset.layer !== event.target.dataset.layer) {\n' +
+'                        app.map.disableLayer($(this)[0].dataset.layer);\n' +
+'                    }\n' +
+'                });\n' +
+'                var eventLayer = event.target.dataset.layer;\n' +
+'                app.map.toggleLayer(eventLayer);\n' +
+'                app.state.setStep = 1;\n' +
+'            });\n' +
+'        })();\n' +
+'    </script>';
 
 app.nav = {
     setState: function(height) {
@@ -637,16 +637,16 @@ app.nav = {
         }, 1000);
     },
     instructions: {
-        initial: `<h2 class="mx-auto w-50 text-center">Start by deciding how you want <br/>to interact with the map</h2>`,
-        reset: `Decide how you want to interact with the map`,
+        initial: '<h2 class="mx-auto w-50 text-center">Start by deciding how you want <br/>to interact with the map</h2>',
+        reset: 'Decide how you want to interact with the map',
         select: [
             'Zoom in and select a stream segment to evaluate changes in flow',
             'select one of the highlighted pour points to evaluate changes in flow associated with management activity upstream',
             'Select filters to narrow your treatment region',
         ],
         filter: [
-            `Select area to manage based on: ${app.filterDropdownContent}`,
-            `Select forest unit to filter or change selection: ${app.filterDropdownContent}`,
+            'Select area to manage based on: ' + app.filterDropdownContent,
+            'Select forest unit to filter or change selection: ' + app.filterDropdownContent,
             'Select filters to narrow your treatment area',
         ],
         draw: [
@@ -769,7 +769,7 @@ app.request = {
     get_focus_area_geojson_by_type: function(unitType, unitId, callback) {
         // TODO write view to get spatial organiation layer
         return $.ajax({
-            url: `/fishpass/get_focus_area_geojson_by_type`,
+            url: '/fishpass/get_focus_area_geojson_by_type',
             data: {
                 unitType: unitType,
                 unitId: unitId
@@ -779,7 +779,7 @@ app.request = {
                 callback(response);
             },
             error: function(response) {
-                console.log(`%cfail @ get planning units response: %o`, 'color: red', response);
+                console.log('%cfail @ get planning units response: %o', 'color: red', response);
             }
         })
     },
@@ -793,7 +793,7 @@ app.request = {
     get_focus_area_geojson_by_ids: function(fa_ids, callback) {
         // TODO write view to get spatial organiation layer
         return $.ajax({
-            url: `/fishpass/get_focus_area_geojson_by_ids`,
+            url: '/fishpass/get_focus_area_geojson_by_ids',
             data: {
                 fa_ids: fa_ids
             },
@@ -802,7 +802,7 @@ app.request = {
                 callback(response);
             },
             error: function(response) {
-                console.log(`%cfail @ get planning units response: %o`, 'color: red', response);
+                console.log('%cfail @ get planning units response: %o', 'color: red', response);
             }
         })
     },
@@ -816,7 +816,7 @@ app.request = {
             id = app.map.selectedFeature.getProperties().ppt_ID;
         }
         return $.ajax({
-            url: `/get_results_by_scenario_id`,
+            url: '/get_results_by_scenario_id',
             data: {
                 id: id,
                 // export: exportResults
@@ -826,19 +826,19 @@ app.request = {
                 return response;
             },
             error: function(response) {
-                console.log(`%cfail @ get planning units response: %o`, 'color: red', response);
+                console.log('%cfail @ get planning units response: %o', 'color: red', response);
             }
         })
     },
     get_barrier_layer: function() {
       return $.ajax({
-          url: `/fishpass/get_barrier_layer/`,
+          url: '/fishpass/get_barrier_layer/',
           dataType: 'json',
           success: function(response) {
               return response;
           },
           error: function(response) {
-              console.log(`%cfail @ get downstream pourpoints: %o`, 'color: red', response);
+              console.log('%cfail @ get downstream pourpoints: %o', 'color: red', response);
           }
       })
     },
@@ -847,7 +847,7 @@ app.request = {
             id = app.map.selectedFeature.getProperties().ppt_ID;
         }
         return $.ajax({
-            url: `/get_downstream_pour_points`,
+            url: '/get_downstream_pour_points',
             data: {
                 pourpoint_id: id
             },
@@ -856,7 +856,7 @@ app.request = {
                 return response;
             },
             error: function(response) {
-                console.log(`%cfail @ get downstream pourpoints: %o`, 'color: red', response);
+                console.log('%cfail @ get downstream pourpoints: %o', 'color: red', response);
             }
         })
     },
@@ -883,7 +883,7 @@ app.request = {
                 return response;
             },
             error: function(response) {
-                console.log(`%cfail @ get hydro results for pourpoint: %o`, 'color: red', response);
+                console.log('%cfail @ get hydro results for pourpoint: %o', 'color: red', response);
             }
         });
     },
@@ -898,7 +898,7 @@ app.request = {
             return response;
         })
         .fail(function(response) {
-            console.log(`%cfail @ get planning units response: %o`, 'color: red', response);
+            console.log('%cfail @ get planning units response: %o', 'color: red', response);
         });
     },
     get_user_scenarios: function() {
@@ -907,7 +907,7 @@ app.request = {
             return response;
         })
         .fail(function(response) {
-            console.log(`%cfail @ get scenarios: %o`, 'color: red', response);
+            console.log('%cfail @ get scenarios: %o', 'color: red', response);
         });
     },
     get_scenarios: function() {
@@ -916,7 +916,7 @@ app.request = {
             return response;
         })
         .fail(function(response) {
-            console.log(`%cfail @ get scenarios: %o`, 'color: red', response);
+            console.log('%cfail @ get scenarios: %o', 'color: red', response);
         });
     },
     /**
@@ -925,7 +925,7 @@ app.request = {
     */
     get_segment_by_bbox: function(bbox) {
         return $.ajax({
-            url: `/get_segment_by_bbox`,
+            url: '/get_segment_by_bbox',
             data: {
                 bbox_coords: bbox
             },
@@ -935,7 +935,7 @@ app.request = {
             return response;
         })
         .fail(function(response) {
-            console.log(`%cfail @ get segment by bbox: %o`, 'color: red', response);
+            console.log('%cfail @ get segment by bbox: %o', 'color: red', response);
             return false;
         });
     },
@@ -946,12 +946,12 @@ app.request = {
     * @property segment name id geometry pourpoints[id, geometry, name]
     */
     get_segment_by_id: function(id) {
-        return $.ajax(`/segment/${id}`)
+        return $.ajax('/segment/' + id)
         .done(function(response) {
             return response;
         })
         .fail(function(response) {
-            console.log(`%cfail @ segment by id: %o`, 'color: red', response);
+            console.log('%cfail @ segment by id: %o', 'color: red', response);
         });
     },
     /**
@@ -961,12 +961,12 @@ app.request = {
     * @property name id acres point_geometry area_geometry
     */
     get_pourpoint_by_id: function(id) {
-        return $.ajax(`pourpoint/${id}`)
+        return $.ajax('pourpoint/' + id)
         .done(function(response) {
             return response;
         })
         .fail(function(response) {
-            console.log(`%cfail @ get pourpoint id: %o`, 'color: red', response);
+            console.log('%cfail @ get pourpoint id: %o', 'color: red', response);
         });
     },
     get_focus_area: function(feature, callback) {
@@ -987,7 +987,7 @@ app.request = {
                 callback(feature, response.geojson);
             },
             error: function(response, status) {
-                console.log(`%cfail @ get focus area: %o`, 'color: red', response);
+                console.log('%cfail @ get focus area: %o', 'color: red', response);
                 callback(null, response);
                 return status;
             }
@@ -1010,7 +1010,7 @@ app.request = {
                 callback(feature, response);
             },
             error: function(response, status) {
-                console.log(`%cfail @ get focus area at point: %o`, 'color: red', response);
+                console.log('%cfail @ get focus area at point: %o', 'color: red', response);
                 callback(null, response);
             }
         })
@@ -1035,7 +1035,7 @@ app.request = {
                 return response;
             },
             error: function(response, status) {
-                console.log(`%cfail @ get basin: %o`, 'color: red', response);
+                console.log('%cfail @ get basin: %o', 'color: red', response);
                 // we don't have the ppt basins yet, just get a HUC12 for now.
                 app.request.get_focus_area_at(app.map.selectedFeature, 'HUC12', function(feature, hucFeat) {
                     vectors = (new ol.format.GeoJSON()).readFeatures(hucFeat.geojson, {
@@ -1088,7 +1088,7 @@ app.request = {
                 app.state.setStep = 'results';
             },
             error: function(response, status) {
-                console.log(`%cfail @ save drawing: %o`, 'color: red', response);
+                console.log('%cfail @ save drawing: %o', 'color: red', response);
                 alert(response.responseJSON.error_msg);
                 app.panel.draw.finishDrawing();
             }
@@ -1112,7 +1112,7 @@ app.request = {
                 return status;
             },
             error: function(response, status) {
-                console.log(`%cfailed save state: %o`, 'color: red', response);
+                console.log('%cfailed save state: %o', 'color: red', response);
                 return status;
             }
         })
@@ -1127,14 +1127,14 @@ app.request = {
                 return status;
             },
             error: function(response, status) {
-                console.log(`%cfail @ save state: %o`, 'color: red', response);
+                console.log('%cfail @ save state: %o', 'color: red', response);
                 return status;
             }
         })
     },
     deleteScenario: function(id) {
         return $.ajax({
-            url: `/scenario/delete_design/fishpass_project_${id}/`,
+            url: '/scenario/delete_design/fishpass_project_' + id + '/',
             type: 'POST',
             data: {
                 uid: id
@@ -1143,7 +1143,7 @@ app.request = {
                 return status;
             },
             error: function(response, status) {
-                console.log(`%failed to deleted: %o`, 'color: red', response);
+                console.log('%failed to deleted: %o', 'color: red', response);
                 return status;
             }
         })

@@ -291,7 +291,7 @@ app.map.layer = {
           format: new ol.format.MVT({
             featureClass: ol.Feature
           }),
-          url: `https://api.mapbox.com/v4/${app.mapbox.layers.county.id}/{z}/{x}/{y}.mvt?access_token=${app.mapbox.key}`
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.county.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
         }),
         style: app.map.styles.FocusArea,
         visible: false,
@@ -311,7 +311,7 @@ app.map.layer = {
           format: new ol.format.MVT({
             featureClass: ol.Feature
           }),
-          url: `https://api.mapbox.com/v4/${app.mapbox.layers.boundary.id}/{z}/{x}/{y}.mvt?access_token=${app.mapbox.key}`
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.boundary.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
         }),
         style: app.map.styles.FocusArea,
         visible: false,
@@ -330,7 +330,7 @@ app.map.layer = {
           format: new ol.format.MVT({
             featureClass: ol.Feature
           }),
-          url: `https://api.mapbox.com/v4/${app.mapbox.layers.region.id}/{z}/{x}/{y}.mvt?access_token=${app.mapbox.key}`
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.region.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
         }),
         style: app.map.styles.FocusArea,
         visible: false,
@@ -349,7 +349,7 @@ app.map.layer = {
           format: new ol.format.MVT({
             featureClass: ol.Feature
           }),
-          url: `https://api.mapbox.com/v4/${app.mapbox.layers.coho.id}/{z}/{x}/{y}.mvt?access_token=${app.mapbox.key}`
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.coho.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
         }),
         style: app.map.styles.FocusArea,
         visible: false,
@@ -368,7 +368,7 @@ app.map.layer = {
           format: new ol.format.MVT({
             featureClass: ol.Feature
           }),
-          url: `https://api.mapbox.com/v4/${app.mapbox.layers.chinook.id}/{z}/{x}/{y}.mvt?access_token=${app.mapbox.key}`
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.chinook.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
         }),
         style: app.map.styles.FocusArea,
         visible: false,
@@ -387,7 +387,7 @@ app.map.layer = {
           format: new ol.format.MVT({
             featureClass: ol.Feature
           }),
-          url: `https://api.mapbox.com/v4/${app.mapbox.layers.chinook_spring.id}/{z}/{x}/{y}.mvt?access_token=${app.mapbox.key}`
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.chinook_spring.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
         }),
         style: app.map.styles.FocusArea,
         visible: false,
@@ -406,7 +406,7 @@ app.map.layer = {
           format: new ol.format.MVT({
             featureClass: ol.Feature
           }),
-          url: `https://api.mapbox.com/v4/${app.mapbox.layers.chinook_fall.id}/{z}/{x}/{y}.mvt?access_token=${app.mapbox.key}`
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.chinook_fall.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
         }),
         style: app.map.styles.FocusArea,
         visible: false,
@@ -425,7 +425,7 @@ app.map.layer = {
           format: new ol.format.MVT({
             featureClass: ol.Feature
           }),
-          url: `https://api.mapbox.com/v4/${app.mapbox.layers.steelhead.id}/{z}/{x}/{y}.mvt?access_token=${app.mapbox.key}`
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.steelhead.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
         }),
         style: app.map.styles.FocusArea,
         visible: false,

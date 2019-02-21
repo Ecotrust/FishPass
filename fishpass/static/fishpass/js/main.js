@@ -62,10 +62,10 @@ var main = {
                         if (response.username.length > 0) {
                             console.log('%cerror wrong username or password: %o', 'color: red;', response);
                             if ($('.alert').length === 0) {
-                                $('#login-collapse .login-form').prepend(`<div class="alert alert-warning fade show" role="alert" style="position: relative; display: block; font-size: .875em;"></div>`);
+                                $('#login-collapse .login-form').prepend('<div class="alert alert-warning fade show" role="alert" style="position: relative; display: block; font-size: .875em;"></div>');
                             }
                             var $alert = $('.alert');
-                            $alert.html(`Password does not match username. Please try again.<br />You may also <a href="/accounts/forgot/">reset your password</a>. Reseting your password will cause your current progress to be lost.`);
+                            $alert.html('Password does not match username. Please try again.<br />You may also <a href="/accounts/forgot/">reset your password</a>. Reseting your password will cause your current progress to be lost.');
                         }
                         console.log('%cerror with sign in credentials: %o', 'color: red;', response);
                     }
@@ -96,7 +96,7 @@ var main = {
                     if (response.success === true) {
                         main.auth.success(response);
                     } else {
-                        document.querySelector('#registration-error').innerHTML = `${response.error}. Please update then submit`;
+                        document.querySelector('#registration-error').innerHTML = response.error + '. Please update then submit';
                     }
                 },
                 error: function(response) {
@@ -126,20 +126,19 @@ var main = {
             $('#login-modal').modal('hide');
 
             // show alert
-            $('body').prepend(`<div class="alert alert-success fade show" role="alert" style="position: fixed; top: 100px; left: 50%; transform: translate(-50%,0); min-width: 250px; line-height: 2; z-index: 3; text-align: center; font-size: 1em;">SUCCESS</div>`);
+            $('body').prepend('<div class="alert alert-success fade show" role="alert" style="position: fixed; top: 100px; left: 50%; transform: translate(-50%,0); min-width: 250px; line-height: 2; z-index: 3; text-align: center; font-size: 1em;">SUCCESS</div>');
             window.setTimeout(function() {
                 $('.alert').alert('close');
             }, 1500);
             // menu navicon hide login  &
             // add account link + sign out link
-            $('#menu #sign-in-modal').before(`<a href="/accounts/" class="list-group-item list-group-item-action">${data.username}</a><button id="sign-out" data-action="sign-out" class="list-group-item list-group-item-action">Sign out</button>`);
+            $('#menu #sign-in-modal').before('<a href="/accounts/" class="list-group-item list-group-item-action">' + data.username + '</a><button id="sign-out" data-action="sign-out" class="list-group-item list-group-item-action">Sign out</button>');
             $('#menu #sign-in-modal').css('display', 'none');
             // Hide top nav login and create account button
-            $('.username-wrap #sign-in-modal-2').before(`<a id="topnav-account-link" href="/accounts/" class="btn btn-link account-action">
-                <i class="svg_icon"><img src="/static/fishpass/img/icon/i_user_blue.svg" /></i>${data.username}</a>`);
+            $('.username-wrap #sign-in-modal-2').before('<a id="topnav-account-link" href="/accounts/" class="btn btn-link account-action"> <i class="svg_icon"><img src="/static/fishpass/img/icon/i_user_blue.svg" /></i>' + data.username + '</a>');
             $('.username-wrap #sign-in-modal-2').css('display', 'none');
             // Hide main nav login and create account button
-            $('#home-login-btn').before(`<a href="/app" class="btn btn-main">Launch App</a>`);
+            $('#home-login-btn').before('<a href="/app" class="btn btn-main">Launch App</a>');
             $('#home-login-btn').css('display', 'none');
             // hide submenu login
             $('#subnav-sign-in-modal').addClass('d-none');
@@ -149,5 +148,5 @@ var main = {
 
 main.utils = {
     arrayToHtmlList: (arr, listID) =>
-      arr.map(item => (document.querySelector('#' + listID).innerHTML += `<li>${item}</li>`))
+      arr.map(item => (document.querySelector('#' + listID).innerHTML += '<li>' + item + '</li>'))
 };

@@ -63,7 +63,7 @@ var madrona = {
                   } else {
                       app.viewModel.scenarios.errorMessage(result.responseText.split('\n\n')[0]);
                   }
-                  console.log(`%c Report could not be generated for this project; %o`, 'color: salmon;', result);
+                  console.log('%c Report could not be generated for this project; %o', 'color: salmon;', result);
               }
             }
           );
@@ -129,7 +129,7 @@ var madrona = {
                     // app.loadingAnimation.hide();
                     // Redirect window to /report/SCENARIO_ID/
                     // document.location.href = '/fishpass/get_report/' + result['X-Madrona-Select'] + '/';
-                    // window.alert('DEBUG: All Done! This would send you to `/fishpass/get_report/' + result['X-Madrona-Select'] + '/`')
+                    // window.alert("DEBUG: All Done! This would send you to '/fishpass/get_report/" + result['X-Madrona-Select'] + "/'")
                     runOptipass(result['X-Madrona-Select']);
                 },
                 error: function(result) {
@@ -142,7 +142,7 @@ var madrona = {
                     } else {
                         app.viewModel.scenarios.errorMessage(result.responseText.split('\n\n')[0]);
                     }
-                    console.log(`%c form not submitted; %o`, 'color: salmon;', result);
+                    console.log('%c form not submitted; %o', 'color: salmon;', result);
                 }
             });
         };
@@ -430,7 +430,7 @@ function scenarioFormModel(options) {
 
         (function() {
             var request = $.ajax({
-                url: `/scenarios/get_filter_results/${app.panel.form.project_id}/`,
+                url: '/scenarios/get_filter_results/' + app.panel.form.project_id + '/',
                 type: 'GET',
                 data: self.filters,
                 dataType: 'json',
@@ -464,7 +464,7 @@ function scenarioFormModel(options) {
                       if ($('#scenarios-form .alert').length > 0) {
                         $('#scenarios-form .alert').removeClass('d-none');
                       } else {
-                        $('#scenarios-form').append(`<div class="alert alert-warning" role="alert" data-bind="text: self.filterNotesMessage()"></div>`);
+                        $('#scenarios-form').append('<div class="alert alert-warning" role="alert" data-bind="text: self.filterNotesMessage()"></div>');
                       }
                     } else {
                       if ($('#scenarios-form .alert').length > 0) {
