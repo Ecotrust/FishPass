@@ -147,6 +147,11 @@ var main = {
 };
 
 main.utils = {
-    arrayToHtmlList: (arr, listID) =>
-      arr.map(item => (document.querySelector('#' + listID).innerHTML += '<li>' + item + '</li>'))
+    // arrayToHtmlList: (arr, listID) =>
+    // arr.map(item => (document.querySelector('#' + listID).innerHTML += '<li>' + item + '</li>'))
+    arrayToHtmlList: function(arr, listID) {
+      return arr.map( function(item) {
+        return (document.querySelector('#' + listID).innerHTML += '<li>' + item + '</li>');
+      });
+    }
 };

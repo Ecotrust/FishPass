@@ -25,8 +25,14 @@ var app = {
       return new Promise(function(resolve, reject) {
         let script = document.createElement('script');
         script.src = src;
-        script.onload = () => resolve(script);
-        script.onerror = () => reject(new Error("Script load error: " + src));
+        // script.onload = () => resolve(script);
+        script.onload = function() {
+          return resolve(script);
+        };
+        // script.onerror = () => reject(new Error("Script load error: " + src));
+        script.onerror = function() {
+          return reject(new Error("Script load error: " + src));
+        };
         document.head.append(script);
       })
     },
