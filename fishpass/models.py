@@ -683,6 +683,10 @@ class ProjectReportBarrier(models.Model):
         if not report_dict:
             from collections import OrderedDict
             bar_record = Barrier.objects.get(pk=self.barrier_id)
+            try:
+                exec("overflow = %s" % bar_record.overflow)
+            except Exception as e:
+                overflow = {}
             report_dict = OrderedDict()
             report_dict['Site Name'] = bar_record.site_name
             report_dict['PAD ID'] = self.barrier_id
@@ -701,8 +705,13 @@ class ProjectReportBarrier(models.Model):
             report_dict['Stream Name'] = bar_record.stream_name
             report_dict['Tributary To'] = bar_record.tributary_to
             # Get watershed name:
-            ws_name_field = settings.FOCUS_AREA_TYPE_NAME_LOOKUP[self.project_report.project.spatial_organization]
-            report_dict['Watershed'] = getattr(bar_record, ws_name_field)
+            ws_name_field = settings.BARRIER_WATERSHED_NAME_LOOKUP[self.project_report.project.spatial_organization]
+            if hasattr(bar_record, ws_name_field):
+                report_dict['Watershed'] = getattr(bar_record, ws_name_field)
+            elif ws_name_field in overflow.keys():
+                report_dict['Watershed'] = overflow[ws_name_field]
+            else:
+                report_dict['Watershed'] = "Unknown"
             report_dict['County'] = bar_record.county
             if bar_record.image_link and len(bar_record.image_link) > 0:
                 report_dict['Image'] = '<img src="' + bar_record.image_link + '" class="barrier-image">'

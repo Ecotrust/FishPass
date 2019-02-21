@@ -255,6 +255,7 @@ FOCUS_AREA_FIELD_ID_LOOKUP = {
 
 DEFAULT_FOCUS_AREA_TYPE = 'HUC_8'
 
+# Used for reading the name from the shapefile on import to FocusArea reords in DB
 FOCUS_AREA_TYPE_NAME_LOOKUP = {
     'HUC02': 'Name',
     'HUC04': 'Name',
@@ -271,6 +272,26 @@ FOCUS_AREA_TYPE_NAME_LOOKUP = {
     'Chinook_Fall': 'ESU_DPS',
     'Steelhead': 'ESU_DPS',
     'ProtectedAreas': 'region_id',
+    # 'State': 'huc8_name',
+}
+
+# Points to field on Barrier Record in database that gives name of watershed
+BARRIER_WATERSHED_NAME_LOOKUP = {
+    'HUC02': 'huc8_name',
+    'HUC04': 'huc8_name',
+    'HUC06': 'huc8_name',
+    'HUC08': 'huc8_name',
+    'HUC10': 'huc10_name',
+    'HUC12': 'huc12_name',
+    'County': 'county',
+    'Region': 'huc8_name',
+    'Boundary': 'huc8_name',
+    'Coho': 'ESU_COHO',
+    'Chinook': 'ESU_CHIN',
+    'Chinook_Spring': 'huc8_name',
+    'Chinook_Fall': 'huc8_name',
+    'Steelhead': 'ESU_STEEL',
+    'ProtectedAreas': 'huc8_name',
     # 'State': 'huc8_name',
 }
 
