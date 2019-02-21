@@ -6,10 +6,20 @@ for (var i=0; i < app.map.getLayers().getArray().length; i++) {
 }
 
 if (app.map.overlays) {
+  app.map.overlays.getLayers().push(app.map.layer.huc02.layer);
+  app.map.overlays.getLayers().push(app.map.layer.huc04.layer);
+  app.map.overlays.getLayers().push(app.map.layer.huc06.layer);
   app.map.overlays.getLayers().push(app.map.layer.huc08.layer);
   app.map.overlays.getLayers().push(app.map.layer.huc12.layer);
   app.map.overlays.getLayers().push(app.map.layer.huc10.layer);
   app.map.overlays.getLayers().push(app.map.layer.county.layer);
+  app.map.overlays.getLayers().push(app.map.layer.boundary.layer);
+  app.map.overlays.getLayers().push(app.map.layer.region.layer);
+  app.map.overlays.getLayers().push(app.map.layer.coho.layer);
+  app.map.overlays.getLayers().push(app.map.layer.chinook.layer);
+  app.map.overlays.getLayers().push(app.map.layer.chinook_spring.layer);
+  app.map.overlays.getLayers().push(app.map.layer.chinook_fall.layer);
+  app.map.overlays.getLayers().push(app.map.layer.steelhead.layer);
   // app.map.overlays.getLayers().push(app.map.layer.county.layer);
   // app.map.overlays.getLayers().push(app.map.layer.roads.layer);
 }

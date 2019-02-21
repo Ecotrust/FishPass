@@ -3,7 +3,7 @@ from django.conf import settings
 
 
 class Command(BaseCommand):
-    help = 'Import management boundaries. 2 arguments - a zipped shapefile in EPSG:3857 and a layer type matching one of: %s' % str(settings.FOCUS_AREA_TYPES)
+    help = 'Import management boundaries. 2 arguments - a zipped shapefile in EPSG:3857 and a layer type matching one of: %s' % str(settings.FOCUS_AREA_TYPES.keys())
     def add_arguments(self, parser):
         parser.add_argument('file',  type=str)
         parser.add_argument('type',  type=str)
@@ -22,9 +22,9 @@ class Command(BaseCommand):
         except IndexError:
             self.stdout.write('--- ERROR: You must provide the location of the zipped shapefile and it\'s type! ---')
             sys.exit()
-        if in_type not in settings.FOCUS_AREA_TYPES:
+        if in_type not in settings.FOCUS_AREA_TYPES.keys():
             self.stdout.write('--- ERROR: Input type (2nd arg) must be one of the following: ---')
-            self.stdout.write('--- %s ---' % settings.FOCUS_AREA_TYPES)
+            self.stdout.write('--- %s ---' % settings.FOCUS_AREA_TYPES.keys())
             sys.exit()
         if not zipfile.is_zipfile(in_file_name):
             self.stdout.write('--- ERROR: Input shapefile (1st arg) must be a zipfile ---')
@@ -89,24 +89,28 @@ class Command(BaseCommand):
             # TODO: Define id_fields for all supported in_types!
             id_field = None
             desc_field = None
-            if in_type == 'HUC08':
-                id_field = 'HUC_8'
-                desc_field = 'HUC_8'
-            if in_type == 'HUC10':
-                id_field = 'HUC_10'
-                desc_field = 'HUC_10'
-            if in_type == 'HUC12':
-                id_field = 'HUC_12'
-                desc_field = 'HUC_12'
-            if in_type == 'County':
-                id_field = 'CNTYIDFP'
-                # desc_field = 'NAME'
-            # if in_type == 'PourPoint':
+            if in_type in settings.FOCUS_AREA_TYPES.keys():
+                id_field = settings.FOCUS_AREA_FIELD_ID_LOOKUP[in_type]
+                desc_field = settings.FOCUS_AREA_TYPE_NAME_LOOKUP[in_type]
+
+            # if in_type == 'HUC08':
+            #     id_field = 'HUC_8'
+            #     desc_field = 'HUC_8'
+            # if in_type == 'HUC10':
+            #     id_field = 'HUC_10'
+            #     desc_field = 'HUC_10'
+            # if in_type == 'HUC12':
+            #     id_field = 'HUC_12'
+            #     desc_field = 'HUC_12'
+            # if in_type == 'County':
+            #     id_field = 'CNTYIDFP'
+            #     # desc_field = 'NAME'
+            # # if in_type == 'PourPoint':
+            # #     id_field = 'ppt_ID'
+            # if in_type == 'PourPointOverlap':
+            #     id_field = 'ppt_id'
+            # if in_type == 'PourPointDiscrete':
             #     id_field = 'ppt_ID'
-            if in_type == 'PourPointOverlap':
-                id_field = 'ppt_id'
-            if in_type == 'PourPointDiscrete':
-                id_field = 'ppt_ID'
 
             if not id_field:
                 self.stdout.write('--- ERROR: ID Field unknown. Check your file type argument. ---')

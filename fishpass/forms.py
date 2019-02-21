@@ -106,8 +106,8 @@ class ProjectForm(ScenarioForm):
 
     # TODO: Select FocusArea Layer
     UNIT_TYPE_CHOICES = []
-    for type in settings.FOCUS_AREA_TYPES:
-        UNIT_TYPE_CHOICES.append((type, type))
+    for key in settings.FOCUS_AREA_TYPES.keys():
+        UNIT_TYPE_CHOICES.append((key, settings.FOCUS_AREA_TYPES[key]))
 
     spatial_organization = forms.ChoiceField(
         choices = UNIT_TYPE_CHOICES,

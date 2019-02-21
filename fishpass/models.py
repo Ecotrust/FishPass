@@ -338,7 +338,7 @@ class BarrierCost(models.Model):
 
 class FocusArea(models.Model):
     UNIT_TYPE_CHOICES = []
-    for type in settings.FOCUS_AREA_TYPES:
+    for type in settings.FOCUS_AREA_TYPES.keys():
         UNIT_TYPE_CHOICES.append((type, type))
 
     unit_type = models.CharField(max_length=20, null=True, blank=True, default=None, choices=UNIT_TYPE_CHOICES)
@@ -386,7 +386,7 @@ class Project(Scenario):
     # null=True, blank=True, verbose_name="Target Area")
 
     UNIT_TYPE_CHOICES = []
-    for type in settings.FOCUS_AREA_TYPES:
+    for type in settings.FOCUS_AREA_TYPES.keys():
         UNIT_TYPE_CHOICES.append((type, type))
 
     spatial_organization = models.CharField(max_length=50, null=True, blank=True, default=None, choices=UNIT_TYPE_CHOICES)

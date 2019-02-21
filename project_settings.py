@@ -217,25 +217,61 @@ HERE_APP_CODE=None
 ########################################
 ######        LAYER DATA        ########
 ########################################
-FOCUS_AREA_TYPES = ['HUC08', 'HUC10', 'HUC12', 'County', 'Region', 'State']
+# FOCUS_AREA_TYPES = ['HUC08', 'HUC10', 'HUC12', 'County', 'Region', 'State']
+FOCUS_AREA_TYPES = OrderedDict({})
+FOCUS_AREA_TYPES['HUC02'] = 'HUC02'
+FOCUS_AREA_TYPES['HUC04'] = 'HUC04'
+FOCUS_AREA_TYPES['HUC06'] = 'HUC06'
+FOCUS_AREA_TYPES['HUC08'] = 'HUC08'
+FOCUS_AREA_TYPES['HUC10'] = 'HUC10'
+FOCUS_AREA_TYPES['HUC12'] = 'HUC12'
+FOCUS_AREA_TYPES['Boundary'] = 'Extent'
+FOCUS_AREA_TYPES['County'] = 'County'
+FOCUS_AREA_TYPES['Region'] = 'Regions'
+FOCUS_AREA_TYPES['Coho'] = 'Coho ESU'
+FOCUS_AREA_TYPES['Chinook'] = 'Chinook ESU'
+FOCUS_AREA_TYPES['Chinook_Spring'] = 'Spring Chinook ESU'
+FOCUS_AREA_TYPES['Chinook_Fall'] = 'Fall Chinook ESU'
+FOCUS_AREA_TYPES['Steelhead'] = 'Steelhead DPS'
+
 FOCUS_AREA_FIELD_ID_LOOKUP = {
-    'HUC08': 'HUC_8',
-    'HUC10': 'HUC_10',
-    'HUC12': 'HUC_12',
-    'County': 'county_id',
-    'Region': 'region_id',
-    'State': 'state_id'
+    'HUC02': 'HUC2',
+    'HUC04': 'HUC4',
+    'HUC06': 'HUC6',
+    'HUC08': 'HUC8',
+    'HUC10': 'HUC10',
+    'HUC12': 'HUC12',
+    'County': 'CNTYIDFP',
+    'Region': 'OBJECTID',
+    'Boundary': 'ORIG_FID',
+    'Coho': 'OBJECTID',
+    'Chinook': 'OBJECTID',
+    'Chinook_Spring': 'OBJECTID',
+    'Chinook_Fall': 'OBJECTID',
+    'Steelhead': 'OBJECTID',
+    'ProtectedAreas': 'region_id',
+    # 'State': 'state_id',
 }
 
 DEFAULT_FOCUS_AREA_TYPE = 'HUC_8'
 
 FOCUS_AREA_TYPE_NAME_LOOKUP = {
-    'HUC08': 'huc8_name',
-    'HUC10': 'huc10_name',
-    'HUC12': 'huc12_name',
-    'County': 'huc8_name',
-    'Region': 'huc8_name',
-    'State': 'huc8_name'
+    'HUC02': 'Name',
+    'HUC04': 'Name',
+    'HUC06': 'Name',
+    'HUC08': 'Name',
+    'HUC10': 'Name',
+    'HUC12': 'Name',
+    'County': 'NAME',
+    'Region': 'Region_Lon',
+    'Boundary': 'ORIG_FID',
+    'Coho': 'ESU_DPS',
+    'Chinook': 'ESU_DPS',
+    'Chinook_Spring': 'ESU_DPS',
+    'Chinook_Fall': 'ESU_DPS',
+    'Steelhead': 'ESU_DPS',
+    'ProtectedAreas': 'region_id',
+    # 'State': 'huc8_name',
 }
 
 # This is only used for importing the PAD. Geometry_DB_SRID is used for import FocusAreas
