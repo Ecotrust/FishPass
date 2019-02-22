@@ -21,7 +21,7 @@ app.mapbox.layers = {
     id: 'fishpasssupport.4v1pyr4t',
     id_field: 'HUC2',
     name_field: 'Name',
-    name: 'HUC 02',
+    name: 'HUC2',
     report_methods: ['filter'],
     map_layer_id: 'huc02'
   },
@@ -29,7 +29,7 @@ app.mapbox.layers = {
     id: 'fishpasssupport.3wdtxzre',
     id_field: 'HUC4',
     name_field: 'Name',
-    name: 'HUC 04',
+    name: 'HUC4',
     report_methods: ['filter'],
     map_layer_id: 'huc04'
   },
@@ -37,7 +37,7 @@ app.mapbox.layers = {
     id: 'fishpasssupport.3wm8d6lr',
     id_field: 'HUC6',
     name_field: 'Name',
-    name: 'HUC 06',
+    name: 'HUC6',
     report_methods: ['filter'],
     map_layer_id: 'huc06'
   },
@@ -45,7 +45,7 @@ app.mapbox.layers = {
     id: 'fishpasssupport.0j3vqpr8',
     id_field: 'HUC8',
     name_field: 'Name',
-    name: 'HUC 08',
+    name: 'HUC8',
     report_methods: ['filter'],
     map_layer_id: 'huc08'
   },
@@ -53,7 +53,7 @@ app.mapbox.layers = {
     id: 'fishpasssupport.c2ulfosi',
     id_field: 'HUC10',
     name_field: 'Name',
-    name: 'HUC 10',
+    name: 'HUC10',
     report_methods: ['filter'],
     map_layer_id: 'huc10'
   },
@@ -61,7 +61,7 @@ app.mapbox.layers = {
     id: 'fishpasssupport.d1sxwwnb',
     id_field: 'HUC12',
     name_field: 'Name',
-    name: 'HUC 12',
+    name: 'HUC12',
     report_methods: ['filter'],
     map_layer_id: 'huc12'
   },
@@ -69,7 +69,7 @@ app.mapbox.layers = {
     id: 'fishpasssupport.5cy4ee66',
     id_field: 'ORIG_FID',
     name_field: 'ORIG_FID',
-    name: 'Extent',
+    name: 'FISHPass Boundary',
     report_methods: ['filter'],
     map_layer_id: 'boundary'
   },
@@ -77,7 +77,7 @@ app.mapbox.layers = {
     id: 'fishpasssupport.blmgjg0s',
     id_field: 'OBJECTID',
     name_field: 'Region_Lon',
-    name: 'Regions',
+    name: 'FISHPassRegions',
     report_methods: ['filter'],
     map_layer_id: 'region'
   },
@@ -85,7 +85,7 @@ app.mapbox.layers = {
     id: 'fishpasssupport.903ocprd',
     id_field: 'OBJECTID',
     name_field: 'ESU_DPS',
-    name: 'Chinook ESU',
+    name: 'Chinook ESUs: Other',
     report_methods: ['filter'],
     map_layer_id: 'chinook'
   },
@@ -93,7 +93,7 @@ app.mapbox.layers = {
     id: 'fishpasssupport.68ypsukt',
     id_field: 'OBJECTID',
     name_field: 'ESU_DPS',
-    name: 'Spring Chinook ESU',
+    name: 'Chinook ESUs: Spring',
     report_methods: ['filter'],
     map_layer_id: 'chinook_spring'
   },
@@ -101,7 +101,7 @@ app.mapbox.layers = {
     id: 'fishpasssupport.0gdogtcv',
     id_field: 'OBJECTID',
     name_field: 'ESU_DPS',
-    name: 'Fall Chinook ESU',
+    name: 'Chinook ESUs: Fall',
     report_methods: ['filter'],
     map_layer_id: 'chinook_fall'
   },
@@ -125,7 +125,7 @@ app.mapbox.layers = {
     id: 'fishpasssupport.2dc9ezel',
     id_field: 'CNTYIDFP',
     name_field: 'NAME',
-    name: 'County',
+    name: 'Counties',
     report_methods: ['filter'],
     map_layer_id: 'county'
   }
@@ -165,10 +165,10 @@ focusAreaSelectAction = function(feat) {
 app.map.layer = {
     huc02: {
       layer: new ol.layer.VectorTile({
-        name: 'HUC 02',
-        title: 'HUC 02',
+        name: app.mapbox.layers.huc02.name,
+        title: app.mapbox.layers.huc02.name,
         unitType: 'HUC02',
-        id: 'huc02', // set id equal to x in app.map.layer.x
+        id: app.mapbox.layers.huc02.map_layer_id,
         source: new ol.source.VectorTile({
           attributions: 'USGS, USDA NRCS, US EPA',
           format: new ol.format.MVT({
@@ -184,10 +184,10 @@ app.map.layer = {
     },
     huc04: {
       layer: new ol.layer.VectorTile({
-        name: 'HUC 04',
-        title: 'HUC 04',
+        name: app.mapbox.layers.huc04.name,
+        title: app.mapbox.layers.huc04.name,
         unitType: 'HUC04',
-        id: 'huc04', // set id equal to x in app.map.layer.x
+        id: app.mapbox.layers.huc04.map_layer_id,
         source: new ol.source.VectorTile({
           attributions: 'USGS, USDA NRCS, US EPA',
           format: new ol.format.MVT({
@@ -203,10 +203,10 @@ app.map.layer = {
     },
     huc06: {
       layer: new ol.layer.VectorTile({
-        name: 'HUC 06',
-        title: 'HUC 06',
+        name: app.mapbox.layers.huc06.name,
+        title: app.mapbox.layers.huc06.name,
         unitType: 'HUC06',
-        id: 'huc06', // set id equal to x in app.map.layer.x
+        id: app.mapbox.layers.huc06.map_layer_id,
         source: new ol.source.VectorTile({
           attributions: 'USGS, USDA NRCS, US EPA',
           format: new ol.format.MVT({
@@ -223,10 +223,10 @@ app.map.layer = {
     // TODO: add to mapbox
     huc08: {
       layer: new ol.layer.VectorTile({
-        name: 'HUC 08',
-        title: 'HUC 08',
+        name: app.mapbox.layers.huc08.name,
+        title: app.mapbox.layers.huc08.name,
         unitType: 'HUC08',
-        id: 'huc08', // set id equal to x in app.map.layer.x
+        id: app.mapbox.layers.huc08.map_layer_id,
         source: new ol.source.VectorTile({
           attributions: 'USGS, USDA NRCS, US EPA',
           format: new ol.format.MVT({
@@ -243,10 +243,10 @@ app.map.layer = {
     // TODO: add to mapbox
     huc10: {
       layer: new ol.layer.VectorTile({
-        name: 'HUC 10',
-        title: 'HUC 10',
+        name: app.mapbox.layers.huc10.name,
+        title: app.mapbox.layers.huc10.name,
         unitType: 'HUC10',
-        id: 'huc10', // set id equal to x in app.map.layer.x
+        id: app.mapbox.layers.huc10.map_layer_id,
         source: new ol.source.VectorTile({
           attributions: 'USGS, USDA NRCS, US EPA',
           format: new ol.format.MVT({
@@ -263,10 +263,10 @@ app.map.layer = {
     // TODO: add to mapbox
     huc12: {
       layer: new ol.layer.VectorTile({
-        name: 'HUC 12',
-        title: 'HUC 12',
+        name: app.mapbox.layers.huc12.name,
+        title: app.mapbox.layers.huc12.name,
         unitType: 'HUC12',
-        id: 'huc12', // set id equal to x in app.map.layer.x
+        id: app.mapbox.layers.huc12.map_layer_id,
         source: new ol.source.VectorTile({
           attributions: 'USGS, USDA NRCS, US EPA',
           format: new ol.format.MVT({
@@ -283,10 +283,10 @@ app.map.layer = {
 
     county: {
       layer: new ol.layer.VectorTile({
-        name: 'County',
-        title: 'County',
+        name: app.mapbox.layers.county.name,
+        title: app.mapbox.layers.county.name,
         unitType: 'County',
-        id: 'county',
+        id: app.mapbox.layers.county.map_layer_id,
         source: new ol.source.VectorTile({
           format: new ol.format.MVT({
             featureClass: ol.Feature
@@ -302,10 +302,10 @@ app.map.layer = {
 
     boundary: {
       layer: new ol.layer.VectorTile({
-        name: 'Extent',
-        title: 'Extent',
+        name: app.mapbox.layers.boundary.name,
+        title: app.mapbox.layers.boundary.name,
         unitType: 'Boundary',
-        id: 'boundary',
+        id: app.mapbox.layers.boundary.map_layer_id,
         source: new ol.source.VectorTile({
           attributions: '',
           format: new ol.format.MVT({
@@ -321,10 +321,10 @@ app.map.layer = {
     },
     region: {
       layer: new ol.layer.VectorTile({
-        name: 'Region',
-        title: 'Region',
+        name: app.mapbox.layers.region.name,
+        title: app.mapbox.layers.region.name,
         unitType: 'Region',
-        id: 'region',
+        id: app.mapbox.layers.region.map_layer_id,
         source: new ol.source.VectorTile({
           attributions: '',
           format: new ol.format.MVT({
