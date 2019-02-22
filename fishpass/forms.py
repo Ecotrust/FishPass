@@ -111,7 +111,7 @@ class ProjectForm(ScenarioForm):
 
     spatial_organization = forms.ChoiceField(
         choices = UNIT_TYPE_CHOICES,
-        label="spatial organization",
+        label="Spatial Focus",
         # help_text="",
         required=True,
         initial='County'
