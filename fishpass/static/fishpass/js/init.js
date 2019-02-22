@@ -4,6 +4,7 @@ $( document ).ready(function() {
   // then runs initFiltering
     // initFiltering sets up the filter form
 
+  $('.ol-geo-search').hide();
   $("#launch-modal").modal('show');
 
   // app.panel.form.init();

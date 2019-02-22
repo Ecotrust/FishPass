@@ -1,5 +1,6 @@
 // app.map = mapSettings.getInitMap();
-app.map = new madronaMap({
+// app.map = new madronaMap({
+app.map = new ol.Map({
   target: 'map',
   // interactions: ol.interaction.defaults({mouseWheelZoom:false}),
   layers: [

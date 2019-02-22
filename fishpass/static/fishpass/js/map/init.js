@@ -1,5 +1,7 @@
 mapSettings.getInitMap = function() {
-    map = new madronaMap({
+    // map = new madronaMap({
+    
+    map = new ol.Map({
       target: 'map',
       layers: [
         new ol.layer.Group({

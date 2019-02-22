@@ -2,9 +2,9 @@
 var madrona = {
     onShow: function(callback) { callback(); },
     resetState: function() {
-        app.state.setStep = 'reset'; // starts app steps for nav, panel, and instructions
+        app.state.setStep('reset'); // starts app steps for nav, panel, and instructions
         app.viewModel.scenarios.reset({cancel: true});
-        app.state.setStep = 0; // go back to step zero
+        app.state.setStep(0); // go back to step zero
     },
     setupForm: function($form) {
         //var submitted = false;
@@ -441,6 +441,7 @@ function scenarioFormModel(options) {
                         min_cost = data[0].min_cost,
                         max_cost = data[0].max_cost;
                     app.map.geoSearch.loadJson(geojson);
+                    $('.ol-geo-search').show();
                     if (data[0].notes.length > 0) {
                       self.filterNotesMessage(data[0].notes);
                       self.filterNotesExist(true);

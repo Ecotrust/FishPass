@@ -134,7 +134,7 @@ app.map.geoSearch.autoCompleteLookup = function() {
                   var y = [parseFloat(x[0]), parseFloat(x[1])];
                   app.map.getView().animate({center: y, zoom: 14});
                   resultsList.innerHTML = '';
-                  app.map.dropPin(y);
+                  // app.map.dropPin(y);
                   input.value = event.target.innerText;
               });
             }
@@ -151,7 +151,9 @@ app.map.geoSearch.autoCompleteLookup = function() {
  */
 app.map.geoSearch.autoCompleteResults = function(val) {
     var options = [];
-    for (var feature of app.map.geoSearch.geojson.features) {
+    // for (var feature of app.map.geoSearch.geojson.features) {
+    for (var i = 0; i < app.map.geoSearch.geojson.features.length; i++) {
+      var feature = app.map.geoSearch.geojson.features[i];
         if (feature['properties']['site_name'].toLowerCase().indexOf(val.toLowerCase()) !== -1 ||
                   feature['properties']['pad_id'].toString().indexOf(val) !== -1 ) {
             options.push(feature);

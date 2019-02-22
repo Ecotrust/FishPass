@@ -5,7 +5,7 @@ var app = {
     * @param {string} method value from data-attr on html element
     */
     setState: function(method) {
-        app.state.setMethod = method;
+        app.state.setMethod(method);
         app.init[method]();
     },
     scenarioInProgress: function() {
@@ -23,7 +23,7 @@ var app = {
     // Promise wrapper to load scripts
     loadScript: function loadScript(src) {
       return new Promise(function(resolve, reject) {
-        let script = document.createElement('script');
+        var script = document.createElement('script');
         script.src = src;
         // script.onload = () => resolve(script);
         script.onload = function() {
@@ -338,7 +338,7 @@ setInit = function() {
     app.map.clearLayers();
     app.map.enableLayer('boundary');
 
-    app.state.setStep = 0;
+    app.state.setStep(0);
     app.map.layer.draw.layer.getSource().clear();
 };
 
@@ -392,12 +392,12 @@ app.init = {
     },
     'hydro': function() {
         reportInit();
-        app.state.setStep = 'hydro';
+        app.state.setStep('hydro');
         app.panel.results.showHydro();
     },
     'aggregate': function() {
         reportInit();
-        app.state.setStep = 'aggregate';
+        app.state.setStep('aggregate');
         app.panel.results.showAggregate();
     }
 }
@@ -526,7 +526,7 @@ app.panel = {
             app.panel.getPanelContentElement.innerHTML = app.nav.stepActions.initial;
             app.panel.moveLeft();
             if (app.state.nav === 'tall') {
-                app.state.navHeight = 'short';
+                app.state.navHeight('short');
             }
         },
         name: ''
@@ -536,12 +536,14 @@ app.panel = {
       if ($('#' + selectFocusAreaStepId).is(":visible")) {
         app.map.selection.select.setActive(true);
         app.viewModel.scenarios.scenarioFormModel.stopShowingFilteringResults();
+        $('.ol-geo-search').hide();
       } else {
         app.map.selection.select.setActive(false);
         if (!app.viewModel.scenarios.scenarioFormModel.showingFilteringResults()) {
           app.viewModel.scenarios.scenarioFormModel.showFilteringResults();
           app.viewModel.scenarios.scenarioFormModel.updatedFilterResultsLayer.setVisibility(true);
         }
+        $('.ol-geo-search').show();
       }
     },
     element: function() { // returns a function. to edit dom element don't forget to invoke: element()
@@ -585,14 +587,14 @@ app.filterDropdownContent = '<div class="dropdown">\n' +
 '                });\n' +
 '                var eventLayer = event.target.dataset.layer;\n' +
 '                app.map.toggleLayer(eventLayer);\n' +
-'                app.state.setStep = 1;\n' +
+'                app.state.setStep(1);\n' +
 '            });\n' +
 '        })();\n' +
 '    </script>';
 
 app.nav = {
     setState: function(height) {
-        app.state.navHeight = height;
+        app.state.navHeight(height);
     },
     showResultsNav: function() {
         document.getElementById('results-nav').classList.remove('d-none');
@@ -694,7 +696,7 @@ app.nav = {
         results: function() {
             app.nav.hideSave();
             if (app.state.nav !== 'short') {
-                app.state.navHeight = 'short';
+                app.state.navHeight('short');
             }
         },
         aggregate: function() {
@@ -989,7 +991,7 @@ app.request = {
             },
             dataType: 'json',
             success: function(response) {
-                app.state.setFocusArea = response;
+                app.state.setFocusArea(response);
                 callback(feature, response.geojson);
             },
             error: function(response, status) {
@@ -1036,7 +1038,7 @@ app.request = {
             },
             dataType: 'json',
             success: function(response) {
-                app.state.setFocusArea = response;
+                app.state.setFocusArea(response);
                 callback(feature, response.geojson);
                 return response;
             },
@@ -1077,8 +1079,8 @@ app.request = {
                 app.map.draw.disable();
                 app.nav.hideSave();
                 if (app.state.nav !== 'short') {
-                    app.state.navHeight = 'short';
-                    app.state.setStep = 'results'; // go to results
+                    app.state.navHeight('short');
+                    app.state.setStep('results'); // go to results
                 }
                 var vectors = (new ol.format.GeoJSON()).readFeatures(response.geojson, {
                     dataProjection: 'EPSG:3857',
@@ -1091,7 +1093,7 @@ app.request = {
                 app.panel.results.init('fishpass_project_' + response.id);
                 app.resultsInit('fishpass_project_' + response.id);
                 app.state.scenarioId = response.id;
-                app.state.setStep = 'results';
+                app.state.setStep('results');
             },
             error: function(response, status) {
                 console.log('%cfail @ save drawing: %o', 'color: red', response);

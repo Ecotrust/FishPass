@@ -487,7 +487,9 @@ app.map.layer = {
         var features = app.map.layer.focusArea.layer.getSource().getFeatures();
         var featureToRemove;
         // loop through features for property id
-        for (var feat of features) {
+        // for (var feat of features) {
+        for (var i = 0; i < features.length; i++) {
+          var feat = features[i];
           var props = feat.getProperties();
           if (id == props.id) {
             featureToRemove = feat;

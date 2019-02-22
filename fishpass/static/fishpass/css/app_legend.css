@@ -1,11 +1,13 @@
 #app-legend {
     position: absolute;
     left: 32vw;
-    top: 10vh;
+    bottom: 10vh;
     background-color: white;
     padding: 0.5rem;
     border: 1px solid #9C7B54;
     border-radius: 4px;
+    width: 12rem;
+    min-width: 200px;
 }
 
 #app-legend p {

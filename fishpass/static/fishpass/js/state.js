@@ -15,10 +15,10 @@ app.state = {
     nav: 'tall',
     step: 0,
     formModel: null,
-    set setMethod(method) {
+    setMethod: function(method) {
         this.method = method;
     },
-    set navHeight(height) {
+    navHeight: function(height) {
         // set state height value
         this.nav = height;
 
@@ -30,10 +30,10 @@ app.state = {
             app.nav.short();
         }
     },
-    set instructions(instruction) {
+    instructions: function(instruction) {
         $('#instruction').html(instruction);
     },
-    set setStep(val) {
+    setStep: function(val) {
         // set state step value
         this.step = val;
 
@@ -42,42 +42,42 @@ app.state = {
         if (app.nav.stepActions[val]) {
             app.nav.stepActions[val]();
         // select, filter, ...
-        } else if (app.nav.stepActions[app.state.getMethod][val]) {
-            app.nav.stepActions[app.state.getMethod][val]();
+      } else if (app.nav.stepActions[app.state.getMethod()][val]) {
+            app.nav.stepActions[app.state.getMethod()][val]();
         }
 
         // update instructions content based on step
         // reset, initial, ...
         if (app.nav.instructions[val]) {
-            app.state.instructions = app.nav.instructions[val];
+            app.state.instructions(app.nav.instructions[val]);
         // select, filter, ...
-        } else if (app.nav.instructions[app.state.getMethod][val]) {
-            app.state.instructions = app.nav.instructions[app.state.getMethod][val];
+      } else if (app.nav.instructions[app.state.getMethod()][val]) {
+            app.state.instructions(app.nav.instructions[app.state.getMethod()][val]);
         }
 
         //TODO: Recognize and trigger filtering/drawing steps.
     },
-    set setFocusArea(focusAreaObject) {
+    setFocusArea: function(focusAreaObject) {
         this.focusArea.method = this.method;
         this.focusArea.id = focusAreaObject.id;
         this.focusArea.geometry = focusAreaObject.geojson;
     },
-    set showMapControls(show) {
+    showMapControls: function(show) {
         app.map.toggleMapControls(show);
     },
-    get getMethod() {
+    getMethod: function() {
         return this.method;
     },
-    get panelContent() {
+    panelContent: function() {
         return this.panel.content;
     },
-    get focusAreaState() {
+    focusAreaState: function() {
         return this.focusArea;
     },
-    get getFormModel() {
+    getFormModel: function() {
         return this.formModel;
     },
-    get saveState() {
+    saveState: function() {
         return {
             method: this.method,
             focusArea: this.focusArea,
