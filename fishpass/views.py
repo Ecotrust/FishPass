@@ -45,6 +45,7 @@ def app(request, template=loader.get_template('fishpass/app.html'), context=acco
     context['SEARCH_DISABLED'] = settings.SEARCH_DISABLED
     context['projects'] = user_projects
     context['initialProjectName'] = default_project_name
+    context['BIOS_LINK'] = settings.BIOS_URL
     return HttpResponse(template.render(context, request))
 
 def new_project(request):
@@ -1252,6 +1253,7 @@ def init_report(request, projid, template=loader.get_template('fishpass/tabularr
         }
     }
     context['LEGEND'] = [[x.name, x.color] for x in BarrierStatus.objects.all().order_by('order')]
+    context['BIOS_LINK'] = settings.BIOS_URL
 
     return HttpResponse(template.render(context, request))
 
@@ -1372,6 +1374,7 @@ def get_report(request, projid, template=loader.get_template('fishpass/report.ht
         cache.set(cache_key, context, 60*60*24*7)
 
     context['LEGEND'] = [[x.name, x.color] for x in BarrierStatus.objects.all().order_by('order')]
+    context['BIOS_LINK'] = settings.BIOS_URL
 
     # context['barriers'] = report.barriers_dict(action_only)
     return HttpResponse(template.render(context, request))

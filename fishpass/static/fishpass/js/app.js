@@ -43,7 +43,7 @@ var app = {
           success: function(result) {
             $('#project-barrier-form-wrap').empty();
             title_html = app.map.selectedBarrier.site_name + " (" + app.map.selectedBarrier.stream_name +
-            ') - <a href="https://map.dfg.ca.gov/bios/?al=ds69&col=pad_id&val=' +
+            ') - <a href="' + page_context.BIOS_LINK +
             app.map.selectedBarrier.pad_id + '" target="_blank">View in BIOS</a>';
             $('#project-barrier-modal').find('.modal-title').html(title_html);
             $('#project-barrier-form-wrap').html(result);

@@ -61,6 +61,11 @@
 {% block footer %}{% endblock %}
 
 {% block extra_js %}
+    <script>
+      page_context = {
+        BIOS_LINK: "{{ BIOS_LINK }}"
+      };
+    </script>
     {{ block.super }}
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
 
