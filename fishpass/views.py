@@ -1261,11 +1261,10 @@ def get_barrier_table_headers(request):
     from fishpass.models import ProjectReportBarrier
     from django.core.exceptions import ObjectDoesNotExist
     found = False
-    while ProjectReportBarrier.objects.all().count() > 0 and found == False:
+    for prb in ProjectReportBarrier.objects.all():
         try:
-            prb = ProjectReportBarrier.objects.all()[0]
             header_list = [ x for x in prb.to_dict()]
-            found = True
+            break
         except ObjectDoesNotExist:
             pass
 
