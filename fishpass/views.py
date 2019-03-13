@@ -1259,7 +1259,16 @@ def init_report(request, projid, template=loader.get_template('fishpass/tabularr
 
 def get_barrier_table_headers(request):
     from fishpass.models import ProjectReportBarrier
-    header_list = [ x for x in ProjectReportBarrier.objects.all()[0].to_dict()]
+    from django.core.exceptions import ObjectDoesNotExist
+    found = False
+    while ProjectReportBarrier.objects.all().count() > 0 and found == False:
+        try:
+            prb = ProjectReportBarrier.objects.all()[0]
+            header_list = [ x for x in prb.to_dict()]
+            found = True
+        except ObjectDoesNotExist:
+            pass
+
     response = json.dumps({
         'header_list': header_list,
         'default_header_list': settings.DEFAULT_DISPLAY_HEADERS
