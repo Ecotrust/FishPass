@@ -1,6 +1,6 @@
 mapSettings.getInitMap = function() {
     // map = new madronaMap({
-    
+
     map = new ol.Map({
       target: 'map',
       layers: [
@@ -16,7 +16,7 @@ mapSettings.getInitMap = function() {
             new ol.layer.Tile({
               title: 'ESRI Topo Map',
               source: new ol.source.XYZ({
-                url: 'http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}.png'
+                url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}.png'
               }),
               name: 'ESRI Topo',
               type: 'base'
