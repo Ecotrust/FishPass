@@ -95,6 +95,10 @@ button.dt-button {
   border: 0.05rem solid #brown;
 }
 
+.map-col {
+  pointer-events: none;
+}
+
 .report-map-wrap-col {
   text-align: center;
 }
@@ -104,6 +108,7 @@ button.dt-button {
   height: 23rem;
   margin: auto;
   position: relative;
+  pointer-events: all;
 }
 
 .report-map-wrap #map {
