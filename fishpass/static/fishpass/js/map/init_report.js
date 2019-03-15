@@ -26,6 +26,10 @@ app.map = new ol.Map({
     new ol.layer.Group({
       title: 'Overlays',
       layers: []
+    }),
+    new ol.layer.Group({
+      title: 'Selection',
+      layers: []
     })
   ],
   view: new ol.View({
