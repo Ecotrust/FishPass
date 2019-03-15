@@ -101,7 +101,7 @@ var possibleConstructorReturn = function (self, call) {
  * See [the examples](./examples) for usage.
  * @constructor
  * @extends {ol.control.Control}
- * @param {Object} opt_options Control options, extends olx.control.ControlOptions adding:  
+ * @param {Object} opt_options Control options, extends olx.control.ControlOptions adding:
  * **`tipLabel`** `String` - the button tooltip.
  */
 
@@ -196,6 +196,8 @@ var LayerSwitcher = function (_Control) {
             if (!this.element.classList.contains(this.shownClassName)) {
                 this.element.classList.add(this.shownClassName);
                 this.renderPanel();
+                // $('.layer-switcher > .panel > ul > .group').first().css('display', 'none');
+                $('.layer-switcher > .panel > ul > .group').first().hide();
             }
         }
 
@@ -369,7 +371,7 @@ var LayerSwitcher = function (_Control) {
         }
 
         /**
-        * **Static** Generate a UUID  
+        * **Static** Generate a UUID
         * Adapted from http://stackoverflow.com/a/2117523/526860
         * @returns {String} UUID
         */

@@ -220,7 +220,6 @@ app.map.layer = {
       }),
       selectAction: focusAreaSelectAction
     },
-    // TODO: add to mapbox
     huc08: {
       layer: new ol.layer.VectorTile({
         name: app.mapbox.layers.huc08.name,
@@ -240,7 +239,6 @@ app.map.layer = {
       }),
       selectAction: focusAreaSelectAction
     },
-    // TODO: add to mapbox
     huc10: {
       layer: new ol.layer.VectorTile({
         name: app.mapbox.layers.huc10.name,
@@ -260,7 +258,6 @@ app.map.layer = {
       }),
       selectAction: focusAreaSelectAction
     },
-    // TODO: add to mapbox
     huc12: {
       layer: new ol.layer.VectorTile({
         name: app.mapbox.layers.huc12.name,
@@ -280,7 +277,6 @@ app.map.layer = {
       }),
       selectAction: focusAreaSelectAction
     },
-
     county: {
       layer: new ol.layer.VectorTile({
         name: app.mapbox.layers.county.name,
@@ -299,7 +295,6 @@ app.map.layer = {
       }),
       selectAction: focusAreaSelectAction
     },
-
     boundary: {
       layer: new ol.layer.VectorTile({
         name: app.mapbox.layers.boundary.name,
@@ -415,6 +410,271 @@ app.map.layer = {
       selectAction: focusAreaSelectAction
     },
     steelhead: {
+      layer: new ol.layer.VectorTile({
+        name: app.mapbox.layers.steelhead.name,
+        title: app.mapbox.layers.steelhead.name,
+        unitType: 'Steelhead',
+        id: app.mapbox.layers.steelhead.map_layer_id,
+        source: new ol.source.VectorTile({
+          attributions: 'NOAA Fisheries, National Marine Fisheries Service, U.S. Department of Commerce, National Atmospheric and Oceanic Administration',
+          format: new ol.format.MVT({
+            featureClass: ol.Feature
+          }),
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.steelhead.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        }),
+        style: app.map.styles.FocusArea,
+        visible: false,
+        renderBuffer: 500
+      }),
+      selectAction: focusAreaSelectAction
+    },
+    huc02_overlay: {
+      layer: new ol.layer.VectorTile({
+        name: app.mapbox.layers.huc02.name,
+        title: app.mapbox.layers.huc02.name,
+        unitType: 'HUC02',
+        id: app.mapbox.layers.huc02.map_layer_id,
+        source: new ol.source.VectorTile({
+          attributions: 'USGS, USDA NRCS, US EPA',
+          format: new ol.format.MVT({
+            featureClass: ol.Feature
+          }),
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.huc02.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        }),
+        style: app.map.styles.FocusArea,
+        visible: false,
+        renderBuffer: 500
+      }),
+      selectAction: focusAreaSelectAction
+    },
+    huc04_overlay: {
+      layer: new ol.layer.VectorTile({
+        name: app.mapbox.layers.huc04.name,
+        title: app.mapbox.layers.huc04.name,
+        unitType: 'HUC04',
+        id: app.mapbox.layers.huc04.map_layer_id,
+        source: new ol.source.VectorTile({
+          attributions: 'USGS, USDA NRCS, US EPA',
+          format: new ol.format.MVT({
+            featureClass: ol.Feature
+          }),
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.huc04.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        }),
+        style: app.map.styles.FocusArea,
+        visible: false,
+        renderBuffer: 500
+      }),
+      selectAction: focusAreaSelectAction
+    },
+    huc06_overlay: {
+      layer: new ol.layer.VectorTile({
+        name: app.mapbox.layers.huc06.name,
+        title: app.mapbox.layers.huc06.name,
+        unitType: 'HUC06',
+        id: app.mapbox.layers.huc06.map_layer_id,
+        source: new ol.source.VectorTile({
+          attributions: 'USGS, USDA NRCS, US EPA',
+          format: new ol.format.MVT({
+            featureClass: ol.Feature
+          }),
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.huc06.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        }),
+        style: app.map.styles.FocusArea,
+        visible: false,
+        renderBuffer: 500
+      }),
+      selectAction: focusAreaSelectAction
+    },
+    huc08_overlay: {
+      layer: new ol.layer.VectorTile({
+        name: app.mapbox.layers.huc08.name,
+        title: app.mapbox.layers.huc08.name,
+        unitType: 'HUC08',
+        id: app.mapbox.layers.huc08.map_layer_id,
+        source: new ol.source.VectorTile({
+          attributions: 'USGS, USDA NRCS, US EPA',
+          format: new ol.format.MVT({
+            featureClass: ol.Feature
+          }),
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.huc08.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        }),
+        style: app.map.styles.FocusArea,
+        visible: false,
+        renderBuffer: 500
+      }),
+      selectAction: focusAreaSelectAction
+    },
+    huc10_overlay: {
+      layer: new ol.layer.VectorTile({
+        name: app.mapbox.layers.huc10.name,
+        title: app.mapbox.layers.huc10.name,
+        unitType: 'HUC10',
+        id: app.mapbox.layers.huc10.map_layer_id,
+        source: new ol.source.VectorTile({
+          attributions: 'USGS, USDA NRCS, US EPA',
+          format: new ol.format.MVT({
+            featureClass: ol.Feature
+          }),
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.huc10.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        }),
+        style: app.map.styles.FocusArea,
+        visible: false,
+        renderBuffer: 500
+      }),
+      selectAction: focusAreaSelectAction
+    },
+    huc12_overlay: {
+      layer: new ol.layer.VectorTile({
+        name: app.mapbox.layers.huc12.name,
+        title: app.mapbox.layers.huc12.name,
+        unitType: 'HUC12',
+        id: app.mapbox.layers.huc12.map_layer_id,
+        source: new ol.source.VectorTile({
+          attributions: 'USGS, USDA NRCS, US EPA',
+          format: new ol.format.MVT({
+            featureClass: ol.Feature
+          }),
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.huc12.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        }),
+        style: app.map.styles.FocusArea,
+        visible: false,
+        renderBuffer: 500
+      }),
+      selectAction: focusAreaSelectAction
+    },
+    county_overlay: {
+      layer: new ol.layer.VectorTile({
+        name: app.mapbox.layers.county.name,
+        title: app.mapbox.layers.county.name,
+        unitType: 'County',
+        id: app.mapbox.layers.county.map_layer_id,
+        source: new ol.source.VectorTile({
+          format: new ol.format.MVT({
+            featureClass: ol.Feature
+          }),
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.county.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        }),
+        style: app.map.styles.FocusArea,
+        visible: false,
+        renderBuffer: 500
+      }),
+      selectAction: focusAreaSelectAction
+    },
+    boundary_overlay: {
+      layer: new ol.layer.VectorTile({
+        name: app.mapbox.layers.boundary.name,
+        title: app.mapbox.layers.boundary.name,
+        unitType: 'Boundary',
+        id: app.mapbox.layers.boundary.map_layer_id,
+        source: new ol.source.VectorTile({
+          attributions: '',
+          format: new ol.format.MVT({
+            featureClass: ol.Feature
+          }),
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.boundary.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        }),
+        style: app.map.styles.FocusArea,
+        visible: false,
+        renderBuffer: 500
+      }),
+      selectAction: focusAreaSelectAction
+    },
+    region_overlay: {
+      layer: new ol.layer.VectorTile({
+        name: app.mapbox.layers.region.name,
+        title: app.mapbox.layers.region.name,
+        unitType: 'Region',
+        id: app.mapbox.layers.region.map_layer_id,
+        source: new ol.source.VectorTile({
+          attributions: '',
+          format: new ol.format.MVT({
+            featureClass: ol.Feature
+          }),
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.region.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        }),
+        style: app.map.styles.FocusArea,
+        visible: false,
+        renderBuffer: 500
+      }),
+      selectAction: focusAreaSelectAction
+    },
+    coho_overlay: {
+      layer: new ol.layer.VectorTile({
+        name: app.mapbox.layers.coho.name,
+        title: app.mapbox.layers.coho.name,
+        unitType: 'Coho',
+        id: app.mapbox.layers.coho.map_layer_id,
+        source: new ol.source.VectorTile({
+          attributions: 'NOAA Fisheries, National Marine Fisheries Service, U.S. Department of Commerce, National Atmospheric and Oceanic Administration',
+          format: new ol.format.MVT({
+            featureClass: ol.Feature
+          }),
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.coho.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        }),
+        style: app.map.styles.FocusArea,
+        visible: false,
+        renderBuffer: 500
+      }),
+      selectAction: focusAreaSelectAction
+    },
+    chinook_overlay: {
+      layer: new ol.layer.VectorTile({
+        name: app.mapbox.layers.chinook.name,
+        title: app.mapbox.layers.chinook.name,
+        unitType: 'Chinook',
+        id: app.mapbox.layers.chinook.map_layer_id,
+        source: new ol.source.VectorTile({
+          attributions: 'NOAA Fisheries, National Marine Fisheries Service, U.S. Department of Commerce, National Atmospheric and Oceanic Administration',
+          format: new ol.format.MVT({
+            featureClass: ol.Feature
+          }),
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.chinook.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        }),
+        style: app.map.styles.FocusArea,
+        visible: false,
+        renderBuffer: 500
+      }),
+      selectAction: focusAreaSelectAction
+    },
+    chinook_spring_overlay: {
+      layer: new ol.layer.VectorTile({
+        name: app.mapbox.layers.chinook_spring.name,
+        title: app.mapbox.layers.chinook_spring.name,
+        unitType: 'Chinook_Spring',
+        id: app.mapbox.layers.chinook_spring.map_layer_id,
+        source: new ol.source.VectorTile({
+          attributions: 'NOAA Fisheries, National Marine Fisheries Service, U.S. Department of Commerce, National Atmospheric and Oceanic Administration',
+          format: new ol.format.MVT({
+            featureClass: ol.Feature
+          }),
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.chinook_spring.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        }),
+        style: app.map.styles.FocusArea,
+        visible: false,
+        renderBuffer: 500
+      }),
+      selectAction: focusAreaSelectAction
+    },
+    chinook_fall_overlay: {
+      layer: new ol.layer.VectorTile({
+        name: app.mapbox.layers.chinook_fall.name,
+        title: app.mapbox.layers.chinook_fall.name,
+        unitType: 'Chinook_Fall',
+        id: app.mapbox.layers.chinook_fall.map_layer_id,
+        source: new ol.source.VectorTile({
+          attributions: 'NOAA Fisheries, National Marine Fisheries Service, U.S. Department of Commerce, National Atmospheric and Oceanic Administration',
+          format: new ol.format.MVT({
+            featureClass: ol.Feature
+          }),
+          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.chinook_fall.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        }),
+        style: app.map.styles.FocusArea,
+        visible: false,
+        renderBuffer: 500
+      }),
+      selectAction: focusAreaSelectAction
+    },
+    steelhead_overlay: {
       layer: new ol.layer.VectorTile({
         name: app.mapbox.layers.steelhead.name,
         title: app.mapbox.layers.steelhead.name,

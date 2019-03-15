@@ -7,6 +7,7 @@ app.map.layerSwitcher = new ol.control.LayerSwitcher({
 });
 
 app.map.layerSwitcher.overlays = {};
+app.map.layerSwitcher.selections = {};
 
 app.map.toggleMapControls = function(show) {
     if (show) {
@@ -18,18 +19,18 @@ app.map.toggleMapControls = function(show) {
 
 app.map.enableLayer = function(layerName) {
   app.map.layer[layerName].layer.setVisible(true);
-  $('#'+ app.map.layerSwitcher.overlays[layerName].checkboxId).prop('checked', true);
+  $('#'+ app.map.layerSwitcher.selections[layerName].checkboxId).prop('checked', true);
 };
 
 app.map.disableLayer = function(layerName) {
   app.map.layer[layerName].layer.setVisible(false);
-  if (app.map.layerSwitcher.overlays[layerName]) {
-    $('#'+ app.map.layerSwitcher.overlays[layerName].checkboxId).prop('checked', false);
+  if (app.map.layerSwitcher.selections[layerName]) {
+    $('#'+ app.map.layerSwitcher.selections[layerName].checkboxId).prop('checked', false);
   }
 };
 
 app.map.toggleLayer = function(layerName) {
-  if ($('#'+ app.map.layerSwitcher.overlays[layerName].checkboxId).prop('checked')){
+  if ($('#'+ app.map.layerSwitcher.selections[layerName].checkboxId).prop('checked')){
     app.map.disableLayer(layerName);
   } else {
     app.map.enableLayer(layerName);

@@ -26,6 +26,10 @@ mapSettings.getInitMap = function() {
         new ol.layer.Group({
           title: 'Overlays',
           layers: []
+        }),
+        new ol.layer.Group({
+          title: 'Selection',
+          layers: []
         })
       ],
       view: new ol.View({
