@@ -49,17 +49,6 @@ app.map.addLayer(app.map.layer.focusArea.layer);
 
 app.map.addControl(app.map.layerSwitcher);
 
-// overlays = $(".layer-switcher .panel .group label:contains('Overlays')").parent().children('ul').children('.layer');
-// overlays.each(function() {
-//   label = this.children[1].innerText;
-//   id = this.children[0].id;
-//   lyr_obj = Object.values(app.map.layer).filter(function( obj ) { return obj.layer.get('title') == label;})[0];
-//   app.map.layerSwitcher.overlays[lyr_obj.layer.get('id')] = {
-//     checkboxId: id,
-//     layer: lyr_obj.layer
-//   };
-// });
-
 selections = $(".layer-switcher .panel .group label:contains('Selection')").parent().children('ul').children('.layer');
 selections.each(function() {
   label = this.children[1].innerText;
