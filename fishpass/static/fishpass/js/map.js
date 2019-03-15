@@ -9,20 +9,27 @@ for (var i=0; i < app.map.getLayers().getArray().length; i++) {
 }
 
 if (app.map.overlays) {
-  app.map.overlays.getLayers().push(app.map.layer.huc02_overlay.layer);
-  app.map.overlays.getLayers().push(app.map.layer.huc04_overlay.layer);
-  app.map.overlays.getLayers().push(app.map.layer.huc06_overlay.layer);
-  app.map.overlays.getLayers().push(app.map.layer.huc08_overlay.layer);
-  app.map.overlays.getLayers().push(app.map.layer.huc12_overlay.layer);
-  app.map.overlays.getLayers().push(app.map.layer.huc10_overlay.layer);
+  // app.map.overlays.getLayers().push(app.map.layer.assessment_database.layer);
+  app.map.overlays.getLayers().push(app.map.layer.protected_areas.layer);
+  app.map.overlays.getLayers().push(app.map.layer.historical_summer_stream_temps.layer);
+  app.map.overlays.getLayers().push(app.map.layer.nwst_2040_summer_stream_temps.layer);
+  app.map.overlays.getLayers().push(app.map.layer.nwst_2080_summer_stream_temps.layer);
+  app.map.overlays.getLayers().push(app.map.layer.baseline_habitat.layer);
+  app.map.overlays.getLayers().push(app.map.layer.upstream_potential.layer);
+  app.map.overlays.getLayers().push(app.map.layer.steelhead_overlay.layer);
+  app.map.overlays.getLayers().push(app.map.layer.chinook_fall_overlay.layer);
+  app.map.overlays.getLayers().push(app.map.layer.chinook_spring_overlay.layer);
+  app.map.overlays.getLayers().push(app.map.layer.chinook_overlay.layer);
+  app.map.overlays.getLayers().push(app.map.layer.coho_overlay.layer);
+  app.map.overlays.getLayers().push(app.map.layer.region_overlay.layer);
   app.map.overlays.getLayers().push(app.map.layer.county_overlay.layer);
   app.map.overlays.getLayers().push(app.map.layer.boundary_overlay.layer);
-  app.map.overlays.getLayers().push(app.map.layer.region_overlay.layer);
-  app.map.overlays.getLayers().push(app.map.layer.coho_overlay.layer);
-  app.map.overlays.getLayers().push(app.map.layer.chinook_overlay.layer);
-  app.map.overlays.getLayers().push(app.map.layer.chinook_spring_overlay.layer);
-  app.map.overlays.getLayers().push(app.map.layer.chinook_fall_overlay.layer);
-  app.map.overlays.getLayers().push(app.map.layer.steelhead_overlay.layer);
+  app.map.overlays.getLayers().push(app.map.layer.huc12_overlay.layer);
+  app.map.overlays.getLayers().push(app.map.layer.huc10_overlay.layer);
+  app.map.overlays.getLayers().push(app.map.layer.huc08_overlay.layer);
+  app.map.overlays.getLayers().push(app.map.layer.huc06_overlay.layer);
+  app.map.overlays.getLayers().push(app.map.layer.huc04_overlay.layer);
+  app.map.overlays.getLayers().push(app.map.layer.huc02_overlay.layer);
 }
 
 if (app.map.selections) {

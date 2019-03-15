@@ -694,6 +694,100 @@ app.map.layer = {
       selectAction: focusAreaSelectAction
     },
 
+    upstream_potential: {
+      layer: new ol.layer.Tile({
+        name: 'Upstream',
+        title: 'Upstream Potential Habitat',
+        id: 'upstream',
+        source: new ol.source.TileArcGISRest({
+          url: 'https://maps.psmfc.org/server/rest/services/CFPF/CFPF_FISHPass/MapServer',
+          params: {'layers': 'show:3'},
+          attributions: 'PSMFC'
+        }),
+        visible: false
+      })
+    },
+    baseline_habitat: {
+      layer: new ol.layer.Tile({
+        name: 'Basline Habitat',
+        title: 'Baseline Fish Habitat',
+        id: 'baseline',
+        source: new ol.source.TileArcGISRest({
+          url: 'https://maps.psmfc.org/server/rest/services/CFPF/CFPF_FISHPass/MapServer',
+          params: {'layers': 'show:2'},
+          attributions: 'PSMFC'
+        }),
+        visible: false
+      })
+    },
+    // assessment_database: {
+    //   layer: new ol.layer.Tile({
+    //     name: 'Assessment Database',
+    //     title: 'Fish Passage Assessment Database',
+    //     id: 'assessment_DB',
+    //     source: new ol.source.TileArcGISRest({
+    //       url: 'https://services2.arcgis.com/Uq9r85Potqm3MfRV/arcgis/rest/services/biosds69_fmu/FeatureServer',
+    //       params: {'layers': 'show:0'},
+    //       attributions: 'PSMFC'
+    //     }),
+    //     visible: false
+    //   })
+    // },
+    protected_areas: {
+      layer: new ol.layer.Tile({
+        name: 'Protected Areas',
+        title: 'Protected Areas',
+        id: 'protected',
+        source: new ol.source.TileArcGISRest({
+          url: 'https://egis.fire.ca.gov/arcgis/rest/services/FRAP/ownership/MapServer',
+          params: {'layers': 'show:0'},
+          attributions: 'CAL FIRE'
+        }),
+        visible: false
+      })
+    },
+    nwst_2040_summer_stream_temps: {
+      layer: new ol.layer.Tile({
+        name: '2040 summer stream temps',
+        title: 'NorWeST 2040 summer stream temps. ',
+        id: '2040_summer_stream_temps',
+        source: new ol.source.TileArcGISRest({
+          url: 'https://apps.fs.usda.gov/fsgisx02/rest/services/rmrs/RMRSAWAE_NorWeSTPredictedStreamTemperatures_2040_01/MapServer',
+          params: {'layers': 'show:0'},
+          attributions: 'Rocky Mountain Research Station – Air, Water, & Aquatic Environments'
+        }),
+        visible: false
+      })
+    },
+    nwst_2080_summer_stream_temps: {
+      layer: new ol.layer.Tile({
+        name: '2080 summer stream temps',
+        title: 'NorWeST 2080 summer stream temps',
+        id: '2080_summer_stream_temps',
+        source: new ol.source.TileArcGISRest({
+          url: 'https://apps.fs.usda.gov/fsgisx02/rest/services/rmrs/RMRSAWAE_NorWeSTPredictedStreamTemperatures_2080_01/MapServer',
+          params: {'layers': 'show:0'},
+          attributions: 'Rocky Mountain Research Station – Air, Water, & Aquatic Environments'
+        }),
+        visible: false
+      })
+    },
+    historical_summer_stream_temps: {
+      layer: new ol.layer.Tile({
+        name: 'Historical summer stream temps',
+        title: 'NorWeST Historical summer stream temps',
+        id: 'historical_summer_stream_temps',
+        source: new ol.source.TileArcGISRest({
+          url: 'https://apps.fs.usda.gov/fsgisx02/rest/services/rmrs/RMRSAWAE_NorWeSTPredictedStreamTemperatures_MeanAugust_01/MapServer',
+          params: {'layers': 'show:0'},
+          attributions: 'Rocky Mountain Research Station – Air, Water, & Aquatic Environments'
+        }),
+        visible: false
+      })
+    },
+
+
+
     // openlayers layer for barriers
     barriers: {
       layer: new ol.layer.Vector({
