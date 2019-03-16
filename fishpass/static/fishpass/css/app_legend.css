@@ -17,10 +17,12 @@
     font-size: 1em;
 }
 
+.legend-title,
 .legend-collapse-button {
   cursor: pointer;
 }
 
+.legend-title:hover,
 .legend-collapse-button:hover {
   color: #9C7B54;
 }

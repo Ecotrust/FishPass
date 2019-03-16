@@ -704,7 +704,13 @@ app.map.layer = {
           params: {'layers': 'show:3'},
           attributions: 'PSMFC'
         }),
-        visible: false
+        visible: false,
+        legend: {
+          type: 'esrijson',
+          url: 'https://maps.psmfc.org/server/rest/services/CFPF/CFPF_FISHPass/MapServer/',
+          lyr_id: 3,
+          title: 'Upstream Potential Habitat'
+        }
       })
     },
     baseline_habitat: {
