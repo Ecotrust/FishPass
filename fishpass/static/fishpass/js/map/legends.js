@@ -1,50 +1,50 @@
-insertLegend(layer, html) {
-  legend_title_div = '<div data-toggle="collapse" class="' + layer.id +
-    '-legend-collapse-button legend-title" data-target="#' + layer.id +
-    '-legend-collapse">' + layer.legend.title + '</div>';
-  legend.html_container = '<div class="container" id="' + layer.id +
-    '-legend-collapse" class="collapse show">' + html +
-    '</div>'/
+insertLegend = function(layer, html) {
+  legend_title_div = '<div data-toggle="collapse" class="' + layer.get('id') +
+    '-legend-collapse-button legend-title" data-target="#' + layer.get('id') +
+    '-legend-collapse" id="' + layer.get('id') + '-legend-header">' +
+    layer.get('legend').title + '</div>';
+  legend_html_container = '<div class="container" id="' + layer.get('id') +
+    '-legend-collapse" class="collapse">' + html +
+    '</div>';
   $("#app-legend").append(legend_title_div);
   $("#app-legend").append(legend_html_container);
+};
+
+removeLegend = function(layerId) {
+  $('#' + layerId + '-legend-header').remove();
+  $('#' + layerId + '-legend-collapse').remove();
 }
 
 // Yanked and modified from MARCO.
 getArcGISJSONLegend = function(layer) {
-  url = layer.legend.url + 'legend?f=json';
+  url = layer.get('legend').url + 'legend?f=json';
   $.ajax({
       dataType: "json",
       url: url,
       type: 'GET',
       success: function(data) {
-          html = {};
+          html = "";
           if (data['layers']) {
               $.each(data['layers'], function(i, layerobj) {
-                  if (parseInt(layerobj['layerId'], 10) === parseInt(layer.legend.lyr_id, 10)) {
-                      html.legend = {'elements': []};
+                  if (parseInt(layerobj['layerId'], 10) === parseInt(layer.get('legend').lyr_id, 10)) {
                       $.each(layerobj['legend'], function(j, legendobj) {
-                          var swatchURL = layer.legend.url + layer.legend.lyr_id +'/images/'+legendobj['url']),
+                          var swatchURL = layer.get('legend').url + layer.get('legend').lyr_id +'/images/'+legendobj['url'],
                               label = legendobj['label'];
                           if (label === "") {
                               label = layerobj['layerName'];
                           }
-                          html.legend['elements'].push({'swatch': swatchURL, 'label': label});
-                          //console.log(self.legend);
+                          html += '<div class="row"> \n' +
+'                                    <div class="col-3">\n' +
+'                                      <p><img class="legend-barrier" src="' + swatchURL + '"></p>\n' +
+'                                    </div> <!-- column 1 -->\n' +
+'                                    <div class="col-9">\n' +
+'                                      <p>' + label + '</p>\n' +
+'                                  </div> <!-- column 2 -->';
                       });
                   }
               });
-              insert_legend(layer, html);
-          } else {
-              //debugger;
+              insertLegend(layer, html);
           }
       }
   });
-}
-
-app.map.showLegend = function(layer) {
-  if (layer.hasOwnProperty('legend')) {
-    if (layer.legend.type == 'esrijson') {
-      getArcGISJSONLegend(layer);
-    }
-  }
 }

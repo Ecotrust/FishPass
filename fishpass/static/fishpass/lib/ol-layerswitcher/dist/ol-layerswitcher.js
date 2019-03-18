@@ -286,7 +286,16 @@ var LayerSwitcher = function (_Control) {
                     }
                 });
             }
-            app.map.showLegend(lyr);
+            if (lyr.get('legend')) {
+              if (visible) {
+                if (lyr.get('legend').type == 'esrijson') {
+                  getArcGISJSONLegend(lyr);
+                }
+
+              } else {    // hide layer
+                removeLegend(lyr.get('id'));
+              }
+            }
         }
 
         /**
