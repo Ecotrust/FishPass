@@ -1,5 +1,7 @@
 <!-- override visualize nav.html -->
 {% load static %}
+{% load flatpages %}
+{% get_flatpages as flatpages %}
 <nav class="navbar navbar-light justify-content-center fixed-top nav">
   <div class="container">
     <div class="username-wrap ml-auto">
@@ -38,6 +40,9 @@
                 <a href="{% url 'account:login' %}" class="btn btn-link account-action">Register</a>
             {% endif %}
         {% endif %}
+        {% for page in flatpages %}
+            <a class="dropdown-item list-group-item list-group-item-action" href="/pages{{ page.url }}">{{ page.title }}</a>
+        {% endfor %}
       </div>
     </div>
   </div>
