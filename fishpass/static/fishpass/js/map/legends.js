@@ -3,11 +3,11 @@ insertLegend = function(layer, html) {
     '-legend-collapse-button legend-title" data-target="#' + layer.get('id') +
     '-legend-collapse" id="' + layer.get('id') + '-legend-header">' +
     layer.get('legend').title + '</div>';
-  legend_html_container = '<div class="container" id="' + layer.get('id') +
+  legend_html_container = '<div class="container collapse" id="' + layer.get('id') +
     '-legend-collapse" class="collapse">' + html +
     '</div>';
-  $("#app-legend").append(legend_title_div);
-  $("#app-legend").append(legend_html_container);
+  $("#legend-collapse").append(legend_title_div);
+  $("#legend-collapse").append(legend_html_container);
 };
 
 removeLegend = function(layerId) {
@@ -39,7 +39,8 @@ getArcGISJSONLegend = function(layer) {
 '                                    </div> <!-- column 1 -->\n' +
 '                                    <div class="col-9">\n' +
 '                                      <p>' + label + '</p>\n' +
-'                                  </div> <!-- column 2 -->';
+'                                    </div> <!-- column 2 -->\n' +
+'                                  </div>';
                       });
                   }
               });

@@ -723,7 +723,13 @@ app.map.layer = {
           params: {'layers': 'show:2'},
           attributions: 'PSMFC'
         }),
-        visible: false
+        visible: false,
+        legend: {
+          type: 'esrijson',
+          url: 'https://maps.psmfc.org/server/rest/services/CFPF/CFPF_FISHPass/MapServer/',
+          lyr_id: 2,
+          title: 'Baseline Fish Habitat'
+        }
       })
     },
     // assessment_database: {
@@ -749,46 +755,70 @@ app.map.layer = {
           params: {'layers': 'show:0'},
           attributions: 'CAL FIRE'
         }),
-        visible: false
+        visible: false,
+        legend: {
+          type: 'esrijson',
+          url: 'https://egis.fire.ca.gov/arcgis/rest/services/FRAP/ownership/MapServer/',
+          lyr_id: 0,
+          title: 'Protected Areas'
+        }
       })
     },
     nwst_2040_summer_stream_temps: {
       layer: new ol.layer.Tile({
-        name: '2040 summer stream temps',
-        title: 'NorWeST 2040 summer stream temps. ',
-        id: '2040_summer_stream_temps',
+        name: '2040 Summer Stream Temps',
+        title: 'NorWeST 2040 Summer Stream Temps',
+        id: 'summer_stream_temps_2040',
         source: new ol.source.TileArcGISRest({
           url: 'https://apps.fs.usda.gov/fsgisx02/rest/services/rmrs/RMRSAWAE_NorWeSTPredictedStreamTemperatures_2040_01/MapServer',
           params: {'layers': 'show:0'},
           attributions: 'Rocky Mountain Research Station – Air, Water, & Aquatic Environments'
         }),
-        visible: false
+        visible: false,
+        legend: {
+          type: 'esrijson',
+          url: 'https://apps.fs.usda.gov/fsgisx02/rest/services/rmrs/RMRSAWAE_NorWeSTPredictedStreamTemperatures_2040_01/MapServer/',
+          lyr_id: 0,
+          title: '2040 Summer Stream Temps'
+        }
       })
     },
     nwst_2080_summer_stream_temps: {
       layer: new ol.layer.Tile({
-        name: '2080 summer stream temps',
-        title: 'NorWeST 2080 summer stream temps',
-        id: '2080_summer_stream_temps',
+        name: '2080 Summer Stream Temps',
+        title: 'NorWeST 2080 Summer Stream Temps',
+        id: 'summer_stream_temps_2080',
         source: new ol.source.TileArcGISRest({
           url: 'https://apps.fs.usda.gov/fsgisx02/rest/services/rmrs/RMRSAWAE_NorWeSTPredictedStreamTemperatures_2080_01/MapServer',
           params: {'layers': 'show:0'},
           attributions: 'Rocky Mountain Research Station – Air, Water, & Aquatic Environments'
         }),
-        visible: false
+        visible: false,
+        legend: {
+          type: 'esrijson',
+          url: 'https://apps.fs.usda.gov/fsgisx02/rest/services/rmrs/RMRSAWAE_NorWeSTPredictedStreamTemperatures_2080_01/MapServer/',
+          lyr_id: 0,
+          title: '2080 Summer Stream Temps'
+        }
       })
     },
     historical_summer_stream_temps: {
       layer: new ol.layer.Tile({
-        name: 'Historical summer stream temps',
-        title: 'NorWeST Historical summer stream temps',
-        id: 'historical_summer_stream_temps',
+        name: 'Historical Summer Stream Temps',
+        title: 'NorWeST Historical Summer Stream Temps',
+        id: 'summer_stream_temps_historical',
         source: new ol.source.TileArcGISRest({
           url: 'https://apps.fs.usda.gov/fsgisx02/rest/services/rmrs/RMRSAWAE_NorWeSTPredictedStreamTemperatures_MeanAugust_01/MapServer',
           params: {'layers': 'show:0'},
           attributions: 'Rocky Mountain Research Station – Air, Water, & Aquatic Environments'
         }),
-        visible: false
+        visible: false,
+        legend: {
+          type: 'esrijson',
+          url: 'https://apps.fs.usda.gov/fsgisx02/rest/services/rmrs/RMRSAWAE_NorWeSTPredictedStreamTemperatures_MeanAugust_01/MapServer/',
+          lyr_id: 0,
+          title: 'Historical Summer Stream Temps'
+        }
       })
     },
 
