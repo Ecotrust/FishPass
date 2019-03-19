@@ -89,14 +89,35 @@ Panel
   background: #CCECAC;
   font-size: .875em;
   flex: 1;
+  min-width: 17vw;
+  max-width: 20vw;
+  white-space: unset;
+  overflow: hidden;
 }
-  .barrier-default-btn-wrap .btn-group .btn:hover {
-    background: #E6F1DB;
-  }
+
+.barrier-default-btn-wrap .btn-group .btn:hover {
+  background: #E6F1DB;
+}
 
 @media (min-width: 900px) {
   .barrier-default-btn-wrap .btn-group .btn {
     font-size: .9375em;
+  }
+}
+
+.block-left-nav-status-button,
+.block-left-nav-type-button {
+  max-width: 15vw;
+}
+
+@media (min-width: 1024px) {
+  .block-left-nav-status-button,
+  .block-left-nav-type-button {
+    max-width: 13vw;
+  }
+  .barrier-default-btn-wrap .btn-group .btn {
+    min-width: 15vw;
+    max-width: 15vw;
   }
 }
 

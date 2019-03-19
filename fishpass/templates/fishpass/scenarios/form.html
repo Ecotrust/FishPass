@@ -1,10 +1,16 @@
 {% block form_block %}
+{% load flatblocks %}
 <div class="featurepanel">
 
   <div class="barrier-default-btn-wrap">
+
     <div class="btn-group" role="group" aria-label="Barrier Defaults">
-      <button type="button" class="btn btn-primary" onclick="app.initProjectSpecificBarrierStatus()" id="open-barrier-status-form">Set Barrier Status</button>
-      <button type="button" class="btn btn-primary" onclick="app.initProjectSpecificBarrierType()" id="open-barrier-types-form">Set Barrier Types</button>
+      <button type="button" class="btn btn-primary col" onclick="app.initProjectSpecificBarrierStatus()" id="open-barrier-status-form">
+          {% flatblock "left-nav-status-button" evaluated=True %}
+      </button>
+      <button type="button" class="btn btn-primary col" onclick="app.initProjectSpecificBarrierType()" id="open-barrier-types-form">
+          {% flatblock "left-nav-type-button" evaluated=True %}
+      </button>
     </div>
   </div>
 
@@ -54,6 +60,13 @@
         </div>
         <!-- <span class="step-text"><i>Step {{ forloop.counter }} of {{ form.get_steps|length|add:"1" }} </i></span> -->
         <p class="instructions">{{ step.instructions }}</p>
+        {% if forloop.counter == 1 %}
+          {% flatblock "step-1-preform-instructions" evaluated=True %}
+        {% elif forloop.counter == 2 %}
+          {% flatblock "step-2-preform-instructions" evaluated=True %}
+        {% elif forloop.counter == 3 %}
+          {% flatblock "step-3-preform-instructions" evaluated=True %}
+        {% endif %}
         <div id="step{{ forloop.counter }}_inputs">
           <ul class="parameters">
             {% for field, field_min, field_max, field_input, field_checkbox in step.fields %}
@@ -263,7 +276,15 @@
     </li>
     {% endfor %}
   </ul>
-</div></div>
+</div>
+{% if forloop.counter == 1 %}
+  {% flatblock "step-1-postform-instructions" evaluated=True %}
+{% elif forloop.counter == 2 %}
+  {% flatblock "step-2-postform-instructions" evaluated=True %}
+{% elif forloop.counter == 3 %}
+  {% flatblock "step-3-postform-instructions" evaluated=True %}
+{% endif %}
+</div>
 {% endfor %}
 
 <div id="step{{ form.get_steps|length|add:"1" }}" class="step">

@@ -27,6 +27,78 @@
   }
 },
 {
+  "model": "flatblocks.flatblock",
+  "pk": 4,
+  "fields": {
+    "slug": "left-nav-status-button",
+    "header": "",
+    "content": "Set Pre-mitigation Passability"
+  }
+},
+{
+  "model": "flatblocks.flatblock",
+  "pk": 5,
+  "fields": {
+    "slug": "left-nav-type-button",
+    "header": "",
+    "content": "Set Barrier Mitigation Cost"
+  }
+},
+{
+  "model": "flatblocks.flatblock",
+  "pk": 7,
+  "fields": {
+    "slug": "step-1-preform-instructions",
+    "header": "",
+    "content": ""
+  }
+},
+{
+  "model": "flatblocks.flatblock",
+  "pk": 8,
+  "fields": {
+    "slug": "step-2-preform-instructions",
+    "header": "",
+    "content": ""
+  }
+},
+{
+  "model": "flatblocks.flatblock",
+  "pk": 9,
+  "fields": {
+    "slug": "step-3-preform-instructions",
+    "header": "",
+    "content": ""
+  }
+},
+{
+  "model": "flatblocks.flatblock",
+  "pk": 12,
+  "fields": {
+    "slug": "step-3-postform-instructions",
+    "header": "",
+    "content": ""
+  }
+},
+{
+  "model": "flatblocks.flatblock",
+  "pk": 13,
+  "fields": {
+    "slug": "step-2-postform-instructions",
+    "header": "",
+    "content": ""
+  }
+},
+{
+  "model": "flatblocks.flatblock",
+  "pk": 14,
+  "fields": {
+    "slug": "step-1-postform-instructions",
+    "header": "",
+    "content": ""
+  }
+},
+{
   "model": "flatpages.flatpage",
   "pk": 1,
   "fields": {
