@@ -2,6 +2,7 @@
 <!-- "fishpass/base.html" overrides the files in visualize -->
 {% extends "fishpass/base.html" %}
 {% load static %}
+{% load flatblocks %}
 
 {% block site_style %}
   {{ block.super }}
@@ -13,17 +14,23 @@
     <div class="container">
       <div class="row">
         <div class="col">
-          <h1>Welcome!</h1>
+          <h1>
+              {% flatblock "homepage-welcome" evaluated=True %}
+          </h1>
         </div>
       </div>
       <div class="row">
         <div class="col col-md-8">
-          <h2>Fish Pass is a tool designed to help refine and optimize fish barrier removal in accordance with your chosen goals.</h2>
+          <h2>
+              {% flatblock "homepage-header" evaluated=True %}
+          </h2>
         </div>
       </div>
       <div class="row">
         <div class="col offset-md-2 col-md-8">
-          <p class="bl">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          <p class="bl">
+            {% flatblock "homepage-paragraph" evaluated=True %}
+          </p>
         </div>
       </div>
       <div class="row">

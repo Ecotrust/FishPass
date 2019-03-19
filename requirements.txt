@@ -2,3 +2,4 @@ xlrd
 django-ckeditor
 celery
 django-celery-results
+flatblocks

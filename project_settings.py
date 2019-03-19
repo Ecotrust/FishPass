@@ -200,6 +200,7 @@ INSTALLED_APPS = [
     'scenarios',
     ### END INSERTED INSTALLED APPS ###
     'ckeditor',
+    'flatblocks',
 ]
 
 CELERY_RESULT_BACKEND = 'django-db'
