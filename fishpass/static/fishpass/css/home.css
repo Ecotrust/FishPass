@@ -24,3 +24,23 @@
     height: 14px;
     margin: 0 12px 3px 0;
 }
+
+.block-homepage-welcome,
+.block-homepage-header,
+.block-homepage-paragraph {
+  /* background-color: rgba(255,255,255,0.3); */
+  background-color: rgba(0,0,0,0.4);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+a {
+  /* color: #217867; */
+  color: #CCECAC;
+  font-weight: bold;
+}
+
+a:hover {
+  border-radius: 0.3rem;
+  padding: 0 0.3rem;
+}

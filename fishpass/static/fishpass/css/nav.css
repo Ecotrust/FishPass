@@ -10,6 +10,7 @@
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.5)
   display: block;
   height: 7vh;
+  min-height: 45px;
   left: 0;
   position: fixed;
   right: 0;

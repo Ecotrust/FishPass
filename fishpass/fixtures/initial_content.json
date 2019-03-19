@@ -5,7 +5,7 @@
   "fields": {
     "slug": "homepage-paragraph",
     "header": "",
-    "content": "Hey! Here's a long paragraph about this site. It lets you do tons of cool stuff like lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    "content": "FISH<i>Pass</i> uses barrier information from the <a href=\"www.calfish.org/pad/\">California Passage Assessment Database</a> (PAD), and performs customized optimization analyses for targeting the removal, repair, or mitigation of diadromous fish passage barriers in California.\r\n<br />\r\nIf you have questions, please contact <a href=\"mailto:info@cafishpassageforum.org\">info@cafishpassageforum.org</a>"
   }
 },
 {
@@ -14,7 +14,7 @@
   "fields": {
     "slug": "homepage-header",
     "header": "",
-    "content": "FISH<i>Pass</i> is a tool designed to help refine and optimize fish barrier removal in accordance with your chosen goals."
+    "content": "This decision support tool, developed by the <a href=\"https://www.cafishpassageforum.org/\" rel=\"nofollow\">California Fish Passage Forum</a>, uses an optimization model designed to help identify the most cost-effective fish passage barriers for remediation."
   }
 },
 {
