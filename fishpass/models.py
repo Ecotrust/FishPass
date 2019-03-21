@@ -695,7 +695,7 @@ class ProjectReportBarrier(models.Model):
                 report_dict['Action'] = 'Treat'
             else:
                 report_dict['Action'] = 'Do not treat'
-            report_dict['Potential Habitat'] = "%s mi" % round(self.potential_habitat(bar_record), 2)
+            report_dict['Potential Habitat (mi)'] = round(self.potential_habitat(bar_record), 2)
             if self.estimated_cost:
                 report_dict['Estimated Cost'] = "$%s" % "{:,}".format(round(self.estimated_cost))
             else:
