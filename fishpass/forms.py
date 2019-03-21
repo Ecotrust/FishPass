@@ -167,9 +167,9 @@ class ProjectForm(ScenarioForm):
         choices=ownership_input_options,
         # widget=forms.CheckboxSelectMultiple(),
         widget=BackwardCompatibleCheckboxSelectMultiple(),
-        initial=initial_ownership,
         label="OwnershipType",
-        help_text="Uncheck any ownership type that you don't wish to consider for mitigation",
+        # help_text="Uncheck any ownership type that you don't wish to consider for mitigation",
+        initial=initial_ownership,
     )
 
     assign_cost = forms.BooleanField(

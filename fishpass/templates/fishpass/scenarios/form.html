@@ -79,10 +79,12 @@
                       <i class="check icon-large icon-check" data-bind="visible: {{ field.html_name }}()"></i>
                       <i class="check icon-large icon-check-empty"></i>
                       <span class="parameter-label" style="margin-left: 5px">{{ field.label }}</span>
+                      {% if field.help_text %}
                       <i class="info-icon icon-info-sign field-tooltip"
                       data-toggle="tooltip"
                       data-original-title="{{ field.help_text }}"
                       data-placement="top"></i>
+                      {% endif %}
                     </label>
                   </div>
               {% endif %} <!-- field -->
