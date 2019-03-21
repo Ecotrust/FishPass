@@ -1,8 +1,28 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'fishpass/css/modal_tooltips.css' %}" />
+
 <form action="#" method="post" id="{{ project_barrier_form_id }}" enctype="multipart/form-data">
   {% csrf_token %}
 
   {% block form_content %}
   <table>
+    {% if HEADERS %}
+      <tr>
+        {% for header in HEADERS %}
+          <th>
+            {{ header.name }}
+            {% if header.tooltip %}
+              <div class="css_tooltip">
+                <i class="info-icon icon-info-sign field-tooltip"></i>
+                <span class="tooltiptext css_tooltip-bottom">
+                  {{ header.tooltip | safe }}
+                </span>
+              </div>
+            {% endif %}
+          </th>
+        {% endfor %}
+      </tr>
+    {% endif %}
     {% for field in project_barrier_form.visible_fields %}
       <tr>
         <th>{{ field.label_tag }}</th>

@@ -448,7 +448,7 @@ class ProjectBarrierForm(forms.ModelForm):
 
     class Meta:
         model = ScenarioBarrier
-        fields = ['project', 'barrier', 'pre_pass', 'post_pass', 'cost', 'action']
+        fields = ['project', 'barrier', 'pre_pass', 'cost', 'post_pass', 'action']
 
 class UploadPADForm(forms.Form):
     file = forms.FileField()

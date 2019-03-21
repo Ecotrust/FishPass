@@ -99,6 +99,24 @@
   }
 },
 {
+  "model": "flatblocks.flatblock",
+  "pk": 15,
+  "fields": {
+    "slug": "barrier-status-help-text",
+    "header": "",
+    "content": "<b>Total:</b> A complete barrier to fish passage for all anadromous species at all life stages at all range of flows.<br />\r\n<br />\r\n<b>Partial:</b> Only a barrier to certain species or life stages.<br />\r\n<br />\r\n<b>Temporal:</b> Only a barrier at certain flows.<br />\r\n<br />\r\n<b>Temporal & Partial:</b> Only a barrier to certain species or life stages and only at certain flows."
+  }
+},
+{
+  "model": "flatblocks.flatblock",
+  "pk": 16,
+  "fields": {
+    "slug": "barrier-passability-help-text",
+    "header": "",
+    "content": "Barrier passability quantifies the degree to which a barrier inhibits the dispersal of fish. Barrier passability is defined as the fraction of fish, in the range 0-1, that are able to pass through, over or around a barrier while migrating upstream."
+  }
+},
+{
   "model": "flatpages.flatpage",
   "pk": 1,
   "fields": {

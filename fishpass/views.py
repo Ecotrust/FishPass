@@ -230,9 +230,28 @@ def project_barrier_status_form(request, project_uid, template=loader.get_templa
                 }
             return JsonResponse(retjson)
         else:
+            from flatblocks.models import FlatBlock
             project_barrier_status_form = ProjectBarrierStatusForm(project=project)
+            try:
+                status_tooltip = FlatBlock.objects.get(slug='barrier-status-help-text').content
+            except Exception as e:
+                status_tooltip = False
+            try:
+                passability_tooltip = FlatBlock.objects.get(slug='barrier-passability-help-text').content
+            except Exception as e:
+                passability_tooltip = False
             context['project_barrier_form'] = project_barrier_status_form
             context['project_barrier_form_id'] = 'project-barrier-status-form'
+            context['HEADERS'] = [
+                {
+                    'name': 'Barrier Status',
+                    'tooltip': status_tooltip,
+                }, {
+                    'name': 'Passability',
+                    'tooltip': passability_tooltip
+                }
+
+            ]
             return HttpResponse(template.render(context, request))
     return None
 

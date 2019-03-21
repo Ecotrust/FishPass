@@ -733,15 +733,15 @@ class ProjectReportBarrier(models.Model):
 # outside of scenario model, between pad and user entry
 class ScenarioBarrier(models.Model):
     ACTION_CHOICES = [
-        ('consider', 'Consider for solution'),
-        ('include', 'Include in solution'),
-        ('exclude', 'Exclude from solution')
+        ('consider', 'Free'),
+        ('include', 'Force-In'),
+        ('exclude', 'Force-Out')
     ]
     project = models.ForeignKey(Project)
     barrier = models.ForeignKey(Barrier)
-    pre_pass = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name="Pre-Passability")
-    post_pass = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name="Post-Passability")
-    cost = models.FloatField(null=True,blank=True,default=None,verbose_name="Estimated cost to mitigate")
+    pre_pass = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name="PrePass")
+    post_pass = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name="PostPass")
+    cost = models.FloatField(null=True,blank=True,default=None,verbose_name="Cost")
     action = models.CharField(max_length= 30, choices=ACTION_CHOICES, default='consider')
 
     class Meta:
