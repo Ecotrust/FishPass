@@ -341,6 +341,12 @@ DS_TREATMENT_CHOICES = [
     ('ignore','Excluded'),
 ]
 
+ACTION_CHOICES = [
+    ('consider', 'Free'),
+    ('include', 'Force-In'),
+    ('exclude', 'Force-Out')
+]
+
 PYTHON_USER_GROUP = 'adm'
 
 MEDIA_ROOT = os.path.realpath(os.path.join(BASE_DIR, '..', 'apps', 'FishPass', 'fishpass', 'media'))

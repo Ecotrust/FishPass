@@ -386,8 +386,8 @@ class Project(Scenario):
     # null=True, blank=True, verbose_name="Target Area")
 
     UNIT_TYPE_CHOICES = []
-    for type in settings.FOCUS_AREA_TYPES.keys():
-        UNIT_TYPE_CHOICES.append((type, type))
+    for unit_type in settings.FOCUS_AREA_TYPES.keys():
+        UNIT_TYPE_CHOICES.append((unit_type, unit_type))
 
     spatial_organization = models.CharField(max_length=50, null=True, blank=True, default=None, choices=UNIT_TYPE_CHOICES)
 
@@ -470,6 +470,32 @@ class Project(Scenario):
             # TODO:?
             'report': {}
         }
+
+    def to_print_dict(self):
+        print_dict = {}
+
+        if isinstance(eval(self.target_area), (list, tuple)):
+            target_area_list = eval(self.target_area)
+        else:
+            target_area_list = [eval(self.target_area)]
+        target_areas_query = FocusArea.objects.filter(pk__in=[int(x) for x in target_area_list])
+        target_areas = ', '.join([str(x) for x in target_areas_query])
+        downstream_treatment = [x[1] for x in settings.DS_TREATMENT_CHOICES if x[0] == self.treat_downstream][0]
+        ownership_types_query = OwnershipType.objects.filter(pk__in=[int(x) for x in eval(self.ownership_input_checkboxes)])
+        ownership_types = ', '.join([str(x) for x in ownership_types_query])
+        if self.assign_cost:
+            cost_type = "Estimated Mitigation Costs in $USD"
+        else:
+            cost_type = "Number of Mitigation Actions"
+
+        print_dict['spatial_focus'] = self.spatial_organization
+        print_dict['target_areas'] = target_areas
+        print_dict['downstream_treatment'] = downstream_treatment
+        print_dict['ownership_input'] = self.ownership_input
+        print_dict['ownership_types'] = ownership_types
+        print_dict['cost_type'] = cost_type
+
+        return print_dict
 
     @property
     def has_report(self):
@@ -732,11 +758,7 @@ class ProjectReportBarrier(models.Model):
 
 # outside of scenario model, between pad and user entry
 class ScenarioBarrier(models.Model):
-    ACTION_CHOICES = [
-        ('consider', 'Free'),
-        ('include', 'Force-In'),
-        ('exclude', 'Force-Out')
-    ]
+    ACTION_CHOICES = settings.ACTION_CHOICES
     project = models.ForeignKey(Project)
     barrier = models.ForeignKey(Barrier)
     pre_pass = models.FloatField(null=True,blank=True,default=None,validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],verbose_name="PrePass")

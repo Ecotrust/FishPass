@@ -95,6 +95,33 @@ button.dt-button {
   border: 0.05rem solid #brown;
 }
 
+#toggle-parameters-show,
+#toggle-passability-overrides-show,
+#toggle-defaults-overrides-show,
+#toggle-barrier-overrides-show {
+  cursor: pointer;
+}
+
+#toggle-parameters-show:hover,
+#toggle-passability-overrides-show:hover,
+#toggle-defaults-overrides-show:hover,
+#toggle-barrier-overrides-show:hover {
+  color: #9C7B54;
+}
+
+.overrides-report {
+  padding: 1rem;
+}
+
+ .report-table th {
+   border-bottom: 1px solid black;
+ }
+
+ .report-table th,
+ .report-table td {
+   padding: 0 0.5rem;
+ }
+
 .map-col {
   pointer-events: none;
 }

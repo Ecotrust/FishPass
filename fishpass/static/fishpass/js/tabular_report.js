@@ -299,5 +299,37 @@ app.report_init = function(geojson, budget) {
     queryBudgetGeoJSON(project_uid, budget);
     // queryAllBarrierReports(project_uid, app.report.barrier_list, budget);
   }
+  $('#toggle-parameters-show').on('click', function(e) {
+    e.preventDefault();
+    if ( $('#parameter-table').is(":visible") ) {
+      $('#parameter-table').hide();
+    } else {
+      $('#parameter-table').show();
+    }
+  });
+  $('#toggle-passability-overrides-show').on('click', function(e) {
+    e.preventDefault();
+    if ( $('#passability-overrides').is(":visible") ) {
+      $('#passability-overrides').hide();
+    } else {
+      $('#passability-overrides').show();
+    }
+  });
+  $('#toggle-defaults-overrides-show').on('click', function(e) {
+    e.preventDefault();
+    if ( $('#defaults-overrides').is(":visible") ) {
+      $('#defaults-overrides').hide();
+    } else {
+      $('#defaults-overrides').show();
+    }
+  });
+  $('#toggle-barrier-overrides-show').on('click', function(e) {
+    e.preventDefault();
+    if ( $('#barrier-overrides').is(":visible") ) {
+      $('#barrier-overrides').hide();
+    } else {
+      $('#barrier-overrides').show();
+    }
+  });
 
 };

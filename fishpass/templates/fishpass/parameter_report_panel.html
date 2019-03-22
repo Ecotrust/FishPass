@@ -1,0 +1,97 @@
+{% load humanize %}
+<div id="report-parameters">
+  <h3 id="toggle-parameters-show">Filter Parameters:</h3>
+  <div id="parameter-table">
+    <table class='report-table'>
+      <tr>
+        <td><b>Spatial Focus:</b></td>
+        <td>{{ report_dict.report.parameters.spatial_focus }}</td>
+      </tr>
+      <tr>
+        <td><b>Target Areas:</b></td>
+        <td>{{ report_dict.report.parameters.target_areas }}</td>
+      </tr>
+      <tr>
+        <td><b>Downstream Treatment:</b></td>
+        <td>{{ report_dict.report.parameters.downstream_treatment }}</td>
+      </tr>
+      {% if report_dict.report.parameters.ownership_input %}
+      <tr>
+        <td><b>Ownership Types:</b></td>
+        <td>{{ report_dict.report.parameters.ownership_types }}</td>
+      </tr>
+      {% endif %}
+      <tr>
+        <td><b>Cost Type:</b></td>
+        <td>{{ report_dict.report.parameters.cost_type }}</td>
+      </tr>
+    </table>
+    {% if report_dict.report.overrides %}
+      <div class="overrides-report">
+
+        {% if report_dict.report.overrides.prepass %}
+          <h4 id="toggle-passability-overrides-show">Pre-Passability Overrides:</h4>
+          <div id="passability-overrides">
+            <table class='report-table'>
+              <tr>
+                <th>Barrier Status</th>
+                <th>Passability</th>
+              </tr>
+              {% for prepass in report_dict.report.overrides.prepass %}
+                <tr>
+                  <td><b>{{ prepass.0 }}</b></td>
+                  <td>{{ prepass.1 }}</td>
+                </tr>
+              {% endfor %}
+            </table>
+          </div>
+        {% endif %} <!-- overrides prepass -->
+
+        {% if report_dict.report.overrides.defaults %}
+          <h4 id="toggle-defaults-overrides-show">Default Cost/Postpass Overrides:</h4>
+          <div id="defaults-overrides">
+            <table class='report-table'>
+              <tr>
+                <th>Barrier Type</th>
+                <th>Mitigation Cost</th>
+                <th>Post-Passability</th>
+              </tr>
+              {% for default in report_dict.report.overrides.defaults %}
+                <tr>
+                  <td><b>{{ default.0 }}</b></td>
+                  <td>{% if default.1 != "None" %}${% endif %}{{ default.1|intcomma }}</td>
+                  <td>{{ default.2 }}</td>
+                </tr>
+              {% endfor %}
+            </table>
+          </div>
+        {% endif %} <!-- defaults -->
+
+        {% if report_dict.report.overrides.barriers %}
+          <h4 id="toggle-barrier-overrides-show">Barrier Overrides:</h4>
+          <div id="barrier-overrides">
+            <table class='report-table'>
+              <tr>
+                <th>Barrier</th>
+                <th>PrePass</th>
+                <th>Cost</th>
+                <th>PostPass</th>
+                <th>Action</th>
+              </tr>
+              {% for default in report_dict.report.overrides.barriers %}
+                <tr>
+                  <td><b>{{ default.0 }}</b></td>
+                  <td>{{ default.1 }}</td>
+                  <td>{% if default.2 != "None" %}${% endif %}{{ default.2|intcomma }}</td>
+                  <td>{{ default.3 }}</td>
+                  <td>{{ default.4 }}</td>
+                </tr>
+              {% endfor %}
+            </table>
+          </div>
+        {% endif %} <!-- barriers -->
+
+      </div>
+    {% endif %} <!-- overrides -->
+  </div>
+</div>
