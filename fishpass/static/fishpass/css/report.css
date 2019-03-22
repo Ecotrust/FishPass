@@ -113,6 +113,10 @@ button.dt-button {
   padding: 1rem;
 }
 
+.report-table {
+  margin-bottom: 0.5rem;
+}
+
  .report-table th {
    border-bottom: 1px solid black;
  }
