@@ -528,15 +528,21 @@ def check_download_report(request):
         }
         return JsonResponse(json)
     else:
-        if int(timer) >= 60:
-            cache_key = "%s_%s_report_task_id" % (project_uid, report_type)
-            celery_task = cache.get(cache_key)
+        cache_key = "%s_%s_report_task_id" % (project_uid, report_type)
+        celery_task = cache.get(cache_key)
 
-            if not celery_task or celery.app.AsyncResult(celery_task).status in ['PENDING', 'SUCCESS', 'FAILURE', 'REVOKED'] :
-                # Do this as a separate process!
-                celery_task = celery.run_view.delay('fishpass', 'generate_report_csv', project_uid, report_type)
-                cache.set(cache_key, celery_task.task_id, 60*60*24*7)
-                # generate_report_csv(project_uid, report_type)
+        if not celery_task or celery.app.AsyncResult(celery_task).status in ['PENDING', 'SUCCESS', 'FAILURE', 'REVOKED'] :
+            if celery_task:
+                celery_status = celery.app.AsyncResult(celery_task).status
+            # If no task exists, the task failed, or we've been waiting for it to start for over a minute...
+            if not celery_task or celery_status in ['FAILURE', 'REVOKED'] or int(timer) >= 60:
+                try:
+                    celery_task = celery.run_view.delay('fishpass', 'generate_report_csv', project_uid, report_type)
+                    cache.set(cache_key, celery_task.task_id, 60*60*24*7)
+                except Exception as e:
+                    generate_report_csv(project_uid, report_type)
+                    # Give the tool up to a full minute to write CSV
+                    cache.set(cache_key, True, 60)
         return JsonResponse({
             'available': False,
             'link': None
