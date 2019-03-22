@@ -407,6 +407,7 @@ class Project(Scenario):
     budget_min = models.IntegerField(null=True,blank=True,default=0,validators=[MinValueValidator(0)])
     budget_max = models.IntegerField(null=True,blank=True,default=100000,validators=[MinValueValidator(0)])
     batch_increment = models.IntegerField(null=True,blank=True,default=10000,validators=[MinValueValidator(1)])
+    date_run = models.DateField(auto_now=True)
 
     objects = ShareableGeoManager()
 
@@ -467,6 +468,7 @@ class Project(Scenario):
             'budget_min': self.budget_min,
             'budget_max': self.budget_max,
             'batch_increment': self.batch_increment,
+            'date_run': self.date_run,
             # TODO:?
             'report': {}
         }

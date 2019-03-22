@@ -390,6 +390,9 @@ def generate_report_csv(project_uid, report_type):
 
     csv_filename = os.path.join(settings.MEDIA_ROOT,'reports','%s%s' % (project_uid, csv_file_suffix))
 
+    if os.path.isfile(csv_filename):
+        os.remove(csv_filename)
+
     # TODO: if assigned costs, cost_unit = '$', else cost_unit = 'count'
     cost_unit = '$'
 
@@ -1304,6 +1307,7 @@ def init_report(request, projid, template=loader.get_template('fishpass/tabularr
             'budget': 'calculating...',
             'ptnl_habitat': 'calculating...',
             'netgain': 'calculating...',
+            'date_run': project.date_run.strftime('%b %d, %Y'),
             'parameters': project.to_print_dict(),
             'overrides': overrides,
         }
