@@ -474,12 +474,15 @@ class Project(Scenario):
     def to_print_dict(self):
         print_dict = {}
 
-        if isinstance(eval(self.target_area), (list, tuple)):
-            target_area_list = eval(self.target_area)
+        if self.target_area:
+            if isinstance(eval(self.target_area), (list, tuple)):
+                target_area_list = eval(self.target_area)
+            else:
+                target_area_list = [eval(self.target_area)]
+            target_areas_query = FocusArea.objects.filter(pk__in=[int(x) for x in target_area_list])
+            target_areas = ', '.join([str(x) for x in target_areas_query])
         else:
-            target_area_list = [eval(self.target_area)]
-        target_areas_query = FocusArea.objects.filter(pk__in=[int(x) for x in target_area_list])
-        target_areas = ', '.join([str(x) for x in target_areas_query])
+            target_areas = "None"
         downstream_treatment = [x[1] for x in settings.DS_TREATMENT_CHOICES if x[0] == self.treat_downstream][0]
         ownership_types_query = OwnershipType.objects.filter(pk__in=[int(x) for x in eval(self.ownership_input_checkboxes)])
         ownership_types = ', '.join([str(x) for x in ownership_types_query])
