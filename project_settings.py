@@ -296,6 +296,26 @@ BARRIER_WATERSHED_NAME_LOOKUP = {
     # 'State': 'huc8_name',
 }
 
+# Used for reporting the most specific identifier for the filtered Focus Areas
+FOCUS_AREA_TYPE_NAME_LOOKUP = {
+    'HUC02': 'unit_id',
+    'HUC04': 'unit_id',
+    'HUC06': 'unit_id',
+    'HUC08': 'unit_id',
+    'HUC10': 'unit_id',
+    'HUC12': 'unit_id',
+    'County': 'description',
+    'Region': 'description',
+    'Boundary': 'description',
+    'Coho': 'description',
+    'Chinook': 'description',
+    'Chinook_Spring': 'description',
+    'Chinook_Fall': 'description',
+    'Steelhead': 'description',
+    'ProtectedAreas': 'description',
+    # 'State': 'description',
+}
+
 # This is only used for importing the PAD. Geometry_DB_SRID is used for import FocusAreas
 IMPORT_SRID = 4326
 

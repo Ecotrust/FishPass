@@ -477,12 +477,13 @@ class Project(Scenario):
         print_dict = {}
 
         if self.target_area:
+            focus_area_id_field = settings.FOCUS_AREA_TYPE_NAME_LOOKUP[self.spatial_organization]
             if isinstance(eval(self.target_area), (list, tuple)):
                 target_area_list = eval(self.target_area)
             else:
                 target_area_list = [eval(self.target_area)]
             target_areas_query = FocusArea.objects.filter(pk__in=[int(x) for x in target_area_list])
-            target_areas = ', '.join([str(x) for x in target_areas_query])
+            target_areas = ', '.join([getattr(x, focus_area_id_field) for x in target_areas_query])
         else:
             target_areas = "None"
         downstream_treatment = [x[1] for x in settings.DS_TREATMENT_CHOICES if x[0] == self.treat_downstream][0]
@@ -509,11 +510,18 @@ class Project(Scenario):
         return False
 
     def save(self, *args, **kwargs):
+        import os
         from fishpass import celery
         from fishpass.views import generate_report_csv
         from django.core.cache import cache
         super(Project, self).save(*args, **kwargs)
         for report_type in ['all', 'filtered']:
+
+            csv_filename = os.path.join(settings.MEDIA_ROOT,'reports','%s_export_%s.csv' % (self.uid, report_type))
+
+            if os.path.isfile(csv_filename):
+                os.remove(csv_filename)
+
             cache_key = "%s_%s_report_task_id" % (self.uid, report_type)
             try:
                 celery_task = celery.run_view.delay('fishpass', 'generate_report_csv', self.uid, report_type)

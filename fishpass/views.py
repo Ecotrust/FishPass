@@ -359,6 +359,37 @@ def project_barrier_form_reset(request, project_uid, barrier_id, context={}):
         request.method = 'GET'
     return project_barrier_form(request, project_uid, barrier_id, context=context)
 
+def get_project_overrides(project):
+    from fishpass.models import ScenarioBarrier, ScenarioBarrierType, ScenarioBarrierStatus
+    overrides = False
+    prepassOverrides_query = ScenarioBarrierStatus.objects.filter(project=project)
+    defaultsOverrides_query = ScenarioBarrierType.objects.filter(project=project)
+    barrierOverrides_query = ScenarioBarrier.objects.filter(project=project)
+    if prepassOverrides_query.count() > 1 or defaultsOverrides_query.count() > 1 or barrierOverrides_query.count() > 1:
+        overrides = {}
+    if prepassOverrides_query.count() > 1:
+        overrides['prepass'] = []
+        for override in prepassOverrides_query.order_by('barrier_status__order'):
+            overrides['prepass'].append( ( override.barrier_status.name, override.default_pre_passability) )
+    if defaultsOverrides_query.count() > 1:
+        overrides['defaults'] = []
+        for override in defaultsOverrides_query.order_by('barrier_type__order'):
+            try:
+                default_cost = int(override.default_cost)
+            except (ValueError, TypeError) as e:
+                default_cost = str(override.default_cost)
+            overrides['defaults'].append( (override.barrier_type.name, default_cost, override.default_post_passability) )
+    if barrierOverrides_query.count() > 1:
+        overrides['barriers'] = []
+        for override in barrierOverrides_query.order_by('barrier__pad_id'):
+            try:
+                cost = int(override.cost)
+            except (ValueError, TypeError) as e:
+                cost = str(override.cost)
+            action = [x[1] for x in settings.ACTION_CHOICES if x[0] == override.action][0]
+            overrides['barriers'].append( (str(override.barrier), override.pre_pass, cost, override.post_pass, action) )
+    return overrides
+
 def generate_report_csv(project_uid, report_type):
     import os
     from fishpass.models import ProjectReport, ProjectReportBarrier, Barrier
@@ -393,20 +424,63 @@ def generate_report_csv(project_uid, report_type):
     if os.path.isfile(csv_filename):
         os.remove(csv_filename)
 
+    parameters = project.to_print_dict()
+    overrides = get_project_overrides(project)
+
     # TODO: if assigned costs, cost_unit = '$', else cost_unit = 'count'
     cost_unit = '$'
+    project_report_items = [
+        ('Report Name:', str(project)),
+        ('Run Date:', project.date_run.strftime('%b %d, %Y')),
+        ('Description:', project.description),
+    ]
 
     if report_list.count() > 1:
         top_index = report_list.count()-1
-        project_report_items = [
+        project_report_items += [
             ('Min Budget (%s):' % cost_unit, report_list[0].budget),
             ('Max Budget (%s):' % cost_unit, report_list[top_index].budget),
             ('Budget Step Size (%s):' % cost_unit, project.batch_increment)
         ]
     else:
-        project_report_items = [
+        project_report_items += [
             ('Budget (%s):' % cost_unit, report_list[0].budget),
         ]
+
+    project_report_items += [
+        ('',),
+        ('Parameters:',),
+        ('', 'Spatial Focus:', parameters['spatial_focus']),
+        ['', 'Target Areas:'] + parameters['target_areas'].split(', '),
+        ('', 'Downstream Treatment:', parameters['downstream_treatment']),
+    ]
+    if parameters['ownership_input']:
+        ownership_types_row = ['', 'Ownership Types:'] + parameters['ownership_types'].split(', ')
+        project_report_items += [ownership_types_row]
+    project_report_items += [
+        ('', 'Cost Type:', parameters['cost_type']),
+        ('',),
+    ]
+
+    if overrides:
+        project_report_items += [('Overrides',),]
+        if 'prepass' in overrides.keys():
+            project_report_items += [('',),]
+            project_report_items += [('', 'Pre-Passability','Barrier Status', 'Passability'),]
+            for item in overrides['prepass']:
+                project_report_items += [('', '', item[0], item[1]),]
+        if 'defaults' in overrides.keys():
+            project_report_items += [('',),]
+            project_report_items += [('', 'Default Cost/Postpass','Barrier Type', 'Mitigation Cost', 'Post-Passability'),]
+            for item in overrides['defaults']:
+                project_report_items += [('', '', item[0], item[1], item[2]),]
+        if 'barriers' in overrides.keys():
+            project_report_items += [('',),]
+            project_report_items += [('', 'Barriers','Barrier', 'PrePass', 'Estimated Cost', 'PostPass', 'Action'),]
+            for item in overrides['barriers']:
+                project_report_items += [('', '', item[0], item[1], item[2], item[3], item[4]),]
+
+        project_report_items += [('',),]
 
     barrier_items_header_dicts = [
         {'label': 'PAD-ID', 'field': 'pad_id', 'project_specific': False},
@@ -485,7 +559,12 @@ def generate_report_csv(project_uid, report_type):
     with open(csv_filename, 'w') as csvfile:
         writer = csv.writer(csvfile)
         for project_report_item in project_report_items:
-            new_row = [project_report_item[0], project_report_item[1]] + [''] * (required_row_length - 2)
+            length_diff = len(project_report_item) - required_row_length
+            if length_diff < 0:
+                row_padding = [''] * required_row_length
+                new_row = list(project_report_item) + row_padding
+            else:
+                new_row = list(project_report_item)
             writer.writerow(new_row)
 
         writer.writerow(blank_row)
@@ -524,14 +603,15 @@ def check_download_report(request):
 
     csv_filename = os.path.join(settings.MEDIA_ROOT,'reports','%s%s' % (project_uid, csv_file_suffix))
 
+    cache_key = "%s_%s_report_task_id" % (project_uid, report_type)
     if os.path.isfile(csv_filename):
+        cache.delete(cache_key)
         json = {
             'available': True,
             'link': '/media/reports/%s%s' % (project_uid, csv_file_suffix)
         }
         return JsonResponse(json)
     else:
-        cache_key = "%s_%s_report_task_id" % (project_uid, report_type)
         celery_task = cache.get(cache_key)
 
         if not celery_task or celery.app.AsyncResult(celery_task).status in ['PENDING', 'SUCCESS', 'FAILURE', 'REVOKED'] :
@@ -1232,7 +1312,7 @@ def init_report(request, projid, template=loader.get_template('fishpass/tabularr
     project = get_feature_by_uid(projid)
     #TODO: support filters on action vs. non-action
     action_only = False
-    overrides = False
+
     if request.method == 'GET':
         try:
             action_only = request.GET['action_only']
@@ -1255,35 +1335,10 @@ def init_report(request, projid, template=loader.get_template('fishpass/tabularr
         else:
             reports = ProjectReport.objects.filter(project=project)
 
-    prepassOverrides_query = ScenarioBarrierStatus.objects.filter(project=project)
-    defaultsOverrides_query = ScenarioBarrierType.objects.filter(project=project)
-    barrierOverrides_query = ScenarioBarrier.objects.filter(project=project)
-    if prepassOverrides_query.count() > 1 or defaultsOverrides_query.count() > 1 or barrierOverrides_query.count() > 1:
-        overrides = {}
-    if prepassOverrides_query.count() > 1:
-        overrides['prepass'] = []
-        for override in prepassOverrides_query.order_by('barrier_status__order'):
-            overrides['prepass'].append( ( override.barrier_status.name, override.default_pre_passability) )
-    if defaultsOverrides_query.count() > 1:
-        overrides['defaults'] = []
-        for override in defaultsOverrides_query.order_by('barrier_type__order'):
-            try:
-                default_cost = int(override.default_cost)
-            except (ValueError, TypeError) as e:
-                default_cost = str(override.default_cost)
-            overrides['defaults'].append( (override.barrier_type.name, default_cost, override.default_post_passability) )
-    if barrierOverrides_query.count() > 1:
-        overrides['barriers'] = []
-        for override in barrierOverrides_query.order_by('barrier__pad_id'):
-            try:
-                cost = int(override.cost)
-            except (ValueError, TypeError) as e:
-                cost = str(override.cost)
-            action = [x[1] for x in settings.ACTION_CHOICES if x[0] == override.action][0]
-            overrides['barriers'].append( (str(override.barrier), override.pre_pass, cost, override.post_pass, action) )
-
+    overrides = get_project_overrides(project)
 
     context['title'] = str(project)
+    context['date_run'] = project.date_run.strftime('%b %d, %Y')
     context['DESCRIPTION'] = project.description
     context['REPORTS'] = reports.order_by('budget')
     context['MAP_TECH'] = settings.MAP_TECH
@@ -1307,7 +1362,6 @@ def init_report(request, projid, template=loader.get_template('fishpass/tabularr
             'budget': 'calculating...',
             'ptnl_habitat': 'calculating...',
             'netgain': 'calculating...',
-            'date_run': project.date_run.strftime('%b %d, %Y'),
             'parameters': project.to_print_dict(),
             'overrides': overrides,
         }
