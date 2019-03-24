@@ -613,6 +613,10 @@ class ProjectReport(models.Model):
         total_barriers = ProjectReportBarrier.objects.filter(project_report=self)
         action_barriers = total_barriers.filter(action=1)
         cost = 0
+        if self.project.assign_cost:
+            budget_unit_character = '$'
+        else:
+            budget_unit_character = None
         for action_barrier in action_barriers:
             bar_dict = action_barrier.to_dict()
             try:
@@ -622,12 +626,18 @@ class ProjectReport(models.Model):
                 pass
 
         if self.project.assign_cost:
-            assign_cost = "$%s" % "{:,}".format(round(self.project.assign_cost))
+            if budget_unit_character:
+                assign_cost = "%s%s" % (budget_unit_character, "{:,}".format(round(self.project.assign_cost)))
+            else:
+                assign_cost = round(self.project.assign_cost)
         else:
             assign_cost = None
 
         if self.budget:
-            budget = "$%s" % "{:,}".format(self.budget)
+            if budget_unit_character:
+                budget = "%s%s" % (budget_unit_character, "{:,}".format(self.budget))
+            else:
+                budget = self.budget
         else:
             budget = None
 
@@ -635,10 +645,15 @@ class ProjectReport(models.Model):
         budget_max = None
         try:
             if self.budget_min:
-                budget_min = "$%s" % "{:,}".format(round(self.project.budget_min))
-
+                if budget_unit_character:
+                    budget_min = "%s%s" % (budget_unit_character, "{:,}".format(round(self.project.budget_min)))
+                else:
+                    budget_min = str(round(self.project.budget_min))
             if self.budget_max:
-                budget_max = "$%s" % "{:,}".format(round(self.project.budget_max))
+                if budget_unit_character:
+                    budget_max = "%s%s" % (budget_unit_character, "{:,}".format(round(self.project.budget_max)))
+                else:
+                    budget_min = str(round(self.project.budget_max))
         except AttributeError as e:
             pass
 
@@ -652,13 +667,16 @@ class ProjectReport(models.Model):
         else:
             netgain = None
 
+        if budget_unit_character:
+            cost = "%s%s" % (budget_unit_character, "{:,}".format(round(cost)))
+
         out_dict = {
             'project': str(self.project),
             'assign_cost': assign_cost,
             'budget_type': self.project.budget_type,
             'barrier_count': total_barriers.count(),
             'action_count': action_barriers.count(),
-            'cost': "$%s" % "{:,}".format(round(cost)),
+            'cost': cost,
             'budget': budget,
             'budget_int': self.budget,
             'budget_min': budget_min,
