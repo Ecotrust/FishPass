@@ -365,6 +365,7 @@ Panel
     max-width: 100%;
 }
 
+.panel .input-group #id_batch_increment,
 .panel .input-group #id_budget_min,
 .panel .input-group #id_budget_max,
 .panel .input-group #id_budget {

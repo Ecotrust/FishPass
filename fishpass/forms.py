@@ -195,7 +195,7 @@ class ProjectForm(ScenarioForm):
         widget=forms.NumberInput(
             attrs={
                 'class': 'currency form-control',
-                # 'pre_text': '$',
+                'pre_text': '$',
             }
         )
     )
@@ -206,7 +206,7 @@ class ProjectForm(ScenarioForm):
         widget=forms.NumberInput(
             attrs={
                 'class': 'currency form-control rangevalue',
-                # 'pre_text': '$',
+                'pre_text': '$',
             }
         )
     )
@@ -217,7 +217,7 @@ class ProjectForm(ScenarioForm):
         widget=forms.NumberInput(
             attrs={
                 'class': 'currency form-control rangevalue',
-                # 'pre_text': '$',
+                'pre_text': '$',
             }
         )
     )
@@ -226,6 +226,12 @@ class ProjectForm(ScenarioForm):
         label='Increment',
         initial=10000,
         min_value=1,            # has to be 1 for scenarios where estimated cost is not considered
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'currency form-control rangevalue',
+                'pre_text': '$',
+            }
+        )
     )
 
     def get_step_0_fields(self):
