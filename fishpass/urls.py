@@ -38,7 +38,7 @@ urlpatterns = [
     url(r'^export_report/(?P<projid>[\w_]+)/$', views.export_report),
     url(r'^get_report_geojson_by_budget/(?P<project_uid>[\w_]+)/(?P<budget>[\w_]+)/$', views.get_report_geojson_by_budget),
     url(r'^get_report_summary_by_budget/(?P<project_uid>[\w_]+)/(?P<budget>[\w_]+)/$', views.get_report_summary_by_budget),
-    url(r'^get_barrier_table_headers/$', views.get_barrier_table_headers),
+    url(r'^get_barrier_table_headers/(?P<project_uid>[\w_]+)/$', views.get_barrier_table_headers),
     url(r'^get_barrier_report/(?P<project_uid>[\w_]+)/(?P<barrier_id>[\w_]+)/(?P<budget>[\w_]+)/$', views.get_barrier_report),
     url(r'^get_barrier_report_list/(?P<project_uid>[\w_]+)/(?P<barrier_id>[\w_]+)/(?P<budget>[\w_]+)/$', views.get_barrier_report_list),
 

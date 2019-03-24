@@ -1439,14 +1439,21 @@ def init_report(request, projid, template=loader.get_template('fishpass/tabularr
 
     return HttpResponse(template.render(context, request))
 
-def get_barrier_table_headers(request):
+def get_barrier_table_headers(request, project_uid=None):
     from fishpass.models import ProjectReportBarrier
     from django.core.exceptions import ObjectDoesNotExist
+    from features.registry import get_feature_by_uid
     found = False
-    for prb in ProjectReportBarrier.objects.all():
+    header_list = []
+    if project_uid:
+        project = get_feature_by_uid(project_uid)
+        barriers = ProjectReportBarrier.objects.filter(project_report__project=project)
+    else:
+        barriers = [ProjectReportBarrier.objects.all()[0]]
+    for prb in barriers:
         try:
-            header_list = [ x for x in prb.to_dict()]
-            break
+            # new_header_list =
+            header_list += [ x for x in prb.to_dict().keys() if x not in header_list]
         except ObjectDoesNotExist:
             pass
 

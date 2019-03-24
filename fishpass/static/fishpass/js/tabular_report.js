@@ -88,7 +88,7 @@ queryAllBarrierReports = function(project_uid, barrier_list, budget) {
 loadBarriers = function(geoJSON, project_uid, budget) {
   loadBarrierLayer(geoJSON);
   $.ajax({
-    url: '/get_barrier_table_headers/',
+    url: '/get_barrier_table_headers/' + project_uid + '/',
     type: 'GET',
     dataType: 'json',
     success: function(response) {
