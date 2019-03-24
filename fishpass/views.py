@@ -430,8 +430,10 @@ def generate_report_csv(project_uid, report_type):
     parameters = project.to_print_dict()
     overrides = get_project_overrides(project)
 
-    # TODO: if assigned costs, cost_unit = '$', else cost_unit = 'count'
-    cost_unit = '$'
+    if project.assign_cost:
+        cost_unit = '$'
+    else:
+        cost_unit = 'Count'
     project_report_items = [
         ('Report Name:', str(project)),
         ('Run Date:', project.date_run.strftime('%b %d, %Y')),
