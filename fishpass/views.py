@@ -572,9 +572,13 @@ def generate_report_csv(project_uid, report_type):
             elif 'value' in field.keys():
                 value = field['value']
             elif 'supplemental_field' in field.keys():
-                overflow = eval(barrier.overflow)
-                if field['supplemental_field'] in overflow.keys():
-                    value = overflow[field['supplemental_field']]
+                try:
+                    overflow = eval(barrier.overflow)
+                    if field['supplemental_field'] in overflow.keys():
+                        value = overflow[field['supplemental_field']]
+                except TypeError as e:
+                    # No Overflow values:
+                    pass
             elif 'function' in field.keys():
                 function = field['function']
                 value = function(barrier)
