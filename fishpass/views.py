@@ -953,8 +953,7 @@ def get_filter_results(request, project_id=None, query=False, notes=[], extra_co
             ownership_boxes.sort()
             ownership_cache_key = "%s_ownership" % '_'.join(ownership_boxes)
 
-
-    if 'assign_cost_input' in request.GET.keys() and request.GET['assign_cost_input'] == 'false':
+    if 'assign_cost' in request.GET.keys() and request.GET['assign_cost'] == 'false':
         min_cost = 1
         max_cost = available_project_count
 

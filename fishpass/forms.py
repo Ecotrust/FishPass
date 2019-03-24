@@ -174,7 +174,8 @@ class ProjectForm(ScenarioForm):
 
     assign_cost = forms.BooleanField(
         label="Use Estimated Costs",
-        help_text="Uncheck to treat the effort of mitigating each barrier as equal",
+        help_text="If \"Use Estimated Costs\" is checked, enter a budget in USD in the Budget box(es) below.\n" +
+            "Otherwise enter the number of barriers in the Budget box(es) below.",
         required = False,
         initial=True
     )
@@ -194,7 +195,7 @@ class ProjectForm(ScenarioForm):
         widget=forms.NumberInput(
             attrs={
                 'class': 'currency form-control',
-                'pre_text': '$',
+                # 'pre_text': '$',
             }
         )
     )
@@ -205,7 +206,7 @@ class ProjectForm(ScenarioForm):
         widget=forms.NumberInput(
             attrs={
                 'class': 'currency form-control rangevalue',
-                'pre_text': '$',
+                # 'pre_text': '$',
             }
         )
     )
@@ -216,7 +217,7 @@ class ProjectForm(ScenarioForm):
         widget=forms.NumberInput(
             attrs={
                 'class': 'currency form-control rangevalue',
-                'pre_text': '$',
+                # 'pre_text': '$',
             }
         )
     )
