@@ -528,7 +528,7 @@ def generate_report_csv(project_uid, report_type):
         {'label': 'Avg Upstream Aug Streamflow', 'field': None, 'project_specific': False, 'supplemental_field': 'Flow_Aug_Upstream_Avg'},
         {'label': 'Avg Upstream Annual Streamflow', 'field': None, 'project_specific': False, 'supplemental_field': 'Flow_Annual_Upstream_Avg'},
         {'label': 'Upstream Mean Aug Stream Temp', 'field': None, 'project_specific': False, 'supplemental_field': 'NorWeST_Mean_S1_93_11'},
-        {'label': 'Upstream Mean Wkly Max Aug Stream Temp', 'field': None, 'project_specific': False, 'supplemental_field': 'NorWeST_Mean_S1_93_11'},
+        {'label': 'Upstream Mean Wkly Max Aug Stream Temp', 'field': None, 'project_specific': False, 'supplemental_field': 'NorWeST_Mean_S37_9311M'},
         {'label': 'Estimated Cost', 'field': 'estimated_cost', 'project_specific': True},
         {'label': 'Road', 'field': 'road', 'project_specific': False},
         {'label': 'Post Mile', 'field': 'post_mile', 'project_specific': False},

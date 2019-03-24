@@ -721,43 +721,91 @@ class ProjectReportBarrier(models.Model):
         cache_key = "project_barrier_%s" % self.pk
         report_dict = cache.get(cache_key)
         if not report_dict:
+
             from collections import OrderedDict
             bar_record = Barrier.objects.get(pk=self.barrier_id)
             try:
-                exec("overflow = %s" % bar_record.overflow)
+                overflow = eval(bar_record.overflow)
             except Exception as e:
                 overflow = {}
+
+            ws_name_field = settings.BARRIER_WATERSHED_NAME_LOOKUP[self.project_report.project.spatial_organization]
+            known_overflow_fields = [
+                ws_name_field,
+                'Slope_Upstream_Avg',
+                'Flow_Aug_Upstream_Avg',
+                'Flow_Annual_Upstream_Avg',
+                'NorWeST_Mean_S1_93_11',
+                'NorWeST_Mean_S37_9311M',
+                'StructOwner',
+            ]
+
             report_dict = OrderedDict()
-            report_dict['Site Name'] = bar_record.site_name
             report_dict['PAD ID'] = self.barrier_id
-            report_dict['View in BIOS'] = '<a href=%s%s target="_blank">link</a>' % (settings.BIOS_URL, self.barrier_id)
             if self.action == 1:
                 report_dict['Action'] = 'Treat'
             else:
                 report_dict['Action'] = 'Do not treat'
+            report_dict['Site Name'] = bar_record.site_name
+            report_dict['Coordinates'] = "%s, %s" % (bar_record.latitude, bar_record.longitude)
+            report_dict['Site Type'] = bar_record.site_type
+            report_dict['Barrier Status'] = str(bar_record.barrier_status)
+            report_dict['Stream Name'] = bar_record.stream_name
+            report_dict['Tributary To'] = bar_record.tributary_to
+
+            if hasattr(bar_record, ws_name_field):
+                report_dict['Watershed Name'] = getattr(bar_record, ws_name_field)
+                if ws_name_field in ['HUC10', 'HUC12']:
+                    report_dict['Watershed Level'] = ws_name_field
+                else:
+                    report_dict['Watershed Level'] = "HUC08"
+            elif ws_name_field in overflow.keys():
+                report_dict['Watershed Name'] = overflow[ws_name_field]
+                report_dict['Watershed Level'] = ws_name_field
+            else:
+                report_dict['Watershed Name'] = "Unknown"
+                report_dict['Watershed Level'] = "Unknown"
+
+            report_dict['County'] = bar_record.county
+            report_dict['Chinook Salmon ESU'] = bar_record.esu_chinook
+            report_dict['Coho Salmon ESU'] = bar_record.esu_coho
+            report_dict['Steelhead Salmon ESU'] = bar_record.esu_steelhead
+            report_dict['Est. Upstream Habitat'] = bar_record.upstream_miles
             report_dict['Potential Habitat (mi)'] = round(self.potential_habitat(bar_record), 2)
+            report_dict['# of Downstream Barriers'] = bar_record.downstream_barrier_count
+            report_dict['Downstream Barrier ID'] = bar_record.downstream_id
+            for (field, label) in [
+                ('Slope_Upstream_Avg', 'Avg Upstream Reach Slope'),
+                ('Flow_Aug_Upstream_Avg', 'Avg Upstream Aug Streamflow'),
+                ('Flow_Annual_Upstream_Avg', 'Avg Upstream Annual Streamflow'),
+                ('NorWeST_Mean_S1_93_11', 'Upstream Mean Aug Stream Temp'),
+                ('NorWeST_Mean_S37_9311M', 'Upstream Mean Wkly Max Aug Stream Temp'),
+            ]:
+                if field in overflow.keys():
+                    report_dict[label] = overflow[field]
+                else:
+                    report_dict[label] = "Unknown"
+
             if self.estimated_cost:
                 report_dict['Estimated Cost'] = "$%s" % "{:,}".format(round(self.estimated_cost))
             else:
                 report_dict['Estimated Cost'] = "NA"
-            report_dict['Barriers Downstream'] = bar_record.downstream_barrier_count
-            report_dict['Site Type'] = bar_record.site_type
-            report_dict['Stream Name'] = bar_record.stream_name
-            report_dict['Tributary To'] = bar_record.tributary_to
-            # Get watershed name:
-            ws_name_field = settings.BARRIER_WATERSHED_NAME_LOOKUP[self.project_report.project.spatial_organization]
-            if hasattr(bar_record, ws_name_field):
-                report_dict['Watershed'] = getattr(bar_record, ws_name_field)
-            elif ws_name_field in overflow.keys():
-                report_dict['Watershed'] = overflow[ws_name_field]
+            report_dict['Road'] = bar_record.road
+            report_dict['Post Mile'] = bar_record.post_mile
+            if 'StructOwner' in overflow.keys():
+                report_dict['Owner'] = overflow['StructOwner']
             else:
-                report_dict['Watershed'] = "Unknown"
-            report_dict['County'] = bar_record.county
+                report_dict['Owner'] = "Unknown"
             if bar_record.image_link and len(bar_record.image_link) > 0:
                 report_dict['Image'] = '<img src="' + bar_record.image_link + '" class="barrier-image">'
             else:
                 report_dict['Image'] = ""
-            report_dict['Coordinates'] = "%s, %s" % (bar_record.latitude, bar_record.longitude)
+            report_dict['View in BIOS'] = '<a href=%s%s target="_blank">link</a>' % (settings.BIOS_URL, self.barrier_id)
+
+            for field in sorted(overflow.keys()):
+                if field not in known_overflow_fields:
+                    report_dict[field] = overflow[field]
+
             cache.set(cache_key, report_dict, 60*60*24*7)
         return report_dict
 
