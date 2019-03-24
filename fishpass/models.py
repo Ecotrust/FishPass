@@ -523,6 +523,7 @@ class Project(Scenario):
                 os.remove(csv_filename)
 
             cache_key = "%s_%s_report_task_id" % (self.uid, report_type)
+            cache.delete(cache_key)
             try:
                 celery_task = celery.run_view.delay('fishpass', 'generate_report_csv', self.uid, report_type)
                 cache.set(cache_key, celery_task.task_id, 60*60*24*7)

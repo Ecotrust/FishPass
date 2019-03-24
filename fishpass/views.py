@@ -390,6 +390,9 @@ def get_project_overrides(project):
             overrides['barriers'].append( (str(override.barrier), override.pre_pass, cost, override.post_pass, action) )
     return overrides
 
+def get_barrier_bios_link(barrier):
+    return '%s%s' % (settings.BIOS_URL, barrier.pad_id)
+
 def generate_report_csv(project_uid, report_type):
     import os
     from fishpass.models import ProjectReport, ProjectReportBarrier, Barrier
@@ -484,16 +487,67 @@ def generate_report_csv(project_uid, report_type):
 
     barrier_items_header_dicts = [
         {'label': 'PAD-ID', 'field': 'pad_id', 'project_specific': False},
-        {'label': 'Estimated Cost ($)', 'field': 'estimated_cost', 'project_specific': True},
-        {'label': 'Barriers Downstream', 'field': 'downstream_barrier_count', 'project_specific': False},
-        {'label': 'Site Type', 'field': 'site_type', 'project_specific': False},
-        {'label': 'Site Name', 'field': 'site_name', 'project_specific': False},
     ]
     barrier_items_header_list = [x['label'] for x in barrier_items_header_dicts]
 
     for report in report_list:
         barrier_items_header_list.append('Action')
-        # barrier_items_header_list.append('Ptnl. Hab')
+
+    if project.spatial_organization in ['HUC10','HUC12']:
+        watershed_name_value = project.spatial_organization
+    else:
+        watershed_name_value = 'HUC08'
+
+    known_overflow_fields = [
+        'Slope_Upstream_Avg',
+        'Flow_Aug_Upstream_Avg',
+        'Flow_Annual_Upstream_Avg',
+        'NorWeST_Mean_S1_93_11',
+        'NorWeST_Mean_S37_9311M',
+        'StructOwner',
+    ]
+
+    barrier_items_header_dicts += [
+        {'label': 'Site Name', 'field': 'site_name', 'project_specific': False},
+        {'label': 'Site Type', 'field': 'site_type', 'project_specific': False},
+        {'label': 'Barrier Status', 'field': 'barrier_status', 'project_specific': False},
+        {'label': 'Stream Name', 'field': 'stream_name', 'project_specific': False},
+        {'label': 'Tributary To', 'field': 'tributary_to', 'project_specific': False},
+        {'label': 'Watershed Name', 'field': settings.BARRIER_WATERSHED_NAME_LOOKUP[project.spatial_organization], 'project_specific': False},
+        {'label': 'Watershed Level', 'field': None, 'project_specific': False, 'value': watershed_name_value},
+        {'label': 'County', 'field': 'county', 'project_specific': False},
+        {'label': 'Chinook Salmon ESU', 'field': 'esu_chinook', 'project_specific': False},
+        {'label': 'Coho Salmon ESU', 'field': 'esu_coho', 'project_specific': False},
+        {'label': 'Steelhead Salmon ESU', 'field': 'esu_steelhead', 'project_specific': False},
+        {'label': 'Est. Upstream Habitat', 'field': 'upstream_miles', 'project_specific': False},
+        {'label': '# of Downstream Barriers', 'field': 'downstream_barrier_count', 'project_specific': False},
+        {'label': 'Downstream Barrier ID', 'field': 'downstream_id', 'project_specific': False},
+        {'label': 'Avg Upstream Reach Slope', 'field': None, 'project_specific': False, 'supplemental_field': 'Slope_Upstream_Avg'},
+        {'label': 'Avg Upstream Aug Streamflow', 'field': None, 'project_specific': False, 'supplemental_field': 'Flow_Aug_Upstream_Avg'},
+        {'label': 'Avg Upstream Annual Streamflow', 'field': None, 'project_specific': False, 'supplemental_field': 'Flow_Annual_Upstream_Avg'},
+        {'label': 'Upstream Mean Aug Stream Temp', 'field': None, 'project_specific': False, 'supplemental_field': 'NorWeST_Mean_S1_93_11'},
+        {'label': 'Upstream Mean Wkly Max Aug Stream Temp', 'field': None, 'project_specific': False, 'supplemental_field': 'NorWeST_Mean_S1_93_11'},
+        {'label': 'Estimated Cost', 'field': 'estimated_cost', 'project_specific': True},
+        {'label': 'Road', 'field': 'road', 'project_specific': False},
+        {'label': 'Post Mile', 'field': 'post_mile', 'project_specific': False},
+        {'label': 'Owner', 'field': None, 'project_specific': False, 'supplemental_field': 'StructOwner'},
+        {'label': 'Photo Hyperlink', 'field': 'image_link', 'project_specific': False},
+        {'label': 'BIOS Link', 'field': None, 'project_specific': False, 'function': get_barrier_bios_link},
+    ]
+
+    try:
+        if len(barrier_list) > 0:
+            sample_barrier = Barrier.objects.get(pad_id=int(barrier_list[0]))
+            sample_overflow = eval(sample_barrier.overflow)
+            keys = sorted(sample_overflow.keys())
+            for key in keys:
+                if key not in known_overflow_fields:
+                    barrier_items_header_dicts += [{'label': key, 'field': None, 'project_specific': False, 'supplemental_field': key},]
+    except Exception as e:
+        print(e)
+        pass
+
+    barrier_items_header_list += [x['label'] for x in barrier_items_header_dicts if not x['label'] == 'PAD-ID']
 
     barrier_dict = {}
     barrier_reports = ProjectReportBarrier.objects.filter(barrier_id__in=barrier_list, project_report__in=report_list).order_by('project_report__budget')
@@ -504,11 +558,23 @@ def generate_report_csv(project_uid, report_type):
         barrier_report = barrier_id_reports[0]
         barrier = Barrier.objects.get(pad_id=int(barrier_id))
         barrier_dict[str(barrier_id)] = {}
+        value = ''
         for field in barrier_items_header_dicts:
-            if field['project_specific']:
-                value = getattr(barrier_report, field['field'])
-            else:
-                value = getattr(barrier, field['field'])
+            if field['field']:
+                if field['project_specific']:
+                    value = getattr(barrier_report, field['field'])
+                else:
+                    value = getattr(barrier, field['field'])
+            elif 'value' in field.keys():
+                value = field['value']
+            elif 'supplemental_field' in field.keys():
+                overflow = eval(barrier.overflow)
+                if field['supplemental_field'] in overflow.keys():
+                    value = overflow[field['supplemental_field']]
+            elif 'function' in field.keys():
+                function = field['function']
+                value = function(barrier)
+
             barrier_dict[str(barrier_id)][field['label']] = str(value)
         barrier_dict[str(barrier_id)]['Actions'] = []
         # For each budget report instance for that barrier
