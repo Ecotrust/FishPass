@@ -509,6 +509,8 @@ def generate_report_csv(project_uid, report_type):
 
     barrier_items_header_dicts += [
         {'label': 'Site Name', 'field': 'site_name', 'project_specific': False},
+        {'label': 'Latitude', 'field': 'latitude', 'project_specific': False},
+        {'label': 'Longitude', 'field': 'longitude', 'project_specific': False},
         {'label': 'Site Type', 'field': 'site_type', 'project_specific': False},
         {'label': 'Barrier Status', 'field': 'barrier_status', 'project_specific': False},
         {'label': 'Stream Name', 'field': 'stream_name', 'project_specific': False},
