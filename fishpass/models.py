@@ -805,7 +805,10 @@ class ProjectReportBarrier(models.Model):
                     report_dict[label] = "Unknown"
 
             if self.estimated_cost:
-                report_dict['Estimated Cost'] = "$%s" % "{:,}".format(round(self.estimated_cost))
+                if self.project_report.project.assign_cost:
+                    report_dict['Estimated Cost'] = "$%s" % "{:,}".format(round(self.estimated_cost))
+                else:
+                    report_dict['Estimated Cost'] = str(round(self.estimated_cost))
             else:
                 report_dict['Estimated Cost'] = "NA"
             report_dict['Road'] = bar_record.road
