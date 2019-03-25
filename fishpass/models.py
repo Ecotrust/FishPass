@@ -457,7 +457,7 @@ class Project(Scenario):
 
     def to_dict(self):
         return {
-            'spatial_organization': self.spatial_organization,
+            'spatial_organization': settings.FOCUS_AREA_TYPES[self.spatial_organization],
             'target_area': self.target_area,
             'treat_downstream': self.treat_downstream,
             'ownership_input': self.ownership_input,
@@ -494,7 +494,7 @@ class Project(Scenario):
         else:
             cost_type = "Number of Mitigation Actions"
 
-        print_dict['spatial_focus'] = self.spatial_organization
+        print_dict['spatial_focus'] = settings.FOCUS_AREA_TYPES[self.spatial_organization]
         print_dict['target_areas'] = target_areas
         print_dict['downstream_treatment'] = downstream_treatment
         print_dict['ownership_input'] = self.ownership_input
@@ -773,10 +773,10 @@ class ProjectReportBarrier(models.Model):
 
             if hasattr(bar_record, ws_name_field):
                 report_dict['Watershed Name'] = getattr(bar_record, ws_name_field)
-                if ws_name_field in ['HUC10', 'HUC12']:
-                    report_dict['Watershed Level'] = ws_name_field
+                if not ws_name_field == settings.DEFAULT_REPORT_WATERSHED_FIELD:
+                    report_dict['Watershed Level'] = settings.FOCUS_AREA_TYPES[self.project_report.project.spatial_organization]
                 else:
-                    report_dict['Watershed Level'] = "HUC08"
+                    report_dict['Watershed Level'] = settings.DEFAULT_REPORT_WATERSHED
             elif ws_name_field in overflow.keys():
                 report_dict['Watershed Name'] = overflow[ws_name_field]
                 report_dict['Watershed Level'] = ws_name_field

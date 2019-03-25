@@ -276,23 +276,25 @@ FOCUS_AREA_TYPE_NAME_LOOKUP = {
     # 'State': 'huc8_name',
 }
 
+DEFAULT_REPORT_WATERSHED = 'HUC08'
+DEFAULT_REPORT_WATERSHED_FIELD = 'huc8_name'
 # Points to field on Barrier Record in database that gives name of watershed
 BARRIER_WATERSHED_NAME_LOOKUP = {
-    'HUC02': 'huc8_name',
-    'HUC04': 'huc8_name',
-    'HUC06': 'huc8_name',
+    'HUC02': DEFAULT_REPORT_WATERSHED_FIELD,
+    'HUC04': DEFAULT_REPORT_WATERSHED_FIELD,
+    'HUC06': DEFAULT_REPORT_WATERSHED_FIELD,
     'HUC08': 'huc8_name',
     'HUC10': 'huc10_name',
     'HUC12': 'huc12_name',
     'County': 'county',
-    'Region': 'huc8_name',
-    'Boundary': 'huc8_name',
-    'Coho': 'ESU_COHO',
-    'Chinook': 'ESU_CHIN',
-    'Chinook_Spring': 'huc8_name',
-    'Chinook_Fall': 'huc8_name',
-    'Steelhead': 'ESU_STEEL',
-    'ProtectedAreas': 'huc8_name',
+    'Region': DEFAULT_REPORT_WATERSHED_FIELD,
+    'Boundary': DEFAULT_REPORT_WATERSHED_FIELD,
+    'Coho': 'esu_coho',
+    'Chinook': 'esu_chinook',
+    'Chinook_Spring': DEFAULT_REPORT_WATERSHED_FIELD,
+    'Chinook_Fall': DEFAULT_REPORT_WATERSHED_FIELD,
+    'Steelhead': 'esu_steelhead',
+    'ProtectedAreas': DEFAULT_REPORT_WATERSHED_FIELD,
     # 'State': 'huc8_name',
 }
 
