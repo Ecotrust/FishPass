@@ -793,14 +793,18 @@ class ProjectReportBarrier(models.Model):
             report_dict['# of Downstream Barriers'] = bar_record.downstream_barrier_count
             report_dict['Downstream Barrier ID'] = bar_record.downstream_id
             for (field, label) in [
-                ('Slope_Upstream_Avg', 'Avg Upstream Reach Slope'),
+                ('Slope_Upstream_Avg', 'Avg Upstream Reach Slope (%)'),
                 ('Flow_Aug_Upstream_Avg', 'Avg Upstream Aug Streamflow'),
                 ('Flow_Annual_Upstream_Avg', 'Avg Upstream Annual Streamflow'),
                 ('NorWeST_Mean_S1_93_11', 'Upstream Mean Aug Stream Temp'),
                 ('NorWeST_Mean_S37_9311M', 'Upstream Mean Wkly Max Aug Stream Temp'),
             ]:
                 if field in overflow.keys():
-                    report_dict[label] = overflow[field]
+                    if field == 'Slope_Upstream_Avg':
+                        from fishpass.views import get_upstream_slope
+                        report_dict[label] = get_upstream_slope(bar_record)
+                    else:
+                        report_dict[label] = overflow[field]
                 else:
                     report_dict[label] = "Unknown"
 

@@ -390,6 +390,18 @@ def get_project_overrides(project):
             overrides['barriers'].append( (str(override.barrier), override.pre_pass, cost, override.post_pass, action) )
     return overrides
 
+def get_upstream_slope(barrier):
+    slope = None
+    overflow = eval(barrier.overflow)
+    if 'Slope_Upstream_Avg' in overflow.keys():
+        raw_value = overflow['Slope_Upstream_Avg']
+        if float(raw_value) > 1.0 or float(raw_value) < -1.0:
+            slope = float("{0:.2f}".format(raw_value))
+        else:
+            slope = float("{0:.2f}".format(float(raw_value) * 100.0))
+
+    return slope
+
 def get_barrier_bios_link(barrier):
     return '%s%s' % (settings.BIOS_URL, barrier.pad_id)
 
@@ -526,7 +538,7 @@ def generate_report_csv(project_uid, report_type):
         {'label': 'Est. Upstream Habitat', 'field': 'upstream_miles', 'project_specific': False},
         {'label': '# of Downstream Barriers', 'field': 'downstream_barrier_count', 'project_specific': False},
         {'label': 'Downstream Barrier ID', 'field': 'downstream_id', 'project_specific': False},
-        {'label': 'Avg Upstream Reach Slope', 'field': None, 'project_specific': False, 'supplemental_field': 'Slope_Upstream_Avg'},
+        {'label': 'Avg Upstream Reach Slope (%)', 'field': None, 'project_specific': False, 'function': get_upstream_slope},
         {'label': 'Avg Upstream Aug Streamflow', 'field': None, 'project_specific': False, 'supplemental_field': 'Flow_Aug_Upstream_Avg'},
         {'label': 'Avg Upstream Annual Streamflow', 'field': None, 'project_specific': False, 'supplemental_field': 'Flow_Annual_Upstream_Avg'},
         {'label': 'Upstream Mean Aug Stream Temp', 'field': None, 'project_specific': False, 'supplemental_field': 'NorWeST_Mean_S1_93_11'},
