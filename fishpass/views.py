@@ -392,7 +392,10 @@ def get_project_overrides(project):
 
 def get_upstream_slope(barrier):
     slope = None
-    overflow = eval(barrier.overflow)
+    try:
+        overflow = eval(barrier.overflow)
+    except TypeError as e:
+        overflow = {}
     if 'Slope_Upstream_Avg' in overflow.keys():
         raw_value = overflow['Slope_Upstream_Avg']
         if float(raw_value) > 1.0 or float(raw_value) < -1.0:
