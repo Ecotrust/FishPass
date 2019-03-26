@@ -161,6 +161,10 @@ button.dt-button {
   top: 2.5em;
 }
 
+.layer-switcher .panel {
+  position: fixed;
+}
+
 .report-barrier-options {
   height: 75vh;
   max-height: 500px;
