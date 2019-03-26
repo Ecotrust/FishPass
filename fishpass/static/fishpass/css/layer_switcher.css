@@ -1,0 +1,116 @@
+#map .layer-switcher {
+    z-index: 4;
+}
+
+#map .layer-switcher {
+    background-color: transparent;
+    right: 2vh;
+    left: auto;
+    top: 14.5vh;
+    z-index: 1;
+}
+
+#map .layer-switcher.shown {
+    bottom: auto;
+}
+
+.layer-switcher .panel {
+    box-shadow: 0 0 40px rgba(60,60,60,0.5);
+    max-height: 70vh;
+}
+
+.layer-switcher button {
+    background: url('/static/fishpass/img/icon/i_layers.svg') rgba(58,86,117,1) 50% no-repeat;
+    background-size: auto 60%;
+}
+
+/* group */
+.layer-switcher .panel > ul {
+    padding-left: .75rem;
+}
+
+/* group list */
+.layer-switcher .panel > ul > li {
+}
+
+/* focus-area (any layer not in a "group") hider */
+.layer-switcher .panel > ul > li.layer {
+    display: none;
+}
+
+/* group title */
+.layer-switcher .panel > ul > li > label {
+    font-size: .75rem;
+    line-height: 3;
+    margin-bottom: 1rem;
+}
+
+/* group layers list */
+.layer-switcher .panel > ul > li > ul {
+    padding-left: 0;
+}
+
+/* group layer */
+.layer-switcher .panel > ul > li > ul > li {
+    /* border-bottom: 1px solid #cccccc; */
+    display: block;
+    margin-bottom: .25rem;
+    padding-bottom: .25rem;
+    position: relative;
+    padding: 0 0.2rem;
+}
+
+/* hover over group layer */
+.layer-switcher .panel > ul > li > ul > li:hover {
+  color:#217867;
+  background-color: #DDD;
+  border-radius: 0.2rem;
+}
+
+/* group layer label */
+.layer-switcher .panel > ul > li > ul > li > label {
+    font-size: .6rem;
+    line-height: 1rem;
+    padding-left: 1rem;
+}
+
+.layer-switcher input[type="checkbox"],
+.layer-switcher input[type="radio"] {
+    bottom: 0;
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.layer-switcher .layer label {
+    cursor: pointer;
+    display: inline-block;
+    /* font-weight: 700 !important; */
+    position: relative;
+}
+
+.layer-switcher .layer label:before {
+    background-repeat: no-repeat;
+    background-size: 45% auto;
+    content: "";
+    display: inline-block;
+    height: 1rem;
+    left: 0;
+    position: absolute;
+    top: 0.3rem;
+    width: 1.7rem;
+}
+
+/* show grey icon */
+.layer-switcher .layer input[type="checkbox"] + label:before,
+.layer-switcher .layer input[type="radio"] + label:before {
+    background-image: url('/static/fishpass/img/icon/i_invisible.svg');
+}
+
+/* show light green icon */
+.layer-switcher .layer input[type="checkbox"]:checked + label:before,
+.layer-switcher .layer input[type="radio"]:checked + label:before {
+    background-image: url('/static/fishpass/img/icon/i_visible_light.svg');
+}
