@@ -398,10 +398,14 @@ def get_upstream_slope(barrier):
         overflow = {}
     if 'Slope_Upstream_Avg' in overflow.keys():
         raw_value = overflow['Slope_Upstream_Avg']
-        if float(raw_value) > 1.0 or float(raw_value) < -1.0:
-            slope = float("{0:.2f}".format(raw_value))
-        else:
-            slope = float("{0:.2f}".format(float(raw_value) * 100.0))
+        try:
+            if float(raw_value) > 1.0 or float(raw_value) < -1.0:
+                slope = float("{0:.2f}".format(raw_value))
+            else:
+                slope = float("{0:.2f}".format(float(raw_value) * 100.0))
+        except ValueError as e:
+            # Sometimes we can't turn things like '' into a float.
+            pass
 
     return slope
 
