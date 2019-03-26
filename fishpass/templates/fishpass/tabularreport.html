@@ -3,6 +3,10 @@
 
 {% block site_style %}
     {{ block.super }}
+
+    <!-- <link rel="stylesheet" href="{% static 'fishpass/lib/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css.css' %}"> -->
+    <link rel="stylesheet" href="{% static 'fishpass/lib/fontawesome-free-5.8.1-web/css/fontawesome.min.css' %}">
+
     <link rel="stylesheet" href="{% static 'fishpass/lib/ol.css' %}" media="screen,projection"/>
     <link rel="stylesheet" href="{% static 'fishpass/lib/ol-layerswitcher/src/ol-layerswitcher.css' %}"/>
 
@@ -124,8 +128,8 @@
     {{ block.super }}
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/2.1.0/knockout-min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.3.2/knockout.mapping.js"></script>
+    <script src="{% static 'fishpass/lib/knockout-min.js' %}"></script>
+    <script src="{% static 'fishpass/lib/knockout.mapping.js' %}"></script>
     <script src="{% static 'js/knockout-bindings.js' %}"></script>
 
     <script src="{% static 'fishpass/lib/ol.js' %}"></script>

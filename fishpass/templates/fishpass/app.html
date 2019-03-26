@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="{% static 'fishpass/lib/ol-layerswitcher/src/ol-layerswitcher.css' %}"/>
     <!-- <link rel="stylesheet" href="{% static 'fishpass/css/billboard.min.css' %}" /> -->
 
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.0.1/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'fishpass/lib/jquery-ui-1.12.1.custom/jquery-ui.theme.min.css.css' %}">
+    <link rel="stylesheet" href="{% static 'fishpass/lib/fontawesome-free-5.8.1-web/css/fontawesome.min.css' %}">
 
     <link rel="stylesheet" href="{% static 'fishpass/lib/ol-ext/dist/ol-ext.min.css' %}" type="text/css">
 
@@ -34,8 +34,7 @@
 
 {% block js_head %}
     <!-- <script src="{% static 'fishpass/lib/jquery-3.2.1.min.js' %}"></script> -->
-    <!-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+    <script src="{% static 'fishpass/lib/underscore-min.js' %}"></script>
 {% endblock js_head %}
 
 {% block content %}
@@ -71,11 +70,10 @@
     {{ block.super }}
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/2.1.0/knockout-min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.3.2/knockout.mapping.js"></script>
+    <script src="{% static 'fishpass/lib/knockout-min.js' %}"></script>
+    <script src="{% static 'fishpass/lib/knockout.mapping.js' %}"></script>
     <script src="{% static 'js/knockout-bindings.js' %}"></script>
 
-    <!-- <script src="https://d3js.org/d3.v4.min.js"></script> -->
     <!-- <script src="{% static 'fishpass/lib/billboard.min.js' %}"></script> -->
 
     <!-- <script src="{% static 'fishpass/lib/pageguide/js/pageguide.min.js' %}"></script> -->
@@ -118,10 +116,7 @@
 
     <script src="{% static 'fishpass/lib/ol-ext/dist/ol-ext.min.js' %}"></script>
 
-    <script
-      src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-      integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
-      crossorigin="anonymous"></script>
+    <script src="{% static 'fishpass/lib/jquery-ui-1.12.1.custom/jquery-ui.min.js' %}"></script>
     <script src="{% static 'fishpass/js/init.js' %}"></script>
     <script src="{% static 'fishpass/js/project.js' %}"></script>
 {% endblock extra_js %}

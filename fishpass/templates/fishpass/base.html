@@ -22,7 +22,7 @@
 
 {% block site_style %}
   <link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Lato" rel="stylesheet">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'fishpass/lib/bootstrap-4.1.3/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'fishpass/css/base.css' %}" />
   <link rel="stylesheet" href="{% static 'fishpass/css/nav.css' %}" />
   <link rel="stylesheet" href="{% static 'fishpass/css/flatpages.css' %}" />
@@ -65,17 +65,17 @@
 {% endblock %}
 
 {% block extra_js %}
-  <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.js"></script>
+  <script src="{% static 'fishpass/lib/es6-promise/es6-promise.js' %}"></script>
+  <script src="{% static 'fishpass/lib/es6-promise/es6-promise.auto.js' %}"></script>
   <script src="{% static 'fishpass/js/main.js' %}"></script>
 {% endblock %}
 
 {% block bootstrap_js %}
   <!-- <script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.js' %}"></script> -->
   <!-- <script src="{% static '/fishpass/lib/popper.min.js' %}"></script> -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="{% static '/fishpass/lib/popper-1.14.3.min.js' %}"></script>
 
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <script src="{% static '/fishpass/lib/bootstrap-4.1.3/bootstrap.min.js' %}"></script>
 {% endblock %}
 
 {% block top-level %}{% endblock %}
