@@ -11,9 +11,16 @@ for (var i=0; i < app.map.getLayers().getArray().length; i++) {
 if (app.map.overlays) {
   // app.map.overlays.getLayers().push(app.map.layer.assessment_database.layer);
   app.map.overlays.getLayers().push(app.map.layer.protected_areas.layer);
+  app.map.overlays.getLayers().push(app.map.layer.winter_steelhead_distribution.layer);
+  app.map.overlays.getLayers().push(app.map.layer.summer_steelhead_distribution.layer);
+  app.map.overlays.getLayers().push(app.map.layer.lamprey.layer);
+  app.map.overlays.getLayers().push(app.map.layer.coho_distribution.layer);
+  app.map.overlays.getLayers().push(app.map.layer.chinook_valley_distribution.layer);
+  app.map.overlays.getLayers().push(app.map.layer.chinook_coastal_distribution.layer);
   app.map.overlays.getLayers().push(app.map.layer.historical_summer_stream_temps.layer);
   app.map.overlays.getLayers().push(app.map.layer.nwst_2040_summer_stream_temps.layer);
   app.map.overlays.getLayers().push(app.map.layer.nwst_2080_summer_stream_temps.layer);
+  app.map.overlays.getLayers().push(app.map.layer.assessment_database.layer);
   app.map.overlays.getLayers().push(app.map.layer.baseline_habitat.layer);
   app.map.overlays.getLayers().push(app.map.layer.upstream_potential.layer);
   app.map.overlays.getLayers().push(app.map.layer.steelhead_overlay.layer);

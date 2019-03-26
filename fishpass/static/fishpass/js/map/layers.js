@@ -732,19 +732,25 @@ app.map.layer = {
         }
       })
     },
-    // assessment_database: {
-    //   layer: new ol.layer.Tile({
-    //     name: 'Assessment Database',
-    //     title: 'Fish Passage Assessment Database',
-    //     id: 'assessment_DB',
-    //     source: new ol.source.TileArcGISRest({
-    //       url: 'https://services2.arcgis.com/Uq9r85Potqm3MfRV/arcgis/rest/services/biosds69_fmu/FeatureServer',
-    //       params: {'layers': 'show:0'},
-    //       attributions: 'PSMFC'
-    //     }),
-    //     visible: false
-    //   })
-    // },
+    assessment_database: {
+      layer: new ol.layer.Tile({
+        name: 'Assessment Database',
+        title: 'Fish Passage Assessment Database',
+        id: 'assessment_DB',
+        source: new ol.source.TileArcGISRest({
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_PAD/PAD/MapServer',
+          // params: {'layers': 'show:0'},
+          attributions: 'CA DFG'
+        }),
+        visible: false,
+        legend: {
+          type: 'esrijson',
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_PAD/PAD/MapServer/',
+          lyr_id: 0,
+          title: 'Fish Passage Assessment Database'
+        }
+      })
+    },
     protected_areas: {
       layer: new ol.layer.Tile({
         name: 'Protected Areas',
@@ -822,6 +828,120 @@ app.map.layer = {
       })
     },
 
+    chinook_coastal_distribution: {
+      layer: new ol.layer.Tile({
+        name: 'Chinook Coastal Distribution: 2005',
+        title: 'Chinook: California Coastal Distribution, 2005',
+        id: 'chinook_coastal_distribution',
+        source: new ol.source.TileArcGISRest({
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_pointslines09/MapServer',
+          params: {'layers': 'show:6'},
+          attributions: 'BDB'
+        }),
+        visible: false,
+        legend: {
+          type: 'esrijson',
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_pointslines09/MapServer/',
+          lyr_id: 6,
+          title: 'Chinook: California Coastal Distribution, 2005'
+        }
+      })
+    },
+    chinook_valley_distribution: {
+      layer: new ol.layer.Tile({
+        name: 'Chinook: Central Valley Spring-run Distribution, 2005',
+        title: 'Chinook: Central Valley Spring-run Distribution, 2005',
+        id: 'chinook_valley_distribution',
+        source: new ol.source.TileArcGISRest({
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_pointslines09/MapServer',
+          params: {'layers': 'show:7'},
+          attributions: 'BDB'
+        }),
+        visible: false,
+        legend: {
+          type: 'esrijson',
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_pointslines09/MapServer/',
+          lyr_id: 7,
+          title: 'Chinook: Central Valley Spring-run Distribution, 2005'
+        }
+      })
+    },
+    coho_distribution: {
+      layer: new ol.layer.Tile({
+        name: 'Coho Distribution',
+        title: 'Coho Distribution',
+        id: 'coho_distribution',
+        source: new ol.source.TileArcGISRest({
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_pointslines03/MapServer',
+          params: {'layers': 'show:33'},
+          attributions: 'BDB'
+        }),
+        visible: false,
+        legend: {
+          type: 'esrijson',
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_pointslines03/MapServer/',
+          lyr_id: 33,
+          title: 'Coho Distribution'
+        }
+      })
+    },
+    lamprey: {
+      layer: new ol.layer.Tile({
+        name: 'Pacific Lamprey Historical Range and Current Distribution',
+        title: 'Pacific Lamprey Historical Range and Current Distribution',
+        id: 'lamprey',
+        source: new ol.source.TileArcGISRest({
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_pointslines26/MapServer',
+          params: {'layers': 'show:5'},
+          attributions: 'BDB'
+        }),
+        visible: false,
+        legend: {
+          type: 'esrijson',
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_pointslines26/MapServer/',
+          lyr_id: 5,
+          title: 'Pacific Lamprey Historical Range and Current Distribution'
+        }
+      })
+    },
+    summer_steelhead_distribution: {
+      layer: new ol.layer.Tile({
+        name: 'Summer Steelhead Distribution',
+        title: 'Summer Steelhead Distribution',
+        id: 'summer_steelhead_distribution',
+        source: new ol.source.TileArcGISRest({
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_pointslines03/MapServer',
+          params: {'layers': 'show:35'},
+          attributions: 'BDB'
+        }),
+        visible: false,
+        legend: {
+          type: 'esrijson',
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_pointslines03/MapServer/',
+          lyr_id: 35,
+          title: 'Summer Steelhead Distribution'
+        }
+      })
+    },
+    winter_steelhead_distribution: {
+      layer: new ol.layer.Tile({
+        name: 'Winter Steelhead Distribution',
+        title: 'Winter Steelhead Distribution',
+        id: 'winter_steelhead_distribution',
+        source: new ol.source.TileArcGISRest({
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_pointslines03/MapServer',
+          params: {'layers': 'show:34'},
+          attributions: 'BDB'
+        }),
+        visible: false,
+        legend: {
+          type: 'esrijson',
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_pointslines03/MapServer/',
+          lyr_id: 34,
+          title: 'Winter Steelhead Distribution'
+        }
+      })
+    },
 
 
     // openlayers layer for barriers
