@@ -183,7 +183,7 @@ class ProjectForm(ScenarioForm):
     budget_type = forms.ChoiceField(
         choices = (('budget', 'Fixed Budget'),('batch', 'Ranged Budget')),
         label="Budget Type",
-        help_text="'Fixed Budget' for a known buget, 'Ranged Budget' to find the best ROI btween a min/max budget",
+        help_text="'Fixed Budget' for a known budget, 'Ranged Budget' to find the best ROI between a min/max budget",
         required=True,
         initial='budget'
     )
