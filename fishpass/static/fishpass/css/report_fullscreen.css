@@ -8,6 +8,6 @@
     position: fixed;
     right: 0;
     top: 8vh;
-    z-index: 100;
+    z-index: 1;
   }
 }
