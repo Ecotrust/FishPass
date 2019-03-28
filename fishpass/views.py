@@ -884,7 +884,15 @@ def get_filter_count(request, query=False, notes=[]):
     if not type(query) in [QuerySet, GeoQuerySet] :
         filter_dict = dictify_request(request.GET)
         (query, notes) = run_filter_query(filter_dict)
-    return HttpResponse(query.count(), status=200)
+    try:
+        timestamp = int(filter_dict['timestamp'])
+    except Exception as e:
+        timestamp = False
+    result = {
+        'timestamp': timestamp,
+        'result': query.count()
+    }
+    return JsonResponse(result)
 
 def get_project_min_max(query, project):
     from numbers import Number
@@ -1017,8 +1025,15 @@ def get_filter_results(request, project_id=None, query=False, notes=[], extra_co
             return_dict[key] = extra_context[key]
     return_json = [return_dict]
 
-    # return # of grid cells and dissolved geometry in geojson
-    return HttpResponse(json.dumps(return_json))
+    try:
+        timestamp = int(filter_dict['timestamp'])
+    except Exception as e:
+        timestamp = False
+    result = {
+        'timestamp': timestamp,
+        'result': return_json
+    }
+    return JsonResponse(result)
 
 # @cache_page(60 * 60) # 1 hour of caching
 def get_barrier_layer(request, project=None, query=False, notes=[],extra_context={}):

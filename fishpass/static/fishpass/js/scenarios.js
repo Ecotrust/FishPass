@@ -182,6 +182,8 @@ function scenarioFormModel(options) {
 
     self.lastChange = (new Date()).getTime();
 
+    self.filterTimestamp = ko.observable(false);
+
     try {
       mapSettings;
     } catch(err) {
@@ -366,13 +368,19 @@ function scenarioFormModel(options) {
       self.showButtonSpinner(true);
 
       (function() {
+          var date = new Date();
+          var timestamp = date.getTime();
+          self.filterTimestamp = timestamp;
+          self.filters.timestamp = timestamp;
           var request = $.ajax({
               url: '/scenarios/get_filter_count',
               type: 'GET',
               data: self.filters,
               dataType: 'json',
               success: function(data) {
-                  self.gridCellsRemaining(data);
+                  if (data.timestamp == self.filterTimestamp) {
+                    self.gridCellsRemaining(data.result);
+                  }
               },
               error: function(error) {
                   console.log('error in getUpdatedFilterCount: ' + error);
@@ -435,56 +443,66 @@ function scenarioFormModel(options) {
         self.showButtonSpinner(true);
 
         (function() {
+            var date = new Date();
+            var timestamp = date.getTime();
+            self.filterTimestamp = timestamp;
+            self.filters.timestamp = timestamp;
             var request = $.ajax({
                 url: '/scenarios/get_filter_results/' + app.panel.form.project_id + '/',
                 type: 'GET',
                 data: self.filters,
                 dataType: 'json',
-                success: function(data) {
-                    self.filterNotesExist(false);
-                    var geojson = data[0].geojson,
-                        featureCount = data[0].count,
-                        min_cost = data[0].min_cost,
-                        max_cost = data[0].max_cost;
-                    app.map.geoSearch.loadJson(geojson);
-                    $('.ol-geo-search').show();
-                    if (data[0].notes.length > 0) {
-                      self.filterNotesMessage(data[0].notes);
-                      self.filterNotesExist(true);
-                    } else if (min_cost == null || max_cost == null) {
-                      self.filterNotesMessage('No viable mitigation projects found.');
-                      self.filterNotesExist(true);
-                    } else {
-                      self.setMinMaxBudget(min_cost, max_cost, false);
-                    }
-                    self.updatedFilterResultsLayer.removeAllFeatures();
-                    if (featureCount && geojson) {
-                        self.updatedFilterResultsLayer.addGeoJSONFeatures(geojson);
-                    }
-                    self.updatedFilterResultsLayer.setVisibility(true);
-                    self.gridCellsRemaining(featureCount);
-                    if (featureCount == 0) {
-                      self.filterNotesMessage('No barriers selected to treat.');
-                      self.filterNotesExist(true);
-                    }
-                    if (self.filterNotesExist()) {
-                      if ($('#scenarios-form .alert').length > 0) {
-                        $('#scenarios-form .alert').removeClass('d-none');
+                success: function(response) {
+                    if (self.filterTimestamp == response.timestamp) {
+                      var data = response.result;
+                      self.filterNotesExist(false);
+                      var geojson = data[0].geojson,
+                      featureCount = data[0].count,
+                      min_cost = data[0].min_cost,
+                      max_cost = data[0].max_cost;
+                      app.map.geoSearch.loadJson(geojson);
+                      $('.ol-geo-search').show();
+                      if (data[0].notes.length > 0) {
+                        self.filterNotesMessage(data[0].notes);
+                        self.filterNotesExist(true);
+                      } else if (min_cost == null || max_cost == null) {
+                        self.filterNotesMessage('No viable mitigation projects found.');
+                        self.filterNotesExist(true);
                       } else {
-                        $('#scenarios-form').append('<div class="alert alert-warning" role="alert" data-bind="text: self.filterNotesMessage()"></div>');
+                        self.setMinMaxBudget(min_cost, max_cost, false);
                       }
-                    } else {
-                      if ($('#scenarios-form .alert').length > 0) {
-                        $('#scenarios-form .alert').addClass('d-none');
+                      self.updatedFilterResultsLayer.removeAllFeatures();
+                      if (featureCount && geojson) {
+                        self.updatedFilterResultsLayer.addGeoJSONFeatures(geojson);
                       }
-                    }
+                      self.updatedFilterResultsLayer.setVisibility(true);
+                      self.gridCellsRemaining(featureCount);
+                      if (featureCount == 0) {
+                        self.filterNotesMessage('No barriers selected to treat.');
+                        self.filterNotesExist(true);
+                      }
+                      if (self.filterNotesExist()) {
+                        if ($('#scenarios-form .alert').length > 0) {
+                          $('#scenarios-form .alert').removeClass('d-none');
+                        } else {
+                          $('#scenarios-form').append('<div class="alert alert-warning" role="alert" data-bind="text: self.filterNotesMessage()"></div>');
+                        }
+                      } else {
+                        if ($('#scenarios-form .alert').length > 0) {
+                          $('#scenarios-form .alert').addClass('d-none');
+                        }
+                      }
 
-                    self.showButtonSpinner(false);
+                      self.showButtonSpinner(false);
+
+                    }
                 },
                 error: function(result) {
+                  if (self.timestamp == result.timestamp) {
                     self.showButtonSpinner(false);
                     self.showingFilteringResults(false);
-                    console.log('%cerror in getUpdatedFilterResults: %o', 'color: red', result);
+                    console.log('%cerror in getUpdatedFilterResults: %o', 'color: red', result.result);
+                  }
                 }
             });
             self.currentGridRequest(request);
