@@ -138,7 +138,11 @@ var madrona = {
                     app.viewModel.scenarios.loadingMessage(null);
                     // clearInterval(barTimer);
                     if (result.status === 400) {
-                        $('#error_bar').append(result.responseText);
+                        if (result.responseText.length > 255) {
+                          $('#error_bar').append("'" + result.responseText.slice(0,256) + "'");
+                        } else {
+                          $('#error_bar').append(result.responseText);
+                        }
                         app.viewModel.scenarios.scenarioForm(true);
                     } else {
                         app.viewModel.scenarios.errorMessage(result.responseText.split('\n\n')[0]);

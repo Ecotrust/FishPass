@@ -285,7 +285,9 @@ class ProjectForm(ScenarioForm):
         return FocusArea.objects.get(pk=self.cleaned_data['focus_area_input'])
 
     def is_valid(self, *args, **kwargs):
-        if len(self.errors.keys()) == 1 and 'ownership_input_checkboxes' in self.errors.keys() and len(self.errors['ownership_input_checkboxes']) == 1 and 'is not one of the available choices.' in self.errors['ownership_input_checkboxes'][0]:
+        if 'batch_increment' in self.errors.keys() and self.data['budget_type'] == 'budget':
+            del self._errors['batch_increment']
+        if 'ownership_input_checkboxes' in self.errors.keys() and len(self.errors['ownership_input_checkboxes']) == 1 and 'is not one of the available choices.' in self.errors['ownership_input_checkboxes'][0]:
             del self._errors['ownership_input_checkboxes']
         return super(ScenarioForm, self).is_valid()
 
