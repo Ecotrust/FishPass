@@ -90,7 +90,7 @@ class OwnershipTypeAdmin(admin.ModelAdmin):
 
 class BarrierCostAdmin(admin.ModelAdmin):
     list_display = ('pad_id', 'formatted_cost', 'site_type', 'barrier_status', 'comment')
-    search_fields = ['pad_id', 'site_type', 'barrier_status', 'comment']
+    search_fields = ['pad_id', 'site_type__name', 'barrier_status__name', 'comment']
     ordering = ('pad_id',)
 
     def formatted_cost(self, obj):
