@@ -789,7 +789,6 @@ class ProjectReportBarrier(models.Model):
             report_dict['Coho Salmon ESU'] = bar_record.esu_coho
             report_dict['Steelhead Salmon ESU'] = bar_record.esu_steelhead
             report_dict['Est. Upstream Habitat'] = bar_record.upstream_miles
-            report_dict['Potential Habitat (mi)'] = round(self.potential_habitat(bar_record), 2)
             report_dict['# of Downstream Barriers'] = bar_record.downstream_barrier_count
             report_dict['Downstream Barrier ID'] = bar_record.downstream_id
             for (field, label) in [
