@@ -1163,6 +1163,11 @@ def createOptiPassInputFile(project, file_location):
     barrier_pad_ids = [x.pad_id for x in barriers]
     for barrier in barriers:
         # TODO: Store pre-made downstream ID list for each barrier, either in DB or cache
+        # Some data self-healing:
+        if barrier.pk == barrier.downstream_id:
+            barrier.downstream_id = 0
+            barrier.downstream_barrier_count = 0
+            barrier.save()
         ds_ids = get_ds_ids(barrier, barrier_pad_ids, ds_ids)
     if 0 in ds_ids:
         ds_ids.remove(0)
@@ -1343,9 +1348,7 @@ def run_optipass(request, scenario_id):
         optipass(project)
         return HttpResponse(request)
     except Exception as e:
-        # TODO: collect and report Error back to initiation page
-        print(str(e))
-        return HttpResponse(status=500)
+        return HttpResponse(str(e), status=500)
 
 def optipass(project):
     import os, subprocess, stat, shutil

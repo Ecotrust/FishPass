@@ -63,7 +63,8 @@ var madrona = {
                   } else {
                       app.viewModel.scenarios.errorMessage(result.responseText.split('\n\n')[0]);
                   }
-                  console.log('%c Report could not be generated for this project; %o', 'color: salmon;', result);
+                  window.alert('There was an error while running your report. Please refresh and try again.');
+                  // console.log('%c Report could not be generated for this project; %o', 'color: salmon;', result);
               }
             }
           );
@@ -142,7 +143,8 @@ var madrona = {
                     } else {
                         app.viewModel.scenarios.errorMessage(result.responseText.split('\n\n')[0]);
                     }
-                    console.log('%c form not submitted; %o', 'color: salmon;', result);
+                    window.alert('There was an error generating your query data to run the report. Please refresh and try again.');
+                    // console.log('%c form not submitted; %o', 'color: salmon;', result);
                 }
             });
         };
@@ -1070,11 +1072,7 @@ function scenariosModel(options) {
             var groupPosition = $(groupID).position().top,
                 containerPosition = $('#sharing-groups .jspPane').position().top,
                 actualPosition = groupPosition + containerPosition;
-            //console.log('group position = ' + groupPosition);
-            //console.log('container position = ' + containerPosition);
-            //console.log('actual position = ' + actualPosition);
             if (actualPosition > 140) {
-                //console.log('scroll to ' + (groupPosition-120));
                 sharingScrollpane.scrollToY(groupPosition-120);
             }
 
