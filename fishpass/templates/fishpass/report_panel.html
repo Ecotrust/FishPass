@@ -36,7 +36,7 @@
           <div class="card-columns p2">
             <div class="card">
               <div class="card-body">
-                <h5 class="card-title">Barriers Treated</h5>
+                <h5 class="card-title">Barriers To Treat</h5>
                 <p class="card-text muted" id="barriers-treated-{{ report_dict.report.budget_int }}">{{ report_dict.report.action_count }}</p>
               </div>
             </div>
@@ -85,7 +85,7 @@
               {% for barrier_id in report_dict.action_barriers %}
                 <a class="nav-link action-barrier-pill {% if forloop.counter < 2 %}active{% endif %}" id="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}-tab" data-toggle="pill" href="#barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" role="tab" aria-controls="barrier-{{ barrier_id }}-{{ report_dict.report.budget_int }}" aria-selected="true">
                   {{ barrier_id }}<br />
-                  <span class='treatment-subtitle'>Treated</span>
+                  <span class='treatment-subtitle'>To Treat</span>
                 </a>
               {% endfor %}
               {% for barrier_id in report_dict.untouched_barriers %}
