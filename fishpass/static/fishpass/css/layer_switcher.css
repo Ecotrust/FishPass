@@ -61,10 +61,9 @@
 }
 
 /* hover over group layer */
-.layer-switcher .panel > ul > li > ul > li:hover {
+.layer-switcher .panel > ul > li > ul > li > input:hover,
+.layer-switcher .panel > ul > li > ul > li > label:hover {
   color:#217867;
-  background-color: #DDD;
-  border-radius: 0.2rem;
 }
 
 /* group layer label */
