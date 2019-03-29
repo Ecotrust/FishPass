@@ -533,18 +533,20 @@ app.panel = {
     },
     stepControl: function() {
       selectFocusAreaStepId = 'step1';
-      if ($('#' + selectFocusAreaStepId).is(":visible")) {
-        app.map.selection.select.setActive(true);
-        app.viewModel.scenarios.scenarioFormModel.stopShowingFilteringResults();
-        $('.ol-geo-search').hide();
-      } else {
-        app.map.selection.select.setActive(false);
-        if (!app.viewModel.scenarios.scenarioFormModel.showingFilteringResults()) {
-          app.viewModel.scenarios.scenarioFormModel.showFilteringResults();
-          app.viewModel.scenarios.scenarioFormModel.updatedFilterResultsLayer.setVisibility(true);
+      setTimeout(function(){
+        if ($('#' + selectFocusAreaStepId).is(":visible")) {
+          app.map.selection.select.setActive(true);
+          app.viewModel.scenarios.scenarioFormModel.stopShowingFilteringResults();
+          $('.ol-geo-search').hide();
+        } else {
+          app.map.selection.select.setActive(false);
+          if (!app.viewModel.scenarios.scenarioFormModel.showingFilteringResults()) {
+            app.viewModel.scenarios.scenarioFormModel.showFilteringResults();
+            app.viewModel.scenarios.scenarioFormModel.updatedFilterResultsLayer.setVisibility(true);
+          }
+          $('.ol-geo-search').show();
         }
-        $('.ol-geo-search').show();
-      }
+      }, 300);
     },
     element: function() { // returns a function. to edit dom element don't forget to invoke: element()
       return this.getElement;
