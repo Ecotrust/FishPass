@@ -99,6 +99,12 @@ app.map.styles = {
         }),
         zIndex: 4
     }),
+    FocusAreaHover: new ol.style.Style({
+      fill: new ol.style.Fill({
+          color: 'rgba(0, 0, 0, 0)'
+      }),
+      zIndex: 4
+    }),
     FocusAreaSelect: new ol.style.Style({
         stroke: new ol.style.Stroke({
             color: '#aa6600',

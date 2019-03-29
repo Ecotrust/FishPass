@@ -231,6 +231,34 @@ var app = {
     }
 }
 
+focusAreaHoverAction = function(feat, layer) {
+  if (feat && $('#step1').is(":visible")) {
+    app.map.focusAreaInfo.tooltip('hide')
+            .css({
+              left: app.map.cursorCoords[0] + 'px',
+              top: (app.map.cursorCoords[1]-15) + 'px'
+            })
+            .attr('data-original-title', feat.get(layer.hoverField))
+            .tooltip('show');
+    app.map.showFocusAreaInfo = true;
+  } else {
+    app.map.focusAreaInfo.tooltip('hide');
+    app.map.showFocusAreaInfo = false;
+  }
+}
+
+$('#map').mousemove(function(event) {
+  app.map.cursorCoords = [event.pageX, event.pageY];
+  if (app.map.hasOwnProperty('showFocusAreaInfo') && app.map.showFocusAreaInfo) {
+    app.map.focusAreaInfo.tooltip('hide')
+    .css({
+      left: app.map.cursorCoords[0] + 'px',
+      top: (app.map.cursorCoords[1]-15) + 'px'
+    })
+    .tooltip('show');
+  }
+})
+
 function selectSpatialOrganization(event) {
   var unitType = event.target.value.toLowerCase();
   if (app.map.layer.hasOwnProperty(unitType)) {
@@ -244,10 +272,92 @@ function selectSpatialOrganization(event) {
     app.map.enableLayer(unitType);
     app.map.selection.spatialOrganizationSelection = newInteractionForLayer(app.map.layer[unitType].layer);
     app.map.selection.setSelect(app.map.selection.spatialOrganizationSelection);
+
   }
 };
 
 function spatialOrgLoad() {
+
+  $('#map').prepend('<div id="focus-area-info"></div>');
+  app.map.focusAreaInfo = $('#focus-area-info');
+  app.map.focusAreaInfo.tooltip({
+    animation: false,
+    trigger: 'manual'
+  });
+
+  var selection_layers = [
+    'huc02',
+    'huc04',
+    'huc06',
+    'huc08',
+    'huc10',
+    'huc12',
+    'county',
+    'boundary',
+    'region',
+    'coho',
+    'chinook',
+    'chinook_spring',
+    'chinook_fall',
+    'steelhead'
+  ];
+  app.map.focusAreaHoverInteractions = {}
+  for (var i = 0; i < selection_layers.length; i++) {
+    layer = selection_layers[i];
+    app.map.focusAreaHoverInteractions[layer] = new ol.interaction.Select({
+      condition: ol.events.condition.pointerMove,
+      layers: [
+        app.map.layer[layer].layer
+      ],
+      style: app.map.styles.FocusAreaHover
+    });
+    app.map.addInteraction(app.map.focusAreaHoverInteractions[layer]);
+  }
+
+  // RDH: I couldn't get the scoping right to make this work in the previous loop.
+  app.map.focusAreaHoverInteractions.huc02.on('select', function(event) {
+    focusAreaHoverAction(event.selected[0], app.map.layer.huc02);
+  });
+  app.map.focusAreaHoverInteractions.huc04.on('select', function(event) {
+    focusAreaHoverAction(event.selected[0], app.map.layer.huc04);
+  });
+  app.map.focusAreaHoverInteractions.huc06.on('select', function(event) {
+    focusAreaHoverAction(event.selected[0], app.map.layer.huc06);
+  });
+  app.map.focusAreaHoverInteractions.huc08.on('select', function(event) {
+    focusAreaHoverAction(event.selected[0], app.map.layer.huc08);
+  });
+  app.map.focusAreaHoverInteractions.huc10.on('select', function(event) {
+    focusAreaHoverAction(event.selected[0], app.map.layer.huc10);
+  });
+  app.map.focusAreaHoverInteractions.huc12.on('select', function(event) {
+    focusAreaHoverAction(event.selected[0], app.map.layer.huc12);
+  });
+  app.map.focusAreaHoverInteractions.county.on('select', function(event) {
+    focusAreaHoverAction(event.selected[0], app.map.layer.county);
+  });
+  app.map.focusAreaHoverInteractions.boundary.on('select', function(event) {
+    focusAreaHoverAction(event.selected[0], app.map.layer.boundary);
+  });
+  app.map.focusAreaHoverInteractions.region.on('select', function(event) {
+    focusAreaHoverAction(event.selected[0], app.map.layer.region);
+  });
+  app.map.focusAreaHoverInteractions.coho.on('select', function(event) {
+    focusAreaHoverAction(event.selected[0], app.map.layer.coho);
+  });
+  app.map.focusAreaHoverInteractions.chinook.on('select', function(event) {
+    focusAreaHoverAction(event.selected[0], app.map.layer.chinook);
+  });
+  app.map.focusAreaHoverInteractions.chinook_spring.on('select', function(event) {
+    focusAreaHoverAction(event.selected[0], app.map.layer.chinook_spring);
+  });
+  app.map.focusAreaHoverInteractions.chinook_fall.on('select', function(event) {
+    focusAreaHoverAction(event.selected[0], app.map.layer.chinook_fall);
+  });
+  app.map.focusAreaHoverInteractions.steelhead.on('select', function(event) {
+    focusAreaHoverAction(event.selected[0], app.map.layer.steelhead);
+  });
+
   document.getElementById('id_spatial_organization').onchange = selectSpatialOrganization;
 
   app.clearTargetAreaInput = function() {

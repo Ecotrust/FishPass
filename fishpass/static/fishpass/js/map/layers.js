@@ -180,7 +180,8 @@ app.map.layer = {
         visible: false,
         renderBuffer: 500
       }),
-      selectAction: focusAreaSelectAction
+      selectAction: focusAreaSelectAction,
+      hoverField: 'HUC2'
     },
     huc04: {
       layer: new ol.layer.VectorTile({
@@ -199,7 +200,8 @@ app.map.layer = {
         visible: false,
         renderBuffer: 500
       }),
-      selectAction: focusAreaSelectAction
+      selectAction: focusAreaSelectAction,
+      hoverField: 'HUC4'
     },
     huc06: {
       layer: new ol.layer.VectorTile({
@@ -218,7 +220,8 @@ app.map.layer = {
         visible: false,
         renderBuffer: 500
       }),
-      selectAction: focusAreaSelectAction
+      selectAction: focusAreaSelectAction,
+      hoverField: 'HUC6'
     },
     huc08: {
       layer: new ol.layer.VectorTile({
@@ -237,7 +240,8 @@ app.map.layer = {
         visible: false,
         renderBuffer: 500
       }),
-      selectAction: focusAreaSelectAction
+      selectAction: focusAreaSelectAction,
+      hoverField: 'HUC8'
     },
     huc10: {
       layer: new ol.layer.VectorTile({
@@ -256,7 +260,8 @@ app.map.layer = {
         visible: false,
         renderBuffer: 500
       }),
-      selectAction: focusAreaSelectAction
+      selectAction: focusAreaSelectAction,
+      hoverField: 'HUC10'
     },
     huc12: {
       layer: new ol.layer.VectorTile({
@@ -275,7 +280,8 @@ app.map.layer = {
         visible: false,
         renderBuffer: 500
       }),
-      selectAction: focusAreaSelectAction
+      selectAction: focusAreaSelectAction,
+      hoverField: 'HUC12'
     },
     county: {
       layer: new ol.layer.VectorTile({
@@ -293,7 +299,8 @@ app.map.layer = {
         visible: false,
         renderBuffer: 500
       }),
-      selectAction: focusAreaSelectAction
+      selectAction: focusAreaSelectAction,
+      hoverField: 'NAME'
     },
     boundary: {
       layer: new ol.layer.VectorTile({
@@ -312,7 +319,8 @@ app.map.layer = {
         visible: false,
         renderBuffer: 500
       }),
-      selectAction: focusAreaSelectAction
+      selectAction: focusAreaSelectAction,
+      hoverField: '-'
     },
     region: {
       layer: new ol.layer.VectorTile({
@@ -331,7 +339,8 @@ app.map.layer = {
         visible: false,
         renderBuffer: 500
       }),
-      selectAction: focusAreaSelectAction
+      selectAction: focusAreaSelectAction,
+      hoverField: 'Region_Lon'
     },
     coho: {
       layer: new ol.layer.VectorTile({
@@ -350,7 +359,8 @@ app.map.layer = {
         visible: false,
         renderBuffer: 500
       }),
-      selectAction: focusAreaSelectAction
+      selectAction: focusAreaSelectAction,
+      hoverField: 'ESU_DPS'
     },
     chinook: {
       layer: new ol.layer.VectorTile({
@@ -369,7 +379,8 @@ app.map.layer = {
         visible: false,
         renderBuffer: 500
       }),
-      selectAction: focusAreaSelectAction
+      selectAction: focusAreaSelectAction,
+      hoverField: 'ESU_DPS'
     },
     chinook_spring: {
       layer: new ol.layer.VectorTile({
@@ -388,7 +399,8 @@ app.map.layer = {
         visible: false,
         renderBuffer: 500
       }),
-      selectAction: focusAreaSelectAction
+      selectAction: focusAreaSelectAction,
+      hoverField: 'ESU_DPS'
     },
     chinook_fall: {
       layer: new ol.layer.VectorTile({
@@ -407,7 +419,8 @@ app.map.layer = {
         visible: false,
         renderBuffer: 500
       }),
-      selectAction: focusAreaSelectAction
+      selectAction: focusAreaSelectAction,
+      hoverField: 'ESU_DPS'
     },
     steelhead: {
       layer: new ol.layer.VectorTile({
@@ -426,7 +439,8 @@ app.map.layer = {
         visible: false,
         renderBuffer: 500
       }),
-      selectAction: focusAreaSelectAction
+      selectAction: focusAreaSelectAction,
+      hoverField: 'ESU_DPS'
     },
     huc02_overlay: {
       layer: new ol.layer.VectorTile({

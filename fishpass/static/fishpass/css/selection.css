@@ -1,8 +1,14 @@
+#focus-area-info,
 #barrier-info {
-  position: absolute;
   height: 1px;
   width: 1px;
-  z-index: 100;
+  z-index: 10;
+}
+#focus-area-info{
+  position: fixed;
+}
+#barrier-info {
+  position: relative;
 }
 .tooltip.in {
   opacity: 1;
