@@ -365,13 +365,13 @@ def get_project_overrides(project):
     prepassOverrides_query = ScenarioBarrierStatus.objects.filter(project=project)
     defaultsOverrides_query = ScenarioBarrierType.objects.filter(project=project)
     barrierOverrides_query = ScenarioBarrier.objects.filter(project=project)
-    if prepassOverrides_query.count() > 1 or defaultsOverrides_query.count() > 1 or barrierOverrides_query.count() > 1:
+    if prepassOverrides_query.count() > 0 or defaultsOverrides_query.count() > 0 or barrierOverrides_query.count() > 0:
         overrides = {}
-    if prepassOverrides_query.count() > 1:
+    if prepassOverrides_query.count() > 0:
         overrides['prepass'] = []
         for override in prepassOverrides_query.order_by('barrier_status__order'):
             overrides['prepass'].append( ( override.barrier_status.name, override.default_pre_passability) )
-    if defaultsOverrides_query.count() > 1:
+    if defaultsOverrides_query.count() > 0:
         overrides['defaults'] = []
         for override in defaultsOverrides_query.order_by('barrier_type__order'):
             try:
@@ -379,7 +379,7 @@ def get_project_overrides(project):
             except (ValueError, TypeError) as e:
                 default_cost = str(override.default_cost)
             overrides['defaults'].append( (override.barrier_type.name, default_cost, override.default_post_passability) )
-    if barrierOverrides_query.count() > 1:
+    if barrierOverrides_query.count() > 0:
         overrides['barriers'] = []
         for override in barrierOverrides_query.order_by('barrier__pad_id'):
             try:
@@ -388,6 +388,7 @@ def get_project_overrides(project):
                 cost = str(override.cost)
             action = [x[1] for x in settings.ACTION_CHOICES if x[0] == override.action][0]
             overrides['barriers'].append( (str(override.barrier), override.pre_pass, cost, override.post_pass, action) )
+
     return overrides
 
 def get_upstream_slope(barrier):
