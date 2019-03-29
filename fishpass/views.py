@@ -1249,7 +1249,6 @@ def createOptiPassInputFile(project, file_location):
         if not type(barrier_dict['COST']) == float and not str(barrier_dict['COST']).isnumeric():
             barrier_dict['NPROJ'] = 0
             barrier_dict['COST'] = 0
-            barrier_dict['POSTPASS'] = barrier_dict['PREPASS']
         else:
             barrier_dict['NPROJ'] = 1
             if not project.assign_cost:
