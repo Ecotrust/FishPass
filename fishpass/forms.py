@@ -158,8 +158,8 @@ class ProjectForm(ScenarioForm):
         required=False,
     )
 
-    ownership_input_options = ((x, settings.OWNERSHIP_LOOKUP[x]) for x in settings.OWNERSHIP_LOOKUP.keys())
-    initial_ownership = list(set([str(x.id) for x in OwnershipType.objects.all()] + [x for x in settings.OWNERSHIP_LOOKUP.keys()]))
+    ownership_input_options = [(x.id, x.name) for x in OwnershipType.objects.all().order_by('order')]
+    initial_ownership = list(set([str(x.id) for x in OwnershipType.objects.all()]))
 
     ownership_input_checkboxes = forms.MultipleChoiceField(
         # required=True,

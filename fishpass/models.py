@@ -372,7 +372,6 @@ class FocusArea(models.Model):
 @register
 class Project(Scenario):
     from features.managers import ShareableGeoManager
-    # OWNERSHIP_CHOICES = [(key, settings.OWNERSHIP_LOOKUP[key]) for key in settings.OWNERSHIP_LOOKUP.keys()]
     BUDGET_CHOICES = [
         ('budget','Fixed Budget'),
         ('batch','Ranged Budget')
