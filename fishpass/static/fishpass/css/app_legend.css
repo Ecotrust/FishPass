@@ -20,6 +20,10 @@
     margin: 0.1rem 0;
 }
 
+.legend-title {
+  font-size: 1.1rem;
+}
+
 .legend-title,
 .legend-collapse-button {
   cursor: pointer;
@@ -43,9 +47,11 @@
 
 .legend-title:after{
   font-size:0.6rem;
+  margin-left: 1rem;
 }
+
 .legend-collapse-button:after {
-  font-size:1rem;
+  font-size:0.8rem;
   float:right;
 }
 
