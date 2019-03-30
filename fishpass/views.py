@@ -332,6 +332,7 @@ def project_barrier_type_form(request, project_uid, template=loader.get_template
 
 def project_barrier_form(request, project_uid, barrier_id, template=loader.get_template('fishpass/modals/project_barrier_modal_form.html'), context={}):
     from fishpass.models import ScenarioBarrier
+    from flatblocks.models import FlatBlock
     if request.user.is_authenticated():
         from fishpass.forms import ProjectBarrierForm
         from fishpass.models import Project, Barrier
@@ -375,6 +376,31 @@ def project_barrier_form(request, project_uid, barrier_id, template=loader.get_t
             project_barrier_form = ProjectBarrierForm(instance=project_barrier, initial=initial)
             context['project_barrier_form'] = project_barrier_form
             context['project_barrier_form_id'] = 'project-barrier-form'
+
+            try:
+                prepass_tooltip = FlatBlock.objects.get(slug='barrier-prepass-help-text').content
+            except Exception as e:
+                prepass_tooltip = False
+            try:
+                cost_tooltip = FlatBlock.objects.get(slug='barrier-cost-help-text').content
+            except Exception as e:
+                cost_tooltip = False
+            try:
+                postpass_tooltip = FlatBlock.objects.get(slug='barrier-postpass-help-text').content
+            except Exception as e:
+                postpass_tooltip = False
+            try:
+                action_tooltip = FlatBlock.objects.get(slug='barrier-postpass-help-text').content
+            except Exception as e:
+                action_tooltip = False
+
+            context['FIELD_TOOLTIPS'] = [
+                prepass_tooltip,
+                cost_tooltip, 
+                postpass_tooltip,
+                postpass_tooltip
+            ]
+
             return HttpResponse(template.render(context, request))
     return None
 

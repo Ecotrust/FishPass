@@ -47,3 +47,19 @@
     border-style: solid;
     border-color: transparent transparent black transparent;
 }
+
+.css_tooltip-right {
+  top: -5px;
+  left: 110%;
+}
+
+.css_tooltip-right::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent black transparent transparent;
+}

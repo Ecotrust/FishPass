@@ -25,7 +25,22 @@
     {% endif %}
     {% for field in project_barrier_form.visible_fields %}
       <tr>
-        <th>{{ field.label_tag }}</th>
+        <th>{{ field.label_tag }}
+          {% if FIELD_TOOLTIPS %}
+            {% for tooltip in FIELD_TOOLTIPS %}
+              {% if forloop.counter == forloop.parentloop.counter %}
+                {% if tooltip %}
+                  <div class="css_tooltip">
+                    <i class="info-icon icon-info-sign field-tooltip"></i>
+                    <span class="tooltiptext css_tooltip-right">
+                      {{ tooltip | safe }}
+                    </span>
+                  </div>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </th>
         <td>
           {{ field.errors }}
           {{ field }}
