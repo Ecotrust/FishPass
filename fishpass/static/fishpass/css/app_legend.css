@@ -17,7 +17,7 @@
     margin: 0;
     line-height: 1;
     font-size: 1em;
-    margin: 0.3rem 0;
+    margin: 0.1rem 0;
 }
 
 .legend-title,
@@ -29,6 +29,32 @@
 .legend-collapse-button:hover {
   color: #9C7B54;
 }
+
+.legend-title:after,
+.legend-collapse-button:after {
+  font-family:Fontawesome;
+    content:'\f077';
+    font-weight:300;
+    padding: 0.1rem;
+    border: 1px solid;
+    border-radius: 0.2rem;
+    margin: 0.1rem;
+}
+
+.legend-title:after{
+  font-size:0.6rem;
+}
+.legend-collapse-button:after {
+  font-size:1rem;
+  float:right;
+}
+
+.legend-title.collapsed:after,
+.legend-collapse-button.collapsed:after {
+  font-family:Fontawesome;
+    content:'\f078';
+}
+
 .legend-barrier {
   height: 17px;
   width: 22px;

@@ -1,6 +1,6 @@
 insertLegend = function(layer, html) {
   legend_title_div = '<div data-toggle="collapse" class="' + layer.get('id') +
-    '-legend-collapse-button legend-title" data-target="#' + layer.get('id') +
+    '-legend-collapse-button legend-title collapsed" data-target="#' + layer.get('id') +
     '-legend-collapse" id="' + layer.get('id') + '-legend-header">' +
     layer.get('legend').title + '</div>';
   legend_html_container = '<div class="container collapse" id="' + layer.get('id') +
