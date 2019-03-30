@@ -49,8 +49,8 @@
 }
 
 .css_tooltip-right {
-  top: -5px;
-  left: 110%;
+  top: -1rem;
+  left: 140%;
 }
 
 .css_tooltip-right::after {
