@@ -382,12 +382,15 @@ def get_project_overrides(project):
     if barrierOverrides_query.count() > 0:
         overrides['barriers'] = []
         for override in barrierOverrides_query.order_by('barrier__pad_id'):
-            try:
-                cost = int(override.cost)
-            except (ValueError, TypeError) as e:
-                cost = str(override.cost)
-            action = [x[1] for x in settings.ACTION_CHOICES if x[0] == override.action][0]
-            overrides['barriers'].append( (str(override.barrier), override.pre_pass, cost, override.post_pass, action) )
+            if override.pre_pass == None and override.post_pass == None and override.cost == None:
+                override.delete()
+            else:
+                try:
+                    cost = int(override.cost)
+                except (ValueError, TypeError) as e:
+                    cost = str(override.cost)
+                action = [x[1] for x in settings.ACTION_CHOICES if x[0] == override.action][0]
+                overrides['barriers'].append( (str(override.barrier), override.pre_pass, cost, override.post_pass, action) )
 
     return overrides
 
