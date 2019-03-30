@@ -396,7 +396,7 @@ def project_barrier_form(request, project_uid, barrier_id, template=loader.get_t
 
             context['FIELD_TOOLTIPS'] = [
                 prepass_tooltip,
-                cost_tooltip, 
+                cost_tooltip,
                 postpass_tooltip,
                 postpass_tooltip
             ]
@@ -1536,6 +1536,7 @@ def init_report(request, projid, template=loader.get_template('fishpass/tabularr
     }
     context['LEGEND'] = [[x.name, x.color] for x in BarrierStatus.objects.all().order_by('order')]
     context['BIOS_LINK'] = settings.BIOS_URL
+    context['MAPBOX_TOKEN'] = settings.MAPBOX_ACCESS_TOKEN
 
     return HttpResponse(template.render(context, request))
 
