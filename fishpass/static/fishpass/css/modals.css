@@ -4,6 +4,11 @@
  ===========================================================================
  */
 
+.modal-dialog {
+  width: 800px;
+  max-width: 80vw;
+}
+
 .modal-content {
     background: #217867;
     border: none;
@@ -57,6 +62,12 @@
 
 .modal-content hr {
     height: 3px;
+}
+
+.modal-body form table {
+  table-layout: fixed;
+  width: 100%;
+  margin-bottom: 2rem;
 }
 
 #login-modal .accounts-form-wrap {
