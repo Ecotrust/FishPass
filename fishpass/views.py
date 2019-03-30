@@ -51,7 +51,7 @@ def app(request, template=loader.get_template('fishpass/app.html'), context=acco
 def new_project(request):
     from fishpass.models import Project
     if request.method == 'POST':
-        project = Project.objects.create(name=request.POST['name'], user=request.user)
+        project = Project.objects.create(name=request.POST['name'], user=request.user, spatial_organization=settings.DEFAULT_FOCUS_AREA_SELECTION)
         return JsonResponse({'project_uid': project.uid})
     else:
         return HttpResponse('Request type must be "POST"', status=405)

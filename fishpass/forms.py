@@ -114,7 +114,7 @@ class ProjectForm(ScenarioForm):
         label="Spatial Focus",
         # help_text="",
         required=True,
-        initial='County'
+        initial=settings.DEFAULT_FOCUS_AREA_SELECTION,
     )
 
     # focus_region = HiddenScenarioBooleanField(

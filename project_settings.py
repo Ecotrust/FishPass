@@ -257,6 +257,9 @@ FOCUS_AREA_FIELD_ID_LOOKUP = {
     # 'State': 'state_id',
 }
 
+DEFAULT_FOCUS_AREA_SELECTION = 'HUC08'
+
+# RDH: Is this used anymore? It does not look like good data.
 DEFAULT_FOCUS_AREA_TYPE = 'HUC_8'
 
 # Used for reading the name from the shapefile on import to FocusArea reords in DB
