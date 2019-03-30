@@ -2,11 +2,29 @@
 
 {% block form_content %}
 <table>
-  <tr>
-    <th>Barrier Type</th>
-    <th class='project-barrier-cost-column'>Mitigation Cost</th>
-    <th class='project-barrier-post-pass-column'>Post-Passability</th>
-  </tr>
+  {% if HEADERS %}
+    <tr>
+      {% for header in HEADERS %}
+        <th>
+          {{ header.name }}
+          {% if header.tooltip %}
+            <div class="css_tooltip">
+              <i class="info-icon icon-info-sign field-tooltip"></i>
+              <span class="tooltiptext css_tooltip-bottom">
+                {{ header.tooltip | safe }}
+              </span>
+            </div>
+          {% endif %}
+        </th>
+      {% endfor %}
+    </tr>
+  {% else %}
+    <tr>
+      <th>Barrier Type</th>
+      <th class='project-barrier-cost-column'>Mitigation Cost</th>
+      <th class='project-barrier-post-pass-column'>Post-Passability</th>
+    </tr>
+  {% endif %}
   {% for field in project_barrier_form.visible_fields %}
     {% if forloop.counter0|divisibleby:2 %}
     <tr>

@@ -269,6 +269,8 @@ def project_barrier_type_form(request, project_uid, template=loader.get_template
     if request.user.is_authenticated():
         from fishpass.forms import ProjectBarrierTypeForm
         from fishpass.models import Project
+        from flatblocks.models import FlatBlock
+
         project_id = int(project_uid.split('_')[-1])
         project = Project.objects.get(pk=project_id)
         if request.method == 'POST':
@@ -295,9 +297,36 @@ def project_barrier_type_form(request, project_uid, template=loader.get_template
                 }
             return JsonResponse(retjson)
         else:
+            try:
+                type_tooltip = FlatBlock.objects.get(slug='barrier-type-help-text').content
+            except Exception as e:
+                type_tooltip = False
+            try:
+                cost_tooltip = FlatBlock.objects.get(slug='barrier-type-cost-help-text').content
+            except Exception as e:
+                cost_tooltip = False
+            try:
+                postpass_tooltip = FlatBlock.objects.get(slug='barrier-type-postpass-help-text').content
+            except Exception as e:
+                postpass_tooltip = False
+
             project_barrier_type_form = ProjectBarrierTypeForm(project=project)
             context['project_barrier_form'] = project_barrier_type_form
             context['project_barrier_form_id'] = 'project-barrier-type-form'
+
+            context['HEADERS'] = [
+                {
+                    'name': 'Barrier Type',
+                    'tooltip': type_tooltip,
+                }, {
+                    'name': 'Mitigation Cost',
+                    'tooltip': cost_tooltip
+                }, {
+                    'name': 'Post-Passability',
+                    'tooltip': postpass_tooltip
+                }
+            ]
+
             return HttpResponse(template.render(context, request))
     return None
 
