@@ -26,14 +26,16 @@ getArcGISJSONLegend = function(layer) {
           html = "";
           if (data['layers']) {
               $.each(data['layers'], function(i, layerobj) {
-                  if (parseInt(layerobj['layerId'], 10) === parseInt(layer.get('legend').lyr_id, 10)) {
-                      $.each(layerobj['legend'], function(j, legendobj) {
-                          var swatchURL = layer.get('legend').url + layer.get('legend').lyr_id +'/images/'+legendobj['url'],
-                              label = legendobj['label'];
-                          if (label === "") {
-                              label = layerobj['layerName'];
-                          }
-                          html += '<div class="row"> \n' +
+                for(var i = 0; i < layer.get('legend').lyr_ids.length; i++) {
+                  var lyr_id = layer.get('legend').lyr_ids[i];
+                  if (parseInt(layerobj['layerId'], 10) === parseInt(lyr_id, 10)) {
+                    $.each(layerobj['legend'], function(j, legendobj) {
+                      var swatchURL = layer.get('legend').url + lyr_id +'/images/'+legendobj['url'],
+                      label = legendobj['label'];
+                      if (label === "") {
+                        label = layerobj['layerName'];
+                      }
+                      html += '<div class="row"> \n' +
 '                                    <div class="col-3">\n' +
 '                                      <p><img class="legend-barrier" src="' + swatchURL + '"></p>\n' +
 '                                    </div> <!-- column 1 -->\n' +
@@ -41,8 +43,9 @@ getArcGISJSONLegend = function(layer) {
 '                                      <p>' + label + '</p>\n' +
 '                                    </div> <!-- column 2 -->\n' +
 '                                  </div>';
-                      });
+                    });
                   }
+                }
               });
               insertLegend(layer, html);
           }

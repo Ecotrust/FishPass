@@ -8,8 +8,9 @@
     padding: 0.5rem;
     border: 1px solid #9C7B54;
     border-radius: 4px;
-    width: 12rem;
+    width: 15rem;
     min-width: 200px;
+    max-width:25vw;
 }
 
 #app-legend p {

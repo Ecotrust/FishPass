@@ -613,99 +613,105 @@ app.map.layer = {
       selectAction: focusAreaSelectAction
     },
     coho_overlay: {
-      layer: new ol.layer.VectorTile({
-        name: app.mapbox.layers.coho.name,
-        title: app.mapbox.layers.coho.name,
+      layer: new ol.layer.Tile({
+        name: 'Coho Salmon ESU',
+        title: 'Coho Salmon ESU',
         unitType: 'Coho',
         id: app.mapbox.layers.coho.map_layer_id,
-        source: new ol.source.VectorTile({
-          attributions: 'NOAA Fisheries, National Marine Fisheries Service, U.S. Department of Commerce, National Atmospheric and Oceanic Administration',
-          format: new ol.format.MVT({
-            featureClass: ol.Feature
-          }),
-          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.coho.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        source: new ol.source.TileArcGISRest({
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_polygons08/MapServer',
+          params: {'layers': 'show:3,4'},
+          attributions: 'CDFW'
         }),
-        style: app.map.styles.FocusArea,
         visible: false,
-        renderBuffer: 500
-      }),
-      selectAction: focusAreaSelectAction
+        legend: {
+          type: 'esrijson',
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_polygons08/MapServer/',
+          lyr_ids: [3,4],
+          title: 'Coho Salmon ESU'
+        }
+      })
     },
     chinook_overlay: {
-      layer: new ol.layer.VectorTile({
-        name: app.mapbox.layers.chinook.name,
-        title: app.mapbox.layers.chinook.name,
+      layer: new ol.layer.Tile({
+        name: 'Chinook Salmon Winter-run ESU, Sacramento River',
+        title: 'Chinook Salmon Winter-run ESU, Sacramento River',
         unitType: 'Chinook',
         id: app.mapbox.layers.chinook.map_layer_id,
-        source: new ol.source.VectorTile({
-          attributions: 'NOAA Fisheries, National Marine Fisheries Service, U.S. Department of Commerce, National Atmospheric and Oceanic Administration',
-          format: new ol.format.MVT({
-            featureClass: ol.Feature
-          }),
-          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.chinook.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        source: new ol.source.TileArcGISRest({
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_polygons08/MapServer',
+          params: {'layers': 'show:0'},
+          attributions: 'CDFW'
         }),
-        style: app.map.styles.FocusArea,
         visible: false,
-        renderBuffer: 500
-      }),
-      selectAction: focusAreaSelectAction
+        legend: {
+          type: 'esrijson',
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_polygons08/MapServer/',
+          lyr_ids: [0],
+          title: 'Chinook Salmon Winter-run ESU, Sacramento River'
+        }
+      })
     },
     chinook_spring_overlay: {
-      layer: new ol.layer.VectorTile({
-        name: app.mapbox.layers.chinook_spring.name,
-        title: app.mapbox.layers.chinook_spring.name,
+      layer: new ol.layer.Tile({
+        name: 'Chinook Salmon Spring-run ESU, Central Valley',
+        title: 'Chinook Salmon Spring-run ESU, Central Valley',
         unitType: 'Chinook_Spring',
         id: app.mapbox.layers.chinook_spring.map_layer_id,
-        source: new ol.source.VectorTile({
-          attributions: 'NOAA Fisheries, National Marine Fisheries Service, U.S. Department of Commerce, National Atmospheric and Oceanic Administration',
-          format: new ol.format.MVT({
-            featureClass: ol.Feature
-          }),
-          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.chinook_spring.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        source: new ol.source.TileArcGISRest({
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_polygons08/MapServer',
+          params: {'layers': 'show:1'},
+          attributions: 'CDFW'
         }),
-        style: app.map.styles.FocusArea,
         visible: false,
-        renderBuffer: 500
-      }),
-      selectAction: focusAreaSelectAction
+        legend: {
+          type: 'esrijson',
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_polygons08/MapServer/',
+          lyr_ids: [1],
+          title: 'Chinook Salmon Spring-run ESU, Central Valley'
+        }
+      })
     },
     chinook_fall_overlay: {
-      layer: new ol.layer.VectorTile({
-        name: app.mapbox.layers.chinook_fall.name,
-        title: app.mapbox.layers.chinook_fall.name,
+      layer: new ol.layer.Tile({
+        name: 'Chinook Salmon Fall and late Fall-run ESU, Central Valley',
+        title: 'Chinook Salmon Fall and late Fall-run ESU, Central Valley',
         unitType: 'Chinook_Fall',
         id: app.mapbox.layers.chinook_fall.map_layer_id,
-        source: new ol.source.VectorTile({
-          attributions: 'NOAA Fisheries, National Marine Fisheries Service, U.S. Department of Commerce, National Atmospheric and Oceanic Administration',
-          format: new ol.format.MVT({
-            featureClass: ol.Feature
-          }),
-          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.chinook_fall.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        source: new ol.source.TileArcGISRest({
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_polygons08/MapServer',
+          params: {'layers': 'show:2'},
+          attributions: 'CDFW'
         }),
-        style: app.map.styles.FocusArea,
         visible: false,
-        renderBuffer: 500
-      }),
-      selectAction: focusAreaSelectAction
+        legend: {
+          type: 'esrijson',
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_polygons08/MapServer/',
+          lyr_ids: [2],
+          title: 'Chinook Salmon Fall and late Fall-run ESU, Central Valley'
+        }
+      })
     },
     steelhead_overlay: {
-      layer: new ol.layer.VectorTile({
-        name: app.mapbox.layers.steelhead.name,
-        title: app.mapbox.layers.steelhead.name,
+      layer: new ol.layer.Tile({
+        name: 'Steelhead DPS',
+        title: 'Steelhead DPS',
         unitType: 'Steelhead',
         id: app.mapbox.layers.steelhead.map_layer_id,
-        source: new ol.source.VectorTile({
-          attributions: 'NOAA Fisheries, National Marine Fisheries Service, U.S. Department of Commerce, National Atmospheric and Oceanic Administration',
-          format: new ol.format.MVT({
-            featureClass: ol.Feature
-          }),
-          url: 'https://api.mapbox.com/v4/' + app.mapbox.layers.steelhead.id + '/{z}/{x}/{y}.mvt?access_token=' + app.mapbox.key
+        source: new ol.source.TileArcGISRest({
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_polygons08/MapServer',
+          params: {'layers': 'show:5,6,7,8,9,10'},
+          attributions: 'CDFW'
         }),
-        style: app.map.styles.FocusArea,
         visible: false,
-        renderBuffer: 500
-      }),
-      selectAction: focusAreaSelectAction
+        legend: {
+          type: 'esrijson',
+          url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_polygons08/MapServer/',
+          // lyr_ids: [5,6,7,8,9,10], #RDH: All layers were redundant, but '10' had 1 more.
+          lyr_ids: [10],
+          title: 'Steelhead DPS'
+        }
+      })
     },
 
     upstream_potential: {
@@ -722,7 +728,7 @@ app.map.layer = {
         legend: {
           type: 'esrijson',
           url: 'https://maps.psmfc.org/server/rest/services/CFPF/CFPF_FISHPass/MapServer/',
-          lyr_id: 3,
+          lyr_ids: [3],
           title: 'Upstream Potential Habitat'
         }
       })
@@ -741,7 +747,7 @@ app.map.layer = {
         legend: {
           type: 'esrijson',
           url: 'https://maps.psmfc.org/server/rest/services/CFPF/CFPF_FISHPass/MapServer/',
-          lyr_id: 2,
+          lyr_ids: [2],
           title: 'Baseline Fish Habitat'
         }
       })
@@ -760,7 +766,7 @@ app.map.layer = {
         legend: {
           type: 'esrijson',
           url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_PAD/PAD/MapServer/',
-          lyr_id: 0,
+          lyr_ids: [0],
           title: 'Fish Passage Assessment Database'
         }
       })
@@ -779,7 +785,7 @@ app.map.layer = {
         legend: {
           type: 'esrijson',
           url: 'https://egis.fire.ca.gov/arcgis/rest/services/FRAP/ownership/MapServer/',
-          lyr_id: 0,
+          lyr_ids: [0],
           title: 'Protected Areas'
         }
       })
@@ -798,7 +804,7 @@ app.map.layer = {
         legend: {
           type: 'esrijson',
           url: 'https://apps.fs.usda.gov/fsgisx02/rest/services/rmrs/RMRSAWAE_NorWeSTPredictedStreamTemperatures_2040_01/MapServer/',
-          lyr_id: 0,
+          lyr_ids: [0],
           title: '2040 Summer Stream Temps'
         }
       })
@@ -817,7 +823,7 @@ app.map.layer = {
         legend: {
           type: 'esrijson',
           url: 'https://apps.fs.usda.gov/fsgisx02/rest/services/rmrs/RMRSAWAE_NorWeSTPredictedStreamTemperatures_2080_01/MapServer/',
-          lyr_id: 0,
+          lyr_ids: [0],
           title: '2080 Summer Stream Temps'
         }
       })
@@ -836,7 +842,7 @@ app.map.layer = {
         legend: {
           type: 'esrijson',
           url: 'https://apps.fs.usda.gov/fsgisx02/rest/services/rmrs/RMRSAWAE_NorWeSTPredictedStreamTemperatures_MeanAugust_01/MapServer/',
-          lyr_id: 0,
+          lyr_ids: [0],
           title: 'Historical Summer Stream Temps'
         }
       })
@@ -856,7 +862,7 @@ app.map.layer = {
         legend: {
           type: 'esrijson',
           url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_pointslines09/MapServer/',
-          lyr_id: 6,
+          lyr_ids: [6],
           title: 'Chinook: California Coastal Distribution, 2005'
         }
       })
@@ -875,7 +881,7 @@ app.map.layer = {
         legend: {
           type: 'esrijson',
           url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_pointslines09/MapServer/',
-          lyr_id: 7,
+          lyr_ids: [7],
           title: 'Chinook: Central Valley Spring-run Distribution, 2005'
         }
       })
@@ -894,7 +900,7 @@ app.map.layer = {
         legend: {
           type: 'esrijson',
           url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_pointslines03/MapServer/',
-          lyr_id: 33,
+          lyr_ids: [33],
           title: 'Coho Distribution'
         }
       })
@@ -913,7 +919,7 @@ app.map.layer = {
         legend: {
           type: 'esrijson',
           url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_pointslines26/MapServer/',
-          lyr_id: 5,
+          lyr_ids: [5],
           title: 'Pacific Lamprey Historical Range and Current Distribution'
         }
       })
@@ -932,7 +938,7 @@ app.map.layer = {
         legend: {
           type: 'esrijson',
           url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_pointslines03/MapServer/',
-          lyr_id: 35,
+          lyr_ids: [35],
           title: 'Summer Steelhead Distribution'
         }
       })
@@ -951,7 +957,7 @@ app.map.layer = {
         legend: {
           type: 'esrijson',
           url: 'https://map.dfg.ca.gov/arcgis/rest/services/Project_BIOS_Public/q_BIOS_Public_pointslines03/MapServer/',
-          lyr_id: 34,
+          lyr_ids: [34],
           title: 'Winter Steelhead Distribution'
         }
       })
