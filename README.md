@@ -57,7 +57,7 @@ FishPass - Web Frontend Interface for OptiPass
 #### Install PostgreSQL/PostGIS and a few Dependencies
 1. `cd /usr/local/apps/marineplanner-core/scripts/`
 1. `sudo chmod +x vagrant_provision0.sh`
-1. `sudo vagrant_provision0.sh xenial 3.6.2 9.5` #Ubuntu xenial, GEOS 3.6.2, PostgreSQL 9.5
+1. `sudo vagrant_provision0.sh bionic 3.7.0 10` #Ubuntu Bionic, GEOS 3.7.0, PostgreSQL 10
 
 #### Installing FishPass
 ```
