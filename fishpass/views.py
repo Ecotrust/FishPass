@@ -390,7 +390,7 @@ def project_barrier_form(request, project_uid, barrier_id, template=loader.get_t
             except Exception as e:
                 postpass_tooltip = False
             try:
-                action_tooltip = FlatBlock.objects.get(slug='barrier-postpass-help-text').content
+                action_tooltip = FlatBlock.objects.get(slug='barrier-action-help-text').content
             except Exception as e:
                 action_tooltip = False
 
