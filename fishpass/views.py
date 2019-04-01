@@ -398,7 +398,7 @@ def project_barrier_form(request, project_uid, barrier_id, template=loader.get_t
                 prepass_tooltip,
                 cost_tooltip,
                 postpass_tooltip,
-                postpass_tooltip
+                action_tooltip
             ]
 
             return HttpResponse(template.render(context, request))
