@@ -114,7 +114,7 @@ class Command(BaseCommand):
                 if 'site_type' in row_dict.keys() and row_dict['site_type']:
                     type_matches = BarrierType.objects.filter(name__iexact=row_dict['site_type']).order_by('order')
                     if type_matches.count() == 0:
-                        (barrierType, created) = BarrierType.objects.get_or_create(name=row_dict['site_type'].title())
+                        (barrierType, created) = BarrierType.objects.get_or_create(name=row_dict['site_type'].lower().title())
                     else:
                         barrierType = type_matches[0]
                         created = False
@@ -123,7 +123,7 @@ class Command(BaseCommand):
                 if 'barrier_status' in row_dict.keys() and row_dict['barrier_status']:
                     status_matches = BarrierStatus.objects.filter(name__iexact=row_dict['barrier_status']).order_by('order')
                     if status_matches.count() == 0:
-                        (barrierStatus, created) = BarrierStatus.objects.get_or_create(name=row_dict['barrier_status'].title())
+                        (barrierStatus, created) = BarrierStatus.objects.get_or_create(name=row_dict['barrier_status'].lower().title())
                     else:
                         barrierStatus = status_matches[0]
                         created = False

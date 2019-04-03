@@ -152,10 +152,20 @@ class Command(BaseCommand):
             else:
                 try:
                     #     get or create BarrierType
-                    (barrierType, created) = BarrierType.objects.get_or_create(name=row_dict['site_type'])
+                    type_matches = BarrierType.objects.filter(name__iexact=row_dict['site_type']).order_by('order')
+                    if type_matches.count() == 0:
+                        (barrierType, created) = BarrierType.objects.get_or_create(name=row_dict['site_type']lower().title())
+                    else:
+                        barrierType = type_matches[0]
+                        created = False
                     row_dict['site_type'] = barrierType
                     #     get or create BarrierStatus
-                    (barrierStatus, created) = BarrierStatus.objects.get_or_create(name=row_dict['barrier_status'])
+                    status_matches = BarrierStatus.objects.filter(name__iexact=row_dict['barrier_status']).order_by('order')
+                    if status_matches.count() == 0:
+                        (barrierStatus, created) = BarrierStatus.objects.get_or_create(name=row_dict['barrier_status']lower().title())
+                    else:
+                        barrierStatus = status_matches[0]
+                        created = False
                     row_dict['barrier_status'] = barrierStatus
                     #     get or create OwnershipType
                     try:
@@ -168,10 +178,20 @@ class Command(BaseCommand):
                     ownershipType.save()
                     row_dict['ownership_type'] = ownershipType
                     if 'species_blocked' in row_dict.keys() and row_dict['species_blocked']:
-                        (species_block_type, created) = BlockedSpeciesType.objects.get_or_create(name=row_dict['species_blocked'].lower().title())
+                        block_matches = BlockedSpeciesType.objects.filter(name__iexact=row_dict['species_blocked'])
+                        if block_matches.count() == 0:
+                            (species_block_type, created) = BlockedSpeciesType.objects.get_or_create(name=row_dict['species_blocked'].lower().title())
+                        else:
+                            species_block_type = status_matches[0]
+                            created = False
                         row_dict['species_blocked'] = species_block_type
                     if 'treatment_status' in row_dict.keys() and row_dict['treatment_status']:
-                        (treatment_status_type, created) = TreatmentStatus.objects.get_or_create(name=row_dict['treatment_status'].lower().title())
+                        treatment_matches = TreatmentStatus.objects.filter(name__iexact=row_dict['treatment_status'])
+                        if treatment_matches.count() == 0:
+                            (treatment_status_type, created) = TreatmentStatus.objects.get_or_create(name=row_dict['treatment_status'].lower().title())
+                        else:
+                            treatment_status_type = status_matches[0]
+                            created = False
                         row_dict['treatment_status'] = treatment_status_type
                     # parse datetime
                     if 'updated' in row_dict.keys() and row_dict['updated']:
