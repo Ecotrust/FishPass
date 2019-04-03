@@ -299,15 +299,15 @@ FOCUS_AREA_TYPE_NAME_LOOKUP = {
 }
 
 DEFAULT_REPORT_WATERSHED = 'HUC08'
-DEFAULT_REPORT_WATERSHED_FIELD = 'huc8_code'
+DEFAULT_REPORT_WATERSHED_FIELD = 'huc8_name'
 # Points to field on Barrier Record in database that gives name of watershed
 BARRIER_WATERSHED_NAME_LOOKUP = {
     'HUC02': DEFAULT_REPORT_WATERSHED_FIELD,
     'HUC04': DEFAULT_REPORT_WATERSHED_FIELD,
     'HUC06': DEFAULT_REPORT_WATERSHED_FIELD,
-    'HUC08': 'huc8_code',
-    'HUC10': 'huc10_code',
-    'HUC12': 'huc12_code',
+    'HUC08': 'huc8_name',
+    'HUC10': 'huc10_name',
+    'HUC12': 'huc12_name',
     'County': 'county',
     'Region': DEFAULT_REPORT_WATERSHED_FIELD,
     'Boundary': DEFAULT_REPORT_WATERSHED_FIELD,

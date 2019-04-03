@@ -181,7 +181,7 @@ app.map.layer = {
         renderBuffer: 500
       }),
       selectAction: focusAreaSelectAction,
-      hoverField: 'HUC2'
+      hoverField: app.mapbox.layers.huc02.name_field
     },
     huc04: {
       layer: new ol.layer.VectorTile({
@@ -201,7 +201,7 @@ app.map.layer = {
         renderBuffer: 500
       }),
       selectAction: focusAreaSelectAction,
-      hoverField: 'HUC4'
+      hoverField: app.mapbox.layers.huc04.name_field
     },
     huc06: {
       layer: new ol.layer.VectorTile({
@@ -221,7 +221,7 @@ app.map.layer = {
         renderBuffer: 500
       }),
       selectAction: focusAreaSelectAction,
-      hoverField: 'HUC6'
+      hoverField: app.mapbox.layers.huc06.name_field
     },
     huc08: {
       layer: new ol.layer.VectorTile({
@@ -241,7 +241,7 @@ app.map.layer = {
         renderBuffer: 500
       }),
       selectAction: focusAreaSelectAction,
-      hoverField: 'HUC8'
+      hoverField: app.mapbox.layers.huc08.name_field
     },
     huc10: {
       layer: new ol.layer.VectorTile({
@@ -261,7 +261,7 @@ app.map.layer = {
         renderBuffer: 500
       }),
       selectAction: focusAreaSelectAction,
-      hoverField: 'HUC10'
+      hoverField: app.mapbox.layers.huc10.name_field
     },
     huc12: {
       layer: new ol.layer.VectorTile({
@@ -281,7 +281,7 @@ app.map.layer = {
         renderBuffer: 500
       }),
       selectAction: focusAreaSelectAction,
-      hoverField: 'HUC12'
+      hoverField: app.mapbox.layers.huc12.name_field
     },
     county: {
       layer: new ol.layer.VectorTile({
@@ -300,7 +300,7 @@ app.map.layer = {
         renderBuffer: 500
       }),
       selectAction: focusAreaSelectAction,
-      hoverField: 'NAME'
+      hoverField: app.mapbox.layers.county.name_field
     },
     boundary: {
       layer: new ol.layer.VectorTile({
@@ -320,6 +320,7 @@ app.map.layer = {
         renderBuffer: 500
       }),
       selectAction: focusAreaSelectAction,
+      // hoverField: app.mapbox.layers.boundary.name_field
       hoverField: '-'
     },
     region: {
@@ -340,7 +341,7 @@ app.map.layer = {
         renderBuffer: 500
       }),
       selectAction: focusAreaSelectAction,
-      hoverField: 'Region_Lon'
+      hoverField: app.mapbox.layers.region.name_field
     },
     coho: {
       layer: new ol.layer.VectorTile({
@@ -360,7 +361,7 @@ app.map.layer = {
         renderBuffer: 500
       }),
       selectAction: focusAreaSelectAction,
-      hoverField: 'ESU_DPS'
+      hoverField: app.mapbox.layers.coho.name_field
     },
     chinook: {
       layer: new ol.layer.VectorTile({
@@ -380,7 +381,7 @@ app.map.layer = {
         renderBuffer: 500
       }),
       selectAction: focusAreaSelectAction,
-      hoverField: 'ESU_DPS'
+      hoverField: app.mapbox.layers.chinook.name_field
     },
     chinook_spring: {
       layer: new ol.layer.VectorTile({
@@ -400,7 +401,7 @@ app.map.layer = {
         renderBuffer: 500
       }),
       selectAction: focusAreaSelectAction,
-      hoverField: 'ESU_DPS'
+      hoverField: app.mapbox.layers.chinook_spring.name_field
     },
     chinook_fall: {
       layer: new ol.layer.VectorTile({
@@ -420,7 +421,7 @@ app.map.layer = {
         renderBuffer: 500
       }),
       selectAction: focusAreaSelectAction,
-      hoverField: 'ESU_DPS'
+      hoverField: app.mapbox.layers.chinook_fall.name_field
     },
     steelhead: {
       layer: new ol.layer.VectorTile({
@@ -440,7 +441,7 @@ app.map.layer = {
         renderBuffer: 500
       }),
       selectAction: focusAreaSelectAction,
-      hoverField: 'ESU_DPS'
+      hoverField: app.mapbox.layers.steelhead.name_field
     },
     huc02_overlay: {
       layer: new ol.layer.VectorTile({
