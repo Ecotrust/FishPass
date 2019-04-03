@@ -304,6 +304,8 @@ class Barrier(models.Model):
     def save(self, *args, **kwargs):
         from django.contrib.gis.geos import Point
         self.geometry = Point(self.longitude, self.latitude,None,4326)
+        if self.downstream_id == None:
+            self.downstream_id = 0
         super(Barrier, self).save(*args, **kwargs)
         purge_exports()
 

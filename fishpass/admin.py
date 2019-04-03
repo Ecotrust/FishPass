@@ -29,7 +29,9 @@ class BarrierAdmin(OSMGeoAdmin):
 
     change_list_template = 'admin/fishpass/barrier_change_list.html'
 
-    form = BarrierForm
+    # RDH: setting choices in __init__ triggers a failed save:
+    # https://stackoverflow.com/q/19407512
+    # form = BarrierForm
 
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('name', 'user', 'description', 'budget', 'budget_min', 'budget_max',)
