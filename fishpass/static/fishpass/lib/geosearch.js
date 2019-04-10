@@ -14,7 +14,7 @@ app.map.geoSearch = function(opt_options) {
     var input = document.createElement('input');
     input.className = 'ol-geo-search-input form-control d-none';
     input.setAttribute('id', 'geo-search-input');
-    input.setAttribute('placeholder', 'Search places');
+    input.setAttribute('placeholder', 'Search barriers');
     input.setAttribute('type', 'search');
 
     var resultsList = document.createElement('div');
