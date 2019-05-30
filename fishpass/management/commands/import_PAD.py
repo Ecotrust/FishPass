@@ -182,7 +182,7 @@ class Command(BaseCommand):
                         if block_matches.count() == 0:
                             (species_block_type, created) = BlockedSpeciesType.objects.get_or_create(name=row_dict['species_blocked'].lower().title())
                         else:
-                            species_block_type = status_matches[0]
+                            species_block_type = block_matches[0]
                             created = False
                         row_dict['species_blocked'] = species_block_type
                     if 'treatment_status' in row_dict.keys() and row_dict['treatment_status']:
@@ -190,7 +190,7 @@ class Command(BaseCommand):
                         if treatment_matches.count() == 0:
                             (treatment_status_type, created) = TreatmentStatus.objects.get_or_create(name=row_dict['treatment_status'].lower().title())
                         else:
-                            treatment_status_type = status_matches[0]
+                            treatment_status_type = treatment_matches[0]
                             created = False
                         row_dict['treatment_status'] = treatment_status_type
                     # parse datetime
@@ -201,8 +201,8 @@ class Command(BaseCommand):
                         # create Barrier
                         Barrier.objects.create(**row_dict)
                         import_count += 1
-                    except ValueError:
-                        warnings.append('row: %d, value:%s' % (row_num, row_dict))
+                    except ValueError as e:
+                        warnings.append('row: %d, value:%s, error: %s' % (row_num, row_dict, e))
                         print(warnings[-1])
                         pass
                 except Exception as e:
