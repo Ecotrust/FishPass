@@ -235,7 +235,7 @@
                     // {{ field_input.html_name }} is in {{ form.COUNT_ONLY_FIELDS }}
                     $('#id_{{ field_input.html_name }}').change( function() {
                       if (app.viewModel.scenarios.scenarioFormModel) {
-                        app.viewModel.scenarios.scenarioFormModel.updateFilterCount('{{ field_input.html_name }}');
+                        app.viewModel.scenarios.scenarioFormModel.updateFiltersAndCount('{{ field_input.html_name }}');
                       }
                     });
                   {% else %}
@@ -252,7 +252,7 @@
                     // {{ field_input.html_name }} is in {{ form.COUNT_ONLY_FIELDS }}
                     $('#id_{{ field_input.html_name }}').change( function() {
                       if (app.viewModel.scenarios.scenarioFormModel) {
-                        app.viewModel.scenarios.scenarioFormModel.updateFilterCount('{{ field.html_name }}');
+                        app.viewModel.scenarios.scenarioFormModel.updateFiltersAndCount('{{ field.html_name }}');
                       }
                     });
                   {% else %}
