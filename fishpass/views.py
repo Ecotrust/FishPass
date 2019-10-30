@@ -1315,7 +1315,7 @@ def createOptiPassInputFile(project, file_location):
         if barrier_dict['POSTPASS'] == None:
             barrier_dict['POSTPASS'] = barrier_dict['PREPASS']
 
-        if not barrier.downstream_id or barrier.downstream_id == 0 or project.treat_downstream == 'ignore':
+        if not barrier.downstream_id or barrier.downstream_id == 0:
             barrier_dict['DSID'] = "NA"
 
         barrier_dicts.append(barrier_dict)
@@ -1350,7 +1350,6 @@ def createOptiPassInputFile(project, file_location):
         writer.writeheader()
         for bar_dict in barrier_dicts:
             writer.writerow(bar_dict)
-
     return file_location
 
 def addOutfileToReport(outfile, project):
