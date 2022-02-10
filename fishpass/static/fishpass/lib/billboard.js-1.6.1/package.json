@@ -89,7 +89,7 @@
     "lite-fixture": "^1.0.2",
     "mini-css-extract-plugin": "^0.4.1",
     "mocha": "^5.2.0",
-    "node-sass": "^4.9.3",
+    "node-sass": "^7.0.0",
     "optimize-css-assets-webpack-plugin": "^5.0.0",
     "regenerator-runtime": "^0.12.1",
     "sass-loader": "^7.1.0",
